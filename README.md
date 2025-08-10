@@ -17,5 +17,5 @@ El objetivo de LinceUS es simplificar el acceso a la información universitaria,
 - **Node.js** – Integración opcional con frontend  
 - **Base de datos vectorial** – Para búsqueda semántica en documentos universitarios  
 
-## 📅 Estado
+## Estado
 Actualmente en desarrollo como parte de un Trabajo Fin de Grado.
