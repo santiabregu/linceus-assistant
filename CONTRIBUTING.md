@@ -2,6 +2,8 @@
 
 Este documento define la política de commits, branching y organización de tareas para el desarrollo de **LinceUS Assistant**. Aunque actualmente el desarrollo lo realiza una sola persona, seguir estas reglas garantiza un flujo de trabajo organizado y fácil de mantener.
 
+**Nota:** La política de ramas y commits comienza a aplicarse a partir del segundo sprint. El primer sprint se dedica únicamente a la configuración inicial y desarrollo del MVP.
+
 ## 1. Nomenclatura de ramas
 
 Se utilizará la siguiente convención para nombrar las ramas:

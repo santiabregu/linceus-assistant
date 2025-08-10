@@ -54,3 +54,6 @@ pip-delete-this-directory.txt
 
 # VS Code
 .vscode/
+
+# Rasa cache
+.rasa/cache/
