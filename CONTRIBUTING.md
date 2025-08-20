@@ -71,14 +71,9 @@ Proceso:
 
 ## 4. Organización de tareas
 
-- Usar GitHub Projects o Issues para gestionar las tareas.
-- Etiquetas recomendadas:
-  - `feature`
-  - `bug`
-  - `documentation`
-  - `maintenance`
-- Definir siempre una descripción clara de la tarea antes de comenzarla.
-- Cerrar las tareas vinculándolas a commits o Pull Requests (`close #ID` en el mensaje).
+La gestión de tareas se lleva a cabo mediante **GitHub Projects**.  
+Consulta el archivo [PROJECTS.md](PROJECTS.md) para conocer la metodología de organización de sprints y issues.  
+
 
 ## 5. Pull Requests
 
