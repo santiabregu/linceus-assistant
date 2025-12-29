@@ -1,5 +1,11 @@
 version: "3.1"
 
+# This is like the "vocabulary" of your bot:
+# Lists all intents your bot can understand
+# Defines responses (what the bot can say)
+# Specifies entities, slots, and actions
+
+
 intents:
   - greet
   - goodbye
@@ -8,26 +14,45 @@ intents:
   - mood_great
   - mood_unhappy
   - bot_challenge
+  - consultar_asignatura
+
+entities:
+  - codigo_asignatura
+
+slots:
+  codigo_asignatura:
+    type: text
+    influence_conversation: true
+    mappings:
+    - type: from_entity
+      entity: codigo_asignatura
 
 responses:
   utter_greet:
-  - text: "Hey! How are you?"
+  - text: "¡Hola! Soy tu asistente universitario. ¿En qué puedo ayudarte?"
 
   utter_cheer_up:
   - text: "Here is something to cheer you up:"
     image: "https://i.imgur.com/nGF1K8f.jpg"
 
   utter_did_that_help:
-  - text: "Did that help you?"
+  - text: "¿Te ha sido útil esta información?"
 
   utter_happy:
-  - text: "Great, carry on!"
+  - text: "¡Perfecto! ¿Hay algo más en lo que pueda ayudarte?"
 
   utter_goodbye:
-  - text: "Bye"
+  - text: "¡Hasta luego! Que tengas un buen día."
 
   utter_iamabot:
-  - text: "I am a bot, powered by Rasa."
+  - text: "Soy un chatbot universitario creado con Rasa para ayudarte con información académica."
+
+  utter_consultar_asignatura:
+  - text: "¿Qué asignatura quieres consultar? Puedes darme el código (por ejemplo: IS2)."
+
+actions:
+  - action_test_supabase
+  - action_consultar_asignatura
 
 session_config:
   session_expiration_time: 60

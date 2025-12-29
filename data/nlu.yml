@@ -1,91 +1,109 @@
 version: "3.1"
 
+# nlu = natural language understanding
+# This file defines intents (what users want to do) with training examples:
+# Intent: The purpose behind a user's message (e.g., greet, goodbye)
+# Examples: Sample phrases users might say for each intent
+
 nlu:
 - intent: greet
   examples: |
+    - hola
+    - buenos días
+    - buenas tardes
+    - buenas noches
     - hey
-    - hello
-    - hi
-    - hello there
-    - good morning
-    - good evening
-    - moin
-    - hey there
-    - let's go
-    - hey dude
-    - goodmorning
-    - goodevening
-    - good afternoon
+    - qué tal
+    - saludos
+    - hola chatbot
+    - buen día
+    - buenas
 
 - intent: goodbye
   examples: |
-    - cu
-    - good by
-    - cee you later
-    - good night
+    - adiós
+    - hasta luego
+    - nos vemos
+    - chao
     - bye
-    - goodbye
-    - have a nice day
-    - see you around
-    - bye bye
-    - see you later
+    - hasta la vista
+    - que tengas buen día
+    - hasta pronto
+    - me voy
+    - gracias y adiós
 
 - intent: affirm
   examples: |
-    - yes
-    - y
-    - indeed
-    - of course
-    - that sounds good
-    - correct
+    - sí
+    - claro
+    - por supuesto
+    - exacto
+    - correcto
+    - afirmativo
+    - vale
+    - ok
+    - está bien
+    - de acuerdo
 
 - intent: deny
   examples: |
     - no
-    - n
-    - never
-    - I don't think so
-    - don't like that
-    - no way
-    - not really
+    - nunca
+    - para nada
+    - no creo
+    - no me parece
+    - no es así
+    - negativo
+    - no, gracias
 
 - intent: mood_great
   examples: |
-    - perfect
-    - great
-    - amazing
-    - feeling like a king
-    - wonderful
-    - I am feeling very good
-    - I am great
-    - I am amazing
-    - I am going to save the world
-    - super stoked
-    - extremely good
-    - so so perfect
-    - so good
-    - so perfect
+    - perfecto
+    - genial
+    - fantástico
+    - me siento genial
+    - estoy muy bien
+    - excelente
+    - maravilloso
+    - súper bien
+    - increíble
 
 - intent: mood_unhappy
   examples: |
-    - my day was horrible
-    - I am sad
-    - I don't feel very well
-    - I am disappointed
-    - super sad
-    - I'm so sad
-    - sad
-    - very sad
-    - unhappy
-    - not good
-    - not very good
-    - extremly sad
-    - so saad
-    - so sad
+    - mi día fue horrible
+    - estoy triste
+    - no me siento bien
+    - estoy decepcionado
+    - muy triste
+    - no muy bien
+    - fatal
+    - mal día
 
 - intent: bot_challenge
   examples: |
-    - are you a bot?
-    - are you a human?
-    - am I talking to a bot?
-    - am I talking to a human?
+    - eres un bot?
+    - eres humano?
+    - estoy hablando con un bot?
+    - eres una máquina?
+    - qué eres?
+
+- intent: consultar_asignatura
+  examples: |
+    - quiero información sobre [IS2](codigo_asignatura)
+    - dime sobre la asignatura [IS2](codigo_asignatura)
+    - qué puedes decirme de [IS2](codigo_asignatura)
+    - información de [IS2](codigo_asignatura)
+    - consultar [IS2](codigo_asignatura)
+    - buscar asignatura [IS2](codigo_asignatura)
+    - datos de la asignatura [IS2](codigo_asignatura)
+    - cuéntame sobre [IS2](codigo_asignatura)
+    - necesito info de [IS2](codigo_asignatura)
+    - mostrar [IS2](codigo_asignatura)
+    - ver asignatura [IS2](codigo_asignatura)
+    - detalles de [IS2](codigo_asignatura)
+    - quiero saber sobre la materia [IS2](codigo_asignatura)
+    - qué es [IS2](codigo_asignatura)
+    - información sobre Ingeniería del Software
+    - dime sobre ingeniería del software 2
+    - consultar ingeniería del software II
+    - quiero ver la asignatura de segundo

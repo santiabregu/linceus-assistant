@@ -1,0 +1,1 @@
+1) Se defino la esquema de la base de datos para todo el proyecto ( esquema inicial )

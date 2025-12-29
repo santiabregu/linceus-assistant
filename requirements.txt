@@ -1,3 +1,17 @@
-rasa>=4.0.0
-rasa-sdk>=4.0.0
+# Rasa Framework - versión compatible con Python 3.10
+rasa==3.6.21
+rasa-sdk==3.6.2
+
+# Gestión de variables de entorno
 python-dotenv==1.0.0
+
+# Base de datos Supabase
+supabase>=2.0.0
+postgrest>=0.10.0
+
+# Dependencias específicas para compatibilidad
+numpy<1.25.0,>=1.19.2
+pydantic<1.10.10,>=1.7.4
+
+# Procesamiento de lenguaje natural en español
+spacy>=3.8.0,<4.0.0

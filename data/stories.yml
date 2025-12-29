@@ -1,5 +1,9 @@
 version: "3.1"
 
+# These define conversation flows - sequences of user intents and bot actions:
+# They show how conversations should progress
+# Help train the dialogue management model
+
 stories:
 
 - story: happy path
@@ -28,3 +32,30 @@ stories:
   - action: utter_did_that_help
   - intent: deny
   - action: utter_goodbye
+
+- story: consultar asignatura con saludo
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: consultar_asignatura
+    entities:
+    - codigo_asignatura: "IS2"
+  - slot_was_set:
+    - codigo_asignatura: "IS2"
+  - action: action_consultar_asignatura
+  - intent: goodbye
+  - action: utter_goodbye
+
+- story: consultar asignatura directa
+  steps:
+  - intent: consultar_asignatura
+    entities:
+    - codigo_asignatura: "IS2"
+  - slot_was_set:
+    - codigo_asignatura: "IS2"
+  - action: action_consultar_asignatura
+
+- story: consultar asignatura sin código
+  steps:
+  - intent: consultar_asignatura
+  - action: utter_consultar_asignatura

@@ -11,3 +11,16 @@ rules:
   steps:
   - intent: bot_challenge
   - action: utter_iamabot
+
+- rule: Always greet back
+  steps:
+  - intent: greet
+  - action: utter_greet
+
+- rule: Consultar asignatura cuando se proporciona código
+  condition:
+  - slot_was_set:
+    - codigo_asignatura: [IS2, is2]
+  steps:
+  - intent: consultar_asignatura
+  - action: action_consultar_asignatura
