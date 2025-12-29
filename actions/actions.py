@@ -1,7 +1,7 @@
 # This files contains your custom actions which can be used to run
 # custom Python code.
 #
-# See this guide on how to implement these action:
+# See this guide on how to implement these action: 
 # https://rasa.com/docs/rasa/custom-actions
 
 import os
@@ -62,9 +62,9 @@ class DatabaseConnection:
 # Instancia global de conexión
 try:
     db_client = DatabaseConnection()
-    print("✅ Configuración de base de datos cargada correctamente")
+    print("Configuración de base de datos cargada correctamente")
 except Exception as e:
-    print(f"❌ Error configurando base de datos: {e}")
+    print(f"Error configurando base de datos: {e}")
     db_client = None
 
 
@@ -79,19 +79,19 @@ class ActionTestSupabase(Action):
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         
         if db_client is None:
-            dispatcher.utter_message(text="❌ Error: No se pudo configurar la conexión a la base de datos")
+            dispatcher.utter_message(text="Error: No se pudo configurar la conexión a la base de datos")
             return []
         
         if db_client.test_connection():
-            dispatcher.utter_message(text="✅ Conexión con la base de datos exitosa!")
+            dispatcher.utter_message(text="Conexión con la base de datos exitosa")
         else:
-            dispatcher.utter_message(text="❌ Error al conectar con la base de datos")
+            dispatcher.utter_message(text="Error al conectar con la base de datos")
         
         return []
 
 
 class ActionConsultarAsignatura(Action):
-    """Action para consultar información de una asignatura"""
+    """Action para consultar información de una asignatura por código"""
     
     def name(self) -> Text:
         return "action_consultar_asignatura"
@@ -101,14 +101,14 @@ class ActionConsultarAsignatura(Action):
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         
         if db_client is None:
-            dispatcher.utter_message(text="❌ Error: No se pudo conectar con la base de datos")
+            dispatcher.utter_message(text="Error: No se pudo conectar con la base de datos")
             return []
         
         # Obtener el código de asignatura de la entidad extraída
         codigo_asignatura = next(tracker.get_latest_entity_values("codigo_asignatura"), None)
         
         if not codigo_asignatura:
-            dispatcher.utter_message(text="Por favor, especifica el código de la asignatura que quieres consultar (por ejemplo: IS2)")
+            dispatcher.utter_message(text="Por favor, especifica el código de la asignatura que quieres consultar")
             return []
         
         # Convertir a mayúsculas para mayor robustez
@@ -117,54 +117,73 @@ class ActionConsultarAsignatura(Action):
         # Realizar consulta a la base de datos
         conn = db_client.get_connection()
         if not conn:
-            dispatcher.utter_message(text="❌ Error al conectar con la base de datos")
+            dispatcher.utter_message(text="Error al conectar con la base de datos")
             return []
         
         try:
             cursor = conn.cursor()
+            
+            # Query actualizado según nuevo esquema
             query = """
-                SELECT codigo, nombre, curso, creditos, calificacion, evaluacion, metodologia, bibliografia
-                FROM public.asignaturas 
-                WHERE codigo = %s
+                SELECT 
+                    a.codigo,
+                    a.nombre,
+                    a.curso,
+                    a.creditos,
+                    a.duracion,
+                    a.tipologia,
+                    a.es_formacion_basica,
+                    a.es_optativa,
+                    t.nombre as titulacion_nombre,
+                    d.nombre as departamento_nombre
+                FROM asignaturas a
+                LEFT JOIN titulaciones t ON a.titulacion_id = t.id
+                LEFT JOIN departamentos d ON a.departamento_id = d.id
+                WHERE a.codigo = %s AND a.activa = true
             """
+            
             cursor.execute(query, (codigo_asignatura,))
             result = cursor.fetchone()
             
             if result:
-                codigo, nombre, curso, creditos, calificacion, evaluacion, metodologia, bibliografia = result
+                (codigo, nombre, curso, creditos, duracion, tipologia, 
+                 es_fb, es_opt, titulacion, departamento) = result
                 
-                # Formatear la respuesta
-                respuesta = f"""
-📚 **{nombre}** ({codigo})
+                # Formatear duración
+                duracion_texto = {
+                    'A': 'Anual',
+                    'C1': 'Primer Cuatrimestre',
+                    'C2': 'Segundo Cuatrimestre'
+                }.get(duracion, duracion)
+                
+                # Formatear tipología
+                tipo_texto = tipologia.replace('_', ' ').title() if tipologia else ''
+                
+                # Construir respuesta
+                respuesta = f"""Información de la asignatura {codigo}:
 
-🎓 **Curso:** {curso}º año
-📖 **Créditos:** {creditos} ECTS
-
-📊 **Calificación:**
-{calificacion}
-
-📝 **Evaluación:**
-{evaluacion}
-
-🔬 **Metodología:**
-{metodologia}
-
-📚 **Bibliografía:**
-{bibliografia}
-                """.strip()
+Nombre: {nombre}
+Curso: {curso}º año
+Créditos: {creditos} ECTS
+Duración: {duracion_texto}
+Tipo: {tipo_texto}"""
+                
+                if departamento:
+                    respuesta += f"\nDepartamento: {departamento}"
                 
                 dispatcher.utter_message(text=respuesta)
             else:
-                dispatcher.utter_message(text=f"❌ No se encontró información para la asignatura '{codigo_asignatura}'. Verifica que el código sea correcto.")
+                dispatcher.utter_message(
+                    text=f"No se encontró información para la asignatura con código '{codigo_asignatura}'. "
+                         "Verifica que el código sea correcto."
+                )
             
             cursor.close()
             
         except Exception as e:
             print(f"Error en consulta de asignatura: {e}")
-            dispatcher.utter_message(text="❌ Error al consultar la información de la asignatura")
+            dispatcher.utter_message(text="Error al consultar la información de la asignatura")
         finally:
             conn.close()
         
         return []
-
-

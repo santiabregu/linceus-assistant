@@ -9,6 +9,7 @@ build/
 venv/
 ENV/
 env/
+rasa_env/
 *.sqlite3
 *.db
  

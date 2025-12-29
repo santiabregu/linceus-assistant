@@ -20,7 +20,7 @@ rules:
 - rule: Consultar asignatura cuando se proporciona código
   condition:
   - slot_was_set:
-    - codigo_asignatura: [IS2, is2]
+    - codigo_asignatura
   steps:
   - intent: consultar_asignatura
   - action: action_consultar_asignatura

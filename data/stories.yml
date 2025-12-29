@@ -50,9 +50,9 @@ stories:
   steps:
   - intent: consultar_asignatura
     entities:
-    - codigo_asignatura: "IS2"
+    - codigo_asignatura: "2050001"
   - slot_was_set:
-    - codigo_asignatura: "IS2"
+    - codigo_asignatura: "2050001"
   - action: action_consultar_asignatura
 
 - story: consultar asignatura sin código

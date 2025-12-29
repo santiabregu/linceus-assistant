@@ -89,21 +89,17 @@ nlu:
 
 - intent: consultar_asignatura
   examples: |
-    - quiero información sobre [IS2](codigo_asignatura)
-    - dime sobre la asignatura [IS2](codigo_asignatura)
-    - qué puedes decirme de [IS2](codigo_asignatura)
-    - información de [IS2](codigo_asignatura)
-    - consultar [IS2](codigo_asignatura)
-    - buscar asignatura [IS2](codigo_asignatura)
-    - datos de la asignatura [IS2](codigo_asignatura)
-    - cuéntame sobre [IS2](codigo_asignatura)
-    - necesito info de [IS2](codigo_asignatura)
-    - mostrar [IS2](codigo_asignatura)
-    - ver asignatura [IS2](codigo_asignatura)
-    - detalles de [IS2](codigo_asignatura)
-    - quiero saber sobre la materia [IS2](codigo_asignatura)
-    - qué es [IS2](codigo_asignatura)
-    - información sobre Ingeniería del Software
-    - dime sobre ingeniería del software 2
-    - consultar ingeniería del software II
-    - quiero ver la asignatura de segundo
+    - quiero información sobre [2050001](codigo_asignatura)
+    - dime sobre la asignatura [2050024](codigo_asignatura)
+    - qué puedes decirme de [2050010](codigo_asignatura)
+    - información de [2050046](codigo_asignatura)
+    - consultar [2050030](codigo_asignatura)
+    - buscar asignatura [2050048](codigo_asignatura)
+    - datos de la asignatura [2050039](codigo_asignatura)
+    - cuéntame sobre [2050051](codigo_asignatura)
+    - necesito info de [2050020](codigo_asignatura)
+    - mostrar [2050033](codigo_asignatura)
+    - ver asignatura [2050045](codigo_asignatura)
+    - detalles de [2050037](codigo_asignatura)
+    - quiero saber sobre la materia [2050012](codigo_asignatura)
+    - qué es [2050003](codigo_asignatura)
