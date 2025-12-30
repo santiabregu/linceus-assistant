@@ -15,10 +15,12 @@ intents:
   - mood_unhappy
   - bot_challenge
   - consultar_asignatura
+  - pregunta_seguimiento
+  - pedir_info_asignatura
 
 entities:
   - codigo_asignatura
-  
+  - atributo_asignatura
 
 slots:
   codigo_asignatura:
@@ -27,6 +29,25 @@ slots:
     mappings:
     - type: from_entity
       entity: codigo_asignatura
+  
+  atributo_asignatura:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: atributo_asignatura
+  
+  ultimo_codigo_consultado:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+  
+  ultimo_nombre_asignatura:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
 
 responses:
   utter_greet:
@@ -48,12 +69,19 @@ responses:
   utter_iamabot:
   - text: "Soy un chatbot universitario creado con Rasa para ayudarte con información académica."
 
+  utter_pedir_codigo:
+  - text: "¿Cuál es el código de la asignatura que quieres consultar? (por ejemplo: 2050001)"
+
+  utter_no_contexto:
+  - text: "No tengo contexto de una asignatura anterior. Por favor, indica el código de la asignatura."
+
   utter_consultar_asignatura:
   - text: "¿Qué asignatura quieres consultar? Puedes darme el código (por ejemplo: 2050001)."
 
 actions:
   - action_test_supabase
   - action_consultar_asignatura
+  - action_pregunta_seguimiento
 
 session_config:
   session_expiration_time: 60

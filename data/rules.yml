@@ -18,9 +18,16 @@ rules:
   - action: utter_greet
 
 - rule: Consultar asignatura cuando se proporciona código
-  condition:
-  - slot_was_set:
-    - codigo_asignatura
   steps:
   - intent: consultar_asignatura
   - action: action_consultar_asignatura
+
+- rule: Pregunta de seguimiento sobre última asignatura
+  steps:
+  - intent: pregunta_seguimiento
+  - action: action_pregunta_seguimiento
+
+- rule: Pedir código cuando no se proporciona
+  steps:
+  - intent: pedir_info_asignatura
+  - action: utter_pedir_codigo

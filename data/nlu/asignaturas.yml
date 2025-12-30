@@ -1,0 +1,109 @@
+version: "3.1"
+
+nlu:
+# =============================================================================
+# CONSULTA DE ASIGNATURA - Con código y/o atributo
+# =============================================================================
+- intent: consultar_asignatura
+  examples: |
+    - quiero información sobre [2050001](codigo_asignatura)
+    - dime sobre la asignatura [2050024](codigo_asignatura)
+    - qué puedes decirme de [2050010](codigo_asignatura)
+    - información de [2050046](codigo_asignatura)
+    - consultar [2050030](codigo_asignatura)
+    - buscar asignatura [2050048](codigo_asignatura)
+    - datos de la asignatura [2050039](codigo_asignatura)
+    - cuéntame sobre [2050051](codigo_asignatura)
+    - necesito info de [2050020](codigo_asignatura)
+    - dame información de [2050015](codigo_asignatura)
+    - qué sabes de [2050033](codigo_asignatura)
+    - háblame de [2050042](codigo_asignatura)
+    - [2050001](codigo_asignatura)
+    - la asignatura [2050024](codigo_asignatura)
+    - quiero saber de [2050010](codigo_asignatura)
+    - info [2050046](codigo_asignatura)
+    - información sobre la asignatura con código [2050001](codigo_asignatura)
+    - dame los datos de la asignatura [2050024](codigo_asignatura)
+    - cuéntame todo sobre [2050010](codigo_asignatura)
+    - qué información tienes de [2050046](codigo_asignatura)
+    - cuántos [créditos](atributo_asignatura) tiene [2050001](codigo_asignatura)
+    - qué [créditos](atributo_asignatura) tiene la asignatura [2050024](codigo_asignatura)
+    - [créditos](atributo_asignatura) de [2050010](codigo_asignatura)
+    - cuántos [créditos](atributo_asignatura) tiene la asignatura con código [2050001](codigo_asignatura)
+    - dime los [créditos](atributo_asignatura) de [2050024](codigo_asignatura)
+    - en qué [curso](atributo_asignatura) está [2050001](codigo_asignatura)
+    - qué [curso](atributo_asignatura) es [2050046](codigo_asignatura)
+    - [curso](atributo_asignatura) de la asignatura [2050030](codigo_asignatura)
+    - de qué [curso](atributo_asignatura) es [2050001](codigo_asignatura)
+    - en qué [año](atributo_asignatura) se da [2050024](codigo_asignatura)
+    - cuánto [dura](atributo_asignatura) [2050001](codigo_asignatura)
+    - qué [duración](atributo_asignatura) tiene [2050024](codigo_asignatura)
+    - la asignatura [2050010](codigo_asignatura) es [anual](atributo_asignatura)
+    - [2050046](codigo_asignatura) es de qué [cuatrimestre](atributo_asignatura)
+    - [duración](atributo_asignatura) de [2050030](codigo_asignatura)
+    - es [anual](atributo_asignatura) [2050001](codigo_asignatura)
+    - qué [tipo](atributo_asignatura) de asignatura es [2050001](codigo_asignatura)
+    - [2050024](codigo_asignatura) es [obligatoria](atributo_asignatura)
+    - es [optativa](atributo_asignatura) [2050010](codigo_asignatura)
+    - [2050046](codigo_asignatura) es [formación básica](atributo_asignatura)
+    - la [tipología](atributo_asignatura) de [2050030](codigo_asignatura)
+    - qué [departamento](atributo_asignatura) imparte [2050001](codigo_asignatura)
+    - [departamento](atributo_asignatura) de [2050024](codigo_asignatura)
+    - quién da [2050010](codigo_asignatura)
+    - qué [departamento](atributo_asignatura) da la asignatura [2050046](codigo_asignatura)
+    - de qué [titulación](atributo_asignatura) es [2050010](codigo_asignatura)
+    - [carrera](atributo_asignatura) de [2050046](codigo_asignatura)
+    - a qué [grado](atributo_asignatura) pertenece [2050001](codigo_asignatura)
+    - [titulación](atributo_asignatura) de la asignatura [2050024](codigo_asignatura)
+    - cómo se [llama](atributo_asignatura) [2050001](codigo_asignatura)
+    - [nombre](atributo_asignatura) de la asignatura [2050024](codigo_asignatura)
+    - cuál es el [nombre](atributo_asignatura) de [2050010](codigo_asignatura)
+
+# =============================================================================
+# PREGUNTA DE SEGUIMIENTO - Sobre la última asignatura consultada
+# =============================================================================
+- intent: pregunta_seguimiento
+  examples: |
+    - y los [créditos](atributo_asignatura)?
+    - [créditos](atributo_asignatura)
+    - cuántos [créditos](atributo_asignatura) tiene
+    - dime los [créditos](atributo_asignatura)
+    - y el [curso](atributo_asignatura)?
+    - [curso](atributo_asignatura)
+    - de qué [curso](atributo_asignatura) es
+    - en qué [año](atributo_asignatura) está
+    - y la [duración](atributo_asignatura)?
+    - [duración](atributo_asignatura)
+    - cuánto [dura](atributo_asignatura)
+    - es [anual](atributo_asignatura)?
+    - de qué [cuatrimestre](atributo_asignatura) es
+    - y el [departamento](atributo_asignatura)?
+    - [departamento](atributo_asignatura)
+    - quién la imparte
+    - qué [departamento](atributo_asignatura) la da
+    - y la [titulación](atributo_asignatura)?
+    - de qué [carrera](atributo_asignatura) es
+    - a qué [grado](atributo_asignatura) pertenece
+    - es [optativa](atributo_asignatura)?
+    - es [obligatoria](atributo_asignatura)?
+    - es [formación básica](atributo_asignatura)?
+    - qué [tipo](atributo_asignatura) es
+    - cómo se [llama](atributo_asignatura)
+    - y el [nombre](atributo_asignatura)?
+    - [nombre](atributo_asignatura)
+
+# =============================================================================
+# SOLICITUD DE INFORMACIÓN SIN CÓDIGO - El bot pedirá el código
+# =============================================================================
+- intent: pedir_info_asignatura
+  examples: |
+    - quiero información de una asignatura
+    - buscar una asignatura
+    - consultar asignatura
+    - información de asignaturas
+    - necesito datos de una asignatura
+    - quiero saber sobre una asignatura
+    - háblame de una asignatura
+    - dame info de una asignatura
+    - quiero consultar una asignatura
+    - tengo dudas sobre una asignatura

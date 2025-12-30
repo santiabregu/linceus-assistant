@@ -1,0 +1,102 @@
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - hola
+    - buenos días
+    - buenas tardes
+    - buenas noches
+    - hey
+    - qué tal
+    - saludos
+    - hola chatbot
+    - buen día
+    - buenas
+    - hola buenas
+    - qué hay
+    - ey
+    - holaa
+
+- intent: goodbye
+  examples: |
+    - adiós
+    - hasta luego
+    - nos vemos
+    - chao
+    - bye
+    - hasta la vista
+    - que tengas buen día
+    - hasta pronto
+    - me voy
+    - gracias y adiós
+    - eso es todo
+    - ya está
+    - nada más gracias
+    - hasta otra
+
+- intent: affirm
+  examples: |
+    - sí
+    - claro
+    - por supuesto
+    - exacto
+    - correcto
+    - afirmativo
+    - vale
+    - ok
+    - está bien
+    - de acuerdo
+    - eso es
+    - efectivamente
+    - así es
+
+- intent: deny
+  examples: |
+    - no
+    - nunca
+    - para nada
+    - no creo
+    - no me parece
+    - no es así
+    - negativo
+    - no, gracias
+    - qué va
+    - en absoluto
+
+- intent: mood_great
+  examples: |
+    - perfecto
+    - genial
+    - fantástico
+    - me siento genial
+    - estoy muy bien
+    - excelente
+    - maravilloso
+    - súper bien
+    - increíble
+    - todo bien
+
+- intent: mood_unhappy
+  examples: |
+    - mi día fue horrible
+    - estoy triste
+    - no me siento bien
+    - estoy decepcionado
+    - muy triste
+    - no muy bien
+    - fatal
+    - mal día
+    - regular
+    - podría estar mejor
+
+- intent: bot_challenge
+  examples: |
+    - eres un bot?
+    - eres humano?
+    - estoy hablando con un bot?
+    - eres una máquina?
+    - qué eres?
+    - eres real?
+    - eres una persona?
+    - con quién hablo?

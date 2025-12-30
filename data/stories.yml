@@ -55,7 +55,22 @@ stories:
     - codigo_asignatura: "2050001"
   - action: action_consultar_asignatura
 
-- story: consultar asignatura sin código
+- story: pedir info asignatura y luego dar código
+  steps:
+  - intent: pedir_info_asignatura
+  - action: utter_pedir_codigo
+  - intent: consultar_asignatura
+    entities:
+    - codigo_asignatura: "2050001"
+  - action: action_consultar_asignatura
+
+- story: consulta con seguimiento
   steps:
   - intent: consultar_asignatura
-  - action: utter_consultar_asignatura
+    entities:
+    - codigo_asignatura: "2050001"
+  - action: action_consultar_asignatura
+  - intent: pregunta_seguimiento
+    entities:
+    - atributo_asignatura: "créditos"
+  - action: action_pregunta_seguimiento
