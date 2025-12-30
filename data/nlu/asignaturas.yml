@@ -2,7 +2,7 @@ version: "3.1"
 
 nlu:
 # =============================================================================
-# CONSULTA DE ASIGNATURA - Con código y/o atributo
+# CONSULTA DE ASIGNATURA - Con código, nombre y/o atributo
 # =============================================================================
 - intent: consultar_asignatura
   examples: |
@@ -26,6 +26,27 @@ nlu:
     - dame los datos de la asignatura [2050024](codigo_asignatura)
     - cuéntame todo sobre [2050010](codigo_asignatura)
     - qué información tienes de [2050046](codigo_asignatura)
+    - información sobre [Fundamentos de Programación](nombre_asignatura)
+    - dime sobre la asignatura [Ingeniería de Requisitos](nombre_asignatura)
+    - qué sabes de [Diseño y Pruebas](nombre_asignatura)
+    - buscar [Introducción a la Ingeniería del Software](nombre_asignatura)
+    - datos de [Análisis y Diseño de Datos y Algoritmos](nombre_asignatura)
+    - información de la asignatura [Bases de Datos](nombre_asignatura)
+    - háblame de [Redes de Computadores](nombre_asignatura)
+    - quiero información de [Sistemas Operativos](nombre_asignatura)
+    - qué información tienes de [Arquitectura de Computadores](nombre_asignatura)
+    - consultar asignatura [Matemática Discreta](nombre_asignatura)
+    - buscar asignatura [Cálculo Infinitesimal](nombre_asignatura)
+    - dame info de [Álgebra Lineal](nombre_asignatura)
+    - cuéntame sobre [Estadística](nombre_asignatura)
+    - necesito info de [Gestión de Proyectos](nombre_asignatura)
+    - cuántos [créditos](atributo_asignatura) tiene [Fundamentos de Programación](nombre_asignatura)
+    - en qué [curso](atributo_asignatura) está [Ingeniería de Requisitos](nombre_asignatura)
+    - qué [departamento](atributo_asignatura) imparte [Diseño y Pruebas](nombre_asignatura)
+    - [créditos](atributo_asignatura) de [Bases de Datos](nombre_asignatura)
+    - [duración](atributo_asignatura) de [Redes de Computadores](nombre_asignatura)
+    - es [optativa](atributo_asignatura) [Gestión de Proyectos](nombre_asignatura)
+    - de qué [curso](atributo_asignatura) es [Sistemas Operativos](nombre_asignatura)
     - cuántos [créditos](atributo_asignatura) tiene [2050001](codigo_asignatura)
     - qué [créditos](atributo_asignatura) tiene la asignatura [2050024](codigo_asignatura)
     - [créditos](atributo_asignatura) de [2050010](codigo_asignatura)

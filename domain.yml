@@ -20,6 +20,7 @@ intents:
 
 entities:
   - codigo_asignatura
+  - nombre_asignatura
   - atributo_asignatura
 
 slots:
@@ -29,6 +30,13 @@ slots:
     mappings:
     - type: from_entity
       entity: codigo_asignatura
+  
+  nombre_asignatura:
+    type: text
+    influence_conversation: true
+    mappings:
+    - type: from_entity
+      entity: nombre_asignatura
   
   atributo_asignatura:
     type: text
