@@ -127,4 +127,35 @@ nlu:
     - háblame de una asignatura
     - dame info de una asignatura
     - quiero consultar una asignatura
-    - tengo dudas sobre una asignatura
+    - tengo dudas sobre una asignatura    
+    - quiero consultar otra asignatura
+    - buscar otra asignatura
+    - otra asignatura
+    - cambiar de asignatura
+    - preguntarte por otra asignatura
+    - información de otra asignatura
+
+# =============================================================================
+# CONSULTA SOLO CON NOMBRE (sin frase introductoria)
+# =============================================================================
+- intent: consultar_asignatura
+  examples: |
+    - [Fundamentos de Programación](nombre_asignatura)
+    - [Fundamentos de Programacion](nombre_asignatura)
+    - [Criptografía](nombre_asignatura)
+    - [Criptografia](nombre_asignatura)
+    - [Bases de Datos](nombre_asignatura)
+    - [Redes](nombre_asignatura)
+    - [Redes de Computadores](nombre_asignatura)
+    - [Ingeniería de Requisitos](nombre_asignatura)
+    - [Diseño y Pruebas](nombre_asignatura)
+    - [Sistemas Operativos](nombre_asignatura)
+    - [Matemática Discreta](nombre_asignatura)
+    - [Álgebra](nombre_asignatura)
+    - [Estadística](nombre_asignatura)
+    - la asignatura [Fundamentos de Programación](nombre_asignatura)
+    - la asignatura [Criptografía](nombre_asignatura)
+    - asignatura [Redes de Computadores](nombre_asignatura)
+    - y [Programación](nombre_asignatura)?
+    - y [Criptografía](nombre_asignatura)?
+    - qué hay de [Bases de Datos](nombre_asignatura)?

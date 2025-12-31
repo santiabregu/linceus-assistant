@@ -60,6 +60,8 @@ slots:
 responses:
   utter_greet:
   - text: "¡Hola! Soy tu asistente universitario. ¿En qué puedo ayudarte?"
+  - text: "¡Hola! ¿Qué tal? Estoy aquí para ayudarte con info de asignaturas, horarios y más."
+  - text: "¡Hey! Soy Linceus, tu asistente de la ETSII. ¿Qué necesitas saber?"
 
   utter_cheer_up:
   - text: "Here is something to cheer you up:"
@@ -78,18 +80,23 @@ responses:
   - text: "Soy un chatbot universitario creado con Rasa para ayudarte con información académica."
 
   utter_pedir_codigo:
-  - text: "¿Cuál es el código de la asignatura que quieres consultar? (por ejemplo: 2050001)"
+  - text: "¿Qué asignatura te interesa? Puedes decirme el nombre o el código."
+  - text: "Dime el nombre o código de la asignatura que quieres consultar."
+  - text: "¿De qué asignatura quieres información? Puedes darme el nombre o el código."
 
   utter_no_contexto:
-  - text: "No tengo contexto de una asignatura anterior. Por favor, indica el código de la asignatura."
+  - text: "No recuerdo de qué asignatura hablábamos. ¿Puedes decirme el nombre o código?"
+  - text: "No tengo claro a qué asignatura te refieres. ¿Me dices cuál es?"
 
   utter_consultar_asignatura:
-  - text: "¿Qué asignatura quieres consultar? Puedes darme el código (por ejemplo: 2050001)."
+  - text: "¿Qué asignatura quieres consultar? Puedes darme el nombre o el código."
+  - text: "Dime qué asignatura te interesa y te cuento todo sobre ella."
 
 actions:
   - action_test_supabase
   - action_consultar_asignatura
   - action_pregunta_seguimiento
+  - action_pedir_info_asignatura
 
 session_config:
   session_expiration_time: 60

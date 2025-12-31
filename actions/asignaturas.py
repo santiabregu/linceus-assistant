@@ -1,7 +1,9 @@
 # Actions relacionadas con la épica de Asignaturas
-# v1.1.0 - Consulta por código o nombre, preguntas de seguimiento
+# v1.2.1 - Rapidfuzz, mejor contexto, respuestas naturales
 
 from typing import Any, Text, Dict, List, Optional
+from rapidfuzz import fuzz, process
+import unicodedata
 
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
@@ -14,31 +16,71 @@ from .db import db_client
 # UTILIDADES COMPARTIDAS PARA ASIGNATURAS
 # =============================================================================
 
+def normalizar_texto(texto: str) -> str:
+    """
+    Normaliza texto: quita acentos y convierte a minúsculas.
+    Útil para búsquedas tolerantes a errores.
+    """
+    if not texto:
+        return ""
+    # Descomponer caracteres unicode (é -> e + ́)
+    texto_normalizado = unicodedata.normalize('NFD', texto)
+    # Eliminar marcas diacríticas (acentos)
+    texto_sin_acentos = ''.join(
+        char for char in texto_normalizado 
+        if unicodedata.category(char) != 'Mn'
+    )
+    return texto_sin_acentos.lower().strip()
+
 # Mapeo de lenguaje natural a campos de BD
 ATRIBUTO_MAP = {
+    # Créditos
     'creditos': 'creditos',
     'créditos': 'creditos',
+    'credito': 'creditos',
+    'crédito': 'creditos',
+    # Curso
     'curso': 'curso',
     'año': 'curso',
+    'cursos': 'curso',
+    # Duración
     'dura': 'duracion',
     'duración': 'duracion',
     'duracion': 'duracion',
     'anual': 'duracion',
     'cuatrimestre': 'duracion',
+    'semestre': 'duracion',
+    # Tipología
     'tipo': 'tipologia',
     'tipología': 'tipologia',
+    'tipologia': 'tipologia',
     'obligatoria': 'tipologia',
+    'obligatorio': 'tipologia',
     'optativa': 'es_optativa',
+    'optativo': 'es_optativa',
     'formación básica': 'es_formacion_basica',
     'formacion basica': 'es_formacion_basica',
+    'basica': 'es_formacion_basica',
+    'básica': 'es_formacion_basica',
+    # Departamento
     'departamento': 'departamento',
+    'depto': 'departamento',
+    'quien la da': 'departamento',
+    'quien la imparte': 'departamento',
+    'imparte': 'departamento',
+    # Titulación
     'titulación': 'titulacion',
     'titulacion': 'titulacion',
     'carrera': 'titulacion',
     'grado': 'titulacion',
+    # Nombre
     'nombre': 'nombre',
     'llama': 'nombre',
+    'llamar': 'nombre',
 }
+
+# Lista de palabras clave para fuzzy matching
+ATRIBUTO_KEYWORDS = list(ATRIBUTO_MAP.keys())
 
 # Query base para obtener datos de asignatura
 QUERY_ASIGNATURA_BASE = """
@@ -60,10 +102,32 @@ QUERY_ASIGNATURA_BASE = """
 
 
 def normalizar_atributo(atributo: str) -> Optional[str]:
-    """Normaliza el atributo extraído al campo de BD correspondiente"""
+    """
+    Normaliza el atributo extraído al campo de BD correspondiente.
+    Usa rapidfuzz para tolerar errores ortográficos.
+    """
     if not atributo:
         return None
-    return ATRIBUTO_MAP.get(atributo.lower().strip())
+    
+    atributo_lower = atributo.lower().strip()
+    
+    # Primero intenta match exacto
+    if atributo_lower in ATRIBUTO_MAP:
+        return ATRIBUTO_MAP[atributo_lower]
+    
+    # Si no hay match exacto, intenta fuzzy matching con rapidfuzz
+    resultado = process.extractOne(
+        atributo_lower, 
+        ATRIBUTO_KEYWORDS, 
+        scorer=fuzz.WRatio,
+        score_cutoff=70  # Mínimo 70% de similitud
+    )
+    
+    if resultado:
+        mejor_match, score, _ = resultado
+        return ATRIBUTO_MAP[mejor_match]
+    
+    return None
 
 
 def formatear_duracion(duracion: str) -> str:
@@ -137,6 +201,7 @@ def generar_respuesta_general(datos: dict) -> str:
 def buscar_asignatura(codigo: str = None, nombre: str = None) -> Optional[dict]:
     """
     Busca una asignatura por código o nombre.
+    La búsqueda por nombre usa rapidfuzz para tolerar errores y acentos.
     Retorna el diccionario de datos o None si no encuentra.
     """
     if not codigo and not nombre:
@@ -155,11 +220,36 @@ def buscar_asignatura(codigo: str = None, nombre: str = None) -> Optional[dict]:
         if codigo:
             query = QUERY_ASIGNATURA_BASE + "WHERE a.codigo = %s AND a.activa = true"
             cursor.execute(query, (codigo.upper(),))
+            result = cursor.fetchone()
         else:
+            # Primero intentar búsqueda exacta con LIKE
             query = QUERY_ASIGNATURA_BASE + "WHERE LOWER(a.nombre) LIKE LOWER(%s) AND a.activa = true"
             cursor.execute(query, (f"%{nombre}%",))
+            result = cursor.fetchone()
+            
+            # Si no encuentra, buscar con fuzzy matching usando rapidfuzz
+            if not result:
+                nombre_normalizado = normalizar_texto(nombre)
+                cursor.execute(QUERY_ASIGNATURA_BASE + "WHERE a.activa = true")
+                todas = cursor.fetchall()
+                
+                # Crear diccionario de nombres normalizados -> row
+                nombres_normalizados = {
+                    normalizar_texto(row[1]): row for row in todas
+                }
+                
+                # Buscar mejor coincidencia con rapidfuzz
+                mejor_match = process.extractOne(
+                    nombre_normalizado,
+                    list(nombres_normalizados.keys()),
+                    scorer=fuzz.WRatio,
+                    score_cutoff=60  # Mínimo 60% similitud para nombres
+                )
+                
+                if mejor_match:
+                    nombre_encontrado, score, _ = mejor_match
+                    result = nombres_normalizados[nombre_encontrado]
         
-        result = cursor.fetchone()
         cursor.close()
         
         if result:
@@ -276,4 +366,57 @@ class ActionPreguntaSeguimiento(Action):
         else:
             dispatcher.utter_message(text="No pude obtener esa información.")
         
+        return []
+
+class ActionPedirInfoAsignatura(Action):
+    """
+    Action para cuando el usuario pide info genérica o quiere cambiar de asignatura.
+    Detecta si quiere "otra asignatura" para limpiar contexto.
+    """
+    
+    # Palabras clave que indican querer cambiar de asignatura
+    PALABRAS_CAMBIO = ['otra', 'diferente', 'distinta', 'cambiar', 'nueva', 'otro']
+    
+    def name(self) -> Text:
+        return "action_pedir_info_asignatura"
+    
+    def _quiere_cambiar_asignatura(self, tracker: Tracker) -> bool:
+        """Detecta si el usuario quiere consultar otra asignatura diferente"""
+        ultimo_mensaje = tracker.latest_message.get('text', '').lower()
+        return any(palabra in ultimo_mensaje for palabra in self.PALABRAS_CAMBIO)
+    
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        
+        # Verificar si quiere cambiar de asignatura
+        if self._quiere_cambiar_asignatura(tracker):
+            dispatcher.utter_message(
+                text="¡Claro! ¿Qué asignatura te interesa ahora? Dime el nombre o código."
+            )
+            # Limpiar contexto anterior
+            return [
+                SlotSet("ultimo_codigo_consultado", None),
+                SlotSet("ultimo_nombre_asignatura", None)
+            ]
+        
+        # Verificar si hay contexto previo
+        ultimo_codigo = tracker.get_slot("ultimo_codigo_consultado")
+        
+        if ultimo_codigo:
+            # Hay contexto, mostrar info de esa asignatura
+            datos = buscar_asignatura(codigo=ultimo_codigo)
+            if datos:
+                respuesta = generar_respuesta_general(datos)
+                dispatcher.utter_message(
+                    text=f"Esta es la información de la última asignatura que consultaste:\n\n{respuesta}\n\n"
+                         "¿Quieres saber algo más específico o consultar otra asignatura?"
+                )
+                return []
+        
+        # No hay contexto, pedir que especifique
+        dispatcher.utter_message(
+            text="¿Qué asignatura te interesa? Puedes decirme el nombre (ej: 'Fundamentos de Programación') "
+                 "o el código (ej: '2050001')."
+        )
         return []

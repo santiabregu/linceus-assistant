@@ -58,3 +58,6 @@ pip-delete-this-directory.txt
 
 # Rasa cache
 .rasa/cache/
+
+# Modelos archivados (solo mantener el activo en models/)
+models_archive/

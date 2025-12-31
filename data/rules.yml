@@ -27,7 +27,7 @@ rules:
   - intent: pregunta_seguimiento
   - action: action_pregunta_seguimiento
 
-- rule: Pedir código cuando no se proporciona
+- rule: Pedir información de asignatura sin especificar
   steps:
   - intent: pedir_info_asignatura
-  - action: utter_pedir_codigo
+  - action: action_pedir_info_asignatura

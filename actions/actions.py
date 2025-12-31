@@ -13,6 +13,7 @@ from .db import db_client
 from .asignaturas import (
     ActionConsultarAsignatura,
     ActionPreguntaSeguimiento,
+    ActionPedirInfoAsignatura,
 )
 
 
@@ -52,4 +53,5 @@ __all__ = [
     'ActionTestSupabase',
     'ActionConsultarAsignatura', 
     'ActionPreguntaSeguimiento',
+    'ActionPedirInfoAsignatura',
 ]
