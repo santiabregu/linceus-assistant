@@ -17,11 +17,18 @@ intents:
   - consultar_asignatura
   - pregunta_seguimiento
   - pedir_info_asignatura
+  - consultar_asignaturas_filtradas
 
 entities:
   - codigo_asignatura
   - nombre_asignatura
   - atributo_asignatura
+  # Entidades para filtros de consultas múltiples
+  - filtro_curso
+  - filtro_tipologia
+  - filtro_duracion
+  - filtro_titulacion
+  - filtro_creditos
 
 slots:
   codigo_asignatura:
@@ -56,6 +63,42 @@ slots:
     influence_conversation: false
     mappings:
     - type: custom
+  
+  # Slots para filtros de consultas múltiples
+  filtro_curso:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: filtro_curso
+  
+  filtro_tipologia:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: filtro_tipologia
+  
+  filtro_duracion:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: filtro_duracion
+  
+  filtro_titulacion:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: filtro_titulacion
+  
+  filtro_creditos:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: filtro_creditos
 
 responses:
   utter_greet:
@@ -97,6 +140,7 @@ actions:
   - action_consultar_asignatura
   - action_pregunta_seguimiento
   - action_pedir_info_asignatura
+  - action_consultar_asignaturas_filtradas
 
 session_config:
   session_expiration_time: 60

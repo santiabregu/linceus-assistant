@@ -14,6 +14,7 @@ from .asignaturas import (
     ActionConsultarAsignatura,
     ActionPreguntaSeguimiento,
     ActionPedirInfoAsignatura,
+    ActionConsultarAsignaturasFiltradas,
 )
 
 
