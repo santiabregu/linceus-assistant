@@ -479,59 +479,6 @@ class ActionPreguntaSeguimiento(Action):
         
         return []
 
-class ActionPedirInfoAsignatura(Action):
-    """
-    Action para cuando el usuario pide info genérica o quiere cambiar de asignatura.
-    Detecta si quiere "otra asignatura" para limpiar contexto.
-    """
-    
-    # Palabras clave que indican querer cambiar de asignatura
-    PALABRAS_CAMBIO = ['otra', 'diferente', 'distinta', 'cambiar', 'nueva', 'otro']
-    
-    def name(self) -> Text:
-        return "action_pedir_info_asignatura"
-    
-    def _quiere_cambiar_asignatura(self, tracker: Tracker) -> bool:
-        """Detecta si el usuario quiere consultar otra asignatura diferente"""
-        ultimo_mensaje = tracker.latest_message.get('text', '').lower()
-        return any(palabra in ultimo_mensaje for palabra in self.PALABRAS_CAMBIO)
-    
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        
-        # Verificar si quiere cambiar de asignatura
-        if self._quiere_cambiar_asignatura(tracker):
-            dispatcher.utter_message(
-                text="¡Claro! ¿Qué asignatura te interesa ahora? Dime el nombre o código."
-            )
-            # Limpiar contexto anterior
-            return [
-                SlotSet("ultimo_codigo_consultado", None),
-                SlotSet("ultimo_nombre_asignatura", None)
-            ]
-        
-        # Verificar si hay contexto previo
-        ultimo_codigo = tracker.get_slot("ultimo_codigo_consultado")
-        
-        if ultimo_codigo:
-            # Hay contexto, mostrar info de esa asignatura
-            datos = buscar_asignatura(codigo=ultimo_codigo)
-            if datos:
-                respuesta = generar_respuesta_general(datos)
-                dispatcher.utter_message(
-                    text=f"Esta es la información de la última asignatura que consultaste:\n\n{respuesta}\n\n"
-                         "¿Quieres saber algo más específico o consultar otra asignatura?"
-                )
-                return []
-        
-        # No hay contexto, pedir que especifique
-        dispatcher.utter_message(
-            text="¿Qué asignatura te interesa? Puedes decirme el nombre (ej: 'Fundamentos de Programación') "
-                 "o el código (ej: '2050001')."
-        )
-        return []
-
 
 class ActionConsultarAsignaturasFiltradas(Action):
     """

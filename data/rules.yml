@@ -27,11 +27,6 @@ rules:
   - intent: pregunta_seguimiento
   - action: action_pregunta_seguimiento
 
-- rule: Pedir información de asignatura sin especificar
-  steps:
-  - intent: pedir_info_asignatura
-  - action: action_pedir_info_asignatura
-
 - rule: Consultar asignaturas con filtros (obligatorias, optativas, por curso, etc.)
   steps:
   - intent: consultar_asignaturas_filtradas

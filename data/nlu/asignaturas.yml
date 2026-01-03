@@ -154,28 +154,6 @@ nlu:
     - y su [departamento](atributo_asignatura)?
 
 # =============================================================================
-# SOLICITUD DE INFORMACIÓN SIN CÓDIGO - El bot pedirá el código
-# =============================================================================
-- intent: pedir_info_asignatura
-  examples: |
-    - quiero información de una asignatura
-    - buscar una asignatura
-    - consultar asignatura
-    - información de asignaturas
-    - necesito datos de una asignatura
-    - quiero saber sobre una asignatura
-    - háblame de una asignatura
-    - dame info de una asignatura
-    - quiero consultar una asignatura
-    - tengo dudas sobre una asignatura    
-    - quiero consultar otra asignatura
-    - buscar otra asignatura
-    - otra asignatura
-    - cambiar de asignatura
-    - preguntarte por otra asignatura
-    - información de otra asignatura
-
-# =============================================================================
 # CONSULTA SOLO CON NOMBRE (sin frase introductoria)
 # =============================================================================
 - intent: consultar_asignatura
@@ -199,6 +177,13 @@ nlu:
     - y [Programación](nombre_asignatura)?
     - y [Criptografía](nombre_asignatura)?
     - qué hay de [Bases de Datos](nombre_asignatura)?
+    - y [Fundamentos de Programación](nombre_asignatura) cuántos [créditos](atributo_asignatura) tiene?
+    - y [Redes](nombre_asignatura) de qué [curso](atributo_asignatura) es?
+    - y [Estadística](nombre_asignatura) es [obligatoria](atributo_asignatura)?
+    - y sobre [Bases de Datos](nombre_asignatura)?
+    - ahora dime de [Criptografía](nombre_asignatura)
+    - y qué sabes de [Álgebra](nombre_asignatura)?
+    - pues y [Diseño y Pruebas](nombre_asignatura)?
 
 # =============================================================================
 # CONSULTAS FILTRADAS (PLURAL) - Múltiples asignaturas con criterios

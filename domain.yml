@@ -16,7 +16,6 @@ intents:
   - bot_challenge
   - consultar_asignatura
   - pregunta_seguimiento
-  - pedir_info_asignatura
   - consultar_asignaturas_filtradas
 
 entities:
@@ -139,7 +138,6 @@ actions:
   - action_test_supabase
   - action_consultar_asignatura
   - action_pregunta_seguimiento
-  - action_pedir_info_asignatura
   - action_consultar_asignaturas_filtradas
 
 session_config:

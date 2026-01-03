@@ -13,7 +13,6 @@ from .db import db_client
 from .asignaturas import (
     ActionConsultarAsignatura,
     ActionPreguntaSeguimiento,
-    ActionPedirInfoAsignatura,
     ActionConsultarAsignaturasFiltradas,
 )
 

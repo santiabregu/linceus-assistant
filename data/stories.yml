@@ -64,15 +64,6 @@ stories:
     - nombre_asignatura: "Fundamentos de Programación"
   - action: action_consultar_asignatura
 
-- story: pedir info asignatura y luego dar código
-  steps:
-  - intent: pedir_info_asignatura
-  - action: action_pedir_info_asignatura
-  - intent: consultar_asignatura
-    entities:
-    - codigo_asignatura: "2050001"
-  - action: action_consultar_asignatura
-
 - story: consulta con seguimiento
   steps:
   - intent: consultar_asignatura

@@ -15,6 +15,7 @@ Este documento registra los cambios realizados en cada versión del chatbot sigu
 | v1.2.2 | 2024-12 | Asignaturas | Rapidfuzz + búsqueda tolerante a acentos |
 | v1.3.0 | 2024-12 | Asignaturas | Consultas filtradas con NLU puro |
 | v1.3.1 | 2024-12 | Asignaturas | Lógica singular/plural + filtro créditos |
+| v1.3.2 | 2026-01 | Asignaturas | Simplificación: eliminar intent redundante + ejemplos NLU |
 
 ---
 
@@ -234,6 +235,40 @@ Usuario dice algo con "asignatura" o nombre
     ↓ No
 Pedir que especifique
 ```
+
+---
+
+### v1.3.2 - Simplificación de Intents
+**Fecha:** Enero 2026  
+**Tipo:** PATCH - Refactorización y limpieza
+
+**Cambios:**
+- **Eliminado intent `pedir_info_asignatura`**: Era un caso de uso artificial (nadie dice "quiero preguntarte sobre una asignatura" sin dar el nombre)
+- **Eliminada `ActionPedirInfoAsignatura`**: ~55 líneas de código innecesario
+- **Limpieza de archivos**:
+  - `domain.yml` - Eliminado intent y action
+  - `rules.yml` - Eliminada rule asociada
+  - `stories.yml` - Eliminada story del flujo
+  - `nlu/asignaturas.yml` - Eliminados 16 ejemplos del intent
+  - `actions/asignaturas.py` - Eliminada clase completa
+- **Nuevos ejemplos NLU para cambio de asignatura**:
+  - "y [Fundamentos de Programación] cuántos [créditos] tiene?"
+  - "y [Redes] de qué [curso] es?"
+  - "ahora dime de [Criptografía]"
+  - +4 variaciones más
+
+**Justificación:**
+- El flujo `pedir_info_asignatura` → esperar → `consultar_asignatura` era innecesario
+- Los usuarios siempre mencionan la asignatura directamente
+- Simplifica el modelo NLU (menos intents = mejor clasificación)
+- El cambio de asignatura en contexto ya estaba soportado por `ActionConsultarAsignatura`
+
+**Archivos modificados:**
+- `actions/asignaturas.py` - Eliminada ActionPedirInfoAsignatura
+- `data/nlu/asignaturas.yml` - Eliminado intent + añadidos ejemplos
+- `data/rules.yml` - Eliminada rule
+- `data/stories.yml` - Eliminada story
+- `domain.yml` - Eliminado intent y action
 
 ---
 
