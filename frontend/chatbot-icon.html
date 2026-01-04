@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linceus - Demo del Chat Widget</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .demo-container {
+            text-align: center;
+            max-width: 600px;
+        }
+        .demo-container img {
+            width: 120px;
+            margin-bottom: 20px;
+        }
+        .demo-container h1 {
+            color: #9e1c3f;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .demo-container p {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+        .instructions {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            text-align: left;
+        }
+        .instructions h2 {
+            color: #333;
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+        }
+        .instructions ol {
+            color: #555;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin-bottom: 10px;
+        }
+        .instructions code {
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+        }
+        .arrow {
+            position: fixed;
+            bottom: 100px;
+            right: 100px;
+            font-size: 3rem;
+            animation: bounce 1s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <img src="linceUS-logo.png" alt="Universidad de Sevilla">
+        <h1>Linceus</h1>
+        <p>Asistente virtual de la Universidad de Sevilla</p>
+        
+        <div class="instructions">
+            <h2>📋 Para probar el chatbot:</h2>
+            <ol>
+                <li>Inicia el servidor Rasa: <code>rasa run --enable-api --cors "*"</code></li>
+                <li>Inicia el action server: <code>rasa run actions</code></li>
+                <li>Haz clic en el botón de chat (esquina inferior derecha) →</li>
+            </ol>
+        </div>
+    </div>
+    
+    <div class="arrow">👇</div>
+
+    <!-- Configuración opcional del widget -->
+    <script>
+        window.LinceusChatConfig = {
+            rasaServer: 'http://localhost:5005',
+            branding: {
+                logo: 'linceUS-logo.png',
+                name: 'Linceus',
+                subtitle: 'Asistente Universidad de Sevilla'
+            }
+        };
+    </script>
+    
+    <!-- Cargar el widget -->
+    <script src="chatbot-widget.js"></script>
+</body>
+</html>

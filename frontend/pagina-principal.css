@@ -1,0 +1,132 @@
+/* RESET BÁSICO */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* COLORES INSTITUCIONALES */
+:root {
+  --us-red: #c4002f;
+  --us-gray-bg: #f3f3f3;
+  --us-text: #333;
+  --us-muted: #777;
+}
+
+/* BODY */
+body {
+  font-family: Georgia, "Times New Roman", serif;
+  background: var(--us-gray-bg);
+  color: var(--us-text);
+}
+
+/* HEADER */
+.us-header {
+  display: flex;
+  align-items: center;
+  padding: 16px 40px;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.us-header-left {
+  margin-right: 40px;
+}
+
+.us-logo {
+  height: 40px;
+}
+
+/* NAV */
+.us-nav {
+  display: flex;
+  gap: 22px;
+  flex: 1;
+}
+
+.us-nav a {
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: #444;
+  text-decoration: none;
+}
+
+.us-nav a:hover {
+  color: var(--us-red);
+}
+
+/* BOTÓN DERECHO */
+.us-header-right {
+  margin-left: auto;
+}
+
+.info-btn {
+  background: #f5b400;
+  border: none;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* MAIN */
+.us-main {
+  padding: 80px 8%;
+}
+
+/* COMUNICACIONES */
+.comunicaciones h1 {
+  font-size: 38px;
+  margin-bottom: 70px;
+  text-align: center;
+}
+
+/* CARDS */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 50px;
+}
+
+.card {
+  background: white;
+  padding: 60px 50px;
+}
+
+/* ETIQUETA */
+.tag {
+  display: block;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #999;
+  margin-bottom: 20px;
+}
+
+/* TITULO CARD */
+.card h2 {
+  font-size: 26px;
+  font-weight: normal;
+  margin-bottom: 30px;
+}
+
+/* TEXTO */
+.card p {
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--us-muted);
+  margin-bottom: 35px;
+}
+
+/* LINK */
+.link {
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--us-red);
+  text-decoration: none;
+  border-bottom: 2px solid var(--us-red);
+  padding-bottom: 6px;
+}
+
+.link:hover {
+  opacity: 0.75;
+}

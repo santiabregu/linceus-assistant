@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Universidad de Sevilla - Linceus</title>
+  <link rel="stylesheet" href="pagina-principal.css">
+</head>
+<body>
+
+<header class="us-header">
+  <div class="us-header-left">
+    <!-- LOGO US -->
+    <img src="logo-us.png" alt="Universidad de Sevilla" class="us-logo">
+  </div>
+
+  <nav class="us-nav">
+    <a href="#">LA US</a>
+    <a href="#">ESTUDIAR</a>
+    <a href="#">INVESTIGAR</a>
+    <a href="#">VIVIR LA US</a>
+    <a href="#">EMPRESAS</a>
+    <a href="#">INTERNACIONAL</a>
+    <a href="#">TRABAJA EN LA US</a>
+  </nav>
+
+  <div class="us-header-right">
+    <button class="info-btn">INFORMACIÓN PARA MÍ</button>
+  </div>
+</header>
+
+<main class="us-main">
+  <section class="comunicaciones">
+    <h1>Comunicaciones oficiales</h1>
+
+    <div class="cards">
+      <article class="card">
+        <span class="tag">MOVILIDAD</span>
+        <h2>Resolución provisional de la convocatoria general de movilidad...</h2>
+        <p>
+          La Universidad de Sevilla hace pública la resolución provisional de destinos
+          de la convocatoria general de movilidad internacional para el curso...
+        </p>
+        <a href="#" class="link">SABER MÁS →</a>
+      </article>
+
+      <article class="card">
+        <span class="tag">BECAS Y AYUDAS</span>
+        <h2>Becas Santander Estudios Erasmus y no Erasmus</h2>
+        <p>
+          Se hacen públicas las convocatorias de Becas Santander Estudios ligadas a los
+          destinos Erasmus y no Erasmus, correspondientes a la Convocatoria...
+        </p>
+        <a href="#" class="link">SABER MÁS →</a>
+      </article>
+    </div>
+  </section>
+</main>
+
+<!-- Linceus Chatbot Widget -->
+<script>
+    window.LinceusChatConfig = {
+        rasaServer: 'http://localhost:5005',
+        branding: {
+            logo: 'linceUS-logo.png',
+            name: 'Linceus',
+            subtitle: 'Asistente Universidad de Sevilla'
+        }
+    };
+</script>
+<script src="chatbot-widget.js"></script>
+
+</body>
+</html>
