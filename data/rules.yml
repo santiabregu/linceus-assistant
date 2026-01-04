@@ -2,22 +2,44 @@ version: "3.1"
 
 rules:
 
-- rule: Say goodbye anytime the user says goodbye
-  steps:
-  - intent: goodbye
-  - action: utter_goodbye
+# ══════════════════════════════════════════════════════════════════════════════
+# GENERAL - Saludos, despedidas y bot challenge
+# ══════════════════════════════════════════════════════════════════════════════
 
-- rule: Say 'I am a bot' anytime the user challenges
-  steps:
-  - intent: bot_challenge
-  - action: utter_iamabot
-
-- rule: Always greet back
+- rule: Saludar al usuario
   steps:
   - intent: greet
   - action: utter_greet
 
-- rule: Consultar asignatura cuando se proporciona código
+- rule: Despedirse del usuario
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
+
+- rule: Responder que soy un bot
+  steps:
+  - intent: bot_challenge
+  - action: utter_iamabot
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CONTEXTO ACADÉMICO - Centro y titulación
+# ══════════════════════════════════════════════════════════════════════════════
+
+- rule: Cambiar centro o titulación
+  steps:
+  - intent: cambiar_contexto_academico
+  - action: action_cambiar_contexto
+
+- rule: Consultar contexto académico actual
+  steps:
+  - intent: consultar_contexto_academico
+  - action: action_consultar_contexto
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ASIGNATURAS - Consultas sobre asignaturas
+# ══════════════════════════════════════════════════════════════════════════════
+
+- rule: Consultar asignatura por código o nombre
   steps:
   - intent: consultar_asignatura
   - action: action_consultar_asignatura
@@ -31,3 +53,15 @@ rules:
   steps:
   - intent: consultar_asignaturas_filtradas
   - action: action_consultar_asignaturas_filtradas
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PROFESORES - (futuro)
+# ══════════════════════════════════════════════════════════════════════════════
+
+# ══════════════════════════════════════════════════════════════════════════════
+# HORARIOS - (futuro)
+# ══════════════════════════════════════════════════════════════════════════════
+
+# ══════════════════════════════════════════════════════════════════════════════
+# TRÁMITES - (futuro)
+# ══════════════════════════════════════════════════════════════════════════════

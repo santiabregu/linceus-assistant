@@ -1,19 +1,19 @@
 version: "3.1"
 
-# These define conversation flows - sequences of user intents and bot actions:
-# They show how conversations should progress
-# Help train the dialogue management model
-
 stories:
 
-- story: happy path
+# ══════════════════════════════════════════════════════════════════════════════
+# GENERAL - Saludos y estados de ánimo
+# ══════════════════════════════════════════════════════════════════════════════
+
+- story: usuario contento
   steps:
   - intent: greet
   - action: utter_greet
   - intent: mood_great
   - action: utter_happy
 
-- story: sad path 1
+- story: usuario triste - se anima
   steps:
   - intent: greet
   - action: utter_greet
@@ -23,7 +23,7 @@ stories:
   - intent: affirm
   - action: utter_happy
 
-- story: sad path 2
+- story: usuario triste - sigue triste
   steps:
   - intent: greet
   - action: utter_greet
@@ -32,6 +32,10 @@ stories:
   - action: utter_did_that_help
   - intent: deny
   - action: utter_goodbye
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ASIGNATURAS - Consultas sobre asignaturas
+# ══════════════════════════════════════════════════════════════════════════════
 
 - story: consultar asignatura con saludo
   steps:
@@ -46,7 +50,7 @@ stories:
   - intent: goodbye
   - action: utter_goodbye
 
-- story: consultar asignatura directa con código
+- story: consultar asignatura por código
   steps:
   - intent: consultar_asignatura
     entities:
@@ -55,7 +59,7 @@ stories:
     - codigo_asignatura: "2050001"
   - action: action_consultar_asignatura
 
-- story: consultar asignatura directa con nombre
+- story: consultar asignatura por nombre
   steps:
   - intent: consultar_asignatura
     entities:
@@ -64,7 +68,7 @@ stories:
     - nombre_asignatura: "Fundamentos de Programación"
   - action: action_consultar_asignatura
 
-- story: consulta con seguimiento
+- story: consulta asignatura con seguimiento
   steps:
   - intent: consultar_asignatura
     entities:
@@ -74,3 +78,11 @@ stories:
     entities:
     - atributo_asignatura: "créditos"
   - action: action_pregunta_seguimiento
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PROFESORES (futuro)
+# ══════════════════════════════════════════════════════════════════════════════
+
+# ══════════════════════════════════════════════════════════════════════════════
+# HORARIOS (futuro)
+# ══════════════════════════════════════════════════════════════════════════════

@@ -1,5 +1,5 @@
 # Actions relacionadas con la épica de Asignaturas
-# v1.3.1 - Lógica singular/plural + filtro créditos + fallbacks
+# v1.4.0 - Soporte para contexto académico (múltiples titulaciones)
 
 from typing import Any, Text, Dict, List, Optional
 from rapidfuzz import fuzz, process
@@ -10,6 +10,7 @@ from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import SlotSet
 
 from .db import db_client
+from .config import BotConfig
 
 
 # =============================================================================
@@ -198,13 +199,16 @@ def generar_respuesta_general(datos: dict) -> str:
     return respuesta
 
 
-def buscar_asignatura(codigo: str = None, nombre: str = None) -> Optional[dict]:
+def buscar_asignatura(codigo: str = None, nombre: str = None, titulacion_codigo: str = None) -> Optional[dict]:
     """
     Busca una asignatura por código o nombre.
     La búsqueda por nombre usa múltiples estrategias:
     1. LIKE exacto en BD
     2. Coincidencia de palabras clave
     3. Fuzzy matching como fallback
+    
+    Si se proporciona titulacion_codigo, filtra por esa titulación.
+    Si no, busca en todas las titulaciones (para búsqueda por código exacto).
     """
     if not codigo and not nombre:
         return None
@@ -216,22 +220,30 @@ def buscar_asignatura(codigo: str = None, nombre: str = None) -> Optional[dict]:
     if not conn:
         return None
     
+    # Construir filtro de titulación si se proporciona
+    filtro_titulacion = ""
+    params_titulacion = []
+    if titulacion_codigo:
+        filtro_titulacion = " AND t.codigo = %s"
+        params_titulacion = [titulacion_codigo]
+    
     try:
         cursor = conn.cursor()
         
         if codigo:
-            query = QUERY_ASIGNATURA_BASE + "WHERE a.codigo = %s AND a.activa = true"
-            cursor.execute(query, (codigo.upper(),))
+            query = QUERY_ASIGNATURA_BASE + "WHERE a.codigo = %s AND a.activa = true" + filtro_titulacion
+            cursor.execute(query, (codigo.upper(), *params_titulacion))
             result = cursor.fetchone()
         else:
             # ESTRATEGIA 1: Búsqueda exacta con LIKE
-            query = QUERY_ASIGNATURA_BASE + "WHERE LOWER(a.nombre) LIKE LOWER(%s) AND a.activa = true"
-            cursor.execute(query, (f"%{nombre}%",))
+            query = QUERY_ASIGNATURA_BASE + "WHERE LOWER(a.nombre) LIKE LOWER(%s) AND a.activa = true" + filtro_titulacion
+            cursor.execute(query, (f"%{nombre}%", *params_titulacion))
             result = cursor.fetchone()
             
             if not result:
                 nombre_normalizado = normalizar_texto(nombre)
-                cursor.execute(QUERY_ASIGNATURA_BASE + "WHERE a.activa = true")
+                query_todas = QUERY_ASIGNATURA_BASE + "WHERE a.activa = true" + filtro_titulacion
+                cursor.execute(query_todas, params_titulacion)
                 todas = cursor.fetchall()
                 
                 # ESTRATEGIA 2: Coincidencia de palabras clave
@@ -348,6 +360,9 @@ class ActionConsultarAsignatura(Action):
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         
+        # Obtener contexto académico (titulación)
+        titulacion = tracker.get_slot("contexto_titulacion") or BotConfig.get_default_titulacion()
+        
         # Obtener entidades extraídas
         codigo = next(tracker.get_latest_entity_values("codigo_asignatura"), None)
         nombre = next(tracker.get_latest_entity_values("nombre_asignatura"), None)
@@ -366,8 +381,8 @@ class ActionConsultarAsignatura(Action):
             )
             return []
         
-        # Buscar asignatura
-        datos = buscar_asignatura(codigo=codigo, nombre=nombre)
+        # Buscar asignatura (con filtro de titulación)
+        datos = buscar_asignatura(codigo=codigo, nombre=nombre, titulacion_codigo=titulacion)
         
         if not datos:
             if codigo:
@@ -395,6 +410,7 @@ class ActionConsultarAsignatura(Action):
         
         # Guardar contexto para preguntas de seguimiento
         return [
+            SlotSet("contexto_dominio", "asignaturas"),
             SlotSet("ultimo_codigo_consultado", datos['codigo']),
             SlotSet("ultimo_nombre_asignatura", datos['nombre'])
         ]
@@ -416,12 +432,15 @@ class ActionPreguntaSeguimiento(Action):
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         
+        # Obtener contexto académico (titulación)
+        titulacion = tracker.get_slot("contexto_titulacion") or BotConfig.get_default_titulacion()
+        
         # Primero: verificar si hay un nombre mencionado en el mensaje
         nombre_mencionado = next(tracker.get_latest_entity_values("nombre_asignatura"), None)
         
         # Si hay nombre, buscar ESA asignatura (no usar contexto)
         if nombre_mencionado:
-            datos = buscar_asignatura(nombre=nombre_mencionado)
+            datos = buscar_asignatura(nombre=nombre_mencionado, titulacion_codigo=titulacion)
             if datos:
                 atributo_raw = next(tracker.get_latest_entity_values("atributo_asignatura"), None)
                 atributo = normalizar_atributo(atributo_raw)
@@ -434,6 +453,7 @@ class ActionPreguntaSeguimiento(Action):
                 dispatcher.utter_message(text=respuesta)
                 # Actualizar contexto con esta nueva asignatura
                 return [
+                    SlotSet("contexto_dominio", "asignaturas"),
                     SlotSet("ultimo_codigo_consultado", datos['codigo']),
                     SlotSet("ultimo_nombre_asignatura", datos['nombre'])
                 ]
@@ -441,7 +461,7 @@ class ActionPreguntaSeguimiento(Action):
                 dispatcher.utter_message(
                     text=f"No encontré ninguna asignatura llamada '{nombre_mencionado}'."
                 )
-                return []
+                return [SlotSet("contexto_dominio", "asignaturas")]
         
         # Si no hay nombre, usar contexto de última consulta
         ultimo_codigo = tracker.get_slot("ultimo_codigo_consultado")
@@ -451,7 +471,7 @@ class ActionPreguntaSeguimiento(Action):
                 text="No tengo contexto de una asignatura anterior. "
                      "Por favor, indica el código o nombre de la asignatura."
             )
-            return []
+            return [SlotSet("contexto_dominio", "asignaturas")]
         
         # Obtener atributo solicitado
         atributo_raw = next(tracker.get_latest_entity_values("atributo_asignatura"), None)
@@ -461,14 +481,14 @@ class ActionPreguntaSeguimiento(Action):
             dispatcher.utter_message(
                 text="No entendí qué información quieres. ¿Créditos, curso, duración, departamento...?"
             )
-            return []
+            return [SlotSet("contexto_dominio", "asignaturas")]
         
-        # Buscar asignatura con el código guardado
+        # Buscar asignatura con el código guardado (no filtramos por titulación, ya lo buscamos por código exacto)
         datos = buscar_asignatura(codigo=ultimo_codigo)
         
         if not datos:
             dispatcher.utter_message(text="No encontré la asignatura en la base de datos.")
-            return []
+            return [SlotSet("contexto_dominio", "asignaturas")]
         
         # Generar respuesta
         respuesta = generar_respuesta_atributo(atributo, datos)
@@ -477,7 +497,7 @@ class ActionPreguntaSeguimiento(Action):
         else:
             dispatcher.utter_message(text="No pude obtener esa información.")
         
-        return []
+        return [SlotSet("contexto_dominio", "asignaturas")]
 
 
 class ActionConsultarAsignaturasFiltradas(Action):
@@ -575,13 +595,18 @@ class ActionConsultarAsignaturasFiltradas(Action):
         valor_lower = normalizar_texto(valor)
         return self.DURACION_MAP.get(valor_lower)
     
-    def _construir_query(self, filtros: Dict[str, Any]) -> tuple:
+    def _construir_query(self, filtros: Dict[str, Any], titulacion_codigo: str = None) -> tuple:
         """
         Construye la query SQL de forma segura a partir de los filtros.
         Retorna (query_string, params_list)
         """
         query = QUERY_ASIGNATURA_BASE + " WHERE a.activa = true"
         params = []
+        
+        # Filtro por titulación (del contexto académico)
+        if titulacion_codigo:
+            query += " AND t.codigo = %s"
+            params.append(titulacion_codigo)
         
         if filtros.get('curso'):
             query += " AND a.curso = %s"
@@ -652,10 +677,29 @@ class ActionConsultarAsignaturasFiltradas(Action):
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         
+        # Obtener contexto académico (titulación)
+        titulacion = tracker.get_slot("contexto_titulacion") or BotConfig.get_default_titulacion()
+        
         # Detectar si el usuario quiere ver TODAS las asignaturas
         mensaje = tracker.latest_message.get('text', '')
         mensaje_lower = mensaje.lower()
         mostrar_todas = any(palabra in mensaje_lower for palabra in ['todas', 'todos', 'completa', 'completo', 'listado completo'])
+        
+        # Detectar si quiere listar TODAS sin filtro específico
+        quiere_listar_todas = any(patron in mensaje_lower for patron in [
+            'cuales son las asignaturas',
+            'cuáles son las asignaturas', 
+            'todas las asignaturas',
+            'listado de asignaturas',
+            'lista de asignaturas',
+            'asignaturas de la carrera',
+            'asignaturas del grado',
+            'asignaturas que hay',
+            'qué asignaturas hay',
+            'que asignaturas hay',
+            'asignaturas enteras',
+            'asignaturas completas',
+        ])
         
         # Extraer entidades de filtro
         filtro_curso_raw = next(tracker.get_latest_entity_values("filtro_curso"), None)
@@ -694,16 +738,20 @@ class ActionConsultarAsignaturasFiltradas(Action):
             mensaje = tracker.latest_message.get('text', '')
             filtros = self._extraer_filtros_del_texto(mensaje)
         
-        # Verificar que hay al menos un filtro
+        # Si no hay filtros PERO el usuario quiere listar todas, permitirlo
+        if not filtros and quiere_listar_todas:
+            filtros = {'listar_todas': True}  # Flag especial para listar todas
+        
+        # Verificar que hay al menos un filtro (o quiere listar todas)
         if not filtros:
             dispatcher.utter_message(
                 text="No detecté ningún filtro en tu consulta. "
                      "Puedo buscar por curso (primero, segundo...), "
                      "tipo (obligatorias, optativas, básicas), "
                      "duración (anuales, primer/segundo cuatrimestre) "
-                     "o titulación."
+                     "o puedes pedir 'todas las asignaturas'."
             )
-            return []
+            return [SlotSet("contexto_dominio", "asignaturas")]
         
         # Ejecutar query
         if db_client is None:
@@ -716,7 +764,8 @@ class ActionConsultarAsignaturasFiltradas(Action):
             return []
         
         try:
-            query, params = self._construir_query(filtros)
+            # Pasar el contexto de titulación a la query
+            query, params = self._construir_query(filtros, titulacion_codigo=titulacion)
             cursor = conn.cursor()
             cursor.execute(query, params)
             rows = cursor.fetchall()
@@ -729,12 +778,14 @@ class ActionConsultarAsignaturasFiltradas(Action):
             # Si hay un solo resultado, guardar contexto
             if len(resultados) == 1:
                 return [
+                    SlotSet("contexto_dominio", "asignaturas"),
                     SlotSet("ultimo_codigo_consultado", resultados[0]['codigo']),
                     SlotSet("ultimo_nombre_asignatura", resultados[0]['nombre'])
                 ]
             
-            # Limpiar slots de filtro para próximas consultas
+            # Limpiar slots de filtro para próximas consultas + guardar dominio
             return [
+                SlotSet("contexto_dominio", "asignaturas"),
                 SlotSet("filtro_curso", None),
                 SlotSet("filtro_tipologia", None),
                 SlotSet("filtro_duracion", None),
@@ -745,6 +796,6 @@ class ActionConsultarAsignaturasFiltradas(Action):
         except Exception as e:
             print(f"Error en consulta filtrada: {e}")
             dispatcher.utter_message(text="Ocurrió un error al buscar las asignaturas.")
-            return []
+            return [SlotSet("contexto_dominio", "asignaturas")]
         finally:
             conn.close()

@@ -1,12 +1,12 @@
 version: "3.1"
 
-# This is like the "vocabulary" of your bot:
-# Lists all intents your bot can understand
-# Defines responses (what the bot can say)
-# Specifies entities, slots, and actions
-
+# ══════════════════════════════════════════════════════════════════════════════
+# INTENTS
+# ══════════════════════════════════════════════════════════════════════════════
 
 intents:
+ 
+  # General - Saludos, despedidas, estados de ánimo
   - greet
   - goodbye
   - affirm
@@ -14,22 +14,76 @@ intents:
   - mood_great
   - mood_unhappy
   - bot_challenge
+
+ 
+  # Contexto académico - Centro y titulación
+  - cambiar_contexto_academico
+  - consultar_contexto_academico
+
+  # Asignaturas
   - consultar_asignatura
   - pregunta_seguimiento
   - consultar_asignaturas_filtradas
 
+  # Profesores (futuro)
+
+  # Horarios (futuro)
+
+  # Trámites (futuro)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ENTITIES
+# ══════════════════════════════════════════════════════════════════════════════
+
 entities:
+
+  # Contexto académico
+  - nombre_centro
+  - nombre_titulacion
+
+  # Asignaturas
   - codigo_asignatura
   - nombre_asignatura
   - atributo_asignatura
-  # Entidades para filtros de consultas múltiples
   - filtro_curso
   - filtro_tipologia
   - filtro_duracion
   - filtro_titulacion
   - filtro_creditos
 
+  # Profesores (futuro)
+
+  # Horarios (futuro)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SLOTS
+# ══════════════════════════════════════════════════════════════════════════════
+
 slots:
+
+  # Contexto académico - Centro y titulación seleccionados
+  contexto_centro:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+  
+  contexto_titulacion:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+
+  contexto_dominio:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+
+
+  # Asignaturas - Datos de consulta
   codigo_asignatura:
     type: text
     influence_conversation: true
@@ -62,8 +116,9 @@ slots:
     influence_conversation: false
     mappings:
     - type: custom
-  
-  # Slots para filtros de consultas múltiples
+
+
+  # Asignaturas - Filtros para consultas múltiples
   filtro_curso:
     type: text
     influence_conversation: false
@@ -99,21 +154,22 @@ slots:
     - type: from_entity
       entity: filtro_creditos
 
+  # Profesores (futuro)
+
+  # Horarios (futuro)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# RESPONSES
+# ══════════════════════════════════════════════════════════════════════════════
+
 responses:
+
+  # General
   utter_greet:
   - text: "¡Hola! Soy tu asistente universitario. ¿En qué puedo ayudarte?"
   - text: "¡Hola! ¿Qué tal? Estoy aquí para ayudarte con info de asignaturas, horarios y más."
   - text: "¡Hey! Soy Linceus, tu asistente de la ETSII. ¿Qué necesitas saber?"
-
-  utter_cheer_up:
-  - text: "Here is something to cheer you up:"
-    image: "https://i.imgur.com/nGF1K8f.jpg"
-
-  utter_did_that_help:
-  - text: "¿Te ha sido útil esta información?"
-
-  utter_happy:
-  - text: "¡Perfecto! ¿Hay algo más en lo que pueda ayudarte?"
 
   utter_goodbye:
   - text: "¡Hasta luego! Que tengas un buen día."
@@ -121,6 +177,18 @@ responses:
   utter_iamabot:
   - text: "Soy un chatbot universitario creado con Rasa para ayudarte con información académica."
 
+  utter_happy:
+  - text: "¡Perfecto! ¿Hay algo más en lo que pueda ayudarte?"
+
+  utter_cheer_up:
+  - text: "Aquí tienes algo para animarte:"
+    image: "https://i.imgur.com/nGF1K8f.jpg"
+
+  utter_did_that_help:
+  - text: "¿Te ha sido útil esta información?"
+
+
+  # Asignaturas
   utter_pedir_codigo:
   - text: "¿Qué asignatura te interesa? Puedes decirme el nombre o el código."
   - text: "Dime el nombre o código de la asignatura que quieres consultar."
@@ -134,11 +202,37 @@ responses:
   - text: "¿Qué asignatura quieres consultar? Puedes darme el nombre o el código."
   - text: "Dime qué asignatura te interesa y te cuento todo sobre ella."
 
+  # Profesores (futuro)
+
+  # Horarios (futuro)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ACTIONS
+# ══════════════════════════════════════════════════════════════════════════════
+
 actions:
+
+  # General / Debug
   - action_test_supabase
+
+  # Contexto académico
+  - action_cambiar_contexto
+  - action_consultar_contexto
+
+  # Asignaturas
   - action_consultar_asignatura
   - action_pregunta_seguimiento
   - action_consultar_asignaturas_filtradas
+
+  # Profesores (futuro)
+
+  # Horarios (futuro)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SESSION CONFIG
+# ══════════════════════════════════════════════════════════════════════════════
 
 session_config:
   session_expiration_time: 60

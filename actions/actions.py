@@ -16,6 +16,11 @@ from .asignaturas import (
     ActionConsultarAsignaturasFiltradas,
 )
 
+# Importar actions de contexto académico
+from .contexto import (
+    ActionCambiarContexto,
+    ActionConsultarContexto,
+)
 
 # =============================================================================
 # ACTIONS GENERALES
@@ -39,7 +44,6 @@ class ActionTestSupabase(Action):
             dispatcher.utter_message(text="Conexión con la base de datos exitosa")
         else:
             dispatcher.utter_message(text="Error al conectar con la base de datos")
-        
         return []
 
 
@@ -53,5 +57,7 @@ __all__ = [
     'ActionTestSupabase',
     'ActionConsultarAsignatura', 
     'ActionPreguntaSeguimiento',
-    'ActionPedirInfoAsignatura',
+    'ActionConsultarAsignaturasFiltradas',
+    'ActionCambiarContexto',
+    'ActionConsultarContexto',
 ]

@@ -16,6 +16,8 @@ Este documento registra los cambios realizados en cada versión del chatbot sigu
 | v1.3.0 | 2024-12 | Asignaturas | Consultas filtradas con NLU puro |
 | v1.3.1 | 2024-12 | Asignaturas | Lógica singular/plural + filtro créditos |
 | v1.3.2 | 2026-01 | Asignaturas | Simplificación: eliminar intent redundante + ejemplos NLU |
+| v1.4.0 | 2026-01 | Infraestructura | Soporte multi-titulación con contexto académico |
+| v1.4.1 | 2026-01 | Asignaturas | Listar todas las asignaturas + slot contexto_dominio |
 
 ---
 
@@ -269,6 +271,86 @@ Pedir que especifique
 - `data/rules.yml` - Eliminada rule
 - `data/stories.yml` - Eliminada story
 - `domain.yml` - Eliminado intent y action
+
+---
+
+### v1.4.0 - Soporte Multi-Titulación
+**Fecha:** Enero 2026  
+**Tipo:** MINOR - Nueva funcionalidad de infraestructura
+
+**Cambios:**
+- **Nuevo módulo `actions/config.py`**: Configuración centralizada del contexto académico
+  - Clase `BotConfig` con defaults desde variables de entorno
+  - Mapeo de códigos a nombres legibles (GII-IS → "Grado en Ing. Informática - Ing. del Software")
+  - Soporte para override por slots de Rasa
+- **Nuevo módulo `actions/contexto.py`**: Actions para gestión de contexto
+  - `ActionCambiarContexto`: Permite cambiar de titulación en conversación
+  - `ActionConsultarContexto`: Muestra el contexto académico actual
+- **Nuevas variables de entorno** en `.env`:
+  - `DEFAULT_UNIVERSIDAD_CODIGO=US`
+  - `DEFAULT_CENTRO_CODIGO=ETSII`
+  - `DEFAULT_TITULACION_CODIGO=GII-IS`
+- **Filtro por titulación en queries**:
+  - `buscar_asignatura()` ahora acepta `titulacion_codigo`
+  - `ActionConsultarAsignatura` filtra por contexto
+  - `ActionPreguntaSeguimiento` filtra por contexto
+  - `ActionConsultarAsignaturasFiltradas` filtra por contexto
+- **Nuevos intents** (ejemplos mínimos, no es prioridad):
+  - `cambiar_contexto_academico`: "cambiar a Tecnologías Informáticas"
+  - `consultar_contexto_academico`: "qué carrera estoy consultando"
+- **Nuevos slots**:
+  - `contexto_centro`: Centro seleccionado (override del default)
+  - `contexto_titulacion`: Titulación seleccionada (override del default)
+
+**Archivos nuevos:**
+- `actions/config.py` - Configuración centralizada
+- `actions/contexto.py` - Actions de contexto
+- `data/nlu/contexto.yml` - Intents de contexto
+
+**Archivos modificados:**
+- `actions/asignaturas.py` - Import BotConfig + filtro titulación en queries
+- `actions/actions.py` - Imports de nuevas actions
+- `domain.yml` - +2 intents, +2 entities, +2 slots, +2 actions
+- `data/rules.yml` - +2 rules para contexto
+- `.env` - +3 variables de configuración
+
+**Preparación para escalabilidad:**
+- El sistema ahora puede soportar múltiples titulaciones (GII-IS, GII-TI, GII-IC, GII-SI)
+- Por defecto usa Ingeniería del Software
+- Los usuarios pueden cambiar de carrera en conversación
+
+---
+
+### v1.4.1 - Listar Todas las Asignaturas y Contexto de Dominio
+**Fecha:** Enero 2026  
+**Tipo:** PATCH - Mejoras funcionales
+
+**Cambios:**
+- **Soporte para listar TODAS las asignaturas sin filtro**:
+  - Detecta patrones como "cuáles son las asignaturas", "todas las asignaturas", "asignaturas enteras"
+  - Permite consulta sin filtro específico (muestra primeras 10 con opción de continuar)
+- **Nuevo slot `contexto_dominio`**:
+  - Indica si estamos hablando de asignaturas, profesores, horarios, etc.
+  - Se setea automáticamente en todas las actions de asignaturas
+  - Preparación para futura épica de Profesores (mismo contexto titulación, diferente dominio)
+- **Todas las actions de asignaturas ahora retornan `SlotSet("contexto_dominio", "asignaturas")`**
+
+**Archivos modificados:**
+- `actions/asignaturas.py` - Detección de "listar todas" + contexto_dominio en todos los returns
+- `domain.yml` - Nuevo slot contexto_dominio
+
+**Flujo mejorado:**
+```
+Usuario: "cuáles son las asignaturas?"
+    ↓
+ActionConsultarAsignaturasFiltradas detecta patrón "listar todas"
+    ↓
+SQL: SELECT * FROM asignaturas WHERE titulacion_codigo = 'GII-IS' LIMIT 10
+    ↓
+Respuesta: Lista de asignaturas + mensaje "hay más, ¿quieres filtrar?"
+    ↓
+SlotSet: contexto_dominio = "asignaturas"
+```
 
 ---
 
