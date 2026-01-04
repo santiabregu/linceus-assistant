@@ -17,7 +17,7 @@ class ActionCambiarContexto(Action):
     Por ahora solo soporta cambio de titulación dentro de ETSII.
     """
     
-    # Mapeo de texto a códigos de titulación (fuzzy matching)
+    # Mapeo de texto a códigos de titulación (fuzzy matching) segun db
     TITULACION_MAP = {
         'ingenieria del software': 'GII-IS',
         'software': 'GII-IS',

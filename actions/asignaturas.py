@@ -361,7 +361,7 @@ class ActionConsultarAsignatura(Action):
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         
         # Obtener contexto académico (titulación)
-        titulacion = tracker.get_slot("contexto_titulacion") or BotConfig.get_default_titulacion()
+        titulacion = BotConfig.get_titulacion_activa(tracker)
         
         # Obtener entidades extraídas
         codigo = next(tracker.get_latest_entity_values("codigo_asignatura"), None)
@@ -433,7 +433,7 @@ class ActionPreguntaSeguimiento(Action):
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         
         # Obtener contexto académico (titulación)
-        titulacion = tracker.get_slot("contexto_titulacion") or BotConfig.get_default_titulacion()
+        titulacion = BotConfig.get_titulacion_activa(tracker)
         
         # Primero: verificar si hay un nombre mencionado en el mensaje
         nombre_mencionado = next(tracker.get_latest_entity_values("nombre_asignatura"), None)
@@ -519,16 +519,19 @@ class ActionConsultarAsignaturasFiltradas(Action):
     }
     
     # Mapeo de texto a valores de tipología (claves sin acentos para normalizar)
+    # IMPORTANTE: Los valores deben coincidir EXACTAMENTE con los de la BD
     TIPOLOGIA_MAP = {
-        'obligatoria': 'Obligatoria',
-        'obligatorias': 'Obligatoria',
-        'obligatorio': 'Obligatoria',
-        'optativa': 'Optativa',
-        'optativas': 'Optativa',
-        'optativo': 'Optativa',
-        'formacion basica': 'Formacion_Basica',
-        'basica': 'Formacion_Basica',
-        'basicas': 'Formacion_Basica',
+        'obligatoria': 'OBLIGATORIA',
+        'obligatorias': 'OBLIGATORIA',
+        'obligatorio': 'OBLIGATORIA',
+        'optativa': 'OPTATIVA',
+        'optativas': 'OPTATIVA',
+        'optativo': 'OPTATIVA',
+        'formacion basica': 'FORMACION_BASICA',
+        'basica': 'FORMACION_BASICA',
+        'basicas': 'FORMACION_BASICA',
+        'tfg': 'TFG',
+        'trabajo fin de grado': 'TFG',
     }
     
     # Mapeo de texto a valores de duración
@@ -678,7 +681,7 @@ class ActionConsultarAsignaturasFiltradas(Action):
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         
         # Obtener contexto académico (titulación)
-        titulacion = tracker.get_slot("contexto_titulacion") or BotConfig.get_default_titulacion()
+        titulacion = BotConfig.get_titulacion_activa(tracker)
         
         # Detectar si el usuario quiere ver TODAS las asignaturas
         mensaje = tracker.latest_message.get('text', '')
@@ -783,19 +786,123 @@ class ActionConsultarAsignaturasFiltradas(Action):
                     SlotSet("ultimo_nombre_asignatura", resultados[0]['nombre'])
                 ]
             
-            # Limpiar slots de filtro para próximas consultas + guardar dominio
+            # Guardar los filtros usados para poder reutilizarlos con "todas"
             return [
                 SlotSet("contexto_dominio", "asignaturas"),
-                SlotSet("filtro_curso", None),
-                SlotSet("filtro_tipologia", None),
-                SlotSet("filtro_duracion", None),
-                SlotSet("filtro_titulacion", None),
-                SlotSet("filtro_creditos", None),
+                SlotSet("ultimos_filtros_curso", filtros.get('curso')),
+                SlotSet("ultimos_filtros_tipologia", filtros.get('tipologia')),
+                SlotSet("ultimos_filtros_duracion", filtros.get('duracion')),
+                SlotSet("ultimos_filtros_creditos", filtros.get('creditos')),
             ]
             
         except Exception as e:
             print(f"Error en consulta filtrada: {e}")
             dispatcher.utter_message(text="Ocurrió un error al buscar las asignaturas.")
             return [SlotSet("contexto_dominio", "asignaturas")]
+        finally:
+            conn.close()
+
+
+class ActionMostrarTodas(Action):
+    """
+    Action para mostrar todos los resultados de la última consulta filtrada.
+    Se activa cuando el usuario dice "todas", "ver más", "mostrar todas", etc.
+    Reutiliza los filtros guardados de la consulta anterior.
+    """
+    
+    def name(self) -> Text:
+        return "action_mostrar_todas"
+    
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        
+        # Recuperar filtros guardados
+        curso = tracker.get_slot("ultimos_filtros_curso")
+        tipologia = tracker.get_slot("ultimos_filtros_tipologia")
+        duracion = tracker.get_slot("ultimos_filtros_duracion")
+        creditos = tracker.get_slot("ultimos_filtros_creditos")
+        titulacion = BotConfig.get_titulacion_activa(tracker)
+        
+        # Verificar que hay filtros guardados
+        if not any([curso, tipologia, duracion, creditos]):
+            dispatcher.utter_message(
+                text="No tengo una consulta anterior para mostrar. "
+                     "Primero pregúntame por asignaturas de algún curso, tipo, etc."
+            )
+            return []
+        
+        # Reconstruir filtros
+        filtros = {}
+        if curso:
+            filtros['curso'] = curso
+        if tipologia:
+            filtros['tipologia'] = tipologia
+        if duracion:
+            filtros['duracion'] = duracion
+        if creditos:
+            filtros['creditos'] = creditos
+        
+        # Ejecutar query sin límite
+        if db_client is None:
+            dispatcher.utter_message(text="Error de conexión a la base de datos.")
+            return []
+        
+        conn = db_client.get_connection()
+        if not conn:
+            dispatcher.utter_message(text="No pude conectar con la base de datos.")
+            return []
+        
+        try:
+            # Construir query (reutilizo la lógica de ActionConsultarAsignaturasFiltradas)
+            query = QUERY_ASIGNATURA_BASE + " WHERE a.activa = true"
+            params = []
+            
+            if titulacion:
+                query += " AND t.codigo = %s"
+                params.append(titulacion)
+            
+            if filtros.get('curso'):
+                query += " AND a.curso = %s"
+                params.append(filtros['curso'])
+            
+            if filtros.get('tipologia'):
+                query += " AND a.tipologia = %s"
+                params.append(filtros['tipologia'])
+            
+            if filtros.get('duracion'):
+                query += " AND a.duracion = %s"
+                params.append(filtros['duracion'])
+            
+            if filtros.get('creditos'):
+                query += " AND a.creditos = %s"
+                params.append(filtros['creditos'])
+            
+            query += " ORDER BY a.curso, a.nombre"
+            
+            cursor = conn.cursor()
+            cursor.execute(query, params)
+            rows = cursor.fetchall()
+            cursor.close()
+            
+            resultados = [parsear_resultado_asignatura(row) for row in rows]
+            
+            if not resultados:
+                dispatcher.utter_message(text="No encontré asignaturas con esos criterios.")
+                return []
+            
+            # Formatear respuesta completa (sin límite)
+            lineas = [f"📚 **Lista completa ({len(resultados)} asignaturas):**\n"]
+            for i, asig in enumerate(resultados, 1):
+                duracion_fmt = {'A': 'Anual', 'C1': 'Primer Cuatrimestre', 'C2': 'Segundo Cuatrimestre'}.get(asig['duracion'], asig['duracion'])
+                lineas.append(f"{i}. {asig['nombre']} ({asig['creditos']} ECTS, {duracion_fmt})")
+            
+            dispatcher.utter_message(text="\n".join(lineas))
+            return [SlotSet("contexto_dominio", "asignaturas")]
+            
+        except Exception as e:
+            print(f"Error en mostrar todas: {e}")
+            dispatcher.utter_message(text="Ocurrió un error al buscar las asignaturas.")
+            return []
         finally:
             conn.close()

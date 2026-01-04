@@ -261,6 +261,28 @@ nlu:
     - [anuales](filtro_duracion) de [Ingeniería Informática](filtro_titulacion)
 
 # =============================================================================
+# PEDIR MÁS RESULTADOS - Ver todos los resultados de la consulta anterior
+# =============================================================================
+- intent: pedir_mas_resultados
+  examples: |
+    - todas
+    - ver todas
+    - mostrar todas
+    - todas las asignaturas
+    - quiero ver todas
+    - dame todas
+    - muéstrame todas
+    - la lista completa
+    - ver más
+    - más resultados
+    - ver el resto
+    - el resto
+    - sí, todas
+    - sí, quiero ver todas
+    - enséñame todas
+    - todas por favor
+
+# =============================================================================
 # REGEX - Patrones para mejorar extracción de entidades
 # =============================================================================
 - regex: codigo_asignatura

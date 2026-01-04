@@ -18,6 +18,9 @@ Este documento registra los cambios realizados en cada versión del chatbot sigu
 | v1.3.2 | 2026-01 | Asignaturas | Simplificación: eliminar intent redundante + ejemplos NLU |
 | v1.4.0 | 2026-01 | Infraestructura | Soporte multi-titulación con contexto académico |
 | v1.4.1 | 2026-01 | Asignaturas | Listar todas las asignaturas + slot contexto_dominio |
+| v1.4.2 | 2026-01 | Infraestructura | Reorganización por épicas + helpers de contexto |
+| v1.4.3 | 2026-01 | General | Intent pedir_ayuda para mostrar capacidades del bot |
+| v1.4.4 | 2026-01 | Asignaturas | Ver todas: reutilizar filtros de consulta anterior |
 
 ---
 
@@ -350,6 +353,100 @@ SQL: SELECT * FROM asignaturas WHERE titulacion_codigo = 'GII-IS' LIMIT 10
 Respuesta: Lista de asignaturas + mensaje "hay más, ¿quieres filtrar?"
     ↓
 SlotSet: contexto_dominio = "asignaturas"
+```
+
+---
+
+### v1.4.2 - Reorganización por Épicas y Helpers de Contexto
+**Fecha:** Enero 2026  
+**Tipo:** PATCH - Refactorización y mejoras de mantenibilidad
+
+**Cambios:**
+- **Reorganización de archivos con secciones por épica**:
+  - `domain.yml`: Secciones para General, Contexto, Asignaturas, Profesores (futuro), Horarios (futuro)
+  - `rules.yml`: Misma estructura con separadores
+  - `stories.yml`: Misma estructura + nombres en español
+- **Nuevos helpers en `config.py`**:
+  - `get_titulacion_activa(tracker)`: Obtiene titulación del slot o default
+  - `get_centro_activo(tracker)`: Obtiene centro del slot o default
+- **Simplificación de actions**:
+  - Las 3 actions de asignaturas ahora usan `BotConfig.get_titulacion_activa(tracker)`
+  - Eliminado código repetitivo de lectura de contexto
+
+**Archivos modificados:**
+- `domain.yml` - Reorganizado con secciones
+- `data/rules.yml` - Reorganizado con secciones + nombres en español
+- `data/stories.yml` - Reorganizado con secciones + nombres en español
+- `actions/config.py` - Nuevos helpers para tracker
+- `actions/asignaturas.py` - Simplificado uso de contexto
+
+**Antes vs Después:**
+```python
+# Antes (repetitivo en cada action):
+titulacion = tracker.get_slot("contexto_titulacion") or BotConfig.get_default_titulacion()
+
+# Después (limpio):
+titulacion = BotConfig.get_titulacion_activa(tracker)
+```
+
+---
+
+### v1.4.3 - Intent de Ayuda
+**Fecha:** Enero 2026  
+**Tipo:** PATCH - Nueva funcionalidad de usuario
+
+**Cambios:**
+- **Nuevo intent `pedir_ayuda`**: Responde cuando el usuario pregunta qué puede hacer el bot
+- **Ejemplos NLU**: ~20 frases como "qué puedes hacer", "ayuda", "qué información tienes"
+- **Response `utter_ayuda`**: Menú con las capacidades actuales del bot
+
+**Archivos modificados:**
+- `data/nlu/general.yml` - Nuevo intent pedir_ayuda
+- `domain.yml` - Nuevo intent + response utter_ayuda
+- `data/rules.yml` - Nueva rule para pedir_ayuda → utter_ayuda
+
+**Ejemplo de respuesta:**
+```
+🎓 Soy Linceus, tu asistente de la ETSII. Puedo ayudarte con:
+
+📚 Asignaturas:
+• "Háblame de Redes de Computadores"
+• "¿Cuántos créditos tiene IS2?"
+• "¿Qué asignaturas obligatorias hay en primero?"
+
+🎯 Contexto académico:
+• "¿Qué carrera estoy consultando?"
+• "Cambiar a Tecnologías Informáticas"
+```
+
+---
+
+### v1.4.4 - Ver Todas las Asignaturas de Consulta Anterior
+**Fecha:** Enero 2026  
+**Tipo:** PATCH - Nueva funcionalidad
+
+**Cambios:**
+- **Nuevo intent `pedir_mas_resultados`**: Permite ver todos los resultados cuando el bot muestra "... y X más"
+- **Nueva action `ActionMostrarTodas`**: Reutiliza los filtros de la consulta anterior
+- **Nuevos slots `ultimos_filtros_*`**: Guardan curso, tipología, duración y créditos de la última consulta
+- **Fix de tipología**: Valores en TIPOLOGIA_MAP ahora coinciden con BD (OBLIGATORIA, OPTATIVA, FORMACION_BASICA, TFG)
+
+**Archivos modificados:**
+- `domain.yml` - +1 intent, +4 slots, +1 action
+- `data/nlu/asignaturas.yml` - +17 ejemplos del intent pedir_mas_resultados
+- `data/rules.yml` - Nueva rule pedir_mas_resultados → action_mostrar_todas
+- `actions/asignaturas.py` - Nueva ActionMostrarTodas + guardar filtros en slots
+- `actions/actions.py` - Import de ActionMostrarTodas
+
+**Flujo:**
+```
+Usuario: "dame las optativas de cuarto"
+Bot: "Encontré 15 asignaturas... y 5 más. Di 'todas' para ver la lista completa."
+    ↓ (guarda filtros: curso=4, tipologia=OPTATIVA)
+
+Usuario: "todas"
+Bot: "📚 Lista completa (15 asignaturas): 1. ... 2. ... 15. ..."
+    ↓ (reutiliza los filtros guardados)
 ```
 
 ---

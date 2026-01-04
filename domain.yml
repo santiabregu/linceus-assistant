@@ -14,6 +14,7 @@ intents:
   - mood_great
   - mood_unhappy
   - bot_challenge
+  - pedir_ayuda
 
  
   # Contexto académico - Centro y titulación
@@ -24,6 +25,7 @@ intents:
   - consultar_asignatura
   - pregunta_seguimiento
   - consultar_asignaturas_filtradas
+  - pedir_mas_resultados
 
   # Profesores (futuro)
 
@@ -154,6 +156,31 @@ slots:
     - type: from_entity
       entity: filtro_creditos
 
+  # Asignaturas - Últimos filtros usados (para "ver todas")
+  ultimos_filtros_curso:
+    type: any
+    influence_conversation: false
+    mappings:
+    - type: custom
+  
+  ultimos_filtros_tipologia:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+  
+  ultimos_filtros_duracion:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+  
+  ultimos_filtros_creditos:
+    type: any
+    influence_conversation: false
+    mappings:
+    - type: custom
+
   # Profesores (futuro)
 
   # Horarios (futuro)
@@ -186,6 +213,22 @@ responses:
 
   utter_did_that_help:
   - text: "¿Te ha sido útil esta información?"
+
+  utter_ayuda:
+  - text: |
+      🎓 **Soy Linceus, tu asistente de la ETSII.** Puedo ayudarte con:
+      
+      📚 **Asignaturas:**
+      • "Háblame de Redes de Computadores"
+      • "¿Cuántos créditos tiene IS2?"
+      • "¿Qué asignaturas obligatorias hay en primero?"
+      • "Dame las optativas de cuarto"
+      
+      🎯 **Contexto académico:**
+      • "¿Qué carrera estoy consultando?"
+      • "Cambiar a Tecnologías Informáticas"
+      
+      ¡Pregúntame lo que necesites!
 
 
   # Asignaturas
@@ -224,6 +267,7 @@ actions:
   - action_consultar_asignatura
   - action_pregunta_seguimiento
   - action_consultar_asignaturas_filtradas
+  - action_mostrar_todas
 
   # Profesores (futuro)
 

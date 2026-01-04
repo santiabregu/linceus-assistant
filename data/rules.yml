@@ -21,6 +21,11 @@ rules:
   - intent: bot_challenge
   - action: utter_iamabot
 
+- rule: Mostrar ayuda sobre capacidades del bot
+  steps:
+  - intent: pedir_ayuda
+  - action: utter_ayuda
+
 # ══════════════════════════════════════════════════════════════════════════════
 # CONTEXTO ACADÉMICO - Centro y titulación
 # ══════════════════════════════════════════════════════════════════════════════
@@ -53,6 +58,11 @@ rules:
   steps:
   - intent: consultar_asignaturas_filtradas
   - action: action_consultar_asignaturas_filtradas
+
+- rule: Mostrar todas las asignaturas de la consulta anterior
+  steps:
+  - intent: pedir_mas_resultados
+  - action: action_mostrar_todas
 
 # ══════════════════════════════════════════════════════════════════════════════
 # PROFESORES - (futuro)

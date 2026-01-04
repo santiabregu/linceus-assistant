@@ -100,3 +100,28 @@ nlu:
     - eres real?
     - eres una persona?
     - con quién hablo?
+
+- intent: pedir_ayuda
+  examples: |
+    - qué puedes hacer
+    - que puedes hacer
+    - qué sabes hacer
+    - qué información tienes
+    - que informacion tienes
+    - qué te puedo preguntar
+    - que te puedo preguntar
+    - ayuda
+    - help
+    - cómo funciona esto
+    - como funciona esto
+    - en qué me puedes ayudar
+    - para qué sirves
+    - qué funciones tienes
+    - cuáles son tus funciones
+    - qué cosas puedes hacer
+    - dame ayuda
+    - necesito ayuda
+    - no sé qué preguntarte
+    - qué opciones tengo
+    - menú
+    - menu
