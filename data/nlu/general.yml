@@ -38,18 +38,39 @@ nlu:
 - intent: affirm
   examples: |
     - sí
+    - si
+    - sii
+    - siii
+    - siiii
+    - see
+    - sep
+    - yes
     - claro
+    - claro que sí
     - por supuesto
     - exacto
     - correcto
     - afirmativo
     - vale
     - ok
+    - okay
     - está bien
     - de acuerdo
     - eso es
     - efectivamente
     - así es
+    - dale
+    - va
+    - perfecto
+    - genial
+    - obvio
+    - sí por favor
+    - si por favor
+    - sí quiero
+    - si quiero
+    - siii quiero
+    - claro quiero
+    - vale quiero
 
 - intent: deny
   examples: |

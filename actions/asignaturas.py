@@ -1,9 +1,12 @@
 # Actions relacionadas con la épica de Asignaturas
-# v1.4.0 - Soporte para contexto académico (múltiples titulaciones)
+# v2.0.0 - Sistema Text-to-SQL integrado para consultas dinámicas
 
-from typing import Any, Text, Dict, List, Optional
+from typing import Any, Text, Dict, List, Optional, Tuple
 from rapidfuzz import fuzz, process
 import unicodedata
+import json
+import re
+from decimal import Decimal
 
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
@@ -11,898 +14,1777 @@ from rasa_sdk.events import SlotSet
 
 from .db import db_client
 from .config import BotConfig
+from .ollama_client import llamar_ollama, verificar_ollama_activo
 
 
 # =============================================================================
-# UTILIDADES COMPARTIDAS PARA ASIGNATURAS
+# CACHE DE ASIGNATURAS POR SESIÓN/TITULACIÓN
 # =============================================================================
 
-def normalizar_texto(texto: str) -> str:
+def cargar_asignaturas_titulacion(
+    contexto_centro: str,
+    contexto_titulacion: str = None
+) -> List[Dict[str, Any]]:
     """
-    Normaliza texto: quita acentos y convierte a minúsculas.
-    Útil para búsquedas tolerantes a errores.
+    Carga TODAS las asignaturas de una titulación específica.
+
+    Esta función se llama UNA VEZ por sesión cuando el usuario
+    hace su primera consulta sobre asignaturas.
+
+    Args:
+        contexto_centro: Código del centro (ej: "ETSII")
+        contexto_titulacion: ID de titulación (opcional)
+
+    Returns:
+        Lista con ~50 asignaturas de esa titulación
     """
-    if not texto:
-        return ""
-    # Descomponer caracteres unicode (é -> e + ́)
-    texto_normalizado = unicodedata.normalize('NFD', texto)
-    # Eliminar marcas diacríticas (acentos)
-    texto_sin_acentos = ''.join(
-        char for char in texto_normalizado 
-        if unicodedata.category(char) != 'Mn'
-    )
-    return texto_sin_acentos.lower().strip()
-
-# Mapeo de lenguaje natural a campos de BD
-ATRIBUTO_MAP = {
-    # Créditos
-    'creditos': 'creditos',
-    'créditos': 'creditos',
-    'credito': 'creditos',
-    'crédito': 'creditos',
-    # Curso
-    'curso': 'curso',
-    'año': 'curso',
-    'cursos': 'curso',
-    # Duración
-    'dura': 'duracion',
-    'duración': 'duracion',
-    'duracion': 'duracion',
-    'anual': 'duracion',
-    'cuatrimestre': 'duracion',
-    'semestre': 'duracion',
-    # Tipología
-    'tipo': 'tipologia',
-    'tipología': 'tipologia',
-    'tipologia': 'tipologia',
-    'obligatoria': 'tipologia',
-    'obligatorio': 'tipologia',
-    'optativa': 'es_optativa',
-    'optativo': 'es_optativa',
-    'formación básica': 'es_formacion_basica',
-    'formacion basica': 'es_formacion_basica',
-    'basica': 'es_formacion_basica',
-    'básica': 'es_formacion_basica',
-    # Departamento
-    'departamento': 'departamento',
-    'depto': 'departamento',
-    'quien la da': 'departamento',
-    'quien la imparte': 'departamento',
-    'imparte': 'departamento',
-    # Titulación
-    'titulación': 'titulacion',
-    'titulacion': 'titulacion',
-    'carrera': 'titulacion',
-    'grado': 'titulacion',
-    # Nombre
-    'nombre': 'nombre',
-    'llama': 'nombre',
-    'llamar': 'nombre',
-}
-
-# Lista de palabras clave para fuzzy matching
-ATRIBUTO_KEYWORDS = list(ATRIBUTO_MAP.keys())
-
-# Query base para obtener datos de asignatura
-QUERY_ASIGNATURA_BASE = """
-    SELECT 
-        a.codigo,
-        a.nombre,
-        a.curso,
-        a.creditos,
-        a.duracion,
-        a.tipologia,
-        a.es_formacion_basica,
-        a.es_optativa,
-        t.nombre as titulacion_nombre,
-        d.nombre as departamento_nombre
-    FROM asignaturas a
-    LEFT JOIN titulaciones t ON a.titulacion_id = t.id
-    LEFT JOIN departamentos d ON a.departamento_id = d.id
-"""
-
-
-def normalizar_atributo(atributo: str) -> Optional[str]:
-    """
-    Normaliza el atributo extraído al campo de BD correspondiente.
-    Usa rapidfuzz para tolerar errores ortográficos.
-    """
-    if not atributo:
-        return None
-    
-    atributo_lower = atributo.lower().strip()
-    
-    # Primero intenta match exacto
-    if atributo_lower in ATRIBUTO_MAP:
-        return ATRIBUTO_MAP[atributo_lower]
-    
-    # Si no hay match exacto, intenta fuzzy matching con rapidfuzz
-    resultado = process.extractOne(
-        atributo_lower, 
-        ATRIBUTO_KEYWORDS, 
-        scorer=fuzz.WRatio,
-        score_cutoff=70  # Mínimo 70% de similitud
-    )
-    
-    if resultado:
-        mejor_match, score, _ = resultado
-        return ATRIBUTO_MAP[mejor_match]
-    
-    return None
-
-
-def formatear_duracion(duracion: str) -> str:
-    """Formatea el código de duración a texto legible"""
-    return {
-        'A': 'Anual',
-        'C1': 'Primer Cuatrimestre',
-        'C2': 'Segundo Cuatrimestre'
-    }.get(duracion, duracion)
-
-
-def formatear_tipologia(tipologia: str) -> str:
-    """Formatea la tipología a texto legible"""
-    return tipologia.replace('_', ' ').title() if tipologia else ''
-
-
-def parsear_resultado_asignatura(result: tuple) -> dict:
-    """Convierte el resultado de la query a un diccionario"""
-    return {
-        'codigo': result[0],
-        'nombre': result[1],
-        'curso': result[2],
-        'creditos': result[3],
-        'duracion': result[4],
-        'tipologia': result[5],
-        'es_formacion_basica': result[6],
-        'es_optativa': result[7],
-        'titulacion': result[8],
-        'departamento': result[9],
-    }
-
-
-def generar_respuesta_atributo(atributo: str, datos: dict) -> Optional[str]:
-    """Genera respuesta específica según el atributo solicitado"""
-    nombre = datos['nombre']
-    
-    respuestas = {
-        'nombre': f"La asignatura se llama {nombre}.",
-        'creditos': f"{nombre} tiene {datos['creditos']} créditos ECTS.",
-        'curso': f"{nombre} se imparte en {datos['curso']}º curso.",
-        'duracion': f"{nombre} tiene una duración {formatear_duracion(datos['duracion']).lower()}.",
-        'tipologia': f"{nombre} es de tipo {formatear_tipologia(datos['tipologia'])}.",
-        'es_optativa': f"{'Sí' if datos['es_optativa'] else 'No'}, {nombre} {'es' if datos['es_optativa'] else 'no es'} optativa.",
-        'es_formacion_basica': f"{'Sí' if datos['es_formacion_basica'] else 'No'}, {nombre} {'es' if datos['es_formacion_basica'] else 'no es'} formación básica.",
-        'departamento': f"{nombre} es impartida por el departamento de {datos['departamento']}."
-                        if datos['departamento'] else f"No tengo información del departamento que imparte {nombre}.",
-        'titulacion': f"{nombre} pertenece a {datos['titulacion']}."
-                      if datos['titulacion'] else f"No tengo información de la titulación de {nombre}.",
-    }
-    
-    return respuestas.get(atributo)
-
-
-def generar_respuesta_general(datos: dict) -> str:
-    """Genera respuesta con resumen básico de la asignatura"""
-    duracion_texto = formatear_duracion(datos['duracion'])
-    tipo_texto = formatear_tipologia(datos['tipologia'])
-    
-    respuesta = f"""{datos['nombre']} ({datos['codigo']}):
-• Curso: {datos['curso']}º
-• Créditos: {datos['creditos']} ECTS
-• Duración: {duracion_texto}
-• Tipo: {tipo_texto}"""
-    
-    if datos['departamento']:
-        respuesta += f"\n• Departamento: {datos['departamento']}"
-    
-    return respuesta
-
-
-def buscar_asignatura(codigo: str = None, nombre: str = None, titulacion_codigo: str = None) -> Optional[dict]:
-    """
-    Busca una asignatura por código o nombre.
-    La búsqueda por nombre usa múltiples estrategias:
-    1. LIKE exacto en BD
-    2. Coincidencia de palabras clave
-    3. Fuzzy matching como fallback
-    
-    Si se proporciona titulacion_codigo, filtra por esa titulación.
-    Si no, busca en todas las titulaciones (para búsqueda por código exacto).
-    """
-    if not codigo and not nombre:
-        return None
-    
     if db_client is None:
-        return None
-    
+        print("❌ No hay conexión a BD")
+        return []
+
     conn = db_client.get_connection()
     if not conn:
-        return None
-    
-    # Construir filtro de titulación si se proporciona
-    filtro_titulacion = ""
-    params_titulacion = []
-    if titulacion_codigo:
-        filtro_titulacion = " AND t.codigo = %s"
-        params_titulacion = [titulacion_codigo]
-    
+        return []
+
     try:
         cursor = conn.cursor()
-        
-        if codigo:
-            query = QUERY_ASIGNATURA_BASE + "WHERE a.codigo = %s AND a.activa = true" + filtro_titulacion
-            cursor.execute(query, (codigo.upper(), *params_titulacion))
-            result = cursor.fetchone()
+
+        # Query para obtener TODAS las asignaturas activas de la titulación
+        if contexto_titulacion:
+            query = """
+                SELECT
+                    codigo, nombre, curso, creditos, duracion, tipologia,
+                    es_formacion_basica, es_optativa, titulacion_id
+                FROM asignaturas
+                WHERE activa = true AND titulacion_id = %s
+                ORDER BY curso, nombre
+            """
+            cursor.execute(query, (contexto_titulacion,))
+            print(f"🔍 Cargando asignaturas de titulacion_id: {contexto_titulacion}")
         else:
-            # ESTRATEGIA 1: Búsqueda exacta con LIKE
-            query = QUERY_ASIGNATURA_BASE + "WHERE LOWER(a.nombre) LIKE LOWER(%s) AND a.activa = true" + filtro_titulacion
-            cursor.execute(query, (f"%{nombre}%", *params_titulacion))
-            result = cursor.fetchone()
-            
-            if not result:
-                nombre_normalizado = normalizar_texto(nombre)
-                query_todas = QUERY_ASIGNATURA_BASE + "WHERE a.activa = true" + filtro_titulacion
-                cursor.execute(query_todas, params_titulacion)
-                todas = cursor.fetchall()
-                
-                # ESTRATEGIA 2: Coincidencia de palabras clave
-                # Extraer palabras significativas del input (>3 caracteres)
-                palabras_busqueda = [
-                    p for p in nombre_normalizado.split() 
-                    if len(p) > 3 and p not in {'sobre', 'info', 'dame', 'quiero', 'asignatura', 'mas', 'informacion'}
-                ]
-                
-                if palabras_busqueda:
-                    mejor_score = 0
-                    mejor_resultado = None
-                    
-                    for row in todas:
-                        nombre_asig_norm = normalizar_texto(row[1])
-                        palabras_asig = nombre_asig_norm.split()
-                        
-                        # Contar cuántas palabras del input están en el nombre
-                        coincidencias = sum(
-                            1 for palabra in palabras_busqueda 
-                            if any(palabra in asig_palabra or asig_palabra in palabra 
-                                   for asig_palabra in palabras_asig)
-                        )
-                        
-                        # Score basado en porcentaje de palabras que coinciden
-                        if coincidencias > 0:
-                            score = coincidencias / len(palabras_busqueda)
-                            # Bonus si todas las palabras coinciden
-                            if coincidencias == len(palabras_busqueda):
-                                score += 0.5
-                            
-                            if score > mejor_score:
-                                mejor_score = score
-                                mejor_resultado = row
-                    
-                    if mejor_resultado and mejor_score >= 0.5:
-                        result = mejor_resultado
-                
-                # ESTRATEGIA 3: Fuzzy matching como fallback
-                if not result:
-                    nombres_normalizados = {
-                        normalizar_texto(row[1]): row for row in todas
-                    }
-                    
-                    mejor_match = process.extractOne(
-                        nombre_normalizado,
-                        list(nombres_normalizados.keys()),
-                        scorer=fuzz.WRatio,
-                        score_cutoff=70  # Aumentado a 70% para evitar falsos positivos
-                    )
-                    
-                    if mejor_match:
-                        nombre_encontrado, score, _ = mejor_match
-                        result = nombres_normalizados[nombre_encontrado]
-        
+            # Si no hay titulación, filtrar por CÓDIGO de centro
+            query = """
+                SELECT DISTINCT
+                    a.codigo, a.nombre, a.curso, a.creditos, a.duracion, a.tipologia,
+                    a.es_formacion_basica, a.es_optativa, a.titulacion_id
+                FROM asignaturas a
+                JOIN titulaciones t ON a.titulacion_id = t.id
+                JOIN centros c ON t.centro_id = c.id
+                WHERE a.activa = true AND c.codigo = %s
+                ORDER BY a.curso, a.nombre
+            """
+            cursor.execute(query, (contexto_centro,))
+            print(f"🔍 Cargando asignaturas de centro código: '{contexto_centro}'")
+
+        resultados = cursor.fetchall()
+
+        # Convertir a diccionarios
+        asignaturas = []
+        for r in resultados:
+            asignaturas.append({
+                "codigo": r[0],
+                "nombre": r[1],
+                "curso": r[2],
+                "creditos": r[3],
+                "duracion": r[4],
+                "tipologia": r[5],
+                "es_formacion_basica": r[6],
+                "es_optativa": r[7],
+                "titulacion_id": r[8]
+            })
+
         cursor.close()
-        
-        if result:
-            return parsear_resultado_asignatura(result)
-        return None
-        
+
+        print(f"✅ Asignaturas cargadas en memoria: {len(asignaturas)} (titulación: {contexto_titulacion or contexto_centro})")
+
+        return asignaturas
+
     except Exception as e:
-        print(f"Error buscando asignatura: {e}")
-        return None
+        print(f"❌ Error cargando asignaturas: {e}")
+        return []
     finally:
         conn.close()
 
 
+def buscar_en_memoria(
+    nombre_o_codigo: str,
+    asignaturas: List[Dict[str, Any]]
+) -> Optional[Dict[str, Any]]:
+    """
+    Busca una asignatura en la lista en memoria usando fuzzy matching.
+
+    Args:
+        nombre_o_codigo: Nombre o código a buscar
+        asignaturas: Lista de asignaturas en memoria
+
+    Returns:
+        Asignatura encontrada o None
+    """
+    if not asignaturas:
+        return None
+
+    # 1. Búsqueda exacta por código (case-insensitive)
+    for asig in asignaturas:
+        if asig["codigo"].upper() == nombre_o_codigo.upper():
+            print(f"✅ Match exacto por código: {asig['nombre']}")
+            return asig
+
+    # 2. Búsqueda exacta por nombre (case-insensitive)
+    for asig in asignaturas:
+        if asig["nombre"].upper() == nombre_o_codigo.upper():
+            print(f"✅ Match exacto por nombre: {asig['nombre']}")
+            return asig
+
+    # 3. Fuzzy matching
+    nombres = [a["nombre"] for a in asignaturas]
+    codigos = [a["codigo"] for a in asignaturas]
+
+    # Buscar por nombre
+    matches_nombre = process.extract(
+        nombre_o_codigo,
+        nombres,
+        scorer=fuzz.WRatio,
+        limit=3
+    )
+
+    # Buscar por código
+    matches_codigo = process.extract(
+        nombre_o_codigo,
+        codigos,
+        scorer=fuzz.ratio,
+        limit=3
+    )
+
+    # Elegir mejor match
+    mejor_score = 0
+    mejor_asig = None
+
+    for match, score, idx in matches_nombre:
+        if score > mejor_score and score >= 70:
+            mejor_score = score
+            mejor_asig = asignaturas[idx]
+
+    for match, score, idx in matches_codigo:
+        if score > mejor_score and score >= 75:
+            mejor_score = score
+            mejor_asig = asignaturas[idx]
+
+    if mejor_asig:
+        print(f"✅ Fuzzy match: {mejor_asig['nombre']} (score: {mejor_score})")
+    else:
+        print(f"❌ No encontrada: '{nombre_o_codigo}'")
+
+    return mejor_asig
+
+
+def filtrar_en_memoria(
+    asignaturas: List[Dict[str, Any]],
+    **filtros
+) -> List[Dict[str, Any]]:
+    """
+    Filtra asignaturas en memoria según criterios.
+
+    Args:
+        asignaturas: Lista de asignaturas en memoria
+        **filtros: curso=1, tipologia="OBLIGATORIA", duracion="C1", etc.
+
+    Returns:
+        Lista filtrada
+    """
+    resultados = asignaturas
+
+    for key, value in filtros.items():
+        if value is not None:
+            resultados = [a for a in resultados if a.get(key) == value]
+
+    print(f"🔍 Filtros {filtros} → {len(resultados)}/{len(asignaturas)} resultados")
+
+    return resultados
+
+
 # =============================================================================
-# ACTIONS
+# FUNCIONES AUXILIARES
 # =============================================================================
 
-def extraer_posible_nombre_del_mensaje(mensaje: str) -> Optional[str]:
+def limpiar_ansi(texto: str) -> str:
+    """Elimina códigos de escape ANSI del texto."""
+    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~]|\[\?[0-9;]*[a-zA-Z]|\[K|\[G)')
+    return ansi_escape.sub('', texto)
+
+
+# =============================================================================
+# TEMPLATES DE RESPUESTA RÁPIDA (sin LLM)
+# =============================================================================
+
+def respuesta_template(asignatura: Dict[str, Any], atributo: str) -> str:
     """
-    Intenta extraer un posible nombre de asignatura del mensaje.
-    Busca palabras capitalizadas o patrones comunes.
+    Genera respuesta directa sin LLM para casos simples.
+    Mucho más rápido que llamar al LLM.
     """
-    import re
-    
-    # Eliminar palabras comunes de preguntas
-    palabras_ignorar = {
-        'la', 'el', 'es', 'de', 'del', 'que', 'qué', 'como', 'cómo',
-        'asignatura', 'asignaturas', 'obligatoria', 'optativa', 'básica',
-        'formación', 'cuántos', 'cuantos', 'créditos', 'creditos', 'curso',
-        'duración', 'duracion', 'tiene', 'son', 'hay', 'dame', 'dime',
-        'información', 'informacion', 'info', 'sobre', 'cuál', 'cual',
-        'anual', 'cuatrimestre', 'primero', 'segundo', 'tercero', 'cuarto',
-        'y', 'o', 'a', 'en', 'por', 'para', 'con', 'sin', 'esta', 'esa',
-        'tipo', 'departamento', 'titulación', 'titulacion', 'carrera',
+    nombre = asignatura.get("nombre", "La asignatura")
+
+    if atributo == "creditos":
+        creditos = asignatura.get("creditos", "N/A")
+        return f"{nombre} tiene {creditos} créditos ECTS."
+
+    elif atributo == "tipo":
+        tipologia = asignatura.get("tipologia", "").upper()
+        es_formacion_basica = asignatura.get("es_formacion_basica", False)
+
+        # Detectar si es de formación básica
+        if es_formacion_basica or "BASICA" in tipologia or "FORMACION" in tipologia:
+            return f"No, {nombre} es de formación básica."
+        elif tipologia == "OBLIGATORIA":
+            return f"Sí, {nombre} es obligatoria."
+        elif tipologia == "OPTATIVA":
+            return f"No, {nombre} es optativa."
+        elif tipologia == "TRONCAL":
+            return f"Sí, {nombre} es troncal (obligatoria)."
+        else:
+            return f"{nombre} es de tipo {tipologia.lower().replace('_', ' ')}."
+
+    elif atributo == "curso":
+        curso = asignatura.get("curso", "N/A")
+        return f"{nombre} está en {curso}º curso."
+
+    elif atributo == "cuatrimestre" or atributo == "duracion":
+        duracion = asignatura.get("duracion", "")
+        if duracion == "A":
+            return f"{nombre} es anual."
+        elif duracion == "C1":
+            return f"{nombre} es del primer cuatrimestre."
+        elif duracion == "C2":
+            return f"{nombre} es del segundo cuatrimestre."
+        else:
+            return f"{nombre} tiene duración {duracion}."
+
+    elif atributo == "general":
+        codigo = asignatura.get("codigo", "")
+        creditos = asignatura.get("creditos", "N/A")
+        curso = asignatura.get("curso", "N/A")
+        tipologia = asignatura.get("tipologia", "").upper()
+        es_formacion_basica = asignatura.get("es_formacion_basica", False)
+
+        # Tipo de asignatura más natural
+        if es_formacion_basica:
+            tipo_str = "de formación básica"
+        elif tipologia == "OBLIGATORIA":
+            tipo_str = "obligatoria"
+        elif tipologia == "OPTATIVA":
+            tipo_str = "optativa"
+        elif tipologia == "TRONCAL":
+            tipo_str = "troncal"
+        else:
+            tipo_str = tipologia.lower().replace("_", " ")
+
+        return f"{nombre} ({codigo}) es una asignatura {tipo_str} de {curso}º curso con {creditos} créditos ECTS."
+
+    # Fallback
+    return f"{nombre}: {asignatura}"
+
+
+def respuesta_template_lista(asignaturas: List[Dict], pregunta: str) -> str:
+    """Genera respuesta para listas sin LLM."""
+    n = len(asignaturas)
+
+    if n == 0:
+        return "No encontré asignaturas que cumplan los criterios."
+
+    lineas = [f"Encontré {n} asignatura{'s' if n > 1 else ''}:\n"]
+
+    for i, asig in enumerate(asignaturas[:10], 1):
+        nombre = asig.get("nombre", "Sin nombre")
+        codigo = asig.get("codigo", "")
+        creditos = asig.get("creditos", "")
+        curso = asig.get("curso", "")
+
+        detalle = f"{i}. {nombre}"
+        extras = []
+        if codigo:
+            extras.append(codigo)
+        if curso:
+            extras.append(f"{curso}º")
+        if creditos:
+            extras.append(f"{creditos} ECTS")
+        if extras:
+            detalle += f" ({', '.join(map(str, extras))})"
+        lineas.append(detalle)
+
+    if n > 10:
+        lineas.append(f"\n... y {n - 10} más.")
+
+    return "\n".join(lineas)
+
+
+def respuesta_template_count(count: int, pregunta: str) -> str:
+    """Genera respuesta para conteos sin LLM."""
+    # Detectar contexto de la pregunta para respuesta más natural
+    pregunta_lower = pregunta.lower()
+
+    if "optativa" in pregunta_lower:
+        return f"Hay {count} asignatura{'s' if count != 1 else ''} optativa{'s' if count != 1 else ''}."
+    elif "obligatoria" in pregunta_lower:
+        return f"Hay {count} asignatura{'s' if count != 1 else ''} obligatoria{'s' if count != 1 else ''}."
+    elif "primero" in pregunta_lower or "primer" in pregunta_lower:
+        return f"En primero hay {count} asignatura{'s' if count != 1 else ''}."
+    elif "segundo" in pregunta_lower:
+        return f"En segundo hay {count} asignatura{'s' if count != 1 else ''}."
+    elif "tercero" in pregunta_lower:
+        return f"En tercero hay {count} asignatura{'s' if count != 1 else ''}."
+    elif "cuarto" in pregunta_lower:
+        return f"En cuarto hay {count} asignatura{'s' if count != 1 else ''}."
+    else:
+        return f"Hay {count} asignatura{'s' if count != 1 else ''}."
+
+
+def _convertir_decimales(obj):
+    """Convierte objetos Decimal a float para serialización JSON"""
+    if isinstance(obj, Decimal):
+        return float(obj)
+    elif isinstance(obj, dict):
+        return {k: _convertir_decimales(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [_convertir_decimales(item) for item in obj]
+    return obj
+
+
+def generar_respuesta_natural(
+    pregunta_usuario: str,
+    datos: Dict[str, Any],
+    tipo_respuesta: str = "especifica"
+) -> str:
+    """
+    Genera una respuesta natural usando el LLM basada en datos estructurados.
+
+    Args:
+        pregunta_usuario: Pregunta original del usuario
+        datos: Datos estructurados de la BD
+        tipo_respuesta: "especifica" | "lista" | "count"
+
+    Returns:
+        Respuesta natural generada por el LLM
+    """
+
+    # Convertir Decimals a float
+    datos = _convertir_decimales(datos)
+
+    if tipo_respuesta == "especifica":
+        # Respuesta sobre una asignatura específica
+        prompt = f"""Responde DIRECTAMENTE basándote en estos datos:
+
+PREGUNTA: "{pregunta_usuario}"
+
+DATOS:
+{json.dumps(datos, indent=2, ensure_ascii=False)}
+
+REGLAS:
+1. Si preguntan "es obligatoria/optativa": Responde "Sí, es [tipología]" o "No, es [tipología]"
+2. Si preguntan créditos: Di exactamente cuántos créditos tiene
+3. Si preguntan curso: Di en qué curso está
+4. Si preguntan "qué es": Da nombre completo, código, curso y créditos
+5. NO seas ambiguo. Los datos son HECHOS, no opiniones
+6. NO digas "para muchos estudiantes" o frases vagas
+7. Sé breve (máximo 2 frases)
+
+EJEMPLOS:
+- "¿Redes es obligatoria?" + tipologia="OBLIGATORIA" → "Sí, Redes de Computadores es obligatoria."
+- "¿Redes es obligatoria?" + tipologia="OPTATIVA" → "No, Redes de Computadores es optativa."
+- "¿cuántos créditos tiene?" + creditos=6 → "Tiene 6 créditos ECTS."
+
+Respuesta:"""
+
+    elif tipo_respuesta == "lista":
+        # Respuesta con lista de asignaturas
+        num_resultados = len(datos) if isinstance(datos, list) else 1
+
+        prompt = f"""Eres un asistente universitario amigable.
+
+Pregunta del usuario: "{pregunta_usuario}"
+
+Encontré {num_resultados} asignaturas:
+{json.dumps(datos, indent=2, ensure_ascii=False)}
+
+Genera una respuesta NATURAL que presente estos resultados de forma conversacional.
+
+Reglas:
+- Empieza con una frase natural ("Encontré X asignaturas...", "Aquí tienes las asignaturas...")
+- Lista las asignaturas de forma clara pero natural
+- Menciona detalles importantes (código, créditos, curso) de forma fluida
+- Si son muchas (>5), menciona solo las primeras y di que hay más
+- Usa lenguaje coloquial pero profesional
+
+Respuesta:"""
+
+    elif tipo_respuesta == "count":
+        # Respuesta de conteo
+        count = datos.get("count", 0) if isinstance(datos, dict) else datos
+
+        prompt = f"""Eres un asistente universitario amigable.
+
+Pregunta del usuario: "{pregunta_usuario}"
+
+Resultado: Hay {count} asignaturas que cumplen los criterios.
+
+Genera una respuesta BREVE y NATURAL que comunique este número de forma conversacional.
+
+Ejemplos:
+- "Hay 8 asignaturas en segundo cuatrimestre"
+- "En primero tienes 10 asignaturas"
+- "Son 6 optativas en total"
+
+Respuesta (una sola frase):"""
+
+    else:
+        # Fallback
+        return str(datos)
+
+    try:
+        respuesta = llamar_ollama(prompt, timeout=30)  # Aumentado para listas
+
+        if respuesta and len(respuesta) > 10:
+            print(f"✅ Respuesta natural generada: {respuesta[:100]}...\n")
+            return respuesta
+
+    except Exception as e:
+        print(f"❌ Error generando respuesta natural: {e}")
+
+    # Fallback: respuesta estructurada básica
+    print("⚠️  Usando respuesta estructurada (fallback)")
+
+    if tipo_respuesta == "especifica":
+        if "nombre" in datos:
+            return f"{datos['nombre']} - {datos.get('creditos', 'N/A')} ECTS, {datos.get('tipologia', 'N/A')}"
+
+    elif tipo_respuesta == "lista":
+        if isinstance(datos, list) and len(datos) > 0:
+            lineas = [f"📋 Asignaturas encontradas ({len(datos)}):\n"]
+            for i, item in enumerate(datos[:10], 1):
+                nombre = item.get('nombre', 'N/A')
+                creditos = item.get('creditos', 'N/A')
+                codigo = item.get('codigo', '')
+                lineas.append(f"{i}. {nombre} ({codigo}) - {creditos} ECTS")
+            if len(datos) > 10:
+                lineas.append(f"\n... y {len(datos) - 10} más")
+            return "\n".join(lineas)
+
+    elif tipo_respuesta == "count":
+        count = datos.get("count", datos) if isinstance(datos, dict) else datos
+        return f"Hay {count} asignaturas."
+
+    return str(datos)
+
+
+# =============================================================================
+# TEXT-TO-SQL PARA ASIGNATURAS
+# =============================================================================
+
+def analizar_consulta_unificado(pregunta: str) -> Dict[str, Any]:
+    """
+    Analiza una consulta en UNA SOLA llamada al LLM.
+    Combina clasificación + extracción de datos.
+
+    Optimización: Reduce de 2-3 llamadas LLM a 1 sola.
+
+    Returns:
+        Dict con:
+        - tipo: "especifica" o "general"
+        - nombre_asignatura: str o None
+        - atributo_solicitado: str o None
+        - confianza: float
+    """
+    pregunta_lower = pregunta.lower()
+
+    # =========================================================================
+    # HEURÍSTICAS RÁPIDAS (sin LLM)
+    # =========================================================================
+
+    # Detectar códigos de asignatura (IS2, FP, etc.)
+    codigo_match = re.search(r'\b([A-Z]{2,4}\d?)\b', pregunta)
+
+    # Patrones específicos con extracción (con y sin tildes)
+    patrones_especificos = [
+        # Créditos
+        (r'(?:cuántos|cuantos|cuanto)\s+(?:créditos|creditos)\s+tiene\s+(.+?)(?:\?|$)', "creditos"),
+        (r'(?:créditos|creditos)\s+(?:de|tiene)\s+(.+?)(?:\?|$)', "creditos"),
+        (r'(.+?)\s+tiene\s+(?:cuántos|cuantos|cuanto)\s+(?:créditos|creditos)', "creditos"),
+        # Obligatoria/Optativa
+        (r'(.+?)\s+es\s+(?:obligatoria|optativa)', "tipo"),
+        (r'(?:es\s+obligatoria|es\s+optativa)\s+(.+?)(?:\?|$)', "tipo"),
+        # Curso
+        (r'(?:en\s+)?(?:qué|que)\s+curso\s+(?:está|esta)\s+(.+?)(?:\?|$)', "curso"),
+        (r'(?:curso\s+de)\s+(.+?)(?:\?|$)', "curso"),
+        # Qué es
+        (r'(?:qué|que)\s+es\s+(.+?)(?:\?|$)', "general"),
+        (r'(?:información|info)\s+(?:de|sobre)\s+(.+?)(?:\?|$)', "general"),
+        # Cuatrimestre
+        (r'(?:cuatrimestre|cuatri)\s+(?:de|tiene)\s+(.+?)(?:\?|$)', "cuatrimestre"),
+    ]
+
+    for patron, atributo in patrones_especificos:
+        match = re.search(patron, pregunta_lower, re.IGNORECASE)
+        if match:
+            nombre = match.group(1).strip()
+            # Limpiar nombre
+            nombre = re.sub(r'^(la\s+asignatura\s+de|la\s+asignatura|asignatura)\s+', '', nombre)
+            nombre = nombre.strip('?.,! ')
+
+            if len(nombre) > 1:
+                print(f"✅ Heurística específica: '{nombre}' → {atributo}")
+                return {
+                    "tipo": "especifica",
+                    "nombre_asignatura": nombre,
+                    "atributo_solicitado": atributo,
+                    "confianza": 0.95,
+                    "metodo": "heuristica"
+                }
+
+    # Si hay código detectado, es específica
+    if codigo_match:
+        codigo = codigo_match.group(1)
+        # Detectar atributo
+        atributo = "general"
+        if "crédito" in pregunta_lower or "credito" in pregunta_lower:
+            atributo = "creditos"
+        elif "obligatoria" in pregunta_lower or "optativa" in pregunta_lower:
+            atributo = "tipo"
+        elif "curso" in pregunta_lower:
+            atributo = "curso"
+
+        print(f"✅ Heurística código: '{codigo}' → {atributo}")
+        return {
+            "tipo": "especifica",
+            "nombre_asignatura": codigo,
+            "atributo_solicitado": atributo,
+            "confianza": 0.9,
+            "metodo": "heuristica_codigo"
+        }
+
+    # Patrones claramente generales
+    patrones_general = [
+        r'(?:asignaturas|materias)\s+(?:de|del|en)\s+(?:primero|segundo|tercero|cuarto|1|2|3|4)',
+        r'(?:cuántas|cuantas)\s+(?:asignaturas|optativas|obligatorias)',
+        r'(?:lista|listado)\s+(?:de\s+)?(?:asignaturas|optativas|obligatorias)',
+        r'(?:optativas|obligatorias)\s+(?:de|del|en)',
+        r'(?:todas\s+las\s+)?asignaturas\s+(?:del\s+)?(?:primer|segundo)\s+cuatri',
+    ]
+
+    for patron in patrones_general:
+        if re.search(patron, pregunta_lower):
+            print(f"✅ Heurística general detectada")
+            return {
+                "tipo": "general",
+                "nombre_asignatura": None,
+                "atributo_solicitado": None,
+                "confianza": 0.9,
+                "metodo": "heuristica"
+            }
+
+    # =========================================================================
+    # LLM: Solo si las heurísticas no funcionan
+    # =========================================================================
+
+    prompt = f"""Analiza esta consulta universitaria:
+
+PREGUNTA: "{pregunta}"
+
+Clasifica y extrae en JSON:
+- tipo: "especifica" (UNA asignatura) o "general" (varias/filtros)
+- nombre_asignatura: nombre o código mencionado (o null si general)
+- atributo: "creditos"|"tipo"|"curso"|"cuatrimestre"|"general" (o null si general)
+
+EJEMPLOS:
+"cuántos créditos tiene Redes" → {{"tipo":"especifica","nombre_asignatura":"Redes","atributo":"creditos"}}
+"asignaturas de primero" → {{"tipo":"general","nombre_asignatura":null,"atributo":null}}
+"IS2 es obligatoria?" → {{"tipo":"especifica","nombre_asignatura":"IS2","atributo":"tipo"}}
+
+JSON:"""
+
+    try:
+        salida = llamar_ollama(prompt, timeout=15)
+
+        if not salida:
+            raise Exception("Sin respuesta")
+
+        # Extraer JSON
+        match = re.search(r'\{[^{}]*"tipo"[^{}]*\}', salida)
+        if match:
+            data = json.loads(match.group(0))
+            data["confianza"] = 0.8
+            data["metodo"] = "llm"
+            print(f"✅ LLM unificado: tipo={data.get('tipo')}, asig={data.get('nombre_asignatura')}")
+            return data
+
+    except Exception as e:
+        print(f"⚠️ Error en LLM unificado: {e}")
+
+    # Fallback: asumir general
+    return {
+        "tipo": "general",
+        "nombre_asignatura": None,
+        "atributo_solicitado": None,
+        "confianza": 0.5,
+        "metodo": "fallback"
     }
-    
-    # Buscar palabras que empiezan con mayúscula (posibles nombres)
-    palabras = mensaje.split()
-    candidatos = []
-    
-    for palabra in palabras:
-        palabra_limpia = re.sub(r'[¿?!¡,.]', '', palabra)
-        if palabra_limpia and palabra_limpia.lower() not in palabras_ignorar:
-            if palabra_limpia[0].isupper() or len(palabra_limpia) > 3:
-                candidatos.append(palabra_limpia)
-    
-    if candidatos:
-        return ' '.join(candidatos)
-    return None
 
 
-class ActionConsultarAsignatura(Action):
-    """Action para consultar información de una asignatura por código o nombre"""
-    
+def clasificar_tipo_consulta_asignatura(pregunta: str) -> Dict[str, Any]:
+    """
+    Clasifica si una consulta sobre asignaturas es ESPECÍFICA o GENERAL.
+
+    - ESPECÍFICA: Pregunta sobre UNA asignatura concreta
+      Ejemplos: "cuántos créditos tiene Redes", "qué es IS2", "Redes es obligatoria?"
+
+    - GENERAL: Pregunta sobre MÚLTIPLES asignaturas con filtros
+      Ejemplos: "asignaturas de primero", "cuántas optativas hay", "asignaturas del segundo cuatri"
+
+    Args:
+        pregunta: Pregunta del usuario
+
+    Returns:
+        Dict con:
+        - tipo: "especifica" o "general"
+        - confianza: float 0-1
+        - razon: explicación breve
+    """
+
+    # Heurística rápida ANTES de llamar al LLM
+    pregunta_lower = pregunta.lower()
+
+    # Patrones que SIEMPRE indican consulta específica
+    patrones_especifica = [
+        r'\bla asignatura\b',  # "la asignatura de X"
+        r'\bcuántos créditos tiene\b',
+        r'\bcuantos creditos tiene\b',
+        r'\bqué es\b',
+        r'\bque es\b',
+        r'\bes obligatoria\b',
+        r'\bes optativa\b',
+        r'\b[A-Z]{2,}\b',  # Códigos como IS2, FP, etc.
+    ]
+
+    for patron in patrones_especifica:
+        if re.search(patron, pregunta, re.IGNORECASE):
+            return {"tipo": "especifica", "confianza": 0.9, "razon": "Heurística: patrón específico"}
+
+    # Patrones que SIEMPRE indican consulta general
+    patrones_general = [
+        r'\basignaturas de\b',
+        r'\bcuántas asignaturas\b',
+        r'\bcuantas asignaturas\b',
+        r'\boptativas de\b',
+        r'\bobligatorias de\b',
+    ]
+
+    for patron in patrones_general:
+        if re.search(patron, pregunta, re.IGNORECASE):
+            return {"tipo": "general", "confianza": 0.9, "razon": "Heurística: patrón general"}
+
+    # Si no hay coincidencia clara, usar LLM
+    prompt = f"""Pregunta: "{pregunta}"
+
+¿Pregunta sobre UNA asignatura o VARIAS?
+
+UNA → {{"tipo":"especifica"}}
+VARIAS → {{"tipo":"general"}}
+"""
+
+    try:
+        salida = llamar_ollama(prompt, timeout=15)  # Reducido a 15s
+
+        if not salida:
+            raise Exception("LLM no devolvió respuesta")
+
+        # Extraer JSON
+        match = re.search(r'\{[^{}]*"tipo"[^{}]*\}', salida)
+        if match:
+            data = json.loads(match.group(0))
+            print(f"🔍 Clasificación LLM: {data.get('tipo')} (confianza: {data.get('confianza')})")
+            print(f"   Razón: {data.get('razon')}\n")
+            return data
+
+    except Exception as e:
+        print(f"❌ Error en LLM: {e}")
+
+    # Fallback final: asumir general
+    return {"tipo": "general", "confianza": 0.5, "razon": "Fallback final"}
+
+
+def extraer_datos_consulta_especifica(
+    pregunta: str,
+    contexto_centro: str = "ETSII",
+    contexto_titulacion: str = None
+) -> Dict[str, Any]:
+    """
+    Extrae nombre de asignatura y atributo solicitado de una consulta específica.
+
+    Args:
+        pregunta: Pregunta del usuario
+        contexto_centro: Centro universitario
+        contexto_titulacion: Titulación (opcional)
+
+    Returns:
+        Dict con:
+        - nombre_asignatura: str
+        - atributo_solicitado: "creditos"|"tipo"|"curso"|"cuatrimestre"|"general"|None
+        - error: str si hubo error
+    """
+
+    prompt = f"""Extrae información de esta consulta sobre una asignatura específica.
+
+CONTEXTO:
+- Centro: {contexto_centro}
+- Titulación: {contexto_titulacion or "No especificada"}
+
+PREGUNTA: "{pregunta}"
+
+EXTRAE:
+1. nombre_asignatura: Nombre o código de la asignatura mencionada
+2. atributo_solicitado: Qué quiere saber el usuario
+   - "creditos": Si pregunta por créditos/ECTS
+   - "tipo": Si pregunta si es obligatoria/optativa/básica
+   - "curso": Si pregunta en qué curso está
+   - "cuatrimestre": Si pregunta en qué cuatrimestre
+   - "duracion": Si pregunta si es anual/cuatrimestral
+   - "general": Si quiere información completa de la asignatura
+
+EJEMPLOS:
+- "cuántos créditos tiene Redes" → {{"nombre_asignatura": "Redes", "atributo_solicitado": "creditos"}}
+- "Redes es obligatoria?" → {{"nombre_asignatura": "Redes", "atributo_solicitado": "tipo"}}
+- "qué es IS2" → {{"nombre_asignatura": "IS2", "atributo_solicitado": "general"}}
+- "en qué curso está Cálculo" → {{"nombre_asignatura": "Cálculo", "atributo_solicitado": "curso"}}
+
+RESPONDE SOLO CON JSON:
+{{"nombre_asignatura": "...", "atributo_solicitado": "..."}}
+
+JSON:"""
+
+    try:
+        salida = llamar_ollama(prompt, timeout=20)
+
+        if not salida:
+            raise Exception("LLM no devolvió respuesta")
+
+        # Extraer JSON
+        match = re.search(r'\{[^{}]*"nombre_asignatura"[^{}]*\}', salida)
+        if match:
+            data = json.loads(match.group(0))
+            print(f"📝 Extracción específica:")
+            print(f"   Asignatura: {data.get('nombre_asignatura')}")
+            print(f"   Atributo: {data.get('atributo_solicitado')}\n")
+            return data
+
+    except Exception as e:
+        print(f"❌ Error extrayendo datos: {e}")
+        return {"error": f"No pude extraer información: {e}"}
+
+    return {"error": "No se pudo procesar la consulta"}
+
+
+def generar_sql_consulta_general(
+    pregunta: str,
+    contexto_centro: str = "ETSII",
+    contexto_titulacion: str = None
+) -> Dict[str, Any]:
+    """
+    Genera SQL para consultas generales sobre asignaturas (con filtros).
+
+    Args:
+        pregunta: Pregunta del usuario
+        contexto_centro: Centro universitario
+        contexto_titulacion: Titulación (opcional)
+
+    Returns:
+        Dict con:
+        - sql: Query SQL generada
+        - tipo_query: "count"|"list"
+        - error: str si hubo error
+    """
+
+    esquema_tabla = """
+    Tabla: asignaturas
+    Columnas:
+    - codigo (VARCHAR): Código único de asignatura (ej: "2050001")
+    - nombre (VARCHAR): Nombre completo
+    - curso (INTEGER): Curso 1-4
+    - creditos (DECIMAL): Créditos ECTS
+    - duracion (VARCHAR): 'A' (Anual), 'C1' (Cuatrimestre 1), 'C2' (Cuatrimestre 2)
+    - tipologia (VARCHAR): 'TRONCAL', 'OBLIGATORIA', 'OPTATIVA'
+    - es_formacion_basica (BOOLEAN): Si es de formación básica
+    - es_optativa (BOOLEAN): Si es optativa
+    - activa (BOOLEAN): Si está activa
+    - titulacion_id (UUID): FK a titulaciones
+
+    Para filtrar por centro o titulación, hacer JOIN:
+    JOIN titulaciones t ON asignaturas.titulacion_id = t.id
+    JOIN centros c ON t.centro_id = c.id
+    """
+
+    prompt = f"""PREGUNTA: "{pregunta}"
+
+TABLA: asignaturas (nombre, codigo, curso, creditos, duracion, tipologia, activa)
+
+FILTROS:
+- curso: 1-4 (primero=1, segundo=2, tercero=3, cuarto=4)
+- tipologia: 'OBLIGATORIA', 'OPTATIVA', 'TRONCAL'
+- duracion: 'A' (anual), 'C1' (1er cuatri), 'C2' (2do cuatri)
+- SIEMPRE: activa=true
+
+TIPO:
+- "cuántas/cuántos" → COUNT(*), tipo_query="count"
+- "cuáles/lista" → SELECT nombre,codigo,creditos,curso, tipo_query="list"
+
+Responde SOLO este JSON (no ejemplos):
+{{"sql":"SELECT...","tipo_query":"count o list"}}
+"""
+
+    try:
+        salida = llamar_ollama(prompt, timeout=40)
+
+        if not salida:
+            raise Exception("LLM no devolvió respuesta")
+
+        print(f"📤 Respuesta LLM completa: {salida}")
+
+        sql = None
+        tipo_query = None
+
+        # Intentar parsear JSON directamente
+        try:
+            data = json.loads(salida)
+            if "sql" in data:
+                sql = data.get("sql", "").strip()
+                tipo_query = data.get("tipo_query", "list").lower()
+                print(f"✅ JSON parseado directamente")
+            else:
+                raise ValueError("No tiene campo 'sql'")
+        except:
+            # Extraer JSON con regex
+            print(f"⚠️  Intentando extraer JSON con regex...")
+            match = re.search(r'\{[^{}]*"sql"[^{}]*"tipo_query"[^{}]*\}', salida, re.DOTALL)
+
+            if not match:
+                # Intentar solo buscar el SQL y asumir tipo
+                match_sql = re.search(r'"sql"\s*:\s*"([^"]+)"', salida)
+                if match_sql:
+                    sql = match_sql.group(1).strip()
+                    tipo_query = "list"
+                    print(f"✅ SQL extraído con regex: {sql}")
+                else:
+                    print(f"❌ No se pudo extraer SQL")
+                    return {"error": f"No se encontró JSON válido en respuesta: {salida[:200]}"}
+            else:
+                json_text = match.group(0)
+                print(f"📄 JSON extraído: {json_text}")
+                try:
+                    data = json.loads(json_text)
+                    sql = data.get("sql", "").strip()
+                    tipo_query = data.get("tipo_query", "list").lower()
+                except json.JSONDecodeError as e:
+                    print(f"❌ Error parseando JSON extraído: {e}")
+                    return {"error": f"JSON malformado: {json_text}"}
+
+        # Validación de seguridad (se ejecuta SIEMPRE)
+        if not sql:
+            return {"error": "No se pudo extraer el SQL"}
+
+        sql_upper = sql.upper()
+        palabras_prohibidas = ["DROP", "DELETE", "UPDATE", "INSERT", "ALTER", "TRUNCATE", "CREATE"]
+        if any(p in sql_upper for p in palabras_prohibidas):
+            return {"error": "Query rechazada por seguridad"}
+
+        if not sql_upper.startswith("SELECT"):
+            return {"error": "Solo se permiten consultas SELECT"}
+
+        print(f"✅ SQL generado:")
+        print(f"   {sql}")
+        print(f"   Tipo: {tipo_query}\n")
+
+        return {"sql": sql, "tipo_query": tipo_query}
+
+    except Exception as e:
+        print(f"❌ Error generando SQL: {e}")
+        return {"error": f"Error generando consulta: {e}"}
+
+
+# =============================================================================
+# ACTIONS - TEXT-TO-SQL PARA ASIGNATURAS
+# =============================================================================
+
+class ActionConsultarAsignaturaDB(Action):
+    """
+    Action principal para consultas dinámicas sobre asignaturas usando Text-to-SQL.
+
+    Clasifica automáticamente si la consulta es:
+    - ESPECÍFICA: Sobre una asignatura concreta → Busca la asignatura y devuelve info
+    - GENERAL: Con filtros múltiples → Genera SQL dinámico
+
+    Ejemplos específicas:
+    - "cuántos créditos tiene Redes de Computadores"
+    - "qué es IS2"
+    - "Redes es obligatoria?"
+
+    Ejemplos generales:
+    - "asignaturas de primero"
+    - "cuántas optativas hay en cuarto"
+    - "asignaturas del segundo cuatrimestre"
+    """
+
     def name(self) -> Text:
-        return "action_consultar_asignatura"
-    
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        
-        # Obtener contexto académico (titulación)
-        titulacion = BotConfig.get_titulacion_activa(tracker)
-        
-        # Obtener entidades extraídas
-        codigo = next(tracker.get_latest_entity_values("codigo_asignatura"), None)
-        nombre = next(tracker.get_latest_entity_values("nombre_asignatura"), None)
-        atributo_raw = next(tracker.get_latest_entity_values("atributo_asignatura"), None)
-        
-        # FALLBACK: Si no hay código ni nombre, intentar extraer del mensaje
-        if not codigo and not nombre:
-            mensaje = tracker.latest_message.get('text', '')
-            nombre_candidato = extraer_posible_nombre_del_mensaje(mensaje)
-            if nombre_candidato:
-                nombre = nombre_candidato
-        
-        if not codigo and not nombre:
+        return "action_consultar_asignatura_db"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any]
+    ) -> List[Dict[Text, Any]]:
+
+        # Obtener contexto
+        pregunta = tracker.latest_message.get("text", "")
+        contexto_centro = tracker.get_slot("contexto_centro") or "ETSII"
+        contexto_titulacion = tracker.get_slot("contexto_titulacion")
+
+        if not pregunta:
+            dispatcher.utter_message(text="No entendí tu pregunta. ¿Puedes reformularla?")
+            return []
+
+        print(f"\n{'='*80}")
+        print(f"🎓 CONSULTA ASIGNATURA DB (MEMORIA)")
+        print(f"   Pregunta: {pregunta}")
+        print(f"   Centro: {contexto_centro}")
+        print(f"   Titulación: {contexto_titulacion or 'N/A'}")
+        print(f"{'='*80}\n")
+
+        # =====================================================================
+        # PASO 1: Cargar asignaturas en memoria (si no están ya cargadas)
+        # =====================================================================
+        asignaturas_memoria = tracker.get_slot("asignaturas_memoria")
+
+        if not asignaturas_memoria:
+            print("🔄 Primera consulta → Cargando TODAS las asignaturas en memoria...")
+            asignaturas_memoria = cargar_asignaturas_titulacion(
+                contexto_centro, contexto_titulacion
+            )
+
+            if not asignaturas_memoria:
+                dispatcher.utter_message(text="No pude cargar las asignaturas. ¿Hay un problema con la conexión?")
+                return []
+
+            # Guardar en slot para futuras consultas
+            slots_set = [SlotSet("asignaturas_memoria", asignaturas_memoria)]
+        else:
+            print(f"📦 Cache de sesión: {len(asignaturas_memoria)} asignaturas en memoria")
+            slots_set = []
+
+        # =====================================================================
+        # PASO 2: Análisis UNIFICADO (1 sola llamada LLM o heurística)
+        # =====================================================================
+        analisis = analizar_consulta_unificado(pregunta)
+        tipo_consulta = analisis.get("tipo", "general")
+
+        print(f"📊 ANÁLISIS UNIFICADO: {tipo_consulta.upper()}")
+        print(f"   Método: {analisis.get('metodo', 'N/A')}")
+        print(f"   Confianza: {analisis.get('confianza', 'N/A')}")
+        if analisis.get("nombre_asignatura"):
+            print(f"   Asignatura: {analisis.get('nombre_asignatura')}")
+            print(f"   Atributo: {analisis.get('atributo_solicitado')}")
+        print()
+
+        # =====================================================================
+        # PASO 3: Procesar consulta (TODO en memoria, sin SQL)
+        # =====================================================================
+        if tipo_consulta == "especifica":
+            slots_result = self._procesar_consulta_especifica_memoria(
+                pregunta, analisis, asignaturas_memoria, dispatcher
+            )
+        else:
+            slots_result = self._procesar_consulta_general_memoria(
+                pregunta, analisis, asignaturas_memoria, dispatcher
+            )
+
+        return slots_set + slots_result
+
+    def _procesar_consulta_especifica_memoria(
+        self,
+        pregunta: str,
+        analisis: Dict[str, Any],
+        asignaturas_memoria: List[Dict[str, Any]],
+        dispatcher: CollectingDispatcher
+    ) -> List[Dict[Text, Any]]:
+        """
+        Procesa consulta específica usando SOLO memoria (sin BD, sin LLM para respuesta).
+
+        Args:
+            pregunta: Pregunta original
+            analisis: Resultado del análisis unificado
+            asignaturas_memoria: Asignaturas cargadas en memoria (~50)
+            dispatcher: Para enviar respuesta
+
+        Returns:
+            Lista de slots a actualizar
+        """
+
+        print("→ Procesando ESPECÍFICA en MEMORIA (sin BD, sin LLM)\n")
+
+        # Ya tenemos los datos extraídos del análisis unificado
+        nombre_asignatura = analisis.get("nombre_asignatura")
+        atributo = analisis.get("atributo_solicitado") or analisis.get("atributo") or "general"
+
+        if not nombre_asignatura:
+            dispatcher.utter_message(text="No pude identificar la asignatura. ¿Puedes especificarla?")
+            return []
+
+        # Buscar en memoria (fuzzy matching)
+        asignatura = buscar_en_memoria(nombre_asignatura, asignaturas_memoria)
+
+        if not asignatura:
             dispatcher.utter_message(
-                text="Por favor, especifica el código o nombre de la asignatura que quieres consultar."
+                text=f"No encontré '{nombre_asignatura}' entre las asignaturas disponibles."
             )
             return []
-        
-        # Buscar asignatura (con filtro de titulación)
-        datos = buscar_asignatura(codigo=codigo, nombre=nombre, titulacion_codigo=titulacion)
-        
-        if not datos:
-            if codigo:
-                dispatcher.utter_message(
-                    text=f"No encontré información para la asignatura con código '{codigo.upper()}'. "
-                         "Verifica que el código sea correcto."
-                )
-            else:
-                dispatcher.utter_message(
-                    text=f"No encontré ninguna asignatura con el nombre '{nombre}'. "
-                         "Intenta con otro nombre o usa el código de la asignatura."
-                )
-            return []
-        
-        # Generar respuesta
-        atributo = normalizar_atributo(atributo_raw)
-        if atributo:
-            respuesta = generar_respuesta_atributo(atributo, datos)
-            if not respuesta:
-                respuesta = generar_respuesta_general(datos)
-        else:
-            respuesta = generar_respuesta_general(datos)
-        
+
+        # Respuesta con template (sin LLM)
+        respuesta = respuesta_template(asignatura, atributo)
+        print(f"✅ Respuesta instantánea: {respuesta[:80]}...\n")
+
         dispatcher.utter_message(text=respuesta)
-        
-        # Guardar contexto para preguntas de seguimiento
+
         return [
-            SlotSet("contexto_dominio", "asignaturas"),
-            SlotSet("ultimo_codigo_consultado", datos['codigo']),
-            SlotSet("ultimo_nombre_asignatura", datos['nombre'])
+            SlotSet("ultimo_codigo_consultado", asignatura["codigo"]),
+            SlotSet("ultimo_nombre_asignatura", asignatura["nombre"])
         ]
+
+    def _procesar_consulta_general_memoria(
+        self,
+        pregunta: str,
+        analisis: Dict[str, Any],
+        asignaturas_memoria: List[Dict[str, Any]],
+        dispatcher: CollectingDispatcher
+    ) -> List[Dict[Text, Any]]:
+        """
+        Procesa consulta general usando SOLO memoria (sin BD, sin SQL, sin LLM).
+
+        Ejemplos:
+        - "asignaturas de primero"
+        - "cuántas optativas hay"
+        - "asignaturas del segundo cuatrimestre"
+
+        Args:
+            pregunta: Pregunta original
+            analisis: Resultado del análisis unificado
+            asignaturas_memoria: Asignaturas en memoria
+            dispatcher: Para enviar respuesta
+
+        Returns:
+            Lista de slots a actualizar
+        """
+
+        print("→ Procesando GENERAL en MEMORIA (sin BD, sin SQL, sin LLM)\n")
+
+        # Extraer filtros de la pregunta con heurísticas
+        filtros = self._extraer_filtros_heuristicas(pregunta)
+
+        print(f"🔍 Filtros detectados: {filtros}")
+
+        # Aplicar filtros en memoria
+        resultados = filtrar_en_memoria(asignaturas_memoria, **filtros)
+
+        # Detectar si pide conteo
+        pregunta_lower = pregunta.lower()
+        es_count = any(p in pregunta_lower for p in ["cuántas", "cuantas", "cuántos", "cuantos"])
+
+        if es_count:
+            count = len(resultados)
+            respuesta = respuesta_template_count(count, pregunta)
+            print(f"✅ Count instantáneo: {count}\n")
+            dispatcher.utter_message(text=respuesta)
+            return []
+
+        # Lista de resultados
+        if not resultados:
+            dispatcher.utter_message(text="No encontré asignaturas que cumplan esos criterios.")
+            return []
+
+        if len(resultados) <= 5:
+            respuesta = respuesta_template_lista(resultados, pregunta)
+            dispatcher.utter_message(text=respuesta)
+            return []
+
+        # Muchos resultados: mostrar primeros 5
+        respuesta = respuesta_template_lista(resultados[:5], pregunta)
+        dispatcher.utter_message(text=respuesta)
+        dispatcher.utter_message(
+            text=f"Hay {len(resultados) - 5} más. ¿Quieres verlas todas?"
+        )
+
+        return [SlotSet("ultimos_resultados_asignaturas", resultados)]
+
+    def _extraer_filtros_heuristicas(self, pregunta: str) -> Dict[str, Any]:
+        """
+        Extrae filtros de una consulta general usando heurísticas (sin LLM).
+
+        Args:
+            pregunta: Pregunta del usuario
+
+        Returns:
+            Dict con filtros: {"curso": 1, "tipologia": "OBLIGATORIA", etc.}
+        """
+        pregunta_lower = pregunta.lower()
+        filtros = {}
+
+        # Curso
+        if "primero" in pregunta_lower or "primer" in pregunta_lower or "1º" in pregunta_lower:
+            filtros["curso"] = 1
+        elif "segundo" in pregunta_lower or "2º" in pregunta_lower:
+            filtros["curso"] = 2
+        elif "tercero" in pregunta_lower or "tercer" in pregunta_lower or "3º" in pregunta_lower:
+            filtros["curso"] = 3
+        elif "cuarto" in pregunta_lower or "4º" in pregunta_lower:
+            filtros["curso"] = 4
+
+        # Tipología
+        if "optativa" in pregunta_lower:
+            filtros["tipologia"] = "OPTATIVA"
+        elif "obligatoria" in pregunta_lower:
+            filtros["tipologia"] = "OBLIGATORIA"
+        elif "troncal" in pregunta_lower:
+            filtros["tipologia"] = "TRONCAL"
+
+        # Duración/Cuatrimestre
+        if "primer cuatri" in pregunta_lower or "1er cuatri" in pregunta_lower or "c1" in pregunta_lower:
+            filtros["duracion"] = "C1"
+        elif "segundo cuatri" in pregunta_lower or "2do cuatri" in pregunta_lower or "c2" in pregunta_lower:
+            filtros["duracion"] = "C2"
+        elif "anual" in pregunta_lower:
+            filtros["duracion"] = "A"
+
+        return filtros
+
+    def _procesar_consulta_especifica_optimizada(
+        self,
+        pregunta: str,
+        analisis: Dict[str, Any],
+        contexto_centro: str,
+        contexto_titulacion: str,
+        dispatcher: CollectingDispatcher
+    ) -> List[Dict[Text, Any]]:
+        """
+        Procesa consultas específicas de forma OPTIMIZADA. (LEGACY - usar _memoria)
+
+        Usa los datos ya extraídos por analizar_consulta_unificado()
+        y templates para respuestas (sin llamar al LLM de nuevo).
+        """
+
+        print("→ Procesando como CONSULTA ESPECÍFICA (OPTIMIZADA)\n")
+
+        # Ya tenemos los datos extraídos del análisis unificado
+        nombre_asignatura = analisis.get("nombre_asignatura")
+        atributo = analisis.get("atributo_solicitado") or analisis.get("atributo") or "general"
+
+        if not nombre_asignatura:
+            dispatcher.utter_message(text="No pude identificar la asignatura. ¿Puedes especificarla?")
+            return []
+
+        # Buscar asignatura en BD
+        asignatura = self._buscar_asignatura(nombre_asignatura, contexto_centro, contexto_titulacion)
+
+        if not asignatura:
+            dispatcher.utter_message(
+                text=f"No encontré la asignatura '{nombre_asignatura}' en {contexto_centro}."
+            )
+            return []
+
+        # OPTIMIZACIÓN: Usar template en vez de LLM para respuesta
+        respuesta = respuesta_template(asignatura, atributo)
+        print(f"✅ Respuesta por template (sin LLM): {respuesta[:80]}...")
+
+        dispatcher.utter_message(text=respuesta)
+
+        return [
+            SlotSet("ultimo_codigo_consultado", asignatura["codigo"]),
+            SlotSet("ultimo_nombre_asignatura", asignatura["nombre"])
+        ]
+
+    def _procesar_consulta_especifica(
+        self,
+        pregunta: str,
+        contexto_centro: str,
+        contexto_titulacion: str,
+        dispatcher: CollectingDispatcher
+    ) -> List[Dict[Text, Any]]:
+        """Procesa consultas sobre una asignatura específica. (LEGACY)"""
+
+        print("→ Procesando como CONSULTA ESPECÍFICA\n")
+
+        # Extraer nombre y atributo
+        datos = extraer_datos_consulta_especifica(pregunta, contexto_centro, contexto_titulacion)
+
+        if "error" in datos:
+            dispatcher.utter_message(text=f"No pude entender tu consulta. {datos['error']}")
+            return []
+
+        nombre_asignatura = datos.get("nombre_asignatura")
+        atributo = datos.get("atributo_solicitado", "general")
+
+        if not nombre_asignatura:
+            dispatcher.utter_message(text="No pude identificar la asignatura. ¿Puedes especificarla?")
+            return []
+
+        # Buscar asignatura en BD
+        asignatura = self._buscar_asignatura(nombre_asignatura, contexto_centro, contexto_titulacion)
+
+        if not asignatura:
+            dispatcher.utter_message(
+                text=f"No encontré la asignatura '{nombre_asignatura}' en {contexto_centro}."
+            )
+            return []
+
+        # Formatear respuesta según atributo solicitado
+        respuesta = self._formatear_respuesta_especifica(asignatura, atributo, pregunta)
+        dispatcher.utter_message(text=respuesta)
+
+        return [
+            SlotSet("ultimo_codigo_consultado", asignatura["codigo"]),
+            SlotSet("ultimo_nombre_asignatura", asignatura["nombre"])
+        ]
+
+    def _procesar_consulta_general(
+        self,
+        pregunta: str,
+        contexto_centro: str,
+        contexto_titulacion: str,
+        dispatcher: CollectingDispatcher
+    ) -> List[Dict[Text, Any]]:
+        """Procesa consultas generales con filtros."""
+
+        print("→ Procesando como CONSULTA GENERAL\n")
+
+        # Generar SQL
+        resultado_sql = generar_sql_consulta_general(pregunta, contexto_centro, contexto_titulacion)
+
+        if "error" in resultado_sql:
+            dispatcher.utter_message(text=f"No pude procesar tu consulta. {resultado_sql['error']}")
+            return []
+
+        sql = resultado_sql.get("sql")
+        tipo_query = resultado_sql.get("tipo_query", "list")
+
+        print(f"🔍 EJECUTANDO SQL:")
+        print(f"   Query: {sql}")
+        print(f"   Tipo: {tipo_query}\n")
+
+        # Ejecutar SQL
+        resultados = self._ejecutar_sql(sql)
+
+        if resultados is None:
+            dispatcher.utter_message(text="Hubo un error al consultar la base de datos.")
+            return []
+
+        # Formatear respuesta
+        return self._formatear_respuesta_general(resultados, tipo_query, dispatcher, pregunta)
+
+    def _buscar_asignatura(
+        self,
+        nombre: str,
+        centro: str,
+        titulacion: str = None
+    ) -> Optional[Dict[str, Any]]:
+        """
+        Busca una asignatura por nombre o código usando búsqueda fuzzy + desambiguación con LLM.
+
+        Estrategia:
+        1. Buscar por código exacto
+        2. Buscar con LIKE
+        3. Si hay múltiples coincidencias o ninguna: usar fuzzy matching + LLM
+        """
+
+        if db_client is None:
+            return None
+
+        conn = db_client.get_connection()
+        if not conn:
+            return None
+
+        try:
+            cursor = conn.cursor()
+
+            # 1. Intentar búsqueda por código exacto
+            query = """
+                SELECT codigo, nombre, curso, creditos, duracion, tipologia
+                FROM asignaturas
+                WHERE codigo = %s AND activa = true
+            """
+            cursor.execute(query, (nombre,))
+            result = cursor.fetchone()
+
+            if result:
+                cursor.close()
+                return self._result_to_dict(result)
+
+            # 2. Buscar con LIKE
+            query = """
+                SELECT codigo, nombre, curso, creditos, duracion, tipologia
+                FROM asignaturas
+                WHERE LOWER(nombre) LIKE LOWER(%s) AND activa = true
+            """
+
+            if titulacion:
+                query += " AND titulacion_id = %s"
+                cursor.execute(query, (f"%{nombre}%", titulacion))
+            else:
+                cursor.execute(query, (f"%{nombre}%",))
+
+            resultados = cursor.fetchall()
+
+            # Si hay una sola coincidencia exacta, devolverla
+            if len(resultados) == 1:
+                cursor.close()
+                return self._result_to_dict(resultados[0])
+
+            # 3. Si hay múltiples o ninguna: fuzzy matching + LLM
+            # Obtener todas las asignaturas activas
+            query = """
+                SELECT codigo, nombre, curso, creditos, duracion, tipologia
+                FROM asignaturas
+                WHERE activa = true
+            """
+
+            if titulacion:
+                query += " AND titulacion_id = %s"
+                cursor.execute(query, (titulacion,))
+            else:
+                cursor.execute(query)
+
+            todas_asignaturas = cursor.fetchall()
+            cursor.close()
+
+            if not todas_asignaturas:
+                return None
+
+            # Convertir a diccionarios
+            asignaturas_dict = [self._result_to_dict(r) for r in todas_asignaturas]
+
+            # Usar fuzzy matching para encontrar las más similares
+            nombres_asignaturas = [a["nombre"] for a in asignaturas_dict]
+            codigos_asignaturas = [a["codigo"] for a in asignaturas_dict]
+
+            # Buscar por nombre
+            matches_nombre = process.extract(
+                nombre,
+                nombres_asignaturas,
+                scorer=fuzz.WRatio,
+                limit=5
+            )
+
+            # Buscar por código
+            matches_codigo = process.extract(
+                nombre,
+                codigos_asignaturas,
+                scorer=fuzz.ratio,
+                limit=5
+            )
+
+            # Combinar y obtener las mejores coincidencias
+            candidatos = []
+
+            for match, score, idx in matches_nombre:
+                if score >= 60:  # Umbral de similitud
+                    candidatos.append({
+                        "asignatura": asignaturas_dict[idx],
+                        "score": score,
+                        "tipo_match": "nombre"
+                    })
+
+            for match, score, idx in matches_codigo:
+                if score >= 70:
+                    # Evitar duplicados
+                    asig = asignaturas_dict[idx]
+                    if not any(c["asignatura"]["codigo"] == asig["codigo"] for c in candidatos):
+                        candidatos.append({
+                            "asignatura": asig,
+                            "score": score,
+                            "tipo_match": "codigo"
+                        })
+
+            # Ordenar por score
+            candidatos.sort(key=lambda x: x["score"], reverse=True)
+
+            if not candidatos:
+                print(f"⚠️ No se encontraron coincidencias fuzzy para '{nombre}'")
+                return None
+
+            # Si hay solo un candidato con buen score, devolverlo
+            if len(candidatos) == 1 or candidatos[0]["score"] > 90:
+                print(f"✅ Coincidencia fuzzy: {candidatos[0]['asignatura']['nombre']} (score: {candidatos[0]['score']})")
+                return candidatos[0]["asignatura"]
+
+            # Si hay múltiples candidatos: usar LLM para desambiguar
+            print(f"🤔 Múltiples coincidencias encontradas, usando LLM para desambiguar...")
+            mejor_match = self._desambiguar_con_llm(nombre, candidatos[:3])  # Top 3
+
+            return mejor_match
+
+        except Exception as e:
+            print(f"❌ Error buscando asignatura: {e}")
+            return None
+        finally:
+            if conn:
+                conn.close()
+
+    def _result_to_dict(self, result: tuple) -> Dict[str, Any]:
+        """Convierte un resultado de BD a diccionario."""
+        return {
+            "codigo": result[0],
+            "nombre": result[1],
+            "curso": result[2],
+            "creditos": result[3],
+            "duracion": result[4],
+            "tipologia": result[5]
+        }
+
+    def _desambiguar_con_llm(
+        self,
+        nombre_buscado: str,
+        candidatos: List[Dict[str, Any]]
+    ) -> Optional[Dict[str, Any]]:
+        """
+        Usa el LLM para elegir la asignatura correcta entre múltiples candidatos.
+
+        Args:
+            nombre_buscado: Nombre/código que el usuario buscó
+            candidatos: Lista de candidatos con sus scores
+
+        Returns:
+            La asignatura elegida o None
+        """
+
+        # Preparar lista de opciones
+        opciones = []
+        for i, cand in enumerate(candidatos, 1):
+            asig = cand["asignatura"]
+            opciones.append(
+                f"{i}. {asig['nombre']} ({asig['codigo']}) - {asig['curso']}º curso"
+            )
+
+        opciones_texto = "\n".join(opciones)
+
+        prompt = f"""Usuario buscó: "{nombre_buscado}"
+
+Opciones:
+{opciones_texto}
+
+Responde SOLO con UN NÚMERO del 1 al {len(candidatos)} (o 0 si ninguna coincide).
+
+Respuesta:"""
+
+        try:
+            salida = llamar_ollama(prompt, timeout=15)
+
+            if not salida:
+                raise Exception("LLM no devolvió respuesta")
+
+            # Limpiar respuesta y buscar el primer dígito
+            salida_limpia = salida.strip()
+
+            # Buscar cualquier dígito en la respuesta
+            match = re.search(r'(\d+)', salida_limpia)
+            if match:
+                num = int(match.group(1))
+
+                print(f"🔍 LLM devolvió: '{salida_limpia}' → número: {num}")
+
+                if num > 0 and num <= len(candidatos):
+                    asignatura_elegida = candidatos[num - 1]["asignatura"]
+                    print(f"✅ LLM eligió: {asignatura_elegida['nombre']}")
+                    return asignatura_elegida
+                elif num == 0:
+                    print(f"⚠️ LLM indicó que ninguna coincide (0)")
+                    return None
+
+        except Exception as e:
+            print(f"❌ Error en desambiguación LLM: {e}")
+
+        # Fallback: devolver el mejor score
+        print(f"⚠️ LLM no pudo desambiguar, usando mejor score")
+        return candidatos[0]["asignatura"]
+
+    def _ejecutar_sql(self, sql: str) -> Optional[List[Dict[str, Any]]]:
+        """Ejecuta una query SQL y devuelve resultados."""
+
+        if db_client is None:
+            return None
+
+        conn = db_client.get_connection()
+        if not conn:
+            return None
+
+        try:
+            cursor = conn.cursor()
+            cursor.execute(sql)
+
+            columnas = [desc[0] for desc in cursor.description] if cursor.description else []
+            filas = cursor.fetchall()
+
+            resultados = [dict(zip(columnas, fila)) for fila in filas]
+
+            cursor.close()
+            print(f"✅ Query ejecutada: {len(resultados)} resultados\n")
+
+            return resultados
+
+        except Exception as e:
+            print(f"❌ Error ejecutando SQL: {e}")
+            return None
+        finally:
+            conn.close()
+
+    def _formatear_respuesta_especifica(
+        self,
+        asignatura: Dict[str, Any],
+        atributo: str,
+        pregunta_original: str = ""
+    ) -> str:
+        """
+        Formatea la respuesta para una consulta específica usando LLM para naturalidad.
+        """
+
+        # Preparar datos según el atributo solicitado
+        if atributo == "creditos":
+            datos_respuesta = {
+                "nombre": asignatura["nombre"],
+                "creditos": asignatura["creditos"]
+            }
+        elif atributo == "tipo":
+            datos_respuesta = {
+                "nombre": asignatura["nombre"],
+                "tipologia": asignatura["tipologia"]
+            }
+        elif atributo == "curso":
+            datos_respuesta = {
+                "nombre": asignatura["nombre"],
+                "curso": asignatura["curso"]
+            }
+        elif atributo == "cuatrimestre" or atributo == "duracion":
+            datos_respuesta = {
+                "nombre": asignatura["nombre"],
+                "duracion": asignatura["duracion"]
+            }
+        elif atributo == "duracion":
+            datos_respuesta = {
+                "nombre": asignatura["nombre"],
+                "duracion": asignatura["duracion"]
+            }
+        else:  # general
+            datos_respuesta = asignatura
+
+        # Generar respuesta natural con LLM
+        return generar_respuesta_natural(
+            pregunta_usuario=pregunta_original,
+            datos=datos_respuesta,
+            tipo_respuesta="especifica"
+        )
+
+    def _formatear_respuesta_general(
+        self,
+        resultados: List[Dict[str, Any]],
+        tipo_query: str,
+        dispatcher: CollectingDispatcher,
+        pregunta_original: str = ""
+    ) -> List[Dict[Text, Any]]:
+        """
+        Formatea la respuesta para una consulta general.
+
+        OPTIMIZACIÓN: Usa templates por defecto, LLM solo si es necesario.
+        """
+
+        # COUNT query - SIEMPRE usar template (rápido)
+        if tipo_query == "count":
+            if resultados and "count" in resultados[0]:
+                count = resultados[0]["count"]
+            else:
+                count = len(resultados)
+
+            # Template rápido (sin LLM)
+            respuesta = respuesta_template_count(count, pregunta_original)
+            print(f"✅ Count por template: {respuesta}")
+            dispatcher.utter_message(text=respuesta)
+            return []
+
+        # Sin resultados
+        if not resultados:
+            dispatcher.utter_message(text="No encontré asignaturas que cumplan los criterios.")
+            return []
+
+        # Lista de resultados - usar template (rápido)
+        if len(resultados) <= 5:
+            respuesta = respuesta_template_lista(resultados, pregunta_original)
+            print(f"✅ Lista por template (sin LLM)")
+            dispatcher.utter_message(text=respuesta)
+            return []
+
+        # Muchos resultados: mostrar primeros 5
+        respuesta = respuesta_template_lista(resultados[:5], pregunta_original)
+        print(f"✅ Lista parcial por template (sin LLM)")
+        dispatcher.utter_message(text=respuesta)
+        dispatcher.utter_message(
+            text=f"Hay {len(resultados) - 5} más. ¿Quieres verlas todas?"
+        )
+
+        return [SlotSet("ultimos_resultados_asignaturas", resultados)]
+
+    def _formatear_lista_asignaturas(
+        self,
+        asignaturas: List[Dict[str, Any]],
+        total: int = None
+    ) -> str:
+        """Formatea una lista de asignaturas."""
+
+        lineas = []
+
+        if total and total > len(asignaturas):
+            lineas.append(f"📋 Mostrando {len(asignaturas)} de {total} asignaturas:\n")
+        else:
+            lineas.append(f"📋 Asignaturas encontradas ({len(asignaturas)}):\n")
+
+        for i, asig in enumerate(asignaturas, 1):
+            nombre = asig.get("nombre", "Sin nombre")
+            codigo = asig.get("codigo", "")
+            creditos = asig.get("creditos", "")
+            curso = asig.get("curso", "")
+
+            linea = f"{i}. **{nombre}**"
+
+            detalles = []
+            if codigo:
+                detalles.append(codigo)
+            if curso:
+                detalles.append(f"{curso}º")
+            if creditos:
+                detalles.append(f"{creditos} ECTS")
+
+            if detalles:
+                linea += f" ({', '.join(map(str, detalles))})"
+
+            lineas.append(linea)
+
+        return "\n".join(lineas)
+
+
+# =============================================================================
+# ACTIONS - MOSTRAR TODOS LOS RESULTADOS
+# =============================================================================
+
+class ActionMostrarTodasAsignaturas(Action):
+    """Muestra todos los resultados guardados de una consulta general previa."""
+
+    def name(self) -> Text:
+        return "action_mostrar_todas_asignaturas"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any]
+    ) -> List[Dict[Text, Any]]:
+
+        resultados = tracker.get_slot("ultimos_resultados_asignaturas")
+
+        if not resultados:
+            dispatcher.utter_message(text="No hay resultados previos para mostrar.")
+            return []
+
+        # Formatear todos los resultados
+        lineas = [f"📋 Todas las asignaturas ({len(resultados)}):\n"]
+
+        for i, asig in enumerate(resultados, 1):
+            nombre = asig.get("nombre", "Sin nombre")
+            codigo = asig.get("codigo", "")
+            creditos = asig.get("creditos", "")
+
+            linea = f"{i}. **{nombre}**"
+            if codigo:
+                linea += f" ({codigo})"
+            if creditos:
+                linea += f" - {creditos} ECTS"
+
+            lineas.append(linea)
+
+        dispatcher.utter_message(text="\n".join(lineas))
+
+        return [SlotSet("ultimos_resultados_asignaturas", None)]
+
+
+# =============================================================================
+# ACTIONS LEGACY (mantener compatibilidad)
+# =============================================================================
+
+class ActionConsultarAsignatura(Action):
+    """Action legacy - redirige a ActionConsultarAsignaturaDB"""
+
+    def name(self) -> Text:
+        return "action_consultar_asignatura"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any]
+    ) -> List[Dict[Text, Any]]:
+
+        # Delegar a la nueva action
+        action_db = ActionConsultarAsignaturaDB()
+        return action_db.run(dispatcher, tracker, domain)
 
 
 class ActionPreguntaSeguimiento(Action):
-    """
-    Action para responder preguntas de seguimiento sobre la última asignatura consultada.
-    
-    IMPORTANTE: Si detecta un nombre de asignatura en el mensaje, usa ESE nombre
-    en lugar del contexto. Esto maneja casos como "Redes es obligatoria?" que 
-    podrían clasificarse erróneamente como seguimiento.
-    """
-    
+    """Action legacy - mantener para compatibilidad"""
+
     def name(self) -> Text:
         return "action_pregunta_seguimiento"
-    
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        
-        # Obtener contexto académico (titulación)
-        titulacion = BotConfig.get_titulacion_activa(tracker)
-        
-        # Primero: verificar si hay un nombre mencionado en el mensaje
-        nombre_mencionado = next(tracker.get_latest_entity_values("nombre_asignatura"), None)
-        
-        # Si hay nombre, buscar ESA asignatura (no usar contexto)
-        if nombre_mencionado:
-            datos = buscar_asignatura(nombre=nombre_mencionado, titulacion_codigo=titulacion)
-            if datos:
-                atributo_raw = next(tracker.get_latest_entity_values("atributo_asignatura"), None)
-                atributo = normalizar_atributo(atributo_raw)
-                
-                if atributo:
-                    respuesta = generar_respuesta_atributo(atributo, datos)
-                else:
-                    respuesta = generar_respuesta_general(datos)
-                
-                dispatcher.utter_message(text=respuesta)
-                # Actualizar contexto con esta nueva asignatura
-                return [
-                    SlotSet("contexto_dominio", "asignaturas"),
-                    SlotSet("ultimo_codigo_consultado", datos['codigo']),
-                    SlotSet("ultimo_nombre_asignatura", datos['nombre'])
-                ]
-            else:
-                dispatcher.utter_message(
-                    text=f"No encontré ninguna asignatura llamada '{nombre_mencionado}'."
-                )
-                return [SlotSet("contexto_dominio", "asignaturas")]
-        
-        # Si no hay nombre, usar contexto de última consulta
-        ultimo_codigo = tracker.get_slot("ultimo_codigo_consultado")
-        
-        if not ultimo_codigo:
-            dispatcher.utter_message(
-                text="No tengo contexto de una asignatura anterior. "
-                     "Por favor, indica el código o nombre de la asignatura."
-            )
-            return [SlotSet("contexto_dominio", "asignaturas")]
-        
-        # Obtener atributo solicitado
-        atributo_raw = next(tracker.get_latest_entity_values("atributo_asignatura"), None)
-        atributo = normalizar_atributo(atributo_raw)
-        
-        if not atributo:
-            dispatcher.utter_message(
-                text="No entendí qué información quieres. ¿Créditos, curso, duración, departamento...?"
-            )
-            return [SlotSet("contexto_dominio", "asignaturas")]
-        
-        # Buscar asignatura con el código guardado (no filtramos por titulación, ya lo buscamos por código exacto)
-        datos = buscar_asignatura(codigo=ultimo_codigo)
-        
-        if not datos:
-            dispatcher.utter_message(text="No encontré la asignatura en la base de datos.")
-            return [SlotSet("contexto_dominio", "asignaturas")]
-        
-        # Generar respuesta
-        respuesta = generar_respuesta_atributo(atributo, datos)
-        if respuesta:
-            dispatcher.utter_message(text=respuesta)
-        else:
-            dispatcher.utter_message(text="No pude obtener esa información.")
-        
-        return [SlotSet("contexto_dominio", "asignaturas")]
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any]
+    ) -> List[Dict[Text, Any]]:
+
+        # Delegar a ActionConsultarAsignaturaDB que maneja todo
+        action_db = ActionConsultarAsignaturaDB()
+        return action_db.run(dispatcher, tracker, domain)
 
 
 class ActionConsultarAsignaturasFiltradas(Action):
-    """
-    Action para consultas con múltiples filtros usando NLU puro.
-    Extrae entidades: filtro_curso, filtro_tipologia, filtro_duracion, filtro_titulacion
-    Ejemplos:
-    - "¿Cuáles son las asignaturas obligatorias de primero?"
-    - "Dame las optativas de cuarto curso"
-    - "¿Qué asignaturas anuales hay?"
-    """
-    
-    # Mapeo de texto a valores de curso
-    CURSO_MAP = {
-        'primero': 1, 'primer': 1, '1': 1, '1º': 1, '1°': 1,
-        'segundo': 2, '2': 2, '2º': 2, '2°': 2,
-        'tercero': 3, 'tercer': 3, '3': 3, '3º': 3, '3°': 3,
-        'cuarto': 4, '4': 4, '4º': 4, '4°': 4,
-    }
-    
-    # Mapeo de texto a valores de tipología (claves sin acentos para normalizar)
-    # IMPORTANTE: Los valores deben coincidir EXACTAMENTE con los de la BD
-    TIPOLOGIA_MAP = {
-        'obligatoria': 'OBLIGATORIA',
-        'obligatorias': 'OBLIGATORIA',
-        'obligatorio': 'OBLIGATORIA',
-        'optativa': 'OPTATIVA',
-        'optativas': 'OPTATIVA',
-        'optativo': 'OPTATIVA',
-        'formacion basica': 'FORMACION_BASICA',
-        'basica': 'FORMACION_BASICA',
-        'basicas': 'FORMACION_BASICA',
-        'tfg': 'TFG',
-        'trabajo fin de grado': 'TFG',
-    }
-    
-    # Mapeo de texto a valores de duración
-    DURACION_MAP = {
-        'anual': 'A',
-        'anuales': 'A',
-        'primer cuatrimestre': 'C1',
-        'cuatrimestre 1': 'C1',
-        'c1': 'C1',
-        'segundo cuatrimestre': 'C2',
-        'cuatrimestre 2': 'C2',
-        'c2': 'C2',
-    }
-    
+    """Action legacy - redirige a ActionConsultarAsignaturaDB"""
+
     def name(self) -> Text:
         return "action_consultar_asignaturas_filtradas"
-    
-    def _normalizar_curso(self, valor: str) -> Optional[int]:
-        """Convierte texto de curso a número"""
-        if not valor:
-            return None
-        valor_lower = normalizar_texto(valor)
-        return self.CURSO_MAP.get(valor_lower)
-    
-    def _normalizar_tipologia(self, valor: str) -> Optional[str]:
-        """Convierte texto de tipología al valor de BD"""
-        if not valor:
-            return None
-        valor_lower = normalizar_texto(valor)
-        return self.TIPOLOGIA_MAP.get(valor_lower)
-    
-    def _extraer_filtros_del_texto(self, texto: str) -> Dict[str, Any]:
-        """
-        Fallback: extrae filtros directamente del texto si NLU no los detectó.
-        Esto maneja casos como 'asignaturas obligatorias' sin entidades.
-        """
-        filtros = {}
-        texto_norm = normalizar_texto(texto)
-        
-        # Buscar tipología en el texto
-        for key, value in self.TIPOLOGIA_MAP.items():
-            if key in texto_norm:
-                filtros['tipologia'] = value
-                break
-        
-        # Buscar curso en el texto
-        for key, value in self.CURSO_MAP.items():
-            if key in texto_norm:
-                filtros['curso'] = value
-                break
-        
-        # Buscar duración en el texto
-        for key, value in self.DURACION_MAP.items():
-            if key in texto_norm:
-                filtros['duracion'] = value
-                break
-        
-        return filtros
-    
-    def _normalizar_duracion(self, valor: str) -> Optional[str]:
-        """Convierte texto de duración al valor de BD"""
-        if not valor:
-            return None
-        valor_lower = normalizar_texto(valor)
-        return self.DURACION_MAP.get(valor_lower)
-    
-    def _construir_query(self, filtros: Dict[str, Any], titulacion_codigo: str = None) -> tuple:
-        """
-        Construye la query SQL de forma segura a partir de los filtros.
-        Retorna (query_string, params_list)
-        """
-        query = QUERY_ASIGNATURA_BASE + " WHERE a.activa = true"
-        params = []
-        
-        # Filtro por titulación (del contexto académico)
-        if titulacion_codigo:
-            query += " AND t.codigo = %s"
-            params.append(titulacion_codigo)
-        
-        if filtros.get('curso'):
-            query += " AND a.curso = %s"
-            params.append(filtros['curso'])
-        
-        if filtros.get('tipologia'):
-            query += " AND a.tipologia = %s"
-            params.append(filtros['tipologia'])
-        
-        if filtros.get('duracion'):
-            query += " AND a.duracion = %s"
-            params.append(filtros['duracion'])
-        
-        if filtros.get('titulacion'):
-            query += " AND LOWER(t.nombre) LIKE LOWER(%s)"
-            params.append(f"%{filtros['titulacion']}%")
-        
-        if filtros.get('creditos'):
-            query += " AND a.creditos = %s"
-            params.append(filtros['creditos'])
-        
-        # Ordenar por curso y nombre
-        query += " ORDER BY a.curso, a.nombre"
-        
-        # El límite se aplica dinámicamente, no aquí
-        
-        return query, params
-    
-    def _formatear_resultados(self, resultados: List[dict], filtros: Dict[str, Any], mostrar_todas: bool = False) -> str:
-        """Formatea resultados de forma legible"""
-        if len(resultados) == 0:
-            return "No encontré asignaturas que cumplan esos criterios."
-        
-        if len(resultados) == 1:
-            return generar_respuesta_general(resultados[0])
-        
-        # Construir descripción del filtro aplicado
-        desc_filtro = []
-        if filtros.get('tipologia'):
-            desc_filtro.append(formatear_tipologia(filtros['tipologia']).lower())
-        if filtros.get('curso'):
-            desc_filtro.append(f"de {filtros['curso']}º curso")
-        if filtros.get('duracion'):
-            desc_filtro.append(formatear_duracion(filtros['duracion']).lower())
-        if filtros.get('titulacion'):
-            desc_filtro.append(f"de {filtros['titulacion']}")
-        if filtros.get('creditos'):
-            desc_filtro.append(f"de {filtros['creditos']} créditos")
-        
-        filtro_texto = " ".join(desc_filtro) if desc_filtro else ""
-        
-        # Determinar cuántas mostrar
-        limite_mostrar = len(resultados) if mostrar_todas else 10
-        
-        # Múltiples resultados
-        respuesta = f"Encontré {len(resultados)} asignaturas {filtro_texto}:\n\n"
-        for i, datos in enumerate(resultados[:limite_mostrar], 1):
-            tipo = formatear_tipologia(datos['tipologia'])
-            duracion = formatear_duracion(datos['duracion'])
-            respuesta += f"{i}. {datos['nombre']} ({datos['creditos']} ECTS, {duracion})\n"
-        
-        if not mostrar_todas and len(resultados) > limite_mostrar:
-            respuesta += f"\n... y {len(resultados) - limite_mostrar} más. Di 'todas' para ver la lista completa."
-        
-        return respuesta
-    
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        
-        # Obtener contexto académico (titulación)
-        titulacion = BotConfig.get_titulacion_activa(tracker)
-        
-        # Detectar si el usuario quiere ver TODAS las asignaturas
-        mensaje = tracker.latest_message.get('text', '')
-        mensaje_lower = mensaje.lower()
-        mostrar_todas = any(palabra in mensaje_lower for palabra in ['todas', 'todos', 'completa', 'completo', 'listado completo'])
-        
-        # Detectar si quiere listar TODAS sin filtro específico
-        quiere_listar_todas = any(patron in mensaje_lower for patron in [
-            'cuales son las asignaturas',
-            'cuáles son las asignaturas', 
-            'todas las asignaturas',
-            'listado de asignaturas',
-            'lista de asignaturas',
-            'asignaturas de la carrera',
-            'asignaturas del grado',
-            'asignaturas que hay',
-            'qué asignaturas hay',
-            'que asignaturas hay',
-            'asignaturas enteras',
-            'asignaturas completas',
-        ])
-        
-        # Extraer entidades de filtro
-        filtro_curso_raw = next(tracker.get_latest_entity_values("filtro_curso"), None)
-        filtro_tipologia_raw = next(tracker.get_latest_entity_values("filtro_tipologia"), None)
-        filtro_duracion_raw = next(tracker.get_latest_entity_values("filtro_duracion"), None)
-        filtro_titulacion = next(tracker.get_latest_entity_values("filtro_titulacion"), None)
-        filtro_creditos_raw = next(tracker.get_latest_entity_values("filtro_creditos"), None)
-        
-        # Normalizar valores
-        filtros = {}
-        
-        curso = self._normalizar_curso(filtro_curso_raw)
-        if curso:
-            filtros['curso'] = curso
-        
-        tipologia = self._normalizar_tipologia(filtro_tipologia_raw)
-        if tipologia:
-            filtros['tipologia'] = tipologia
-        
-        duracion = self._normalizar_duracion(filtro_duracion_raw)
-        if duracion:
-            filtros['duracion'] = duracion
-        
-        if filtro_titulacion:
-            filtros['titulacion'] = filtro_titulacion
-        
-        # Convertir créditos a número
-        if filtro_creditos_raw:
-            try:
-                filtros['creditos'] = float(filtro_creditos_raw)
-            except ValueError:
-                pass
-        
-        # FALLBACK: Si NLU no extrajo entidades, buscar en el texto directamente
-        if not filtros:
-            mensaje = tracker.latest_message.get('text', '')
-            filtros = self._extraer_filtros_del_texto(mensaje)
-        
-        # Si no hay filtros PERO el usuario quiere listar todas, permitirlo
-        if not filtros and quiere_listar_todas:
-            filtros = {'listar_todas': True}  # Flag especial para listar todas
-        
-        # Verificar que hay al menos un filtro (o quiere listar todas)
-        if not filtros:
-            dispatcher.utter_message(
-                text="No detecté ningún filtro en tu consulta. "
-                     "Puedo buscar por curso (primero, segundo...), "
-                     "tipo (obligatorias, optativas, básicas), "
-                     "duración (anuales, primer/segundo cuatrimestre) "
-                     "o puedes pedir 'todas las asignaturas'."
-            )
-            return [SlotSet("contexto_dominio", "asignaturas")]
-        
-        # Ejecutar query
-        if db_client is None:
-            dispatcher.utter_message(text="Error de conexión a la base de datos.")
-            return []
-        
-        conn = db_client.get_connection()
-        if not conn:
-            dispatcher.utter_message(text="No pude conectar con la base de datos.")
-            return []
-        
-        try:
-            # Pasar el contexto de titulación a la query
-            query, params = self._construir_query(filtros, titulacion_codigo=titulacion)
-            cursor = conn.cursor()
-            cursor.execute(query, params)
-            rows = cursor.fetchall()
-            cursor.close()
-            
-            resultados = [parsear_resultado_asignatura(row) for row in rows]
-            respuesta = self._formatear_resultados(resultados, filtros, mostrar_todas)
-            dispatcher.utter_message(text=respuesta)
-            
-            # Si hay un solo resultado, guardar contexto
-            if len(resultados) == 1:
-                return [
-                    SlotSet("contexto_dominio", "asignaturas"),
-                    SlotSet("ultimo_codigo_consultado", resultados[0]['codigo']),
-                    SlotSet("ultimo_nombre_asignatura", resultados[0]['nombre'])
-                ]
-            
-            # Guardar los filtros usados para poder reutilizarlos con "todas"
-            return [
-                SlotSet("contexto_dominio", "asignaturas"),
-                SlotSet("ultimos_filtros_curso", filtros.get('curso')),
-                SlotSet("ultimos_filtros_tipologia", filtros.get('tipologia')),
-                SlotSet("ultimos_filtros_duracion", filtros.get('duracion')),
-                SlotSet("ultimos_filtros_creditos", filtros.get('creditos')),
-            ]
-            
-        except Exception as e:
-            print(f"Error en consulta filtrada: {e}")
-            dispatcher.utter_message(text="Ocurrió un error al buscar las asignaturas.")
-            return [SlotSet("contexto_dominio", "asignaturas")]
-        finally:
-            conn.close()
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any]
+    ) -> List[Dict[Text, Any]]:
+
+        # Delegar a la nueva action
+        action_db = ActionConsultarAsignaturaDB()
+        return action_db.run(dispatcher, tracker, domain)
 
 
 class ActionMostrarTodas(Action):
-    """
-    Action para mostrar todos los resultados de la última consulta filtrada.
-    Se activa cuando el usuario dice "todas", "ver más", "mostrar todas", etc.
-    Reutiliza los filtros guardados de la consulta anterior.
-    """
-    
+    """Action legacy - redirige a ActionMostrarTodasAsignaturas"""
+
     def name(self) -> Text:
         return "action_mostrar_todas"
-    
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        
-        # Recuperar filtros guardados
-        curso = tracker.get_slot("ultimos_filtros_curso")
-        tipologia = tracker.get_slot("ultimos_filtros_tipologia")
-        duracion = tracker.get_slot("ultimos_filtros_duracion")
-        creditos = tracker.get_slot("ultimos_filtros_creditos")
-        titulacion = BotConfig.get_titulacion_activa(tracker)
-        
-        # Verificar que hay filtros guardados
-        if not any([curso, tipologia, duracion, creditos]):
-            dispatcher.utter_message(
-                text="No tengo una consulta anterior para mostrar. "
-                     "Primero pregúntame por asignaturas de algún curso, tipo, etc."
-            )
-            return []
-        
-        # Reconstruir filtros
-        filtros = {}
-        if curso:
-            filtros['curso'] = curso
-        if tipologia:
-            filtros['tipologia'] = tipologia
-        if duracion:
-            filtros['duracion'] = duracion
-        if creditos:
-            filtros['creditos'] = creditos
-        
-        # Ejecutar query sin límite
-        if db_client is None:
-            dispatcher.utter_message(text="Error de conexión a la base de datos.")
-            return []
-        
-        conn = db_client.get_connection()
-        if not conn:
-            dispatcher.utter_message(text="No pude conectar con la base de datos.")
-            return []
-        
-        try:
-            # Construir query (reutilizo la lógica de ActionConsultarAsignaturasFiltradas)
-            query = QUERY_ASIGNATURA_BASE + " WHERE a.activa = true"
-            params = []
-            
-            if titulacion:
-                query += " AND t.codigo = %s"
-                params.append(titulacion)
-            
-            if filtros.get('curso'):
-                query += " AND a.curso = %s"
-                params.append(filtros['curso'])
-            
-            if filtros.get('tipologia'):
-                query += " AND a.tipologia = %s"
-                params.append(filtros['tipologia'])
-            
-            if filtros.get('duracion'):
-                query += " AND a.duracion = %s"
-                params.append(filtros['duracion'])
-            
-            if filtros.get('creditos'):
-                query += " AND a.creditos = %s"
-                params.append(filtros['creditos'])
-            
-            query += " ORDER BY a.curso, a.nombre"
-            
-            cursor = conn.cursor()
-            cursor.execute(query, params)
-            rows = cursor.fetchall()
-            cursor.close()
-            
-            resultados = [parsear_resultado_asignatura(row) for row in rows]
-            
-            if not resultados:
-                dispatcher.utter_message(text="No encontré asignaturas con esos criterios.")
-                return []
-            
-            # Formatear respuesta completa (sin límite)
-            lineas = [f"📚 **Lista completa ({len(resultados)} asignaturas):**\n"]
-            for i, asig in enumerate(resultados, 1):
-                duracion_fmt = {'A': 'Anual', 'C1': 'Primer Cuatrimestre', 'C2': 'Segundo Cuatrimestre'}.get(asig['duracion'], asig['duracion'])
-                lineas.append(f"{i}. {asig['nombre']} ({asig['creditos']} ECTS, {duracion_fmt})")
-            
-            dispatcher.utter_message(text="\n".join(lineas))
-            return [SlotSet("contexto_dominio", "asignaturas")]
-            
-        except Exception as e:
-            print(f"Error en mostrar todas: {e}")
-            dispatcher.utter_message(text="Ocurrió un error al buscar las asignaturas.")
-            return []
-        finally:
-            conn.close()
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any]
+    ) -> List[Dict[Text, Any]]:
+
+        # Delegar a la nueva action
+        action = ActionMostrarTodasAsignaturas()
+        return action.run(dispatcher, tracker, domain)

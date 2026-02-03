@@ -261,6 +261,82 @@ nlu:
     - [anuales](filtro_duracion) de [Ingeniería Informática](filtro_titulacion)
 
 # =============================================================================
+# CONSULTAR ASIGNATURA DB - Text-to-SQL dinámico (NUEVO)
+# Maneja TANTO consultas específicas COMO generales
+# La action clasifica automáticamente el tipo y genera SQL apropiado
+# =============================================================================
+- intent: consultar_asignatura_db
+  examples: |
+    - cuántos créditos tiene Redes
+    - cuántos créditos tiene Redes de Computadores
+    - qué es IS2
+    - Redes es obligatoria?
+    - en qué curso está Cálculo
+    - Programación es anual?
+    - cuánto dura Bases de Datos
+    - Estadística de qué curso es
+    - IS2 es optativa?
+    - qué tipo de asignatura es Álgebra
+    - Arquitectura cuántos créditos tiene
+    - en qué cuatrimestre está IA
+    - Inteligencia Artificial es obligatoria
+    - cuántos créditos tiene la asignatura de Redes
+    - asignaturas de primero
+    - asignaturas de primer curso
+    - dame las asignaturas de segundo
+    - qué asignaturas hay en tercero
+    - asignaturas de cuarto
+    - cuántas asignaturas hay en primero
+    - cuántas asignaturas del segundo cuatrimestre
+    - cuántas asignaturas del primer cuatrimestre del primer año
+    - asignaturas obligatorias de tercero
+    - dame las optativas de cuarto
+    - qué asignaturas optativas hay en segundo
+    - asignaturas de formación básica de primero
+    - cuántas obligatorias hay en tercero
+    - cuántas optativas de cuarto curso
+    - asignaturas del segundo cuatrimestre
+    - asignaturas del primer cuatri
+    - dame las asignaturas anuales
+    - cuántas asignaturas anuales hay
+    - asignaturas de 6 créditos
+    - asignaturas obligatorias con más de 6 créditos
+    - asignaturas del segundo cuatri del primer año
+    - cuántos créditos Redes
+    - Redes cuántos créditos
+    - IS2 qué es
+    - Cálculo en qué curso
+    - obligatorias de primero
+    - optativas cuarto
+    - asignaturas primero
+    - cuántas asignaturas segundo cuatri
+    - asignaturas segundo cuatrimestre primer curso
+    - y el cuarto
+    - y cuarto
+    - y en cuarto
+    - y en cuarto curso
+    - y el segundo
+    - y segundo
+    - y en segundo
+    - y el primero
+    - y primero
+    - y el tercero
+    - y tercero
+    - y las de cuarto
+    - y las de segundo
+    - y las de primero
+    - y las de tercero
+    - pues y el cuarto
+    - y el cuarto qué tal
+    - y el segundo cuatrimestre
+    - y el primer cuatrimestre
+    - y las optativas
+    - y las obligatorias
+    - y cuántas hay en segundo
+    - y en tercero cuántas
+    - y el cuarto cuántas tiene
+
+# =============================================================================
 # PEDIR MÁS RESULTADOS - Ver todos los resultados de la consulta anterior
 # =============================================================================
 - intent: pedir_mas_resultados
@@ -278,9 +354,33 @@ nlu:
     - ver el resto
     - el resto
     - sí, todas
+    - si, todas
+    - sii todas
+    - siii todas
     - sí, quiero ver todas
+    - si quiero ver todas
+    - siii quiero verlas todas
     - enséñame todas
     - todas por favor
+    - quiero verlas todas
+    - sí
+    - si
+    - sii
+    - siii
+    - siiii
+    - vale
+    - ok
+    - claro
+    - dale
+    - sí quiero
+    - si quiero
+    - siii quiero
+    - claro quiero
+    - vale quiero verlas
+    - si quiero verlas todas
+    - quiero verlas todas
+    - muéstramelas todas
+    - dame la lista completa
 
 # =============================================================================
 # REGEX - Patrones para mejorar extracción de entidades

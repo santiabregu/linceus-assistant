@@ -5,6 +5,9 @@ from typing import Any, Text, Dict, List
 
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
+from rasa_sdk.events import SlotSet
+from .llm_interpreter import interpretar_con_llama
+
 
 # Importar conexión a BD
 from .db import db_client
@@ -46,6 +49,41 @@ class ActionTestSupabase(Action):
         else:
             dispatcher.utter_message(text="Error al conectar con la base de datos")
         return []
+
+class ActionLLMPreprocess(Action):
+
+    def name(self) -> Text:
+        return "action_llm_preprocess"
+
+    def run(self, dispatcher, tracker, domain):
+        try:
+            mensaje = tracker.latest_message.get("text", "")
+
+            llm_data = interpretar_con_llama(mensaje)
+
+            eventos = []
+
+            # Verificar que llm_data sea un diccionario válido
+            if not isinstance(llm_data, dict):
+                print(f"LLM devolvió tipo inválido: {type(llm_data)}")
+                return []
+
+            nombre = llm_data.get("nombre_asignatura")
+            if nombre and isinstance(nombre, str):
+                eventos.append(SlotSet("llm_nombre_asignatura", nombre))
+
+            atributo = llm_data.get("atributo_asignatura")
+            if atributo and isinstance(atributo, str):
+                eventos.append(SlotSet("llm_atributo_asignatura", atributo))
+
+            intent = llm_data.get("intent")
+            if intent and isinstance(intent, str):
+                eventos.append(SlotSet("llm_intent", intent))
+
+            return eventos
+        except Exception as e:
+            print(f"Error en ActionLLMPreprocess: {e}")
+            return []
 
 
 # =============================================================================

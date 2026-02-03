@@ -15,6 +15,7 @@ intents:
   - mood_unhappy
   - bot_challenge
   - pedir_ayuda
+  - nlu_fallback
 
  
   # Contexto académico - Centro y titulación
@@ -23,6 +24,7 @@ intents:
 
   # Asignaturas
   - consultar_asignatura
+  - consultar_asignatura_db  # Text-to-SQL dinámico
   - pregunta_seguimiento
   - consultar_asignaturas_filtradas
   - pedir_mas_resultados
@@ -119,63 +121,35 @@ slots:
     mappings:
     - type: custom
 
+  # LLM - Slots para preprocesamiento con Ollama
+  llm_nombre_asignatura:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
 
-  # Asignaturas - Filtros para consultas múltiples
-  filtro_curso:
+  llm_intent:
     type: text
     influence_conversation: false
     mappings:
-    - type: from_entity
-      entity: filtro_curso
-  
-  filtro_tipologia:
-    type: text
-    influence_conversation: false
-    mappings:
-    - type: from_entity
-      entity: filtro_tipologia
-  
-  filtro_duracion:
-    type: text
-    influence_conversation: false
-    mappings:
-    - type: from_entity
-      entity: filtro_duracion
-  
-  filtro_titulacion:
-    type: text
-    influence_conversation: false
-    mappings:
-    - type: from_entity
-      entity: filtro_titulacion
-  
-  filtro_creditos:
-    type: text
-    influence_conversation: false
-    mappings:
-    - type: from_entity
-      entity: filtro_creditos
+    - type: custom
 
-  # Asignaturas - Últimos filtros usados (para "ver todas")
-  ultimos_filtros_curso:
+  llm_atributo_asignatura:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+
+
+  # Asignaturas - Resultados de consultas SQL dinámicas
+  ultimos_resultados_asignaturas:
     type: any
     influence_conversation: false
     mappings:
     - type: custom
-  
-  ultimos_filtros_tipologia:
-    type: text
-    influence_conversation: false
-    mappings:
-    - type: custom
-  
-  ultimos_filtros_duracion:
-    type: text
-    influence_conversation: false
-    mappings:
-    - type: custom
-  
-  ultimos_filtros_creditos:
+
+  # Asignaturas - Cache de asignaturas en memoria por sesión
+  asignaturas_memoria:
     type: any
     influence_conversation: false
     mappings:
@@ -217,18 +191,33 @@ responses:
   utter_ayuda:
   - text: |
       🎓 **Soy Linceus, tu asistente de la ETSII.** Puedo ayudarte con:
-      
+
       📚 **Asignaturas:**
       • "Háblame de Redes de Computadores"
       • "¿Cuántos créditos tiene IS2?"
       • "¿Qué asignaturas obligatorias hay en primero?"
       • "Dame las optativas de cuarto"
-      
+
       🎯 **Contexto académico:**
       • "¿Qué carrera estoy consultando?"
       • "Cambiar a Tecnologías Informáticas"
-      
+
       ¡Pregúntame lo que necesites!
+
+  utter_default:
+  - text: |
+      No estoy seguro de entender tu pregunta.
+
+      📚 Puedo ayudarte con información sobre **asignaturas**:
+      • Créditos ECTS
+      • Curso (1º, 2º, 3º, 4º)
+      • Tipo (obligatoria, optativa, formación básica)
+      • Cuatrimestre (anual, C1, C2)
+
+      Prueba preguntando:
+      • "¿Cuántos créditos tiene Redes?"
+      • "Dame las optativas de cuarto"
+      • "¿Qué asignaturas hay en primero?"
 
 
   # Asignaturas
@@ -255,6 +244,8 @@ responses:
 # ══════════════════════════════════════════════════════════════════════════════
 
 actions:
+  # LLM Preprocessing
+  - action_llm_preprocess
 
   # General / Debug
   - action_test_supabase
@@ -265,9 +256,11 @@ actions:
 
   # Asignaturas
   - action_consultar_asignatura
+  - action_consultar_asignatura_db  # Text-to-SQL dinámico
   - action_pregunta_seguimiento
   - action_consultar_asignaturas_filtradas
   - action_mostrar_todas
+  - action_mostrar_todas_asignaturas  # Muestra todos los resultados SQL
 
   # Profesores (futuro)
 

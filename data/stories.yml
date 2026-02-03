@@ -37,47 +37,41 @@ stories:
 # ASIGNATURAS - Consultas sobre asignaturas
 # ══════════════════════════════════════════════════════════════════════════════
 
-- story: consultar asignatura con saludo
-  steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: consultar_asignatura
-    entities:
-    - codigo_asignatura: "IS2"
-  - slot_was_set:
-    - codigo_asignatura: "IS2"
-  - action: action_consultar_asignatura
-  - intent: goodbye
-  - action: utter_goodbye
-
-- story: consultar asignatura por código
+# LEGACY: Consulta con action antigua
+- story: consultar asignatura legacy
   steps:
   - intent: consultar_asignatura
-    entities:
-    - codigo_asignatura: "2050001"
-  - slot_was_set:
-    - codigo_asignatura: "2050001"
   - action: action_consultar_asignatura
 
-- story: consultar asignatura por nombre
+# NUEVO: Text-to-SQL - Consulta específica
+- story: consulta específica text-to-sql
   steps:
-  - intent: consultar_asignatura
-    entities:
-    - nombre_asignatura: "Fundamentos de Programación"
-  - slot_was_set:
-    - nombre_asignatura: "Fundamentos de Programación"
-  - action: action_consultar_asignatura
+  - intent: consultar_asignatura_db
+  - action: action_consultar_asignatura_db
 
-- story: consulta asignatura con seguimiento
+# NUEVO: Text-to-SQL - Consulta general
+- story: consulta general asignaturas
   steps:
-  - intent: consultar_asignatura
-    entities:
-    - codigo_asignatura: "2050001"
-  - action: action_consultar_asignatura
+  - intent: consultar_asignatura_db
+  - action: action_consultar_asignatura_db
+
+# NUEVO: Text-to-SQL - Con seguimiento
+- story: consulta con seguimiento
+  steps:
+  - intent: consultar_asignatura_db
+  - action: action_consultar_asignatura_db
   - intent: pregunta_seguimiento
-    entities:
-    - atributo_asignatura: "créditos"
   - action: action_pregunta_seguimiento
+
+# NUEVO: Ver todos los resultados
+- story: mostrar todas las asignaturas
+  steps:
+  - intent: consultar_asignatura_db
+  - action: action_consultar_asignatura_db
+  - slot_was_set:
+    - ultimos_resultados_asignaturas: []
+  - intent: pedir_mas_resultados
+  - action: action_mostrar_todas_asignaturas
 
 # ══════════════════════════════════════════════════════════════════════════════
 # PROFESORES (futuro)
