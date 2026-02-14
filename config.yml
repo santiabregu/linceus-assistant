@@ -13,6 +13,11 @@ language: es
 pipeline:
   # Step 1: Tokenization - Breaking text into words/tokens
   - name: WhitespaceTokenizer
+
+  - name: LLMCommandGenerator
+    llm:
+      model: "ollama"
+      
   
   # Step 2: Pattern Recognition - For course codes, emails, etc.
   - name: RegexFeaturizer
