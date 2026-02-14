@@ -1,76 +1,63 @@
 version: "3.1"
 
 nlu:
+
 - intent: greet
   examples: |
     - hola
-    - buenos días
+    - buenos dias
     - buenas tardes
     - buenas noches
     - hey
-    - qué tal
+    - que tal
     - saludos
     - hola chatbot
-    - buen día
+    - buen dia
     - buenas
     - hola buenas
-    - qué hay
+    - que hay
     - ey
     - holaa
 
 - intent: goodbye
   examples: |
-    - adiós
+    - adios
     - hasta luego
     - nos vemos
     - chao
     - bye
     - hasta la vista
-    - que tengas buen día
+    - que tengas buen dia
     - hasta pronto
     - me voy
-    - gracias y adiós
+    - gracias y adios
     - eso es todo
-    - ya está
-    - nada más gracias
+    - ya esta
+    - nada mas gracias
     - hasta otra
 
 - intent: affirm
   examples: |
-    - sí
     - si
     - sii
     - siii
-    - siiii
-    - see
-    - sep
-    - yes
     - claro
-    - claro que sí
+    - claro que si
     - por supuesto
     - exacto
     - correcto
-    - afirmativo
     - vale
     - ok
     - okay
-    - está bien
+    - esta bien
     - de acuerdo
     - eso es
-    - efectivamente
-    - así es
     - dale
-    - va
     - perfecto
     - genial
-    - obvio
-    - sí por favor
     - si por favor
-    - sí quiero
     - si quiero
-    - siii quiero
     - claro quiero
-    - vale quiero
 
 - intent: deny
   examples: |
@@ -79,70 +66,65 @@ nlu:
     - para nada
     - no creo
     - no me parece
-    - no es así
+    - no es asi
     - negativo
-    - no, gracias
-    - qué va
+    - no gracias
+    - que va
     - en absoluto
 
 - intent: mood_great
   examples: |
     - perfecto
     - genial
-    - fantástico
+    - fantastico
     - me siento genial
     - estoy muy bien
     - excelente
     - maravilloso
-    - súper bien
-    - increíble
+    - super bien
+    - increible
     - todo bien
 
 - intent: mood_unhappy
   examples: |
-    - mi día fue horrible
+    - mi dia fue horrible
     - estoy triste
     - no me siento bien
     - estoy decepcionado
     - muy triste
     - no muy bien
     - fatal
-    - mal día
+    - mal dia
     - regular
-    - podría estar mejor
+    - podria estar mejor
 
 - intent: bot_challenge
   examples: |
     - eres un bot?
     - eres humano?
     - estoy hablando con un bot?
-    - eres una máquina?
-    - qué eres?
+    - eres una maquina?
+    - que eres?
     - eres real?
     - eres una persona?
-    - con quién hablo?
+    - con quien hablo?
 
 - intent: pedir_ayuda
   examples: |
-    - qué puedes hacer
     - que puedes hacer
-    - qué sabes hacer
-    - qué información tienes
+    - que sabes hacer
     - que informacion tienes
-    - qué te puedo preguntar
     - que te puedo preguntar
     - ayuda
     - help
-    - cómo funciona esto
     - como funciona esto
-    - en qué me puedes ayudar
-    - para qué sirves
-    - qué funciones tienes
-    - cuáles son tus funciones
-    - qué cosas puedes hacer
+    - en que me puedes ayudar
+    - para que sirves
+    - que funciones tienes
+    - cuales son tus funciones
+    - que cosas puedes hacer
     - dame ayuda
     - necesito ayuda
-    - no sé qué preguntarte
-    - qué opciones tengo
-    - menú
+    - no se que preguntarte
+    - que opciones tengo
     - menu

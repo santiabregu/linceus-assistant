@@ -1,29 +1,23 @@
 version: "3.1"
 
 nlu:
-# =============================================================================
-# CAMBIO DE CONTEXTO ACADÉMICO (centro/titulación)
-# Ejemplos mínimos - no es prioridad, usamos defaults
-# =============================================================================
+
 - intent: cambiar_contexto_academico
   examples: |
-    - quiero ver asignaturas de [Ingeniería del Software](nombre_titulacion)
-    - cambiar a [Tecnologías Informáticas](nombre_titulacion)
-    - cambiar carrera a [Ingeniería de Computadores](nombre_titulacion)
+    - quiero ver asignaturas de [Ingenieria del Software](nombre_titulacion)
+    - cambiar a [Tecnologias Informaticas](nombre_titulacion)
+    - cambiar carrera a [Ingenieria de Computadores](nombre_titulacion)
     - ver asignaturas de [TI](nombre_titulacion)
-    - cambiar a la carrera de [Sistemas de Información](nombre_titulacion)
+    - cambiar a la carrera de [Sistemas de Informacion](nombre_titulacion)
     - quiero consultar [otra carrera](nombre_titulacion)
-    - cambiar de titulación
+    - cambiar de titulacion
     - ver otra carrera
 
-# =============================================================================
-# CONSULTAR CONTEXTO ACTUAL
-# =============================================================================
 - intent: consultar_contexto_academico
   examples: |
-    - qué carrera estoy consultando
-    - de qué titulación me estás dando información
-    - qué centro es
-    - de qué carrera son estas asignaturas
-    - cuál es mi carrera actual
-    - en qué titulación estoy
+    - que carrera estoy consultando
+    - de que titulacion me estas dando informacion
+    - que centro es
+    - de que carrera son estas asignaturas
+    - cual es mi carrera actual
+    - en que titulacion estoy

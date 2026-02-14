@@ -1,316 +1,68 @@
 version: "3.1"
 
 nlu:
-# =============================================================================
-# CONSULTA DE ASIGNATURA ESPECÍFICA - Singular, con código o nombre
-# Patrón: "la asignatura X", "sobre X", código de 7 dígitos
-# =============================================================================
-- intent: consultar_asignatura
-  examples: |
-    - quiero información sobre [2050001](codigo_asignatura)
-    - dime sobre la asignatura [2050024](codigo_asignatura)
-    - qué puedes decirme de [2050010](codigo_asignatura)
-    - información de [2050046](codigo_asignatura)
-    - consultar [2050030](codigo_asignatura)
-    - buscar asignatura [2050048](codigo_asignatura)
-    - datos de la asignatura [2050039](codigo_asignatura)
-    - cuéntame sobre [2050051](codigo_asignatura)
-    - necesito info de [2050020](codigo_asignatura)
-    - dame información de [2050015](codigo_asignatura)
-    - qué sabes de [2050033](codigo_asignatura)
-    - háblame de [2050042](codigo_asignatura)
-    - [2050001](codigo_asignatura)
-    - la asignatura [2050024](codigo_asignatura)
-    - quiero saber de [2050010](codigo_asignatura)
-    - info [2050046](codigo_asignatura)
-    - información sobre la asignatura con código [2050001](codigo_asignatura)
-    - dame los datos de la asignatura [2050024](codigo_asignatura)
-    - cuéntame todo sobre [2050010](codigo_asignatura)
-    - qué información tienes de [2050046](codigo_asignatura)
-    - información sobre [Fundamentos de Programación](nombre_asignatura)
-    - dime sobre la asignatura [Ingeniería de Requisitos](nombre_asignatura)
-    - qué sabes de [Diseño y Pruebas](nombre_asignatura)
-    - buscar [Introducción a la Ingeniería del Software](nombre_asignatura)
-    - datos de [Análisis y Diseño de Datos y Algoritmos](nombre_asignatura)
-    - información de la asignatura [Bases de Datos](nombre_asignatura)
-    - háblame de [Redes de Computadores](nombre_asignatura)
-    - quiero información de [Sistemas Operativos](nombre_asignatura)
-    - qué información tienes de [Arquitectura de Computadores](nombre_asignatura)
-    - consultar asignatura [Matemática Discreta](nombre_asignatura)
-    - buscar asignatura [Cálculo Infinitesimal](nombre_asignatura)
-    - dame info de [Álgebra Lineal](nombre_asignatura)
-    - cuéntame sobre [Estadística](nombre_asignatura)
-    - necesito info de [Gestión de Proyectos](nombre_asignatura)
-    - cuántos [créditos](atributo_asignatura) tiene [Fundamentos de Programación](nombre_asignatura)
-    - en qué [curso](atributo_asignatura) está [Ingeniería de Requisitos](nombre_asignatura)
-    - qué [departamento](atributo_asignatura) imparte [Diseño y Pruebas](nombre_asignatura)
-    - [créditos](atributo_asignatura) de [Bases de Datos](nombre_asignatura)
-    - [duración](atributo_asignatura) de [Redes de Computadores](nombre_asignatura)
-    - [Redes](nombre_asignatura) es [optativa](atributo_asignatura)?
-    - [Gestión de Proyectos](nombre_asignatura) es [optativa](atributo_asignatura)?
-    - de qué [curso](atributo_asignatura) es [Sistemas Operativos](nombre_asignatura)
-    - cuántos [créditos](atributo_asignatura) tiene [2050001](codigo_asignatura)
-    - qué [créditos](atributo_asignatura) tiene la asignatura [2050024](codigo_asignatura)
-    - [créditos](atributo_asignatura) de [2050010](codigo_asignatura)
-    - cuántos [créditos](atributo_asignatura) tiene la asignatura con código [2050001](codigo_asignatura)
-    - dime los [créditos](atributo_asignatura) de [2050024](codigo_asignatura)
-    - en qué [curso](atributo_asignatura) está [2050001](codigo_asignatura)
-    - qué [curso](atributo_asignatura) es [2050046](codigo_asignatura)
-    - [curso](atributo_asignatura) de la asignatura [2050030](codigo_asignatura)
-    - de qué [curso](atributo_asignatura) es [2050001](codigo_asignatura)
-    - en qué [año](atributo_asignatura) se da [2050024](codigo_asignatura)
-    - cuánto [dura](atributo_asignatura) [2050001](codigo_asignatura)
-    - qué [duración](atributo_asignatura) tiene [2050024](codigo_asignatura)
-    - la asignatura [2050010](codigo_asignatura) es [anual](atributo_asignatura)
-    - [2050046](codigo_asignatura) es de qué [cuatrimestre](atributo_asignatura)
-    - [duración](atributo_asignatura) de [2050030](codigo_asignatura)
-    - es [anual](atributo_asignatura) [2050001](codigo_asignatura)
-    - qué [tipo](atributo_asignatura) de asignatura es [2050001](codigo_asignatura)
-    - [2050024](codigo_asignatura) es [obligatoria](atributo_asignatura)
-    - es [optativa](atributo_asignatura) [2050010](codigo_asignatura)
-    - [2050046](codigo_asignatura) es [formación básica](atributo_asignatura)
-    - la [tipología](atributo_asignatura) de [2050030](codigo_asignatura)
-    - qué [departamento](atributo_asignatura) imparte [2050001](codigo_asignatura)
-    - [departamento](atributo_asignatura) de [2050024](codigo_asignatura)
-    - quién da [2050010](codigo_asignatura)
-    - qué [departamento](atributo_asignatura) da la asignatura [2050046](codigo_asignatura)
-    - de qué [titulación](atributo_asignatura) es [2050010](codigo_asignatura)
-    - [carrera](atributo_asignatura) de [2050046](codigo_asignatura)
-    - a qué [grado](atributo_asignatura) pertenece [2050001](codigo_asignatura)
-    - [titulación](atributo_asignatura) de la asignatura [2050024](codigo_asignatura)
-    - cómo se [llama](atributo_asignatura) [2050001](codigo_asignatura)
-    - [nombre](atributo_asignatura) de la asignatura [2050024](codigo_asignatura)
-    - cuál es el [nombre](atributo_asignatura) de [2050010](codigo_asignatura)
-    - la asignatura de [introduccion a la matematica discreta](nombre_asignatura) es [obligatoria](atributo_asignatura)?
-    - [Matemática Discreta](nombre_asignatura) es [obligatoria](atributo_asignatura)?
-    - [Álgebra](nombre_asignatura) es [formación básica](atributo_asignatura)?
-    - la asignatura [Redes](nombre_asignatura) es [obligatoria](atributo_asignatura)?
-    - dame toda la info de la asignatura [algebra lineal](nombre_asignatura)
-    - dame toda la info de [Fundamentos de Programación](nombre_asignatura)
-    - toda la información de [Bases de Datos](nombre_asignatura)
-    - [Redes](nombre_asignatura) es [obligatoria](atributo_asignatura)?
-    - [Redes de Computadores](nombre_asignatura) es [optativa](atributo_asignatura)?
-    - [Fundamentos de Programación](nombre_asignatura) es [anual](atributo_asignatura)?
-    - [Bases de Datos](nombre_asignatura) es de [formación básica](atributo_asignatura)?
-    - [Sistemas Operativos](nombre_asignatura) es [obligatoria](atributo_asignatura)?
-    - [Cálculo](nombre_asignatura) es [básica](atributo_asignatura)?
-    - [Estadística](nombre_asignatura) es [optativa](atributo_asignatura)?
-    - [Arquitectura](nombre_asignatura) es del [primer cuatrimestre](atributo_asignatura)?
-    - [Programación](nombre_asignatura) es [anual](atributo_asignatura)?
-    - [Ingeniería de Requisitos](nombre_asignatura) es [obligatoria](atributo_asignatura)?
-    - [Diseño y Pruebas](nombre_asignatura) es [optativa](atributo_asignatura)?
-    - [Gestión de Proyectos](nombre_asignatura) es [obligatoria](atributo_asignatura)?
-    - cuántos [créditos](atributo_asignatura) tiene [Redes](nombre_asignatura)?
-    - de qué [curso](atributo_asignatura) es [Redes](nombre_asignatura)?
-    - [Redes](nombre_asignatura) tiene cuántos [créditos](atributo_asignatura)?
-    - [Redes](nombre_asignatura) de qué [curso](atributo_asignatura) es?
-    - [Bases de Datos](nombre_asignatura) cuánto [dura](atributo_asignatura)?
-    - en qué [curso](atributo_asignatura) está [Estadística](nombre_asignatura)?
-    - qué [tipo](atributo_asignatura) es [Álgebra](nombre_asignatura)?
-    - [Criptografía](nombre_asignatura) es [optativa](atributo_asignatura)?
-    - la asignatura [Criptografía](nombre_asignatura) cuántos [créditos](atributo_asignatura) tiene?
-    - [Criptografía](nombre_asignatura) de qué [curso](atributo_asignatura) es?
 
-# =============================================================================
-# PREGUNTA DE SEGUIMIENTO - Solo atributo, SIN nombre/código
-# Requiere contexto previo (ultimo_codigo_consultado)
-# Patrón: verbos sin sujeto claro, pronombres (la, esa, esta)
-# =============================================================================
-- intent: pregunta_seguimiento
+- intent: consultar_asignatura_db
   examples: |
-    - y los [créditos](atributo_asignatura)?
-    - [créditos](atributo_asignatura)
-    - cuántos [créditos](atributo_asignatura) tiene
-    - dime los [créditos](atributo_asignatura)
-    - y el [curso](atributo_asignatura)?
-    - [curso](atributo_asignatura)
-    - de qué [curso](atributo_asignatura) es
-    - en qué [año](atributo_asignatura) está
-    - y la [duración](atributo_asignatura)?
-    - [duración](atributo_asignatura)
-    - cuánto [dura](atributo_asignatura)
-    - es [anual](atributo_asignatura)?
-    - de qué [cuatrimestre](atributo_asignatura) es
-    - y el [departamento](atributo_asignatura)?
-    - [departamento](atributo_asignatura)
-    - quién la imparte
-    - qué [departamento](atributo_asignatura) la da
-    - y la [titulación](atributo_asignatura)?
-    - de qué [carrera](atributo_asignatura) es
-    - a qué [grado](atributo_asignatura) pertenece
-    - es [optativa](atributo_asignatura)?
-    - es [obligatoria](atributo_asignatura)?
-    - es [formación básica](atributo_asignatura)?
-    - qué [tipo](atributo_asignatura) es
-    - cómo se [llama](atributo_asignatura)
-    - y el [nombre](atributo_asignatura)?
-    - [nombre](atributo_asignatura)
-    - esa es [obligatoria](atributo_asignatura)?
-    - esa cuántos [créditos](atributo_asignatura) tiene?
-    - y esa de qué [curso](atributo_asignatura) es?
-    - cuéntame más sobre los [créditos](atributo_asignatura)
-    - qué más sabes de esa?
-    - dime su [duración](atributo_asignatura)
-    - y su [departamento](atributo_asignatura)?
-
-# =============================================================================
-# CONSULTA SOLO CON NOMBRE (sin frase introductoria)
-# =============================================================================
-- intent: consultar_asignatura
-  examples: |
-    - [Fundamentos de Programación](nombre_asignatura)
+    - cuantos creditos tiene [Redes](nombre_asignatura)
+    - cuantos creditos tiene [Redes de Computadores](nombre_asignatura)
+    - que es [IS2](nombre_asignatura)
+    - [Redes](nombre_asignatura) es obligatoria?
+    - en que curso esta [Calculo](nombre_asignatura)
+    - [Programacion](nombre_asignatura) es anual?
+    - cuanto dura [Bases de Datos](nombre_asignatura)
+    - [Estadistica](nombre_asignatura) de que curso es
+    - [IS2](nombre_asignatura) es optativa?
+    - que tipo de asignatura es [Algebra](nombre_asignatura)
+    - [Arquitectura](nombre_asignatura) cuantos creditos tiene
+    - en que cuatrimestre esta [IA](nombre_asignatura)
+    - [Inteligencia Artificial](nombre_asignatura) es obligatoria
+    - cuantos creditos tiene la asignatura de [Redes](nombre_asignatura)
+    - informacion sobre [Fundamentos de Programacion](nombre_asignatura)
+    - dime sobre la asignatura [Ingenieria de Requisitos](nombre_asignatura)
+    - que sabes de [Diseno y Pruebas](nombre_asignatura)
+    - buscar [Introduccion a la Ingenieria del Software](nombre_asignatura)
+    - datos de [Analisis y Diseno de Datos y Algoritmos](nombre_asignatura)
+    - hablame de [Redes de Computadores](nombre_asignatura)
+    - quiero informacion de [Sistemas Operativos](nombre_asignatura)
+    - consultar asignatura [Matematica Discreta](nombre_asignatura)
+    - dame info de [Algebra Lineal](nombre_asignatura)
+    - cuentame sobre [Estadistica](nombre_asignatura)
+    - necesito info de [Gestion de Proyectos](nombre_asignatura)
     - [Fundamentos de Programacion](nombre_asignatura)
-    - [Criptografía](nombre_asignatura)
     - [Criptografia](nombre_asignatura)
     - [Bases de Datos](nombre_asignatura)
     - [Redes](nombre_asignatura)
-    - [Redes de Computadores](nombre_asignatura)
-    - [Ingeniería de Requisitos](nombre_asignatura)
-    - [Diseño y Pruebas](nombre_asignatura)
-    - [Sistemas Operativos](nombre_asignatura)
-    - [Matemática Discreta](nombre_asignatura)
-    - [Álgebra](nombre_asignatura)
-    - [Estadística](nombre_asignatura)
-    - la asignatura [Fundamentos de Programación](nombre_asignatura)
-    - la asignatura [Criptografía](nombre_asignatura)
-    - asignatura [Redes de Computadores](nombre_asignatura)
-    - y [Programación](nombre_asignatura)?
-    - y [Criptografía](nombre_asignatura)?
-    - qué hay de [Bases de Datos](nombre_asignatura)?
-    - y [Fundamentos de Programación](nombre_asignatura) cuántos [créditos](atributo_asignatura) tiene?
-    - y [Redes](nombre_asignatura) de qué [curso](atributo_asignatura) es?
-    - y [Estadística](nombre_asignatura) es [obligatoria](atributo_asignatura)?
+    - la asignatura [Fundamentos de Programacion](nombre_asignatura)
+    - y [Programacion](nombre_asignatura)?
+    - y [Criptografia](nombre_asignatura)?
+    - que hay de [Bases de Datos](nombre_asignatura)?
     - y sobre [Bases de Datos](nombre_asignatura)?
-    - ahora dime de [Criptografía](nombre_asignatura)
-    - y qué sabes de [Álgebra](nombre_asignatura)?
-    - pues y [Diseño y Pruebas](nombre_asignatura)?
-
-# =============================================================================
-# CONSULTAS FILTRADAS (PLURAL) - Múltiples asignaturas con criterios
-# Patrón clave: "asignaturas" (plural), "cuáles son", "qué...hay", "listar"
-# Usa entidades de Rasa para extraer filtros de forma estructurada
-# =============================================================================
-- intent: consultar_asignaturas_filtradas
-  examples: |
-    - cuáles son las asignaturas [obligatorias](filtro_tipologia)
-    - dame las asignaturas [obligatorias](filtro_tipologia) de [primero](filtro_curso)
-    - qué asignaturas [obligatorias](filtro_tipologia) hay en [primer](filtro_curso) curso
-    - las [obligatorias](filtro_tipologia) de [1º](filtro_curso)
-    - asignaturas [obligatorias](filtro_tipologia)
-    - cuáles son las [optativas](filtro_tipologia)
-    - dame las asignaturas [optativas](filtro_tipologia)
-    - qué [optativas](filtro_tipologia) hay
-    - [optativas](filtro_tipologia) de [cuarto](filtro_curso)
-    - [optativas](filtro_tipologia) de [4º](filtro_curso) curso
-    - lista de [optativas](filtro_tipologia)
-    - muéstrame las [optativas](filtro_tipologia)
-    - cuáles son las asignaturas de [formación básica](filtro_tipologia)
-    - asignaturas [básicas](filtro_tipologia)
-    - asignaturas de [formación básica](filtro_tipologia)
-    - qué asignaturas son de [formación básica](filtro_tipologia)
-    - qué asignaturas son [básicas](filtro_tipologia)
-    - qué asignaturas son [obligatorias](filtro_tipologia)
-    - qué asignaturas son [optativas](filtro_tipologia)
-    - [formación básica](filtro_tipologia) de [primero](filtro_curso)
-    - [básicas](filtro_tipologia) de [primer](filtro_curso) curso
-    - qué asignaturas hay en [primero](filtro_curso)
-    - asignaturas de [primer](filtro_curso) curso
-    - asignaturas de [1º](filtro_curso)
-    - quiero información sobre las asignaturas del [primer](filtro_curso) curso
-    - información sobre las asignaturas de [primero](filtro_curso)
-    - dame las asignaturas de [segundo](filtro_curso)
-    - qué hay en [2º](filtro_curso) curso
-    - asignaturas del [segundo](filtro_curso) curso
-    - asignaturas de [tercero](filtro_curso)
-    - asignaturas de [tercer](filtro_curso) curso
-    - asignaturas de [3º](filtro_curso)
-    - asignaturas de [cuarto](filtro_curso)
-    - asignaturas de [cuarto](filtro_curso) curso
-    - asignaturas de [4º](filtro_curso)
-    - qué asignaturas [anuales](filtro_duracion) hay
-    - asignaturas [anuales](filtro_duracion)
-    - cuáles son las [anuales](filtro_duracion)
-    - [anuales](filtro_duracion) de [primero](filtro_curso)
-    - asignaturas del [primer cuatrimestre](filtro_duracion)
-    - asignaturas de [primer cuatrimestre](filtro_duracion)
-    - qué hay en el [segundo cuatrimestre](filtro_duracion)
-    - asignaturas del [segundo cuatrimestre](filtro_duracion) de [tercero](filtro_curso)
-    - dame las [obligatorias](filtro_tipologia) [anuales](filtro_duracion)
-    - [optativas](filtro_tipologia) del [segundo cuatrimestre](filtro_duracion)
-    - [formación básica](filtro_tipologia) del [primer cuatrimestre](filtro_duracion)
-    - cuántas asignaturas [obligatorias](filtro_tipologia) hay en [segundo](filtro_curso)
-    - cuántas [optativas](filtro_tipologia) hay en [cuarto](filtro_curso)
-    - listar asignaturas de [primero](filtro_curso)
-    - todas las asignaturas de [primer](filtro_curso) curso
-    - qué asignaturas puedo cursar en [segundo](filtro_curso)
-    - asignaturas de [6](filtro_creditos) créditos
-    - asignaturas de [12](filtro_creditos) créditos
-    - asignaturas que tienen [6](filtro_creditos) créditos
-    - cuáles son las asignaturas de [6](filtro_creditos) créditos
-    - qué asignaturas tienen [12](filtro_creditos) créditos
-    - [obligatorias](filtro_tipologia) de [6](filtro_creditos) créditos
-    - [optativas](filtro_tipologia) de [primero](filtro_curso) con [6](filtro_creditos) créditos
-    - opciones de [optativas](filtro_tipologia)
-    - qué [optativas](filtro_tipologia) puedo elegir
-    - asignaturas de [Ingeniería del Software](filtro_titulacion)
-    - [optativas](filtro_tipologia) de [Ingeniería Informática](filtro_titulacion)
-    - asignaturas de [primero](filtro_curso) de [Ingeniería del Software](filtro_titulacion)
-    - [obligatorias](filtro_tipologia) de [segundo](filtro_curso) de [Software](filtro_titulacion)
-    - asignaturas del grado en [Ingeniería Informática](filtro_titulacion)
-    - qué asignaturas tiene [Ingeniería del Software](filtro_titulacion)
-    - [anuales](filtro_duracion) de [Ingeniería Informática](filtro_titulacion)
-
-# =============================================================================
-# CONSULTAR ASIGNATURA DB - Text-to-SQL dinámico (NUEVO)
-# Maneja TANTO consultas específicas COMO generales
-# La action clasifica automáticamente el tipo y genera SQL apropiado
-# =============================================================================
-- intent: consultar_asignatura_db
-  examples: |
-    - cuántos créditos tiene Redes
-    - cuántos créditos tiene Redes de Computadores
-    - qué es IS2
-    - Redes es obligatoria?
-    - en qué curso está Cálculo
-    - Programación es anual?
-    - cuánto dura Bases de Datos
-    - Estadística de qué curso es
-    - IS2 es optativa?
-    - qué tipo de asignatura es Álgebra
-    - Arquitectura cuántos créditos tiene
-    - en qué cuatrimestre está IA
-    - Inteligencia Artificial es obligatoria
-    - cuántos créditos tiene la asignatura de Redes
+    - ahora dime de [Criptografia](nombre_asignatura)
+    - y que sabes de [Algebra](nombre_asignatura)?
+    - pues y [Diseno y Pruebas](nombre_asignatura)?
     - asignaturas de primero
     - asignaturas de primer curso
     - dame las asignaturas de segundo
-    - qué asignaturas hay en tercero
+    - que asignaturas hay en tercero
     - asignaturas de cuarto
-    - cuántas asignaturas hay en primero
-    - cuántas asignaturas del segundo cuatrimestre
-    - cuántas asignaturas del primer cuatrimestre del primer año
+    - cuantas asignaturas hay en primero
+    - cuantas asignaturas del segundo cuatrimestre
     - asignaturas obligatorias de tercero
     - dame las optativas de cuarto
-    - qué asignaturas optativas hay en segundo
-    - asignaturas de formación básica de primero
-    - cuántas obligatorias hay en tercero
-    - cuántas optativas de cuarto curso
+    - que asignaturas optativas hay en segundo
+    - asignaturas de formacion basica de primero
+    - cuantas obligatorias hay en tercero
+    - cuantas optativas de cuarto curso
     - asignaturas del segundo cuatrimestre
     - asignaturas del primer cuatri
     - dame las asignaturas anuales
-    - cuántas asignaturas anuales hay
-    - asignaturas de 6 créditos
-    - asignaturas obligatorias con más de 6 créditos
-    - asignaturas del segundo cuatri del primer año
-    - cuántos créditos Redes
-    - Redes cuántos créditos
-    - IS2 qué es
-    - Cálculo en qué curso
+    - cuantas asignaturas anuales hay
+    - asignaturas de 6 creditos
     - obligatorias de primero
     - optativas cuarto
     - asignaturas primero
-    - cuántas asignaturas segundo cuatri
-    - asignaturas segundo cuatrimestre primer curso
+    - cuantas asignaturas segundo cuatri
     - y el cuarto
     - y cuarto
     - y en cuarto
@@ -326,19 +78,55 @@ nlu:
     - y las de segundo
     - y las de primero
     - y las de tercero
-    - pues y el cuarto
-    - y el cuarto qué tal
-    - y el segundo cuatrimestre
-    - y el primer cuatrimestre
     - y las optativas
     - y las obligatorias
-    - y cuántas hay en segundo
-    - y en tercero cuántas
-    - y el cuarto cuántas tiene
+    - y cuantas hay en segundo
+    - cuales son las asignaturas obligatorias
+    - dame las asignaturas obligatorias de primero
+    - que asignaturas obligatorias hay en primer curso
+    - las obligatorias de primero
+    - cuales son las optativas
+    - dame las asignaturas optativas
+    - que optativas hay
+    - optativas de cuarto
+    - lista de optativas
+    - muestrame las optativas
+    - cuales son las asignaturas de formacion basica
+    - asignaturas basicas
+    - que asignaturas hay en primero
+    - asignaturas de primer curso
+    - quiero informacion sobre las asignaturas del primer curso
+    - informacion sobre las asignaturas de primero
+    - que asignaturas anuales hay
+    - asignaturas anuales
+    - cuales son las anuales
+    - asignaturas del primer cuatrimestre
+    - que hay en el segundo cuatrimestre
+    - dame las obligatorias anuales
+    - optativas del segundo cuatrimestre
+    - listar asignaturas de primero
+    - todas las asignaturas de primer curso
+    - y los creditos?
+    - creditos
+    - cuantos creditos tiene
+    - dime los creditos
+    - y el curso?
+    - curso
+    - de que curso es
+    - en que ano esta
+    - y la duracion?
+    - duracion
+    - cuanto dura
+    - es anual?
+    - de que cuatrimestre es
+    - es optativa?
+    - es obligatoria?
+    - es formacion basica?
+    - que tipo es
+    - esa es obligatoria?
+    - esa cuantos creditos tiene?
+    - y esa de que curso es?
 
-# =============================================================================
-# PEDIR MÁS RESULTADOS - Ver todos los resultados de la consulta anterior
-# =============================================================================
 - intent: pedir_mas_resultados
   examples: |
     - todas
@@ -347,48 +135,22 @@ nlu:
     - todas las asignaturas
     - quiero ver todas
     - dame todas
-    - muéstrame todas
+    - muestrame todas
     - la lista completa
-    - ver más
-    - más resultados
+    - ver mas
+    - mas resultados
     - ver el resto
     - el resto
-    - sí, todas
-    - si, todas
-    - sii todas
-    - siii todas
-    - sí, quiero ver todas
+    - si todas
     - si quiero ver todas
-    - siii quiero verlas todas
-    - enséñame todas
+    - ensenname todas
     - todas por favor
     - quiero verlas todas
-    - sí
     - si
     - sii
-    - siii
-    - siiii
     - vale
     - ok
     - claro
     - dale
-    - sí quiero
     - si quiero
-    - siii quiero
-    - claro quiero
-    - vale quiero verlas
-    - si quiero verlas todas
-    - quiero verlas todas
-    - muéstramelas todas
     - dame la lista completa
-
-# =============================================================================
-# REGEX - Patrones para mejorar extracción de entidades
-# =============================================================================
-- regex: codigo_asignatura
-  examples: |
-    - \b20\d{5}\b
-
-- regex: filtro_creditos
-  examples: |
-    - \b(6|12|4\.5|9)\b

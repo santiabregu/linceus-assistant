@@ -1,12 +1,6 @@
 version: "3.1"
 
-# ══════════════════════════════════════════════════════════════════════════════
-# INTENTS
-# ══════════════════════════════════════════════════════════════════════════════
-
 intents:
- 
-  # General - Saludos, despedidas, estados de ánimo
   - greet
   - goodbye
   - affirm
@@ -16,260 +10,119 @@ intents:
   - bot_challenge
   - pedir_ayuda
   - nlu_fallback
-
- 
-  # Contexto académico - Centro y titulación
   - cambiar_contexto_academico
   - consultar_contexto_academico
-
-  # Asignaturas
-  - consultar_asignatura
-  - consultar_asignatura_db  # Text-to-SQL dinámico
-  - pregunta_seguimiento
-  - consultar_asignaturas_filtradas
+  - consultar_asignatura_db
   - pedir_mas_resultados
 
-  # Profesores (futuro)
-
-  # Horarios (futuro)
-
-  # Trámites (futuro)
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# ENTITIES
-# ══════════════════════════════════════════════════════════════════════════════
-
 entities:
-
-  # Contexto académico
   - nombre_centro
   - nombre_titulacion
-
-  # Asignaturas
-  - codigo_asignatura
   - nombre_asignatura
   - atributo_asignatura
   - filtro_curso
   - filtro_tipologia
   - filtro_duracion
-  - filtro_titulacion
   - filtro_creditos
 
-  # Profesores (futuro)
-
-  # Horarios (futuro)
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# SLOTS
-# ══════════════════════════════════════════════════════════════════════════════
-
 slots:
-
-  # Contexto académico - Centro y titulación seleccionados
   contexto_centro:
     type: text
     influence_conversation: false
     mappings:
     - type: custom
-  
+
   contexto_titulacion:
     type: text
     influence_conversation: false
     mappings:
     - type: custom
 
-  contexto_dominio:
-    type: text
-    influence_conversation: false
-    mappings:
-    - type: custom
-
-
-  # Asignaturas - Datos de consulta
-  codigo_asignatura:
-    type: text
-    influence_conversation: true
-    mappings:
-    - type: from_entity
-      entity: codigo_asignatura
-  
-  nombre_asignatura:
-    type: text
-    influence_conversation: true
-    mappings:
-    - type: from_entity
-      entity: nombre_asignatura
-  
-  atributo_asignatura:
-    type: text
-    influence_conversation: false
-    mappings:
-    - type: from_entity
-      entity: atributo_asignatura
-  
   ultimo_codigo_consultado:
     type: text
     influence_conversation: false
     mappings:
     - type: custom
-  
+
   ultimo_nombre_asignatura:
     type: text
     influence_conversation: false
     mappings:
     - type: custom
 
-  # LLM - Slots para preprocesamiento con Ollama
-  llm_nombre_asignatura:
-    type: text
-    influence_conversation: false
-    mappings:
-    - type: custom
-
-  llm_intent:
-    type: text
-    influence_conversation: false
-    mappings:
-    - type: custom
-
-  llm_atributo_asignatura:
-    type: text
-    influence_conversation: false
-    mappings:
-    - type: custom
-
-
-  # Asignaturas - Resultados de consultas SQL dinámicas
   ultimos_resultados_asignaturas:
     type: any
     influence_conversation: false
     mappings:
     - type: custom
 
-  # Asignaturas - Cache de asignaturas en memoria por sesión
   asignaturas_memoria:
     type: any
     influence_conversation: false
     mappings:
     - type: custom
 
-  # Profesores (futuro)
-
-  # Horarios (futuro)
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# RESPONSES
-# ══════════════════════════════════════════════════════════════════════════════
-
 responses:
-
-  # General
   utter_greet:
-  - text: "¡Hola! Soy tu asistente universitario. ¿En qué puedo ayudarte?"
-  - text: "¡Hola! ¿Qué tal? Estoy aquí para ayudarte con info de asignaturas, horarios y más."
-  - text: "¡Hey! Soy Linceus, tu asistente de la ETSII. ¿Qué necesitas saber?"
+  - text: "Hola! Soy tu asistente universitario. En que puedo ayudarte?"
+  - text: "Hola! Que tal? Estoy aqui para ayudarte con info de asignaturas."
+  - text: "Hey! Soy Linceus, tu asistente de la ETSII. Que necesitas saber?"
 
   utter_goodbye:
-  - text: "¡Hasta luego! Que tengas un buen día."
+  - text: "Hasta luego! Que tengas un buen dia."
 
   utter_iamabot:
-  - text: "Soy un chatbot universitario creado con Rasa para ayudarte con información académica."
+  - text: "Soy un chatbot universitario creado con Rasa para ayudarte con informacion academica."
 
   utter_happy:
-  - text: "¡Perfecto! ¿Hay algo más en lo que pueda ayudarte?"
+  - text: "Perfecto! Hay algo mas en lo que pueda ayudarte?"
 
   utter_cheer_up:
-  - text: "Aquí tienes algo para animarte:"
+  - text: "Aqui tienes algo para animarte:"
     image: "https://i.imgur.com/nGF1K8f.jpg"
 
   utter_did_that_help:
-  - text: "¿Te ha sido útil esta información?"
+  - text: "Te ha sido util esta informacion?"
 
   utter_ayuda:
   - text: |
-      🎓 **Soy Linceus, tu asistente de la ETSII.** Puedo ayudarte con:
+      **Soy Linceus, tu asistente de la ETSII.** Puedo ayudarte con:
 
-      📚 **Asignaturas:**
-      • "Háblame de Redes de Computadores"
-      • "¿Cuántos créditos tiene IS2?"
-      • "¿Qué asignaturas obligatorias hay en primero?"
-      • "Dame las optativas de cuarto"
+      **Asignaturas:**
+      - "Hablame de Redes de Computadores"
+      - "Cuantos creditos tiene IS2?"
+      - "Que asignaturas obligatorias hay en primero?"
+      - "Dame las optativas de cuarto"
 
-      🎯 **Contexto académico:**
-      • "¿Qué carrera estoy consultando?"
-      • "Cambiar a Tecnologías Informáticas"
+      **Contexto academico:**
+      - "Que carrera estoy consultando?"
+      - "Cambiar a Tecnologias Informaticas"
 
-      ¡Pregúntame lo que necesites!
+      Preguntame lo que necesites!
 
   utter_default:
   - text: |
       No estoy seguro de entender tu pregunta.
 
-      📚 Puedo ayudarte con información sobre **asignaturas**:
-      • Créditos ECTS
-      • Curso (1º, 2º, 3º, 4º)
-      • Tipo (obligatoria, optativa, formación básica)
-      • Cuatrimestre (anual, C1, C2)
+      Puedo ayudarte con informacion sobre **asignaturas**:
+      - Creditos ECTS
+      - Curso (1, 2, 3, 4)
+      - Tipo (obligatoria, optativa, formacion basica)
+      - Cuatrimestre (anual, C1, C2)
 
       Prueba preguntando:
-      • "¿Cuántos créditos tiene Redes?"
-      • "Dame las optativas de cuarto"
-      • "¿Qué asignaturas hay en primero?"
-
-
-  # Asignaturas
-  utter_pedir_codigo:
-  - text: "¿Qué asignatura te interesa? Puedes decirme el nombre o el código."
-  - text: "Dime el nombre o código de la asignatura que quieres consultar."
-  - text: "¿De qué asignatura quieres información? Puedes darme el nombre o el código."
+      - "Cuantos creditos tiene Redes?"
+      - "Dame las optativas de cuarto"
+      - "Que asignaturas hay en primero?"
 
   utter_no_contexto:
-  - text: "No recuerdo de qué asignatura hablábamos. ¿Puedes decirme el nombre o código?"
-  - text: "No tengo claro a qué asignatura te refieres. ¿Me dices cuál es?"
-
-  utter_consultar_asignatura:
-  - text: "¿Qué asignatura quieres consultar? Puedes darme el nombre o el código."
-  - text: "Dime qué asignatura te interesa y te cuento todo sobre ella."
-
-  # Profesores (futuro)
-
-  # Horarios (futuro)
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# ACTIONS
-# ══════════════════════════════════════════════════════════════════════════════
+  - text: "No recuerdo de que asignatura hablabamos. Puedes decirme el nombre?"
 
 actions:
-  # LLM Preprocessing
-  - action_llm_preprocess
-
-  # General / Debug
-  - action_test_supabase
-
-  # Contexto académico
   - action_cambiar_contexto
   - action_consultar_contexto
-
-  # Asignaturas
-  - action_consultar_asignatura
-  - action_consultar_asignatura_db  # Text-to-SQL dinámico
-  - action_pregunta_seguimiento
-  - action_consultar_asignaturas_filtradas
-  - action_mostrar_todas
-  - action_mostrar_todas_asignaturas  # Muestra todos los resultados SQL
-
-  # Profesores (futuro)
-
-  # Horarios (futuro)
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# SESSION CONFIG
-# ══════════════════════════════════════════════════════════════════════════════
+  - action_consultar_asignatura_db
+  - action_mostrar_todas_asignaturas
 
 session_config:
   session_expiration_time: 60

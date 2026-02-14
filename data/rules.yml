@@ -2,10 +2,6 @@ version: "3.1"
 
 rules:
 
-# ══════════════════════════════════════════════════════════════════════════════
-# GENERAL - Saludos, despedidas y bot challenge
-# ══════════════════════════════════════════════════════════════════════════════
-
 - rule: Saludar al usuario
   steps:
   - intent: greet
@@ -21,68 +17,40 @@ rules:
   - intent: bot_challenge
   - action: utter_iamabot
 
-- rule: Mostrar ayuda sobre capacidades del bot
+- rule: Mostrar ayuda
   steps:
   - intent: pedir_ayuda
   - action: utter_ayuda
 
-- rule: Respuesta por defecto cuando no entiende
+- rule: Respuesta por defecto
   steps:
   - intent: nlu_fallback
   - action: utter_default
 
-
-# ══════════════════════════════════════════════════════════════════════════════
-# CONTEXTO ACADÉMICO (SIN LLM POR AHORA)
-# ══════════════════════════════════════════════════════════════════════════════
-
-- rule: Cambiar centro o titulación
+- rule: Cambiar contexto academico
   steps:
   - intent: cambiar_contexto_academico
   - action: action_cambiar_contexto
 
-- rule: Consultar contexto académico actual
+- rule: Consultar contexto academico
   steps:
   - intent: consultar_contexto_academico
   - action: action_consultar_contexto
 
-
-# ══════════════════════════════════════════════════════════════════════════════
-# ASIGNATURAS (AQUÍ SÍ USAMOS LLM)
-# ══════════════════════════════════════════════════════════════════════════════
-
-# LEGACY: Action antigua que redirige a la nueva
-- rule: Consultar asignatura por código o nombre (legacy)
-  steps:
-  - intent: consultar_asignatura
-  - action: action_consultar_asignatura
-
-# NUEVO: Text-to-SQL dinámico (consultas específicas y generales)
-- rule: Consultar asignatura con Text-to-SQL
+- rule: Consultar asignatura
   steps:
   - intent: consultar_asignatura_db
   - action: action_consultar_asignatura_db
 
-- rule: Pregunta de seguimiento sobre última asignatura
-  steps:
-  - intent: pregunta_seguimiento
-  - action: action_pregunta_seguimiento
-
-- rule: Consultar asignaturas con filtros
-  steps:
-  - intent: consultar_asignaturas_filtradas
-  - action: action_consultar_asignaturas_filtradas
-
-- rule: Mostrar todas las asignaturas de la consulta anterior
+- rule: Mostrar todas las asignaturas
   steps:
   - intent: pedir_mas_resultados
   - action: action_mostrar_todas_asignaturas
 
-- rule: Mostrar todas con afirmación (cuando hay contexto)
+- rule: Mostrar todas con afirmacion
   steps:
   - intent: affirm
   - action: action_mostrar_todas_asignaturas
   condition:
   - slot_was_set:
     - ultimos_resultados_asignaturas
-

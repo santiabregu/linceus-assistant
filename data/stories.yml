@@ -2,25 +2,11 @@ version: "3.1"
 
 stories:
 
-# ══════════════════════════════════════════════════════════════════════════════
-# GENERAL - Saludos y estados de ánimo
-# ══════════════════════════════════════════════════════════════════════════════
-
 - story: usuario contento
   steps:
   - intent: greet
   - action: utter_greet
   - intent: mood_great
-  - action: utter_happy
-
-- story: usuario triste - se anima
-  steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - intent: affirm
   - action: utter_happy
 
 - story: usuario triste - sigue triste
@@ -33,50 +19,21 @@ stories:
   - intent: deny
   - action: utter_goodbye
 
-# ══════════════════════════════════════════════════════════════════════════════
-# ASIGNATURAS - Consultas sobre asignaturas
-# ══════════════════════════════════════════════════════════════════════════════
-
-# LEGACY: Consulta con action antigua
-- story: consultar asignatura legacy
-  steps:
-  - intent: consultar_asignatura
-  - action: action_consultar_asignatura
-
-# NUEVO: Text-to-SQL - Consulta específica
-- story: consulta específica text-to-sql
+- story: consulta asignatura
   steps:
   - intent: consultar_asignatura_db
   - action: action_consultar_asignatura_db
 
-# NUEVO: Text-to-SQL - Consulta general
-- story: consulta general asignaturas
-  steps:
-  - intent: consultar_asignatura_db
-  - action: action_consultar_asignatura_db
-
-# NUEVO: Text-to-SQL - Con seguimiento
 - story: consulta con seguimiento
   steps:
   - intent: consultar_asignatura_db
   - action: action_consultar_asignatura_db
-  - intent: pregunta_seguimiento
-  - action: action_pregunta_seguimiento
+  - intent: consultar_asignatura_db
+  - action: action_consultar_asignatura_db
 
-# NUEVO: Ver todos los resultados
-- story: mostrar todas las asignaturas
+- story: ver todas las asignaturas
   steps:
   - intent: consultar_asignatura_db
   - action: action_consultar_asignatura_db
-  - slot_was_set:
-    - ultimos_resultados_asignaturas: []
   - intent: pedir_mas_resultados
   - action: action_mostrar_todas_asignaturas
-
-# ══════════════════════════════════════════════════════════════════════════════
-# PROFESORES (futuro)
-# ══════════════════════════════════════════════════════════════════════════════
-
-# ══════════════════════════════════════════════════════════════════════════════
-# HORARIOS (futuro)
-# ══════════════════════════════════════════════════════════════════════════════
