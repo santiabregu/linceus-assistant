@@ -22,10 +22,35 @@ from .text_to_sql import (
     generar_respuesta_natural
 )
 
+from .config import BotConfig
+
 
 # ============================================================================
 # UTILIDADES
 # ============================================================================
+
+TITULACIONES_DISPONIBLES = (
+    "• **Ingeniería del Software** (IS)\n"
+    "• **Tecnologías Informáticas** (TI)\n"
+    "• **Ingeniería de Computadores** (IC)"
+)
+
+
+def comprobar_titulacion(tracker, dispatcher) -> Optional[str]:
+    """
+    Comprueba si hay titulación seleccionada.
+    Si no la hay, pide al usuario que la indique y devuelve None.
+    Si la hay, devuelve el código de titulación.
+    """
+    titulacion = tracker.get_slot("contexto_titulacion")
+    if not titulacion:
+        dispatcher.utter_message(
+            text=f"Antes de consultar asignaturas, necesito saber tu titulación:\n\n"
+                 f"{TITULACIONES_DISPONIBLES}\n\n"
+                 f"Dime cuál cursas."
+        )
+        return None
+    return titulacion
 
 def normalizar_texto(texto: str) -> str:
     """Normaliza texto para búsqueda (sin tildes, minúsculas, sin espacios extra)."""
@@ -76,7 +101,9 @@ class ActionConsultaEspecifica(Action):
     ) -> List[Dict[Text, Any]]:
 
         pregunta = tracker.latest_message.get("text", "")
-        contexto_titulacion = tracker.get_slot("contexto_titulacion")
+        contexto_titulacion = comprobar_titulacion(tracker, dispatcher)
+        if not contexto_titulacion:
+            return []
         ultimo_codigo = tracker.get_slot("ultimo_codigo_consultado")
         ultimo_nombre = tracker.get_slot("ultimo_nombre_asignatura")
 
@@ -119,13 +146,15 @@ class ActionConsultaEspecifica(Action):
         )
 
         if not exito or not resultados:
-            # Intentar búsqueda más flexible
+            # Intentar búsqueda más flexible (con filtro de titulación)
+            from .text_to_sql import _inyectar_filtro_titulacion
             sql_flexible = """
                 SELECT codigo, nombre, curso, creditos, duracion, tipologia, 
                        es_formacion_basica, es_optativa 
                 FROM asignaturas 
                 WHERE activa = true AND nombre_normalizado ILIKE %s
             """
+            sql_flexible = _inyectar_filtro_titulacion(sql_flexible, contexto_titulacion)
             nombre_norm = f"%{normalizar_texto(nombre_asignatura)}%"
             exito, resultados = ejecutar_query(sql_flexible, [nombre_norm])
             
@@ -201,7 +230,9 @@ class ActionConsultaListado(Action):
     ) -> List[Dict[Text, Any]]:
 
         pregunta = tracker.latest_message.get("text", "")
-        contexto_titulacion = tracker.get_slot("contexto_titulacion")
+        contexto_titulacion = comprobar_titulacion(tracker, dispatcher)
+        if not contexto_titulacion:
+            return []
 
         print(f"\n{'='*60}")
         print(f"📋 CONSULTA LISTADO: {pregunta}")
@@ -282,7 +313,9 @@ class ActionConsultaConteo(Action):
     ) -> List[Dict[Text, Any]]:
 
         pregunta = tracker.latest_message.get("text", "")
-        contexto_titulacion = tracker.get_slot("contexto_titulacion")
+        contexto_titulacion = comprobar_titulacion(tracker, dispatcher)
+        if not contexto_titulacion:
+            return []
 
         print(f"\n{'='*60}")
         print(f"🔢 CONSULTA CONTEO: {pregunta}")

@@ -4,20 +4,84 @@ nlu:
 
 - intent: cambiar_contexto_academico
   examples: |
-    - quiero ver asignaturas de [Ingenieria del Software](nombre_titulacion)
-    - cambiar a [Tecnologias Informaticas](nombre_titulacion)
-    - cambiar carrera a [Ingenieria de Computadores](nombre_titulacion)
+    - quiero ver asignaturas de [Ingeniería del Software](nombre_titulacion)
+    - cambiar a [Tecnologías Informáticas](nombre_titulacion)
     - ver asignaturas de [TI](nombre_titulacion)
-    - cambiar a la carrera de [Sistemas de Informacion](nombre_titulacion)
     - quiero consultar [otra carrera](nombre_titulacion)
     - cambiar de titulacion
     - ver otra carrera
+    - [Ingeniería del Software](nombre_titulacion)
+    - [Tecnologías Informáticas](nombre_titulacion)
+    - [Ingeniería de Computadores](nombre_titulacion)
+    - [IS](nombre_titulacion)
+    - [TI](nombre_titulacion)
+    - [IC](nombre_titulacion)
+    - [GII-IS](nombre_titulacion)
+    - [GII-TI](nombre_titulacion)
+    - [GII-IC](nombre_titulacion)
+    - [software](nombre_titulacion)
+    - [tecnologías](nombre_titulacion)
+    - [computadores](nombre_titulacion)
+    - soy de [Ingeniería del Software](nombre_titulacion)
+    - estudio [Tecnologías Informáticas](nombre_titulacion)
+    - curso [Ingeniería de Computadores](nombre_titulacion)
+    - mi carrera es [IS](nombre_titulacion)
+    - estoy en [TI](nombre_titulacion)
+    - yo hago [IC](nombre_titulacion)
+    - la de [software](nombre_titulacion)
+    - quiero ver [software](nombre_titulacion)
+    - quiero ver [tecnologías](nombre_titulacion)
+    - quiero ver [computadores](nombre_titulacion)
+    - ponme en [IS](nombre_titulacion)
+    - ponme en [TI](nombre_titulacion)
+    - ponme en [IC](nombre_titulacion)
+    - cambiar a [IS](nombre_titulacion)
+    - cambiar a [TI](nombre_titulacion)
+    - cambiar a [IC](nombre_titulacion)
+    - cambia a [Ingeniería del Software](nombre_titulacion)
+    - cambia a [Tecnologías Informáticas](nombre_titulacion)
+    - cambia a [Ingeniería de Computadores](nombre_titulacion)
+    - cambiar a [Ingeniería del Software](nombre_titulacion)
+    - cambiar a [Ingeniería de Computadores](nombre_titulacion)
+    - cambia a [ingenieria del software](nombre_titulacion)
+    - cambia a [ingenieria de computadores](nombre_titulacion)
+    - cambia a [tecnologias informaticas](nombre_titulacion)
+    - cambiar carrera a [Ingeniería de Computadores](nombre_titulacion)
+    - cambiar carrera a [software](nombre_titulacion)
+    - seleccionar [Ingeniería del Software](nombre_titulacion)
+    - seleccionar [Tecnologías Informáticas](nombre_titulacion)
+    - seleccionar [Ingeniería de Computadores](nombre_titulacion)
+    - quiero cambiar a [computadores](nombre_titulacion)
+    - ahora quiero ver [TI](nombre_titulacion)
+    - pasame a [IC](nombre_titulacion)
+
+- intent: consulta_titulaciones
+  examples: |
+    - que titulaciones hay
+    - cuales son las titulaciones
+    - que carreras hay en la ETSII
+    - que carreras tiene la escuela
+    - que carreras hay disponibles
+    - cuales son las carreras disponibles
+    - dime las titulaciones del centro
+    - que grados hay en informatica
+    - que grados tiene la ETSII
+    - listame las titulaciones
+    - muestra las carreras
+    - ver todas las titulaciones
+    - quiero ver las carreras
+    - que opciones de carrera hay
+    - que puedo estudiar en la ETSII
+    - cuantas carreras hay
+    - titulaciones disponibles
 
 - intent: consultar_contexto_academico
   examples: |
     - que carrera estoy consultando
-    - de que titulacion me estas dando informacion
+    - de que titulación me estas dando información
     - que centro es
     - de que carrera son estas asignaturas
     - cual es mi carrera actual
-    - en que titulacion estoy
+    - en que titulación estoy
+    - que titulación tengo seleccionada
+    - que carrera tengo puesta

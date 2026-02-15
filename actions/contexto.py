@@ -1,5 +1,5 @@
 # Actions relacionadas con el contexto académico (centro/titulación)
-# v1.4.0 - Soporte para múltiples carreras con defaults
+# v2.1.0 - Soporte para múltiples carreras con consulta de titulaciones
 
 from typing import Any, Text, Dict, List
 from rapidfuzz import fuzz, process
@@ -9,6 +9,7 @@ from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import SlotSet
 
 from .config import BotConfig
+from .db import db_client
 
 
 class ActionCambiarContexto(Action):
@@ -20,21 +21,21 @@ class ActionCambiarContexto(Action):
     # Mapeo de texto a códigos de titulación (fuzzy matching) segun db
     TITULACION_MAP = {
         'ingenieria del software': 'GII-IS',
+        'ingeniería del software': 'GII-IS',
         'software': 'GII-IS',
         'is': 'GII-IS',
         'gii-is': 'GII-IS',
         'tecnologias informaticas': 'GII-TI',
+        'tecnologías informáticas': 'GII-TI',
         'tecnologias': 'GII-TI',
+        'tecnologías': 'GII-TI',
         'ti': 'GII-TI',
         'gii-ti': 'GII-TI',
         'ingenieria de computadores': 'GII-IC',
+        'ingeniería de computadores': 'GII-IC',
         'computadores': 'GII-IC',
         'ic': 'GII-IC',
         'gii-ic': 'GII-IC',
-        'sistemas de informacion': 'GII-SI',
-        'sistemas': 'GII-SI',
-        'si': 'GII-SI',
-        'gii-si': 'GII-SI',
     }
     
     def name(self) -> Text:
@@ -91,7 +92,6 @@ class ActionCambiarContexto(Action):
                 f"• Ingeniería del Software (IS)",
                 f"• Tecnologías Informáticas (TI)", 
                 f"• Ingeniería de Computadores (IC)",
-                f"• Sistemas de Información (SI)",
             ])
             dispatcher.utter_message(
                 text=f"No reconocí la titulación. Las opciones disponibles son:\n\n{opciones}\n\n"
@@ -122,5 +122,82 @@ class ActionConsultarContexto(Action):
                  f"• Titulación: {contexto['titulacion_nombre']}\n\n"
                  "Si quieres cambiar de carrera, dime cuál te interesa."
         )
+        
+        return []
+
+
+class ActionConsultaTitulaciones(Action):
+    """
+    Consulta las titulaciones disponibles en la base de datos.
+    Permite al usuario preguntar qué carreras hay en el centro.
+    """
+    
+    def name(self) -> Text:
+        return "action_consulta_titulaciones"
+    
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        
+        # Consultar titulaciones de la base de datos
+        sql = """
+            SELECT t.codigo, t.nombre, c.nombre as centro_nombre,
+                   (SELECT COUNT(*) FROM asignaturas WHERE titulacion_id = t.id AND activa = true) as num_asignaturas
+            FROM titulaciones t
+            JOIN centros c ON t.centro_id = c.id
+            WHERE t.activa = true
+            ORDER BY t.nombre
+        """
+        
+        try:
+            conn = db_client.get_connection()
+            if not conn:
+                dispatcher.utter_message(
+                    text="No pude conectar con la base de datos. Inténtalo de nuevo."
+                )
+                return []
+            
+            cursor = conn.cursor()
+            cursor.execute(sql)
+            columnas = [desc[0] for desc in cursor.description]
+            filas = cursor.fetchall()
+            cursor.close()
+            conn.close()
+            
+            if not filas:
+                dispatcher.utter_message(
+                    text="No encontré titulaciones activas en la base de datos."
+                )
+                return []
+            
+            # Formatear respuesta
+            titulaciones = [dict(zip(columnas, fila)) for fila in filas]
+            
+            # Agrupar por centro
+            centros = {}
+            for t in titulaciones:
+                centro = t['centro_nombre']
+                if centro not in centros:
+                    centros[centro] = []
+                centros[centro].append(t)
+            
+            # Construir mensaje
+            mensaje = "📚 **Titulaciones disponibles:**\n\n"
+            
+            for centro, tits in centros.items():
+                mensaje += f"**{centro}:**\n"
+                for t in tits:
+                    mensaje += f"• **{t['nombre']}** ({t['codigo']}) - {t['num_asignaturas']} asignaturas\n"
+                mensaje += "\n"
+            
+            mensaje += "Dime cuál te interesa para consultar sus asignaturas."
+            
+            dispatcher.utter_message(text=mensaje)
+            
+        except Exception as e:
+            print(f"Error consultando titulaciones: {e}")
+            dispatcher.utter_message(
+                text="Hubo un problema al consultar las titulaciones. Inténtalo de nuevo."
+            )
         
         return []

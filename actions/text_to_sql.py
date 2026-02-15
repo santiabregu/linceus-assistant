@@ -51,6 +51,30 @@ COLUMNAS_FILTRABLES = {
     'titulacion_id', 'activa', 'nombre_normalizado'
 }
 
+
+def _subquery_titulacion(codigo_titulacion: str) -> str:
+    """Genera subquery para filtrar por titulación usando su código."""
+    return f"(SELECT id FROM titulaciones WHERE codigo = '{codigo_titulacion}' LIMIT 1)"
+
+
+def _inyectar_filtro_titulacion(sql: str, codigo_titulacion: str) -> str:
+    """
+    Inyecta filtro de titulación en una query SQL.
+    Si la query ya contiene filtro de titulacion_id, no lo añade.
+    """
+    if not codigo_titulacion:
+        return sql
+    if 'titulacion_id' in sql.lower():
+        return sql
+    subquery = _subquery_titulacion(codigo_titulacion)
+    # Insertar después de 'WHERE activa = true'
+    sql_lower = sql.lower()
+    idx = sql_lower.find('where activa = true')
+    if idx != -1:
+        insert_pos = idx + len('WHERE activa = true')
+        sql = sql[:insert_pos] + f" AND titulacion_id = {subquery}" + sql[insert_pos:]
+    return sql
+
 # Mapeo de sinónimos para valores (normalización)
 SINONIMOS_VALORES = {
     # Tipología
@@ -119,7 +143,6 @@ SCHEMA DE LA TABLA:
 
 PREGUNTA DEL USUARIO: "{pregunta}"
 {f'ASIGNATURA MENCIONADA: "{nombre_asignatura}"' if nombre_asignatura else ''}
-{f'FILTRAR POR TITULACION: "{contexto_titulacion}"' if contexto_titulacion else ''}
 
 INSTRUCCIONES:
 1. Genera una query SELECT que obtenga la información pedida
@@ -161,18 +184,20 @@ JSON:"""
                 # Validar la SQL generada
                 sql_validada = validar_sql(data.get('sql', ''), tipo='select')
                 if sql_validada:
-                    data['sql'] = sql_validada
+                    data['sql'] = _inyectar_filtro_titulacion(sql_validada, contexto_titulacion)
                     data['valido'] = True
                     return data
     except Exception as e:
         print(f"Error generando SQL específica: {e}")
     
     # Fallback: query segura predefinida
-    return {
-        'sql': """SELECT codigo, nombre, curso, creditos, duracion, tipologia, 
+    sql_fallback = """SELECT codigo, nombre, curso, creditos, duracion, tipologia, 
                          es_formacion_basica, es_optativa 
                   FROM asignaturas 
-                  WHERE activa = true AND (nombre_normalizado ILIKE %s OR codigo ILIKE %s)""",
+                  WHERE activa = true AND (nombre_normalizado ILIKE %s OR codigo ILIKE %s)"""
+    sql_fallback = _inyectar_filtro_titulacion(sql_fallback, contexto_titulacion)
+    return {
+        'sql': sql_fallback,
         'parametros': [f'%{nombre_asignatura}%', f'%{nombre_asignatura}%'] if nombre_asignatura else ['%%', '%%'],
         'atributo_solicitado': 'general',
         'explicacion': 'fallback - búsqueda por nombre',
@@ -195,8 +220,8 @@ def generar_sql_listado(
         Dict con 'sql', 'parametros', 'filtros_aplicados', 'explicacion'
     """
     
-    # Construir parte del WHERE para titulación
-    where_titulacion = f" AND titulacion_id = '{contexto_titulacion}'" if contexto_titulacion else ""
+    # Construir parte del WHERE para titulación (subquery por código)
+    where_titulacion = f" AND titulacion_id = {_subquery_titulacion(contexto_titulacion)}" if contexto_titulacion else ""
     
     prompt = f"""Genera SQL para listar asignaturas según esta pregunta: "{pregunta}"
 
@@ -250,9 +275,8 @@ GENERA SOLO EL JSON (sin explicaciones):"""
                 data = json.loads(json_str)
                 sql_validada = validar_sql(data.get('sql', ''), tipo='select')
                 if sql_validada:
-                    data['sql'] = sql_validada
+                    data['sql'] = _inyectar_filtro_titulacion(sql_validada, contexto_titulacion)
                     data['valido'] = True
-                    # El filtro de titulacion_id ya está en el prompt/ejemplos
                     return data
             else:
                 print("❌ No se encontró JSON en la respuesta")
@@ -263,8 +287,7 @@ GENERA SOLO EL JSON (sin explicaciones):"""
     
     # Fallback: listar todas las asignaturas activas
     sql_base = "SELECT codigo, nombre, curso, creditos, duracion, tipologia FROM asignaturas WHERE activa = true"
-    if contexto_titulacion:
-        sql_base += f" AND titulacion_id = '{contexto_titulacion}'"
+    sql_base = _inyectar_filtro_titulacion(sql_base, contexto_titulacion)
     sql_base += " ORDER BY curso, nombre"
     
     return {
@@ -297,7 +320,6 @@ SCHEMA DE LA TABLA:
 {ASIGNATURAS_SCHEMA}
 
 PREGUNTA DEL USUARIO: "{pregunta}"
-{f'FILTRAR POR TITULACION: titulacion_id = "{contexto_titulacion}"' if contexto_titulacion else ''}
 
 EXTRAE LOS FILTROS DE LA PREGUNTA:
 - curso: 1, 2, 3 o 4
@@ -341,25 +363,19 @@ JSON:"""
                 data = json.loads(json_str)
                 sql_validada = validar_sql(data.get('sql', ''), tipo='count')
                 if sql_validada:
-                    data['sql'] = sql_validada
+                    data['sql'] = _inyectar_filtro_titulacion(sql_validada, contexto_titulacion)
                     data['valido'] = True
-                    if contexto_titulacion and 'titulacion_id' not in data['sql']:
-                        data['sql'] = data['sql'].replace(
-                            'WHERE activa = true',
-                            f"WHERE activa = true AND titulacion_id = '{contexto_titulacion}'"
-                        )
                     return data
     except Exception as e:
         print(f"Error generando SQL conteo: {e}")
     
     # Fallback
     sql_base = "SELECT COUNT(*) FROM asignaturas WHERE activa = true"
-    if contexto_titulacion:
-        sql_base += f" AND titulacion_id = %s"
+    sql_base = _inyectar_filtro_titulacion(sql_base, contexto_titulacion)
     
     return {
         'sql': sql_base,
-        'parametros': [contexto_titulacion] if contexto_titulacion else [],
+        'parametros': [],
         'filtros_aplicados': {},
         'explicacion': 'fallback - cuenta todas las asignaturas',
         'valido': True
@@ -408,7 +424,7 @@ def validar_sql(sql: str, tipo: str = 'select') -> Optional[str]:
     tablas_mencionadas = re.findall(r'FROM\s+(\w+)|JOIN\s+(\w+)', sql_upper)
     tablas_flat = [t for grupo in tablas_mencionadas for t in grupo if t]
     
-    tablas_permitidas = {'ASIGNATURAS'}
+    tablas_permitidas = {'ASIGNATURAS', 'TITULACIONES'}
     for tabla in tablas_flat:
         if tabla not in tablas_permitidas:
             print(f"⚠️ SQL rechazada: tabla no permitida '{tabla}'")

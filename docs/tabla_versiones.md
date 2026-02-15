@@ -22,6 +22,8 @@ Este documento registra los cambios realizados en cada versión del chatbot sigu
 | v1.4.3 | 2026-01 | General | Intent pedir_ayuda para mostrar capacidades del bot |
 | v1.4.4 | 2026-01 | Asignaturas | Ver todas: reutilizar filtros de consulta anterior |
 | v2.0.0 | 2026-02 | Infraestructura | Migración completa a Text-to-SQL con Ollama |
+| v2.1.0 | 2026-02 | Infraestructura | Sistema multi-titulación funcional con selección obligatoria |
+| v2.1.1 | 2026-02 | Infraestructura | Mejora NLU cambio titulación + consulta de titulaciones disponibles |
 
 ---
 
@@ -530,11 +532,151 @@ Usuario: "cuántos créditos tiene Redes"
 
 ---
 
+### v2.1.0 - Sistema Multi-Titulación Funcional
+**Fecha:** Febrero 2026  
+**Tipo:** MINOR - Nueva funcionalidad crítica de infraestructura
+
+**Cambios:**
+- **Flujo de saludo con selección de titulación obligatoria**:
+  - `utter_greet` ahora presenta a Linceus y muestra las 3 titulaciones disponibles (IS, TI, IC)
+  - Nueva respuesta `utter_pedir_titulacion` para solicitar titulación a mitad de conversación
+  - Actualizada `utter_ayuda` con recordatorio de indicar titulación
+- **Cambio de titulación funcional con fuzzy matching**:
+  - Fuzzy matching con `rapidfuzz` en `contexto.py` (score cutoff: 70%)
+  - Reconoce códigos (IS, TI, IC, GII-IS, GII-TI, GII-IC)
+  - Reconoce nombres completos y parciales ("software", "computadores", "tecnologías")
+  - Eliminada referencia a GII-SI (no existe en la base de datos)
+- **Fix crítico de filtrado SQL por titulación**:
+  - **Bug detectado**: `contexto_titulacion` almacena código ('GII-IS') pero se usaba directamente como `titulacion_id` (UUID) → nunca funcionaba el filtrado
+  - **Solución**: Nuevas funciones `_subquery_titulacion()` y `_inyectar_filtro_titulacion()` en `text_to_sql.py`
+  - Genera subquery: `(SELECT id FROM titulaciones WHERE codigo = 'GII-IS' LIMIT 1)`
+  - Se aplica en los 3 generadores SQL + todos los fallbacks
+  - Inyección automática después de `WHERE activa = true`
+- **Bloqueo de consultas sin titulación**:
+  - Nueva función `comprobar_titulacion()` en `asignaturas.py`
+  - Aplicada en las 3 actions (específica, listado, conteo)
+  - Muestra mensaje con las 3 opciones si no hay titulación seleccionada
+  - Fallback de búsqueda flexible ahora también filtra por titulación
+- **Expansión de datos NLU**:
+  - `contexto.yml` expandido de ~8 a ~27 ejemplos (eliminados IC y GII-SI explícitos para testing de generalización)
+  - Códigos sueltos, frases naturales ("soy de", "estudio"), comandos ("ponme en", "seleccionar")
+- **Nuevas stories para flujo de titulación**:
+  - Saludo → selección de titulación
+  - Saludo → selección → consulta (listado/específica)
+  - Cambio de titulación en medio de conversación → consulta
+- **Arquitectura Text-to-SQL mejorada**:
+  - Tablas permitidas: ASIGNATURAS + TITULACIONES (para validación)
+  - Eliminada instrucción `FILTRAR POR TITULACION` del prompt de conteo (conflicto con inyector)
+
+**Archivos modificados:**
+- `actions/text_to_sql.py` - Funciones de subquery e inyección + fix en 3 generadores
+- `actions/asignaturas.py` - Comprobación de titulación + import de inyector en fallback
+- `actions/contexto.py` - Eliminado GII-SI del mapeo y mensaje fallback
+- `domain.yml` - Actualizado `utter_greet`, añadido `utter_pedir_titulacion`, actualizado `utter_ayuda`
+- `data/nlu/contexto.yml` - Expandido con más ejemplos, eliminados IC/SI para testing
+- `data/stories.yml` - 5 nuevas stories para flujos de titulación
+- `data/rules.yml` - Sin cambios (ya tenía las rules correctas)
+
+**Flujo completo:**
+```
+Usuario: "Hola"
+    ↓
+Bot: "¡Hola! Soy Linceus... ¿Cuál cursas?
+      • Ingeniería del Software (IS)
+      • Tecnologías Informáticas (TI)
+      • Ingeniería de Computadores (IC)"
+    ↓
+Usuario: "Quiero ver software"
+    ↓
+Bot: "✅ Cambiado a: Grado en Ing. Informática - Ing. del Software"
+    ↓
+Usuario: "Dame las optativas de cuarto"
+    ↓
+SQL generado: SELECT ... WHERE activa = true 
+              AND titulacion_id = (SELECT id FROM titulaciones WHERE codigo = 'GII-IS' LIMIT 1)
+              AND curso = 4 AND tipologia = 'OPTATIVA'
+    ↓
+Bot: [Lista de optativas filtradas correctamente por GII-IS]
+```
+
+**Datos en base de datos:**
+- 3 titulaciones activas: GII-IS (42 asignaturas), GII-TI (52 asignaturas), GII-IC (44 asignaturas)
+- Total: 138 asignaturas en Sprint 4
+- Documentado en `docs/sprints/S4/datos_DB.md`
+
+**Testing de generalización NLU:**
+- Eliminados todos los ejemplos de IC/Computadores de `contexto.yml`
+- El sistema debe reconocer "IC", "computadores", "Ingeniería de Computadores" por generalización del patrón aprendido
+- El fuzzy matching en `contexto.py` resuelve cualquier variación sin necesidad de ejemplos explícitos
+
+**Funcionalidades nuevas:**
+- ✅ Selección de titulación obligatoria en primer contacto
+- ✅ Cambio de titulación en medio de conversación
+- ✅ Filtrado SQL correcto por titulación (bug crítico resuelto)
+- ✅ Bloqueo de consultas sin contexto académico
+- ✅ Generalización NLU más allá de ejemplos explícitos
+
+---
+
+### v2.1.1 - Mejoras de Reconocimiento de Titulación y Consulta de Catálogo
+**Fecha:** Febrero 2026  
+**Tipo:** PATCH - Mejoras de UX y nueva funcionalidad menor
+
+**Cambios:**
+- **Mejora NLU para cambio de titulación**:
+  - Añadidos ~25 ejemplos nuevos en `contexto.yml` para `cambiar_contexto_academico`
+  - Incluidos ejemplos con frases completas: "cambia a ingeniería del software", "cambia a ingenieria de computadores" (sin tildes)
+  - Restaurados todos los ejemplos de IC/computadores (eliminados en v2.1.0 para testing)
+  - Variantes: "cambiar carrera a", "quiero cambiar a", "pasame a", "ahora quiero ver"
+  - **Fix**: Frases como "cambia a ingenieria de computadores" ya no se confunden con consultas de asignaturas
+- **Nueva funcionalidad: consulta de titulaciones disponibles**:
+  - Nuevo intent `consulta_titulaciones` con 17 ejemplos de entrenamiento
+  - Nueva action `action_consulta_titulaciones` que consulta la base de datos
+  - Muestra todas las titulaciones activas agrupadas por centro
+  - Incluye número de asignaturas por titulación
+  - Permite al usuario preguntar: "¿qué carreras hay en la ETSII?"
+- **Actualizaciones de configuración**:
+  - `domain.yml` - Añadido intent `consulta_titulaciones` y action `action_consulta_titulaciones`
+  - `data/rules.yml` - Nueva rule para consulta de titulaciones
+  - `actions/contexto.py` - Implementada `ActionConsultaTitulaciones` con query SQL JOIN
+
+**Archivos modificados:**
+- `data/nlu/contexto.yml` - Expandido de ~27 a ~57 ejemplos para `cambiar_contexto_academico` + 17 nuevos para `consulta_titulaciones`
+- `actions/contexto.py` - Añadida nueva action con consulta a BD
+- `domain.yml` - Nuevo intent + action
+- `data/rules.yml` - Nueva rule
+
+**Ejemplo de uso (consulta de titulaciones):**
+```
+Usuario: "¿qué carreras hay en la ETSII?"
+
+Bot: 
+📚 **Titulaciones disponibles:**
+
+**Escuela Técnica Superior de Ingeniería Informática:**
+• **Grado en Ing. Informática - Ing. del Software** (GII-IS) - 42 asignaturas
+• **Grado en Ing. Informática - Tecnologías Informáticas** (GII-TI) - 52 asignaturas
+• **Grado en Ing. Informática - Ing. de Computadores** (GII-IC) - 44 asignaturas
+
+Dime cuál te interesa para consultar sus asignaturas.
+```
+
+**Problema resuelto:**
+- El usuario reportaba que "cambia a ingenieria de computadores" se interpretaba como consulta de la asignatura "Estructura de Computadores" en lugar de cambio de titulación
+- Solución: Ampliación masiva de ejemplos NLU con todas las variantes posibles de cambio de titulación
+
+**Mejoras de UX:**
+- ✅ Reconocimiento robusto de cambio de titulación con múltiples variantes
+- ✅ Usuarios pueden explorar qué titulaciones hay disponibles antes de seleccionar
+- ✅ Información de número de asignaturas por titulación (transparencia)
+
+---
+
 ## Próximas Versiones Planificadas
 
 | Versión | Épica | Descripción |
 |---------|-------|-------------|
-| v2.0.0 | Horarios | Consulta de horarios por asignatura/grupo |
+| v2.2.0 | Horarios | Consulta de horarios por asignatura/grupo |
 | v3.0.0 | Profesores | Información sobre profesorado |
 | v4.0.0 | Trámites | Documentación administrativa |
 | v5.0.0 | RAG | Respuestas basadas en documentos con embeddings |
