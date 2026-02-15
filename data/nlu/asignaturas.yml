@@ -2,7 +2,10 @@ version: "3.1"
 
 nlu:
 
-- intent: consultar_asignatura_db
+# =============================================================================
+# INTENT 1: CONSULTA ESPECÍFICA - Pregunta sobre UNA asignatura concreta
+# =============================================================================
+- intent: consulta_asignatura_especifica
   examples: |
     - cuantos creditos tiene [Redes](nombre_asignatura)
     - cuantos creditos tiene [Redes de Computadores](nombre_asignatura)
@@ -41,28 +44,66 @@ nlu:
     - ahora dime de [Criptografia](nombre_asignatura)
     - y que sabes de [Algebra](nombre_asignatura)?
     - pues y [Diseno y Pruebas](nombre_asignatura)?
+    - dime la descripcion de [ADDA](nombre_asignatura)
+    - dame los detalles de [Calculo](nombre_asignatura)
+    - info de [Sistemas Operativos](nombre_asignatura)
+    - que me puedes decir de [Fisica](nombre_asignatura)
+    - describeme [Logica Informatica](nombre_asignatura)
+    - explicame [Estructuras de Datos](nombre_asignatura)
+    - quiero saber sobre [Compiladores](nombre_asignatura)
+    - dame informacion de [Redes](nombre_asignatura)
+    - [Calculo](nombre_asignatura) tiene 12 creditos?
+    - de que departamento es [Redes](nombre_asignatura)
+    - quien imparte [Fundamentos de Programacion](nombre_asignatura)
+    - y los creditos?
+    - creditos
+    - cuantos creditos tiene
+    - dime los creditos
+    - y el curso?
+    - curso
+    - de que curso es
+    - en que ano esta
+    - y la duracion?
+    - duracion
+    - cuanto dura
+    - es anual?
+    - de que cuatrimestre es
+    - es optativa?
+    - es obligatoria?
+    - es formacion basica?
+    - que tipo es
+    - esa es obligatoria?
+    - esa cuantos creditos tiene?
+    - y esa de que curso es?
+    - y esa?
+    - y cuantos creditos?
+    - que creditos tiene?
+
+# =============================================================================
+# INTENT 2: LISTADO - Pide una LISTA de asignaturas con filtros
+# =============================================================================
+- intent: consulta_asignaturas_listado
+  examples: |
     - asignaturas de primero
     - asignaturas de primer curso
     - dame las asignaturas de segundo
     - que asignaturas hay en tercero
     - asignaturas de cuarto
-    - cuantas asignaturas hay en primero
-    - cuantas asignaturas del segundo cuatrimestre
     - asignaturas obligatorias de tercero
     - dame las optativas de cuarto
     - que asignaturas optativas hay en segundo
     - asignaturas de formacion basica de primero
-    - cuantas obligatorias hay en tercero
-    - cuantas optativas de cuarto curso
     - asignaturas del segundo cuatrimestre
     - asignaturas del primer cuatri
     - dame las asignaturas anuales
-    - cuantas asignaturas anuales hay
     - asignaturas de 6 creditos
     - obligatorias de primero
     - optativas cuarto
     - asignaturas primero
-    - cuantas asignaturas segundo cuatri
+    - lista de asignaturas
+    - dame las asignaturas
+    - que asignaturas hay
+    - muestrame las asignaturas
     - y el cuarto
     - y cuarto
     - y en cuarto
@@ -80,7 +121,6 @@ nlu:
     - y las de tercero
     - y las optativas
     - y las obligatorias
-    - y cuantas hay en segundo
     - cuales son las asignaturas obligatorias
     - dame las asignaturas obligatorias de primero
     - que asignaturas obligatorias hay en primer curso
@@ -106,27 +146,63 @@ nlu:
     - optativas del segundo cuatrimestre
     - listar asignaturas de primero
     - todas las asignaturas de primer curso
-    - y los creditos?
-    - creditos
-    - cuantos creditos tiene
-    - dime los creditos
-    - y el curso?
-    - curso
-    - de que curso es
-    - en que ano esta
-    - y la duracion?
-    - duracion
-    - cuanto dura
-    - es anual?
-    - de que cuatrimestre es
-    - es optativa?
-    - es obligatoria?
-    - es formacion basica?
-    - que tipo es
-    - esa es obligatoria?
-    - esa cuantos creditos tiene?
-    - y esa de que curso es?
+    - listado de asignaturas de segundo
+    - dame un listado de optativas
+    - ensenname las obligatorias
+    - quiero ver las asignaturas de tercero
+    - muestrame las de cuarto curso
+    - obligatorias de segundo cuatrimestre
+    - asignaturas troncales
+    - dame las troncales de primero
+    - asignaturas de 12 creditos
+    - las de formacion basica
+    - que basicas hay en primero
+    - lista completa de asignaturas
+    - todas las optativas
+    - todas las obligatorias
+    - dame la lista de primero
+    - quiero la lista de segundo
 
+# =============================================================================
+# INTENT 3: CONTEO - Pregunta por CANTIDAD de asignaturas
+# =============================================================================
+- intent: consulta_asignaturas_conteo
+  examples: |
+    - cuantas asignaturas hay en primero
+    - cuantas asignaturas del segundo cuatrimestre
+    - cuantas obligatorias hay en tercero
+    - cuantas optativas de cuarto curso
+    - cuantas asignaturas anuales hay
+    - cuantas asignaturas segundo cuatri
+    - y cuantas hay en segundo
+    - cuantas asignaturas hay
+    - cuantas son en total
+    - cuantas hay en primero
+    - numero de asignaturas de segundo
+    - cantidad de optativas en cuarto
+    - cuantas obligatorias tiene primero
+    - cuantas de formacion basica hay
+    - cuantas basicas en primero
+    - total de asignaturas de tercero
+    - cuantas son de 6 creditos
+    - cuantas de 12 creditos hay
+    - cuantas asignaturas tiene el primer cuatrimestre
+    - cuantas del segundo cuatri
+    - numero de anuales
+    - cuantas troncales hay
+    - cuantas optativas hay en total
+    - total de obligatorias
+    - cuantas asignaturas tiene cuarto
+    - cuantas tiene segundo curso
+    - cuantas hay en tercero
+    - numero total de asignaturas
+    - cuantas son optativas
+    - cuantas son obligatorias
+    - cuantas asignaturas de primero hay
+
+# =============================================================================
+# INTENT: PEDIR MÁS RESULTADOS (paginación)
+# =============================================================================
 - intent: pedir_mas_resultados
   examples: |
     - todas
@@ -146,11 +222,6 @@ nlu:
     - ensenname todas
     - todas por favor
     - quiero verlas todas
-    - si
-    - sii
-    - vale
-    - ok
-    - claro
-    - dale
-    - si quiero
     - dame la lista completa
+    - ensenname el resto
+    - quiero ver mas

@@ -4,7 +4,9 @@ from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 
 from .asignaturas import (
-    ActionConsultarAsignaturaDB,
+    ActionConsultaEspecifica,
+    ActionConsultaListado,
+    ActionConsultaConteo,
     ActionMostrarTodasAsignaturas,
 )
 
@@ -14,7 +16,9 @@ from .contexto import (
 )
 
 __all__ = [
-    'ActionConsultarAsignaturaDB',
+    'ActionConsultaEspecifica',
+    'ActionConsultaListado',
+    'ActionConsultaConteo',
     'ActionMostrarTodasAsignaturas',
     'ActionCambiarContexto',
     'ActionConsultarContexto',

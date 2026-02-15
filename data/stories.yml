@@ -19,21 +19,49 @@ stories:
   - intent: deny
   - action: utter_goodbye
 
-- story: consulta asignatura
+# =============================================================================
+# STORIES: CONSULTAS DE ASIGNATURAS (Text-to-SQL)
+# =============================================================================
+
+- story: consulta asignatura especifica
   steps:
-  - intent: consultar_asignatura_db
-  - action: action_consultar_asignatura_db
+  - intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
 
 - story: consulta con seguimiento
   steps:
-  - intent: consultar_asignatura_db
-  - action: action_consultar_asignatura_db
-  - intent: consultar_asignatura_db
-  - action: action_consultar_asignatura_db
+  - intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+  - intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
 
-- story: ver todas las asignaturas
+- story: listar asignaturas con filtros
   steps:
-  - intent: consultar_asignatura_db
-  - action: action_consultar_asignatura_db
+  - intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
+
+- story: contar asignaturas
+  steps:
+  - intent: consulta_asignaturas_conteo
+  - action: action_consulta_conteo
+
+- story: ver todas las asignaturas (paginacion)
+  steps:
+  - intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
   - intent: pedir_mas_resultados
   - action: action_mostrar_todas_asignaturas
+
+- story: flujo mixto - especifica luego listado
+  steps:
+  - intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+  - intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
+
+- story: flujo mixto - listado luego conteo
+  steps:
+  - intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
+  - intent: consulta_asignaturas_conteo
+  - action: action_consulta_conteo

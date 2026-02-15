@@ -37,10 +37,24 @@ rules:
   - intent: consultar_contexto_academico
   - action: action_consultar_contexto
 
-- rule: Consultar asignatura
+# =============================================================================
+# REGLAS PARA CONSULTAS DE ASIGNATURAS (Text-to-SQL)
+# =============================================================================
+
+- rule: Consulta especifica de asignatura
   steps:
-  - intent: consultar_asignatura_db
-  - action: action_consultar_asignatura_db
+  - intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+
+- rule: Listado de asignaturas
+  steps:
+  - intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
+
+- rule: Conteo de asignaturas
+  steps:
+  - intent: consulta_asignaturas_conteo
+  - action: action_consulta_conteo
 
 - rule: Mostrar todas las asignaturas
   steps:

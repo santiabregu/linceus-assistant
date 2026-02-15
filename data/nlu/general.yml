@@ -74,8 +74,6 @@ nlu:
 
 - intent: mood_great
   examples: |
-    - perfecto
-    - genial
     - fantastico
     - me siento genial
     - estoy muy bien
@@ -84,6 +82,8 @@ nlu:
     - super bien
     - increible
     - todo bien
+    - estoy de maravilla
+    - muy bien
 
 - intent: mood_unhappy
   examples: |

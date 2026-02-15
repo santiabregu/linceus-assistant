@@ -12,7 +12,10 @@ intents:
   - nlu_fallback
   - cambiar_contexto_academico
   - consultar_contexto_academico
-  - consultar_asignatura_db
+  # Intents separados para asignaturas (Text-to-SQL)
+  - consulta_asignatura_especifica   # "¿Cuántos créditos tiene Redes?"
+  - consulta_asignaturas_listado     # "Dame las optativas de cuarto"
+  - consulta_asignaturas_conteo      # "¿Cuántas asignaturas hay en primero?"
   - pedir_mas_resultados
 
 entities:
@@ -121,7 +124,10 @@ responses:
 actions:
   - action_cambiar_contexto
   - action_consultar_contexto
-  - action_consultar_asignatura_db
+  # Actions separadas para Text-to-SQL
+  - action_consulta_especifica      # Consulta sobre UNA asignatura
+  - action_consulta_listado         # Listar asignaturas con filtros
+  - action_consulta_conteo          # Contar asignaturas
   - action_mostrar_todas_asignaturas
 
 session_config:

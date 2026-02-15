@@ -11,7 +11,7 @@ from typing import Dict, Any, Optional
 
 # Configuración de Ollama
 OLLAMA_API_URL = "http://localhost:11434/api/generate"
-OLLAMA_MODEL = "llama3.2:3b"  # Modelo pequeño y rápido (antes: llama3)
+OLLAMA_MODEL = "gemma2:2b"  # Optimizado para CPU (5-10s vs 38s)
 DEFAULT_TIMEOUT = 30  # segundos
 
 
@@ -25,7 +25,8 @@ def llamar_ollama(
     prompt: str,
     modelo: str = OLLAMA_MODEL,
     timeout: int = DEFAULT_TIMEOUT,
-    stream: bool = False
+    stream: bool = False,
+    options: Optional[Dict[str, Any]] = None
 ) -> Optional[str]:
     """
     Llama a Ollama usando la API HTTP.
@@ -40,23 +41,31 @@ def llamar_ollama(
         modelo: Nombre del modelo (default: llama3)
         timeout: Timeout en segundos
         stream: Si hacer streaming o no
+        options: Opciones personalizadas (sobreescribe defaults)
 
     Returns:
         Respuesta del modelo o None si hay error
     """
 
+    # Defaults optimizados para generación SQL (JSON corto)
+    default_options = {
+        "temperature": 0.1,
+        "num_predict": 150,
+        "num_ctx": 512,
+        "top_k": 10,
+        "top_p": 0.9
+    }
+
+    # Permitir sobreescribir opciones por llamada
+    if options:
+        default_options.update(options)
+
     payload = {
         "model": modelo,
         "prompt": prompt,
         "stream": stream,
-        "keep_alive": "2h",  # Mantener modelo en memoria 2 horas
-        "options": {
-            "temperature": 0.1,  # Más determinista para clasificación
-            "num_predict": 150,  # Tokens máximos (optimizado para JSON corto)
-            "num_ctx": 512,      # Contexto reducido para mayor velocidad
-            "top_k": 10,         # Limitar vocabulario para respuestas más rápidas
-            "top_p": 0.9         # Nucleus sampling
-        }
+        "keep_alive": "2h",
+        "options": default_options
     }
 
     try:
