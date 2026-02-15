@@ -2,10 +2,6 @@ version: "3.1"
 
 rules:
 
-# ══════════════════════════════════════════════════════════════════════════════
-# GENERAL - Saludos, despedidas y bot challenge
-# ══════════════════════════════════════════════════════════════════════════════
-
 - rule: Saludar al usuario
   steps:
   - intent: greet
@@ -21,57 +17,54 @@ rules:
   - intent: bot_challenge
   - action: utter_iamabot
 
-- rule: Mostrar ayuda sobre capacidades del bot
+- rule: Mostrar ayuda
   steps:
   - intent: pedir_ayuda
   - action: utter_ayuda
 
-# ══════════════════════════════════════════════════════════════════════════════
-# CONTEXTO ACADÉMICO - Centro y titulación
-# ══════════════════════════════════════════════════════════════════════════════
+- rule: Respuesta por defecto
+  steps:
+  - intent: nlu_fallback
+  - action: utter_default
 
-- rule: Cambiar centro o titulación
+- rule: Cambiar contexto academico
   steps:
   - intent: cambiar_contexto_academico
   - action: action_cambiar_contexto
 
-- rule: Consultar contexto académico actual
+- rule: Consultar contexto academico
   steps:
   - intent: consultar_contexto_academico
   - action: action_consultar_contexto
 
-# ══════════════════════════════════════════════════════════════════════════════
-# ASIGNATURAS - Consultas sobre asignaturas
-# ══════════════════════════════════════════════════════════════════════════════
+# =============================================================================
+# REGLAS PARA CONSULTAS DE ASIGNATURAS (Text-to-SQL)
+# =============================================================================
 
-- rule: Consultar asignatura por código o nombre
+- rule: Consulta especifica de asignatura
   steps:
-  - intent: consultar_asignatura
-  - action: action_consultar_asignatura
+  - intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
 
-- rule: Pregunta de seguimiento sobre última asignatura
+- rule: Listado de asignaturas
   steps:
-  - intent: pregunta_seguimiento
-  - action: action_pregunta_seguimiento
+  - intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
 
-- rule: Consultar asignaturas con filtros (obligatorias, optativas, por curso, etc.)
+- rule: Conteo de asignaturas
   steps:
-  - intent: consultar_asignaturas_filtradas
-  - action: action_consultar_asignaturas_filtradas
+  - intent: consulta_asignaturas_conteo
+  - action: action_consulta_conteo
 
-- rule: Mostrar todas las asignaturas de la consulta anterior
+- rule: Mostrar todas las asignaturas
   steps:
   - intent: pedir_mas_resultados
-  - action: action_mostrar_todas
+  - action: action_mostrar_todas_asignaturas
 
-# ══════════════════════════════════════════════════════════════════════════════
-# PROFESORES - (futuro)
-# ══════════════════════════════════════════════════════════════════════════════
-
-# ══════════════════════════════════════════════════════════════════════════════
-# HORARIOS - (futuro)
-# ══════════════════════════════════════════════════════════════════════════════
-
-# ══════════════════════════════════════════════════════════════════════════════
-# TRÁMITES - (futuro)
-# ══════════════════════════════════════════════════════════════════════════════
+- rule: Mostrar todas con afirmacion
+  steps:
+  - intent: affirm
+  - action: action_mostrar_todas_asignaturas
+  condition:
+  - slot_was_set:
+    - ultimos_resultados_asignaturas

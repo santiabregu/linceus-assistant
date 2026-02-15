@@ -21,6 +21,7 @@ Este documento registra los cambios realizados en cada versión del chatbot sigu
 | v1.4.2 | 2026-01 | Infraestructura | Reorganización por épicas + helpers de contexto |
 | v1.4.3 | 2026-01 | General | Intent pedir_ayuda para mostrar capacidades del bot |
 | v1.4.4 | 2026-01 | Asignaturas | Ver todas: reutilizar filtros de consulta anterior |
+| v2.0.0 | 2026-02 | Infraestructura | Migración completa a Text-to-SQL con Ollama |
 
 ---
 
@@ -448,6 +449,84 @@ Usuario: "todas"
 Bot: "📚 Lista completa (15 asignaturas): 1. ... 2. ... 15. ..."
     ↓ (reutiliza los filtros guardados)
 ```
+
+---
+
+### v2.0.0 - Sistema Text-to-SQL con Ollama
+**Fecha:** Febrero 2026
+**Tipo:** MAJOR - Nueva arquitectura de procesamiento con LLM
+
+**Cambios:**
+- **Migración completa de Gemini a Ollama**:
+  - Cliente HTTP optimizado (`ollama_client.py`) vs subprocess
+  - Modelo `llama3.2:3b` (más rápido que llama3)
+  - Velocidad mejorada: 2-4s por consulta (vs 20-30s anterior)
+  - El modelo permanece cargado en memoria → no hay overhead de inicio
+- **Sistema Text-to-SQL con clasificación automática**:
+  - Distingue consultas específicas ("cuántos créditos tiene Redes") vs generales ("asignaturas de primero")
+  - Generación dinámica de SQL con filtros complejos
+  - Desambiguación inteligente con LLM cuando hay múltiples coincidencias
+- **Búsqueda fuzzy mejorada**:
+  - Búsqueda por código exacto, nombre parcial, y fuzzy matching
+  - Tolerancia a errores ortográficos y falta de acentos
+  - Cache de asignaturas en memoria por sesión (mejora rendimiento)
+- **Respuestas naturales con LLM**:
+  - Todas las respuestas pasan por el LLM para eliminar roboticidad
+  - Formato conversacional natural
+- **Nueva action `ActionLLMPreprocess`**: Preprocesa con LLM antes de Rasa NLU
+- **Nueva action `ActionConsultarAsignaturaDB`**: Sistema Text-to-SQL completo
+- **Eliminado `gemini_client.py`**: Completamente reemplazado por Ollama
+- **Nuevos documentos**:
+  - `docs/TEXT_TO_SQL_ASIGNATURAS.md` - Documentación del sistema
+  - `SOLUCION_VELOCIDAD_OLLAMA.md` - Solución técnica para optimización
+  - `VERIFICACION_SISTEMA.md` - Checklist de consistencia
+  - `db_tables.md` - Esquema de base de datos
+  - `iniciar_ollama.bat` - Script para iniciar Ollama correctamente
+
+**Archivos principales modificados:**
+- `actions/asignaturas.py` - Reescrito con sistema Text-to-SQL
+- `actions/actions.py` - Añadida ActionLLMPreprocess
+- `actions/ollama_client.py` - **NUEVO** Cliente HTTP para Ollama
+- `actions/llm_interpreter.py` - **NUEVO** Interpretación con Llama
+- `domain.yml` - Nuevos intents y slots para Text-to-SQL
+- `data/nlu/asignaturas.yml` - Intent `consultar_asignatura_db`
+- `data/rules.yml` - Reglas para nuevo flujo
+- `data/stories.yml` - Stories para Text-to-SQL
+- `config.yml` - Configuración optimizada
+- `.gitignore` - Añadido directorio `old/`
+
+**Arquitectura del sistema:**
+```
+Usuario: "cuántos créditos tiene Redes"
+    ↓
+1. Clasificación automática → "consulta específica"
+    ↓
+2. Extracción de datos → nombre="Redes", atributo="creditos"
+    ↓
+3. Búsqueda fuzzy → "Redes de Computadores" (score: 85%)
+    ↓
+4. Si múltiples coincidencias → LLM desambigua
+    ↓
+5. Formateo con LLM → "Redes de Computadores tiene 6 créditos ECTS"
+```
+
+**Mejoras de rendimiento:**
+| Operación | Antes | Ahora | Mejora |
+|-----------|-------|-------|--------|
+| Llamada a LLM | 20-30s | 2-4s | **5-15x** |
+| Consulta completa | 60-90s | 8-15s | **6-10x** |
+
+**Funcionalidades nuevas:**
+- ✅ Búsqueda fuzzy con desambiguación inteligente
+- ✅ Clasificación automática de tipo de consulta
+- ✅ Generación dinámica de SQL para consultas complejas
+- ✅ Respuestas conversacionales naturales
+- ✅ Cache de asignaturas en memoria
+- ✅ Detección automática de contexto académico
+
+**Modelos entrenados:**
+- `models/linceus_v2_0_3.tar.gz` - Versión intermedia
+- `models/linceus_v2_0_4.tar.gz` - Versión estable actual
 
 ---
 

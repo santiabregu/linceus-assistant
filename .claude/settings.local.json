@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:legacy-docs-oss.rasa.com)"
+    ]
+  }
+}

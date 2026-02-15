@@ -2,25 +2,11 @@ version: "3.1"
 
 stories:
 
-# ══════════════════════════════════════════════════════════════════════════════
-# GENERAL - Saludos y estados de ánimo
-# ══════════════════════════════════════════════════════════════════════════════
-
 - story: usuario contento
   steps:
   - intent: greet
   - action: utter_greet
   - intent: mood_great
-  - action: utter_happy
-
-- story: usuario triste - se anima
-  steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - intent: affirm
   - action: utter_happy
 
 - story: usuario triste - sigue triste
@@ -33,56 +19,49 @@ stories:
   - intent: deny
   - action: utter_goodbye
 
-# ══════════════════════════════════════════════════════════════════════════════
-# ASIGNATURAS - Consultas sobre asignaturas
-# ══════════════════════════════════════════════════════════════════════════════
+# =============================================================================
+# STORIES: CONSULTAS DE ASIGNATURAS (Text-to-SQL)
+# =============================================================================
 
-- story: consultar asignatura con saludo
+- story: consulta asignatura especifica
   steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: consultar_asignatura
-    entities:
-    - codigo_asignatura: "IS2"
-  - slot_was_set:
-    - codigo_asignatura: "IS2"
-  - action: action_consultar_asignatura
-  - intent: goodbye
-  - action: utter_goodbye
+  - intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
 
-- story: consultar asignatura por código
+- story: consulta con seguimiento
   steps:
-  - intent: consultar_asignatura
-    entities:
-    - codigo_asignatura: "2050001"
-  - slot_was_set:
-    - codigo_asignatura: "2050001"
-  - action: action_consultar_asignatura
+  - intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+  - intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
 
-- story: consultar asignatura por nombre
+- story: listar asignaturas con filtros
   steps:
-  - intent: consultar_asignatura
-    entities:
-    - nombre_asignatura: "Fundamentos de Programación"
-  - slot_was_set:
-    - nombre_asignatura: "Fundamentos de Programación"
-  - action: action_consultar_asignatura
+  - intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
 
-- story: consulta asignatura con seguimiento
+- story: contar asignaturas
   steps:
-  - intent: consultar_asignatura
-    entities:
-    - codigo_asignatura: "2050001"
-  - action: action_consultar_asignatura
-  - intent: pregunta_seguimiento
-    entities:
-    - atributo_asignatura: "créditos"
-  - action: action_pregunta_seguimiento
+  - intent: consulta_asignaturas_conteo
+  - action: action_consulta_conteo
 
-# ══════════════════════════════════════════════════════════════════════════════
-# PROFESORES (futuro)
-# ══════════════════════════════════════════════════════════════════════════════
+- story: ver todas las asignaturas (paginacion)
+  steps:
+  - intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
+  - intent: pedir_mas_resultados
+  - action: action_mostrar_todas_asignaturas
 
-# ══════════════════════════════════════════════════════════════════════════════
-# HORARIOS (futuro)
-# ══════════════════════════════════════════════════════════════════════════════
+- story: flujo mixto - especifica luego listado
+  steps:
+  - intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+  - intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
+
+- story: flujo mixto - listado luego conteo
+  steps:
+  - intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
+  - intent: consulta_asignaturas_conteo
+  - action: action_consulta_conteo

@@ -1,143 +1,157 @@
-# Módulo de integración con Gemini API
-# Usado para interpretar consultas complejas y generar filtros estructurados
+"""
+Cliente para Google Gemini API.
+Alternativa rápida a Ollama cuando se necesita velocidad (demo, producción).
+"""
 
 import os
-import json
-from typing import Optional, Dict, Any
-import google.generativeai as genai
+from google import genai
+from google.genai import types
+from typing import Dict, Any, Optional
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# Configurar Gemini
+# Configuración de Gemini
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
-    print("Gemini API configurada correctamente")
-else:
-    print("WARNING: GEMINI_API_KEY no encontrada en .env")
+GEMINI_MODEL = "gemini-2.5-flash-lite"  # Modelo económico y rápido, ideal para SQL/JSON
+DEFAULT_TIMEOUT = 30  # segundos
 
 
-# Schema de la base de datos para el prompt
-SCHEMA_ASIGNATURAS = """
-Tabla: asignaturas
-Campos:
-- codigo (TEXT): Código único de la asignatura, ej: "2050001"
-- nombre (TEXT): Nombre completo, ej: "Fundamentos de Programación"
-- curso (INTEGER): Año del grado (1, 2, 3, 4)
-- creditos (DECIMAL): Créditos ECTS, ej: 6.0, 12.0
-- duracion (TEXT): "A" = Anual, "C1" = Primer Cuatrimestre, "C2" = Segundo Cuatrimestre
-- tipologia (TEXT): "Formacion_Basica", "Obligatoria", "Optativa"
-- es_formacion_basica (BOOLEAN)
-- es_optativa (BOOLEAN)
-- activa (BOOLEAN): Si la asignatura está activa actualmente
-"""
-
-
-def interpretar_consulta_asignatura(pregunta: str) -> Optional[Dict[str, Any]]:
+def llamar_gemini(
+    prompt: str,
+    modelo: str = GEMINI_MODEL,
+    timeout: int = DEFAULT_TIMEOUT,
+    options: Optional[Dict[str, Any]] = None
+) -> Optional[str]:
     """
-    Usa Gemini para interpretar una consulta en lenguaje natural
-    y devuelve filtros estructurados para la query.
-    
+    Llama a Gemini API.
+
+    Ventajas vs Ollama local:
+    - Mucho más rápido (1-3s vs 30-60s en CPU)
+    - No consume recursos locales
+    - Modelos más potentes
+
+    Args:
+        prompt: Prompt para el modelo
+        modelo: Nombre del modelo
+        timeout: Timeout en segundos
+        options: Opciones de generación
+
     Returns:
-        Dict con estructura:
-        {
-            "tipo": "especifica" | "filtrada" | "listado",
-            "filtros": {
-                "codigo": "2050001",  # opcional
-                "nombre": "Redes",     # opcional
-                "curso": 1,            # opcional
-                "tipologia": "Obligatoria",  # opcional
-                "duracion": "A",       # opcional
-            },
-            "atributo_solicitado": "creditos",  # opcional, si pide algo específico
-            "limite": 10  # opcional, para listados
-        }
+        Respuesta del modelo o None si hay error
     """
-    if not GEMINI_API_KEY:
-        return None
-    
-    prompt = f"""Eres un asistente que interpreta consultas sobre asignaturas universitarias.
 
-{SCHEMA_ASIGNATURAS}
+    # Defaults optimizados para generación SQL (JSON corto)
+    temperature = 0.0
+    max_tokens = 150
+    top_p = 0.9
+    top_k = 10
 
-Dada la siguiente pregunta del usuario, genera un JSON con los filtros necesarios para buscar en la base de datos.
-
-REGLAS:
-1. Si menciona un código específico (ej: "2050001"), usa "codigo"
-2. Si menciona un nombre o parte del nombre, usa "nombre" 
-3. Si dice "primero", "primer curso", "1º", etc. → curso: 1
-4. Si dice "obligatoria", "obligatorias" → tipologia: "Obligatoria"
-5. Si dice "optativa", "optativas" → tipologia: "Optativa"
-6. Si dice "formación básica", "básicas" → tipologia: "Formacion_Basica"
-7. Si dice "anual", "anuales" → duracion: "A"
-8. Si dice "primer cuatrimestre" → duracion: "C1"
-9. Si dice "segundo cuatrimestre" → duracion: "C2"
-10. Si pide un atributo específico (créditos, curso, etc.), indica en "atributo_solicitado"
-11. Si es una lista general, pon "tipo": "listado"
-12. Si busca una asignatura específica, pon "tipo": "especifica"
-13. Si busca con filtros, pon "tipo": "filtrada"
-
-PREGUNTA: "{pregunta}"
-
-Responde SOLO con el JSON, sin explicaciones ni markdown:
-"""
+    # Permitir sobreescribir opciones
+    if options:
+        if "temperature" in options:
+            temperature = options["temperature"]
+        if "num_predict" in options:
+            max_tokens = options["num_predict"]
+        if "top_p" in options:
+            top_p = options["top_p"]
+        if "top_k" in options:
+            top_k = options["top_k"]
 
     try:
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        response = model.generate_content(prompt)
+        print(f"🤖 Llamando a Gemini API (modelo: {modelo})...")
+
+        # Crear cliente con API key
+        client = genai.Client(api_key=GEMINI_API_KEY)
         
-        # Extraer JSON de la respuesta
-        texto = response.text.strip()
-        
-        # Limpiar si viene con markdown
-        if texto.startswith("```"):
-            texto = texto.split("```")[1]
-            if texto.startswith("json"):
-                texto = texto[4:]
-        texto = texto.strip()
-        
-        resultado = json.loads(texto)
-        return resultado
-        
-    except json.JSONDecodeError as e:
-        print(f"Error parseando JSON de Gemini: {e}")
-        print(f"Respuesta raw: {response.text}")
-        return None
+        # Generar contenido
+        response = client.models.generate_content(
+            model=modelo,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                temperature=temperature,
+                max_output_tokens=max_tokens,
+                top_p=top_p,
+                top_k=top_k
+            )
+        )
+
+        respuesta = response.text.strip()
+        print(f"✅ Respuesta recibida ({len(respuesta)} chars)")
+
+        return respuesta
+
     except Exception as e:
-        print(f"Error llamando a Gemini: {e}")
+        print(f"❌ Error llamando a Gemini: {e}")
         return None
 
 
-def generar_respuesta_natural(datos: list, pregunta_original: str) -> str:
+def verificar_gemini_activo() -> bool:
     """
-    Usa Gemini para generar una respuesta natural basada en los datos.
+    Verifica si Gemini está configurado correctamente.
+
+    Returns:
+        True si la API key está configurada y es válida
     """
-    if not GEMINI_API_KEY or not datos:
-        return None
-    
-    # Limitar datos para no exceder tokens
-    datos_limitados = datos[:10]
-    
-    prompt = f"""Eres un asistente universitario amable. 
-    
-El usuario preguntó: "{pregunta_original}"
-
-Los datos encontrados son:
-{json.dumps(datos_limitados, ensure_ascii=False, indent=2)}
-
-Genera una respuesta natural y concisa en español. 
-- Si hay varios resultados, listarlos de forma clara
-- Si hay muchos (más de 5), menciona cuántos hay y muestra los primeros
-- Usa bullet points si es necesario
-- No uses markdown, solo texto plano con saltos de línea
-
-Respuesta:"""
-
     try:
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        response = model.generate_content(prompt)
-        return response.text.strip()
+        if not GEMINI_API_KEY:
+            print("❌ GEMINI_API_KEY no encontrada en .env")
+            return False
+
+        # Test simple
+        client = genai.Client(api_key=GEMINI_API_KEY)
+        response = client.models.generate_content(
+            model=GEMINI_MODEL,
+            contents="Di 'OK'",
+            config=types.GenerateContentConfig(
+                max_output_tokens=10,
+                temperature=0.0
+            )
+        )
+        
+        if response.text:
+            print(f"✅ Gemini activo y respondiendo (modelo: {GEMINI_MODEL})")
+            return True
+        
+        return False
+
     except Exception as e:
-        print(f"Error generando respuesta natural: {e}")
-        return None
+        print(f"❌ Error verificando Gemini: {e}")
+        return False
+
+
+# Test del módulo
+if __name__ == "__main__":
+    print("🧪 Testing Gemini Client\n")
+
+    # 1. Verificar que Gemini está activo
+    if not verificar_gemini_activo():
+        print("\n💡 Para usar Gemini:")
+        print("   1. Obtén una API key en: https://makersuite.google.com/app/apikey")
+        print("   2. Agrégala al archivo .env: GEMINI_API_KEY=tu_key_aqui")
+        exit(1)
+
+    # 2. Test simple
+    print("\n📝 Test 1: Clasificación simple")
+    respuesta = llamar_gemini(
+        prompt='Clasifica: "cuántos créditos tiene Redes". Responde: {"tipo": "especifica"}',
+        timeout=10
+    )
+    print(f"Respuesta: {respuesta}")
+
+    # 3. Test de velocidad
+    print("\n⚡ Test 2: Velocidad (debería ser <3s)")
+    import time
+    inicio = time.time()
+    respuesta = llamar_gemini(
+        prompt="Di 'OK'",
+        timeout=5
+    )
+    duracion = time.time() - inicio
+    print(f"Respuesta: {respuesta}")
+    print(f"Duración: {duracion:.2f}s")
+
+    if duracion < 3:
+        print("✅ Velocidad óptima!")
+    else:
+        print("⚠️ Más lento de lo esperado")
