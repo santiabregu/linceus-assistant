@@ -1,0 +1,594 @@
+% !TEX root = ../proyect.tex
+
+\chapter{Herramientas utilizadas}\label{cap:herramientas}
+
+En este capítulo se describen las herramientas y tecnologías empleadas durante el desarrollo del proyecto LinceUS Assistant. La selección de estas herramientas se ha realizado considerando criterios de eficiencia, escalabilidad y adecuación a los requisitos funcionales del asistente virtual.
+
+\section{Herramientas de desarrollo}\label{sec:herramientas-desarrollo}
+
+\subsection{Python}
+
+Python es el lenguaje de programación principal utilizado en este proyecto. Su elección se fundamenta en:
+
+\begin{itemize}
+    \item Amplio ecosistema de librerías para procesamiento de lenguaje natural
+    \item Excelente integración con frameworks de IA y aprendizaje automático
+    \item Simplicidad sintáctica que facilita el desarrollo y mantenimiento
+    \item Comunidad activa y extensa documentación
+\end{itemize}
+
+Se utiliza Python 3.10 por su compatibilidad con las versiones actuales de Rasa y las dependencias del proyecto.
+
+\section{Estudio de frameworks conversacionales}\label{sec:estudio-frameworks}
+
+Durante la fase de diseño del proyecto se realizó un análisis exhaustivo de frameworks conversacionales de código abierto que cumpliesen con los requisitos de despliegue local, integración en Python y soporte para RAG (Retrieval Augmented Generation). Esta sección documenta el proceso de evaluación y la decisión final.
+
+\subsection{Frameworks analizados}\label{subsec:frameworks-analizados}
+
+Se consideraron los siguientes frameworks conversacionales:
+
+\begin{itemize}
+    \item \textbf{Rasa}: Framework en Python centrado en control de flujo conversacional y políticas de diálogo avanzadas
+    \item \textbf{Botpress}: Plataforma con editor visual de flujos y módulos preconstruidos
+    \item \textbf{DeepPavlov}: Librería orientada a NLP avanzado con módulos reutilizables para tareas específicas
+    \item \textbf{OpenDialog}: Framework centrado en diseño visual y gestión de contextos conversacionales
+    \item \textbf{Tock}: Solución francesa con enfoque multicanal y soporte para varios idiomas
+    \item \textbf{Botonic}: Framework basado en React para chatbots conversacionales
+\end{itemize}
+
+\subsection{Criterios de evaluación}\label{subsec:criterios-evaluacion}
+
+La evaluación se basó en cinco criterios fundamentales para el proyecto:
+
+\subsubsection{Flujo conversacional}
+
+El flujo conversacional se refiere a la capacidad del framework para definir, controlar y gestionar el diálogo entre el usuario y el sistema. Incluye cómo se modelan las intenciones, las respuestas, los contextos y la memoria de la conversación, así como el grado de flexibilidad para manejar diálogos no lineales, interrupciones o escenarios complejos. Un buen manejo del flujo conversacional permite que el chatbot no solo siga guiones rígidos, sino que pueda adaptarse dinámicamente a las necesidades del usuario, manteniendo coherencia y contexto a lo largo de la interacción.
+
+\begin{itemize}
+    \item \textbf{Rasa}: Máximo control mediante \textit{stories} y \textit{rules}, permitiendo modelar diálogos complejos y contextuales con políticas de aprendizaje por refuerzo
+    \item \textbf{Botpress}: Facilita el diseño con nodos visuales tipo diagrama de flujo, aunque más orientado a flujos rígidos y predefinidos
+    \item \textbf{DeepPavlov}: Permite construir agentes multi-skill, pero requiere definir manualmente los pipelines de procesamiento
+    \item \textbf{OpenDialog}: Sobresale en el modelado de escenarios y contextos complejos, aunque su dependencia de PHP limita la integración con Python
+    \item \textbf{Tock/Botonic}: Permiten definir historias o rutas conversacionales, pero con menor madurez y flexibilidad que Rasa
+\end{itemize}
+
+\subsubsection{Testing y validación}
+
+La capacidad de testing hace referencia a las herramientas disponibles para validar la calidad y el correcto funcionamiento del agente conversacional. Esto incluye desde pruebas unitarias (validación de intenciones, entidades y respuestas individuales) hasta pruebas end-to-end (que simulan conversaciones completas para comprobar flujos y contextos). Un buen soporte de testing permite automatizar la detección de errores, reducir el riesgo de alucinaciones o respuestas incoherentes y asegurar la estabilidad del sistema a medida que evoluciona.
+
+\begin{itemize}
+    \item \textbf{Rasa}: Incorpora herramientas integradas para pruebas unitarias de NLU y end-to-end de diálogos completos, con métricas de precisión y recall
+    \item \textbf{Botpress}: Ofrece principalmente un simulador manual en el editor visual, sin suite de pruebas automatizadas robusta
+    \item \textbf{DeepPavlov}: No incluye framework específico de testing, las pruebas deben implementarse con scripts personalizados en Python
+    \item \textbf{OpenDialog}: Depende de pruebas manuales mediante interfaz web
+    \item \textbf{Tock/Botonic}: Testing manual o mediante herramientas externas
+\end{itemize}
+
+\subsubsection{Compatibilidad con RAG y embeddings}
+
+La compatibilidad con RAG (Retrieval Augmented Generation) y el uso de embeddings mide hasta qué punto un framework permite integrar modelos de lenguaje con bases de datos vectoriales para mejorar las respuestas. Esta característica es clave cuando se trabaja con información documental extensa o cambiante, ya que permite que el chatbot ofrezca respuestas actualizadas, precisas y fundamentadas en datos externos, reduciendo el riesgo de alucinaciones.
+
+\begin{itemize}
+    \item \textbf{Rasa}: Integración natural con bases vectoriales (pgvector, Qdrant, FAISS) mediante acciones personalizadas, permitiendo implementar RAG completo
+    \item \textbf{Botpress}: Dispone de un módulo de Knowledge Base que admite cargar documentos, aunque menos flexible en personalización del retrieval
+    \item \textbf{DeepPavlov}: Destaca en Q\&A y FAQ matching con búsqueda semántica, aunque el RAG debe construirse manualmente
+    \item \textbf{OpenDialog}: No tiene soporte nativo para vectores, requiere integración externa completa
+    \item \textbf{Tock/Botonic}: Sin soporte nativo para RAG
+\end{itemize}
+
+\subsubsection{Despliegue local y privacidad}
+
+El despliegue local y la gestión de la privacidad se refieren a la posibilidad de ejecutar el framework en entornos controlados (on-premise o en servidores propios) sin depender necesariamente de servicios en la nube. Esta característica es crucial cuando se manejan datos sensibles o confidenciales, ya que permite aplicar políticas de seguridad personalizadas y cumplir con normativas como el RGPD.
+
+\begin{itemize}
+    \item \textbf{Rasa}: Desplegable completamente en local mediante Docker o instalación directa, sin dependencias cloud obligatorias. Compatible con RGPD
+    \item \textbf{Botpress}: Versión open-source desplegable localmente con Docker, aunque algunas características premium requieren cloud
+    \item \textbf{DeepPavlov}: Funciona como librería Python pura o servicio REST autocontenido
+    \item \textbf{OpenDialog}: Requiere un stack LAMP (Linux, Apache, MySQL, PHP) más pesado de configurar
+    \item \textbf{Tock}: Estable en entornos locales con stack Kotlin/MongoDB
+    \item \textbf{Botonic}: Orientado a despliegue en Node.js, compatible con local
+\end{itemize}
+
+\subsubsection{Comunidad y documentación}
+
+La comunidad y la documentación de un framework son indicadores clave de su madurez, accesibilidad y sostenibilidad a largo plazo. Una comunidad activa ofrece foros, repositorios y soporte colaborativo que facilitan la resolución de problemas y el intercambio de buenas prácticas. Una documentación clara, actualizada y completa reduce la curva de aprendizaje y permite implementar soluciones más rápido.
+
+\begin{itemize}
+    \item \textbf{Rasa}: Comunidad más amplia con forum oficial, Discord activo, miles de repositorios en GitHub y documentación exhaustiva con tutoriales
+    \item \textbf{Botpress}: Foros y Discord activos, documentación clara pero con menor alcance que Rasa
+    \item \textbf{DeepPavlov}: Comunidad académica sólida, documentación técnica orientada a investigadores
+    \item \textbf{OpenDialog}: Comunidad pequeña, documentación básica
+    \item \textbf{Tock}: Comunidad francófona principalmente, documentación en francés e inglés
+    \item \textbf{Botonic}: Comunidad pequeña, documentación limitada
+\end{itemize}
+
+\subsection{Comparación detallada}
+
+La Tabla \ref{tab:comp-frameworks-detallada} presenta una comparación cuantitativa de los frameworks evaluados según los cinco criterios establecidos. La puntuación va de 1 a 3 estrellas, donde 3 estrellas indica excelencia en el criterio.
+
+\subsection{Comparación detallada}
+
+La Tabla \ref{tab:comp-frameworks-detallada} presenta una comparación cuantitativa de los frameworks evaluados según los cinco criterios establecidos. La puntuación va de 1 a 3 estrellas, donde 3 estrellas indica excelencia en el criterio.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|c|c|c|c|c|c|}
+\hline
+\textbf{Criterio} & \textbf{Rasa} & \textbf{Botpress} & \textbf{DeepPavlov} & \textbf{OpenDialog} & \textbf{Tock} & \textbf{Botonic} \\ \hline
+Flujo conversacional & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star$ & $\star$ \\ \hline
+Testing & $\star\star\star$ & $\star$ & $\star$ & $\star$ & $\star$ & $\star$ \\ \hline
+RAG y embeddings & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star$ & $\star$ & $\star$ \\ \hline
+Despliegue local & $\star\star\star$ & $\star\star\star$ & $\star\star$ & $\star$ & $\star\star$ & $\star\star$ \\ \hline
+Comunidad y docs & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star$ & $\star$ & $\star$ \\ \hline\hline
+\textbf{Puntuación total} & \textbf{15} & \textbf{10} & \textbf{9} & \textbf{6} & \textbf{6} & \textbf{6} \\ \hline
+\end{tabular}
+\caption{Comparación detallada de frameworks conversacionales según criterios técnicos. Escala de 1 a 3 estrellas por criterio.}
+\label{tab:comp-frameworks-detallada}
+\end{table}
+
+\subsection{Decisión final}
+
+El framework seleccionado para el desarrollo de LinceUS Assistant es \textbf{Rasa}, basándose en los siguientes fundamentos:
+
+\begin{enumerate}
+    \item \textbf{Control del flujo conversacional}: Rasa ofrece el máximo nivel de control mediante \textit{stories}, \textit{rules} y políticas de diálogo avanzadas, esencial para manejar consultas académicas complejas
+    
+    \item \textbf{Testing integrado}: Las herramientas de testing automatizado permiten validar continuamente la calidad del sistema y detectar regresiones, crítico en un proyecto académico que evoluciona iterativamente
+    
+    \item \textbf{Soporte RAG}: La integración probada con bases vectoriales (pgvector) permite implementar un sistema completo de Retrieval Augmented Generation para consultas sobre documentación académica
+    
+    \item \textbf{Privacidad y RGPD}: El despliegue local sencillo y seguro garantiza el cumplimiento del RGPD, requisito fundamental al manejar datos académicos de estudiantes
+    
+    \item \textbf{Sostenibilidad del proyecto}: La amplia comunidad y documentación exhaustiva garantizan soporte a largo plazo y facilitan la resolución de problemas técnicos
+    
+    \item \textbf{Ecosistema Python}: La integración nativa con Python facilita la conexión con Ollama, Supabase y otras herramientas del stack tecnológico
+\end{enumerate}
+
+Aunque Botpress ofrece ventajas en facilidad de uso inicial mediante su editor visual, la necesidad de control granular sobre el comportamiento conversacional, testing automatizado y personalización profunda del sistema RAG hacen de Rasa la opción más adecuada para los objetivos del proyecto.
+
+\subsection{Características de Rasa Framework}
+
+Rasa es el motor conversacional principal del asistente. Se trata de un framework de código abierto especializado en la construcción de asistentes conversacionales con capacidades de procesamiento de lenguaje natural.
+
+Características principales utilizadas:
+\begin{itemize}
+    \item \textbf{Rasa NLU}: Para la comprensión del lenguaje natural, identificación de intenciones y extracción de entidades
+    \item \textbf{Rasa Core}: Para la gestión del flujo de conversación y las políticas de diálogo
+    \item \textbf{Rasa Actions}: Para la ejecución de acciones personalizadas que conectan con bases de datos y servicios externos
+\end{itemize}
+
+La versión utilizada es Rasa 3.6.21, compatible con el ecosistema Python 3.10.
+
+\section{Estudio de bases de datos}\label{sec:estudio-bases-datos}
+
+Durante la fase de diseño se realizó un análisis exhaustivo de soluciones de bases de datos que pudieran almacenar tanto información estructurada como embeddings vectoriales para el sistema RAG. Esta sección documenta el proceso de evaluación de bases de datos relacionales, plataformas BaaS (Backend as a Service) y motores vectoriales dedicados.
+
+\subsection{Bases de datos analizadas}\label{subsec:bases-datos-analizadas}
+
+Se revisaron diferentes opciones open source para almacenar información estructurada y embeddings:
+
+\textbf{Plataformas BaaS con bases de datos relacionales:}
+\begin{itemize}
+    \item \textbf{Supabase}: PostgreSQL gestionado con API REST automática, autenticación integrada y soporte pgvector
+    \item \textbf{PostgreSQL autogestionado}: Motor relacional puro con extensión pgvector instalada manualmente
+    \item \textbf{Appwrite}: Plataforma BaaS con múltiples motores de BD y servicios integrados
+    \item \textbf{PocketBase}: Backend ligero en Go con SQLite, ideal para proyectos pequeños
+    \item \textbf{Directus}: Headless CMS sobre cualquier SQL con API automática
+    \item \textbf{Hasura}: Motor GraphQL sobre PostgreSQL con autenticación y permisos
+\end{itemize}
+
+\textbf{Motores vectoriales dedicados:}
+\begin{itemize}
+    \item \textbf{Qdrant}: Base de datos vectorial nativa con API REST y filtros avanzados
+    \item \textbf{Weaviate}: Motor vectorial con GraphQL y módulos de ML integrados
+    \item \textbf{Milvus}: Sistema distribuido de alta escalabilidad para billones de vectores
+    \item \textbf{FAISS}: Librería de Facebook para búsqueda de similitud, embebida en Python
+\end{itemize}
+
+\subsection{Criterios de evaluación}\label{subsec:criterios-evaluacion-bd}
+
+La evaluación se basó en cinco criterios fundamentales:
+
+\subsubsection{Modelo de datos}
+
+El modelo de datos define cómo se organiza, almacena y consulta la información dentro de una base de datos. Dependiendo de la tecnología, este modelo puede ser relacional (tablas y relaciones SQL), orientado a documentos (estructuras tipo JSON), o especializado en vectores (espacios multidimensionales para embeddings). La elección del modelo es clave para garantizar la eficiencia, flexibilidad y escalabilidad del sistema, ya que influye directamente en cómo se estructuran los datos académicos (universidades, centros, titulaciones, asignaturas, horarios) y los embeddings utilizados en búsquedas semánticas.
+
+\begin{itemize}
+    \item \textbf{Supabase/PostgreSQL}: Modelo relacional completo con soporte para claves foráneas, joins complejos, índices y transacciones ACID. Ideal para dominios con relaciones naturales
+    \item \textbf{Appwrite/PocketBase/Directus}: Modelos relacionales simplificados con abstracción de alto nivel, menos flexibilidad en consultas complejas
+    \item \textbf{Hasura}: PostgreSQL puro con capa GraphQL, mantiene todas las capacidades relacionales
+    \item \textbf{Qdrant/Weaviate/Milvus}: Optimizados para vectores, datos estructurados limitados o como metadatos
+    \item \textbf{FAISS}: Solo vectores en memoria, sin persistencia de datos estructurados
+\end{itemize}
+
+\subsubsection{Búsqueda vectorial}
+
+La capacidad de búsqueda vectorial mide la eficiencia y escalabilidad para almacenar embeddings de alta dimensionalidad y realizar búsquedas de similitud (distancia coseno, euclidiana). Esta característica es fundamental para implementar sistemas RAG que recuperan documentos relevantes basándose en similitud semántica.
+
+\begin{itemize}
+    \item \textbf{Supabase/PostgreSQL con pgvector}: Adecuado para corpus medianos (miles a cientos de miles de vectores), con índices IVFFlat y HNSW. Suficiente para documentación académica
+    \item \textbf{Qdrant/Weaviate/Milvus}: Motores especializados extremadamente eficientes para millones o billones de vectores, con filtrado avanzado y optimizaciones específicas
+    \item \textbf{FAISS}: Excelente rendimiento embebido en Python, pero sin persistencia ni concurrencia nativa
+    \item \textbf{Appwrite/PocketBase/Directus/Hasura}: Sin soporte nativo, requieren integración manual con motores externos
+\end{itemize}
+
+\subsubsection{Despliegue local y facilidad}
+
+El despliegue local y la facilidad de instalación miden la complejidad técnica y los recursos necesarios para poner en marcha la base de datos en un entorno controlado. Algunas soluciones ofrecen entornos ligeros (binarios únicos o Docker simple), mientras que otras requieren stacks más pesados con múltiples dependencias. Esta característica impacta en la rapidez de configuración, curva de aprendizaje y costes de mantenimiento.
+
+\begin{itemize}
+    \item \textbf{Supabase}: Despliegue con Docker Compose, incluye todos los servicios (BD, Auth, Storage, API) en un comando
+    \item \textbf{PostgreSQL}: Instalación tradicional ligera, configuración manual de extensiones
+    \item \textbf{PocketBase}: Más liviano posible, un solo binario ejecutable sin dependencias
+    \item \textbf{Appwrite/Directus}: Requieren más servicios y dependencias (Redis, almacenamiento, workers)
+    \item \textbf{Hasura}: Docker simple pero requiere PostgreSQL separado
+    \item \textbf{Qdrant/Weaviate/Milvus}: Añaden complejidad de configuración, aunque muy escalables
+    \item \textbf{FAISS}: Librería Python sin instalación de servidor
+\end{itemize}
+
+\subsubsection{Seguridad y cumplimiento RGPD}
+
+La seguridad y el cumplimiento normativo son aspectos fundamentales cuando se trabaja con información académica de estudiantes. Esta característica evalúa los mecanismos nativos de autenticación, autorización y control de acceso. Tecnologías con Row-Level Security, roles definidos o autenticación integrada facilitan el cumplimiento del RGPD y reducen riesgos. Motores sin seguridad propia obligan a implementar medidas adicionales en la capa de aplicación, aumentando complejidad y responsabilidad.
+
+\begin{itemize}
+    \item \textbf{Supabase}: Row-Level Security (RLS) nativa, autenticación JWT integrada, políticas de acceso a nivel de fila
+    \item \textbf{PostgreSQL}: Roles y permisos SQL robustos, pero sin autenticación de aplicación integrada
+    \item \textbf{Appwrite/Directus/Hasura}: Mecanismos de autenticación y permisos integrados de alto nivel
+    \item \textbf{PocketBase}: Auth básica incluida, pero menos sofisticada
+    \item \textbf{Motores vectoriales}: Carecen de autenticación propia, requieren protección adicional en la aplicación o proxy
+    \item \textbf{FAISS}: Sin seguridad, es solo una librería
+\end{itemize}
+
+\subsubsection{Comunidad y documentación}
+
+La comunidad y documentación determinan el nivel de soporte, recursos y acompañamiento disponibles. Una comunidad amplia facilita la resolución de problemas y la existencia de librerías. Documentación clara con ejemplos prácticos acelera la adopción y reduce la curva de aprendizaje.
+
+\begin{itemize}
+    \item \textbf{PostgreSQL}: El más maduro con décadas de desarrollo, documentación exhaustiva, comunidad global masiva
+    \item \textbf{Supabase}: Crecimiento rápido, documentación excelente con ejemplos de IA/RAG, comunidad activa en Discord
+    \item \textbf{Qdrant/Weaviate}: Comunidades activas especializadas en búsqueda vectorial y LLMs
+    \item \textbf{Milvus}: Respaldo de LF AI \& Data, documentación técnica sólida
+    \item \textbf{Appwrite/PocketBase/Directus}: Comunidades menores pero en expansión
+    \item \textbf{Hasura}: Comunidad GraphQL activa
+    \item \textbf{FAISS}: Documentación técnica de Facebook Research
+\end{itemize}
+
+\subsection{Comparación detallada}
+
+La Tabla \ref{tab:comp-bases-datos-detallada} presenta una comparación cuantitativa de las bases de datos evaluadas según los cinco criterios establecidos. La puntuación va de 1 a 3 estrellas por criterio.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{|l|c|c|c|c|c|c|c|c|c|c|}
+\hline
+\textbf{Criterio} & \textbf{Supa.} & \textbf{Pg} & \textbf{App.} & \textbf{Pock.} & \textbf{Dir.} & \textbf{Has.} & \textbf{Qdr.} & \textbf{Weav.} & \textbf{Milv.} & \textbf{FAISS} \\ \hline
+Modelo datos & $\star\star\star$ & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ \\ \hline
+Búsq. vectorial & $\star\star$ & $\star\star$ & $\star$ & $\star$ & $\star$ & $\star$ & $\star\star\star$ & $\star\star\star$ & $\star\star\star$ & $\star\star$ \\ \hline
+Despliegue local & $\star\star\star$ & $\star\star\star$ & $\star\star$ & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ \\ \hline
+Seguridad RGPD & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star$ & $\star\star$ & $\star\star$ & $\star$ & $\star$ & $\star$ & $\star$ \\ \hline
+Comunidad docs & $\star\star\star$ & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ \\ \hline\hline
+\textbf{Total} & \textbf{14} & \textbf{13} & \textbf{9} & \textbf{9} & \textbf{9} & \textbf{9} & \textbf{10} & \textbf{10} & \textbf{10} & \textbf{9} \\ \hline
+\end{tabular}
+\caption{Comparación detallada de bases de datos según criterios técnicos. Supa=Supabase, Pg=PostgreSQL, App=Appwrite, Pock=PocketBase, Dir=Directus, Has=Hasura, Qdr=Qdrant, Weav=Weaviate, Milv=Milvus.}
+\label{tab:comp-bases-datos-detallada}
+\end{table}
+
+\subsection{Decisión final}
+
+La base de datos seleccionada para LinceUS Assistant es \textbf{Supabase (PostgreSQL + pgvector)}, basándose en los siguientes fundamentos:
+
+\begin{enumerate}
+    \item \textbf{Unificación de datos}: Permite almacenar datos estructurados (asignaturas, horarios, profesores) y vectores de embeddings en una sola plataforma, evitando la complejidad de sincronizar múltiples sistemas
+    
+    \item \textbf{Modelo relacional completo}: El dominio académico se modela naturalmente con relaciones SQL (universidad → centros → titulaciones → asignaturas), con integridad referencial y consultas complejas con joins
+    
+    \item \textbf{Seguridad integrada}: Row-Level Security y autenticación JWT nativa permiten cumplir con RGPD sin implementación adicional compleja
+    
+    \item \textbf{API REST automática}: Generación automática de endpoints elimina código boilerplate y acelera el desarrollo
+    
+    \item \textbf{pgvector suficiente}: Para el volumen de documentación académica del proyecto (miles de documentos), pgvector ofrece rendimiento adecuado sin la complejidad de motores vectoriales dedicados
+    
+    \item \textbf{Despliegue sencillo}: Docker Compose incluye todos los servicios necesarios, facilitando entorno de desarrollo y producción
+    
+    \item \textbf{Comunidad y recursos}: Documentación extensa con ejemplos específicos de IA/RAG, comunidad activa y crecimiento continuo
+    
+    \item \textbf{Ecosistema Python}: Cliente oficial de Python con tipado estático, integración natural con Rasa Actions
+\end{enumerate}
+
+Aunque motores vectoriales como Qdrant o Weaviate ofrecen mayor rendimiento para búsquedas vectoriales, su especialización requiere una base de datos relacional adicional para datos estructurados, duplicando la complejidad del sistema. Para el alcance del proyecto, Supabase ofrece el mejor balance entre capacidades relacionales, búsqueda vectorial, facilidad de uso y seguridad integrada.
+
+\subsection{Ollama}
+
+Ollama es una plataforma que permite ejecutar modelos de lenguaje de gran tamaño (LLMs) localmente. En este proyecto se utiliza para:
+
+\begin{itemize}
+    \item Generación de consultas SQL a partir de lenguaje natural (Text-to-SQL)
+    \item Procesamiento de consultas complejas que requieren comprensión contextual avanzada
+    \item Generación de respuestas naturales y contextualizadas
+\end{itemize}
+
+\subsubsection{Migración de Gemini API a Ollama}
+
+Durante el desarrollo (Sprint 3), se realizó una migración completa de Gemini API a Ollama. La Tabla \ref{tab:comp-llms} muestra la comparativa que motivó esta decisión técnica.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Aspecto} & \textbf{Gemini API} & \textbf{Ollama Local} & \textbf{Mejora} \\ \hline
+Velocidad respuesta & 20-30s & 2-4s & \textbf{5-15x} \\ \hline
+Coste por 1000 queries & \$0.10 & \$0.00 & 100\% ahorro \\ \hline
+Dependencia externa & Sí (Internet) & No & Mayor control \\ \hline
+Privacidad datos & Cloud & Local & Mayor seguridad \\ \hline
+Cache en memoria & No & Sí & Más eficiente \\ \hline
+Latencia de red & Variable & 0ms & Predecible \\ \hline
+\end{tabular}
+\caption{Comparativa entre Gemini API y Ollama para el proyecto LinceUS.}
+\label{tab:comp-llms}
+\end{table}
+
+\textbf{Decisión técnica:} La migración a Ollama resultó en una mejora de rendimiento de 5-15x en velocidad de respuesta, eliminó costes de API y mejoró la privacidad al procesar todas las consultas localmente. Se utiliza el modelo \texttt{llama3.2:3b} que ofrece el mejor balance entre velocidad y capacidad para las tareas del proyecto.
+
+\textbf{Implementación:} Se desarrolló un cliente HTTP personalizado (\texttt{ollama\_client.py}) que mantiene el modelo cargado en memoria entre consultas, evitando tiempos de carga repetidos y mejorando significativamente la experiencia de usuario.
+
+\subsubsection{Arquitectura del cliente Ollama}
+
+Durante el desarrollo se evaluaron dos enfoques para comunicarse con Ollama. La Tabla \ref{tab:comp-ollama-client} compara ambas arquitecturas.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Aspecto} & \textbf{subprocess} & \textbf{API HTTP (Elegida)} \\ \hline
+Tiempo por consulta & 20-30s & \textbf{2-4s} \\ \hline
+Carga de modelo & Cada consulta & Una sola vez \\ \hline
+Persistencia en memoria & No & \textbf{Sí} \\ \hline
+Complejidad implementación & Baja & Media \\ \hline
+Gestión de errores & Limitada & Completa \\ \hline
+Concurrencia & Difícil & Nativa \\ \hline
+Endpoint & CLI local & \texttt{http://localhost:11434} \\ \hline
+\end{tabular}
+\caption{Comparativa de arquitecturas para cliente Ollama.}
+\label{tab:comp-ollama-client}
+\end{table}
+
+\textbf{Resultado:} La API HTTP resultó en una mejora de rendimiento de 5-15x al mantener el modelo LLM cargado en memoria entre consultas. El enfoque subprocess recargaba el modelo en cada interacción, causando tiempos inaceptables de 20-30 segundos.
+
+\subsection{Supabase}
+
+Supabase es una plataforma de base de datos como servicio que proporciona:
+
+\begin{itemize}
+    \item Base de datos PostgreSQL gestionada en la nube
+    \item API REST automática para operaciones CRUD
+    \item Autenticación y autorización integradas
+    \item Interfaz de administración web intuitiva
+\end{itemize}
+
+\subsubsection{Comparativa de soluciones de base de datos}
+
+La elección de la base de datos fue crucial para el proyecto dada la complejidad del modelo de datos académico. La Tabla \ref{tab:comp-bd} compara las principales alternativas evaluadas.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|p{2.8cm}|p{2.8cm}|p{2.8cm}|}
+\hline
+\textbf{Criterio} & \textbf{PostgreSQL + Supabase} & \textbf{MongoDB Atlas} & \textbf{Firebase} \\ \hline
+Tipo & Relacional SQL & NoSQL documentos & NoSQL en tiempo real \\ \hline
+Búsqueda vectorial & Sí (pgvector) & Sí (Atlas Search) & No nativo \\ \hline
+Relaciones complejas & Excelente (FK, joins) & Manual & Manual \\ \hline
+API automática & Sí (REST) & No & Sí (SDK) \\ \hline
+Panel admin & Sí (web) & Sí (web) & Sí (web) \\ \hline
+Consultas SQL & Nativas & No (MQL) & No \\ \hline
+Coste inicial & Gratis (2 proyectos) & Gratis (512MB) & Gratis (Spark) \\ \hline
+Escalabilidad & Vertical + horizontal & Horizontal & Automática \\ \hline
+\end{tabular}
+\caption{Comparativa de soluciones de base de datos para LinceUS.}
+\label{tab:comp-bd}
+\end{table}
+
+\textbf{Decisión:} Se eligió PostgreSQL con Supabase por:
+\begin{enumerate}
+    \item \textbf{Modelo relacional}: El dominio académico (universidades, centros, titulaciones, asignaturas, horarios) se modela naturalmente con relaciones SQL
+    \item \textbf{pgvector}: Soporte nativo para búsqueda semántica necesario para el sistema RAG
+    \item \textbf{API REST automática}: Generación de endpoints sin código boilerplate
+    \item \textbf{Consultas SQL complejas}: Necesarias para filtros avanzados de asignaturas y horarios
+\end{enumerate}
+
+La extensión \textbf{pgvector} fue especialmente determinante, ya que permite almacenar embeddings de 768 dimensiones y realizar búsquedas de similitud directamente en la base de datos, eliminando la necesidad de servicios externos como Pinecone.
+
+\subsection{Visual Studio Code}
+
+Visual Studio Code ha sido el entorno de desarrollo integrado (IDE) principal utilizado durante el proyecto. Ofrece:
+
+\begin{itemize}
+    \item Excelente soporte para Python y desarrollo web
+    \item Extensiones para Git, Markdown y LaTeX
+    \item Depurador integrado
+    \item Terminal integrada para ejecución de comandos
+\end{itemize}
+
+\subsubsection{Comparativa de modelos LLM}
+
+Dentro del ecosistema Ollama, se evaluaron diferentes modelos según tamaño y capacidad. La Tabla \ref{tab:comp-modelos-llm} muestra la comparativa que llevó a elegir el modelo óptimo.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Modelo} & \textbf{Parámetros} & \textbf{Tiempo respuesta} & \textbf{Calidad} \\ \hline
+llama3 (8B) & 8 mil millones & 10-15s & Muy alta \\ \hline
+\textbf{llama3.2:3b} & 3 mil millones & \textbf{2-4s} & Alta \\ \hline
+llama3.2:1b & 1 mil millones & 1-2s & Media \\ \hline
+mistral & 7 mil millones & 8-12s & Alta \\ \hline
+\end{tabular}
+\caption{Comparativa de modelos LLM disponibles en Ollama.}
+\label{tab:comp-modelos-llm}
+\end{table}
+
+\textbf{Decisión:} Se eligió \texttt{llama3.2:3b} por ofrecer el mejor balance entre velocidad (2-4s) y calidad de respuestas. El modelo de 8B era demasiado lento (10-15s) y el de 1B sacrificaba demasiada precisión. El modelo de 3B proporciona tiempos de respuesta 2-3x más rápidos que el de 8B manteniendo calidad suficiente para clasificación, extracción de datos y generación de respuestas naturales.
+
+\section{Herramientas de gestión y colaboración}\label{sec:herramientas-gestion}
+
+\subsection{Git y GitHub}
+
+Git es el sistema de control de versiones utilizado para gestionar el código fuente del proyecto. GitHub actúa como repositorio remoto, proporcionando:
+
+\begin{itemize}
+    \item Historial completo de cambios en el código
+    \item Gestión de ramas para desarrollo paralelo
+    \item Colaboración entre desarrollador y tutor
+    \item Sistema de issues para seguimiento de tareas y problemas
+    \item Documentación del proyecto mediante README y wikis
+\end{itemize}
+
+La estrategia de ramificación empleada sigue el modelo \textit{trunk-based development}, con una rama principal (\texttt{main}) y ramas de características (\textit{feature branches}) para nuevas funcionalidades.
+
+\subsection{Microsoft Teams}
+
+Microsoft Teams ha sido la herramienta principal de comunicación con el tutor del proyecto. Se ha utilizado para:
+
+\begin{itemize}
+    \item Reuniones periódicas de seguimiento
+    \item Compartir documentación y avances
+    \item Chat para consultas puntuales
+    \item Almacenamiento compartido de archivos
+\end{itemize}
+
+\subsection{Overleaf}
+
+Overleaf es un editor de LaTeX online que permite la redacción colaborativa de documentos científicos. Se ha empleado para:
+
+\begin{itemize}
+    \item Elaboración de la memoria del TFG
+    \item Redacción del anteproyecto
+    \item Generación automática de bibliografías en formato APA
+    \item Compilación en tiempo real del documento PDF
+\end{itemize}
+
+La capacidad de compartir el documento con el tutor ha facilitado la revisión y retroalimentación continua durante la redacción de la memoria.
+
+\section{Librerías y frameworks complementarios}\label{sec:librerias}
+
+\subsection{spaCy}
+
+spaCy es una librería de procesamiento de lenguaje natural utilizada para:
+
+\begin{itemize}
+    \item Tokenización y análisis morfológico del texto en español
+    \item Normalización de consultas de usuario
+    \item Preprocesamiento de texto antes del análisis por Rasa
+\end{itemize}
+
+Se utiliza el modelo \texttt{es\_core\_news\_md} para español, que proporciona vectores de palabras y capacidades de análisis lingüístico.
+
+\subsection{RapidFuzz}
+
+RapidFuzz es una librería de coincidencia difusa (\textit{fuzzy matching}) que permite:
+
+\begin{itemize}
+    \item Tolerar errores tipográficos en las consultas de usuario
+    \item Encontrar coincidencias aproximadas en nombres de asignaturas y centros
+    \item Mejorar la robustez del sistema ante variaciones en la entrada
+\end{itemize}
+
+\subsubsection{Comparativa de librerías de fuzzy matching}
+
+Se evaluaron diferentes opciones para implementar búsqueda tolerante a errores. La Tabla \ref{tab:comp-fuzzy} muestra la comparativa.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Criterio} & \textbf{difflib (Python std)} & \textbf{RapidFuzz (Elegido)} \\ \hline
+Velocidad & Lento & \textbf{10-100x más rápido} \\ \hline
+Precisión en typos & Media & Alta \\ \hline
+Algoritmos disponibles & 1 (SequenceMatcher) & Múltiples (WRatio, etc.) \\ \hline
+Dependencias externas & No & Sí (librería C++) \\ \hline
+Configurabilidad & Baja & Alta \\ \hline
+Ejemplo: "obligatioria" & 73\% & 91\% \\ \hline
+\end{tabular}
+\caption{Comparativa de librerías para fuzzy matching.}
+\label{tab:comp-fuzzy}
+\end{table}
+
+\textbf{Decisión:} Se adoptó RapidFuzz por su velocidad superior (10-100x más rápido que difflib) y mayor precisión en detección de errores tipográficos. Se configuró con un umbral de 70\% para atributos y 60\% para nombres de asignaturas, usando el algoritmo WRatio que mejor se adapta a consultas en lenguaje natural.
+
+\subsection{python-dotenv}
+
+Esta librería gestiona las variables de entorno del proyecto, permitiendo:
+
+\begin{itemize}
+    \item Separar la configuración del código
+    \item Proteger credenciales sensibles (API keys, contraseñas de BD)
+    \item Facilitar el despliegue en diferentes entornos (desarrollo, producción)
+\end{itemize}
+
+\section{Herramientas de documentación}\label{sec:herramientas-doc}
+
+\subsection{Markdown}
+
+Markdown se ha utilizado extensivamente para documentar el proyecto:
+
+\begin{itemize}
+    \item README.md para la descripción general del proyecto
+    \item Documentación de decisiones arquitectónicas
+    \item Guías de instalación y uso
+    \item Esquemas de base de datos (usando sintaxis Mermaid)
+\end{itemize}
+
+\subsection{Mermaid}
+
+Mermaid es una herramienta de generación de diagramas a partir de texto. Se ha utilizado para:
+
+\begin{itemize}
+    \item Diagramas entidad-relación de la base de datos
+    \item Diagramas de flujo del sistema
+    \item Diagramas de secuencia para casos de uso complejos
+\end{itemize}
+
+\section{Resumen de herramientas}
+
+A modo de resumen, la siguiente tabla presenta las herramientas empleadas, su propósito y la razón de su elección en el desarrollo del TFG:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|p{4.5cm}|p{4cm}|}
+\hline
+\textbf{Herramienta} & \textbf{Propósito} & \textbf{Razón de elección} \\ \hline
+\textbf{Python 3.10} & Lenguaje principal & Ecosistema NLP/IA, compatible con Rasa \\ \hline
+\textbf{Rasa 3.6.21} & Framework conversacional & Open-source, ejecución local, control total \\ \hline
+\textbf{Ollama (llama3.2:3b)} & LLM local para Text-to-SQL & 5-15x más rápido que Gemini, sin costes \\ \hline
+\textbf{PostgreSQL + Supabase} & Base de datos relacional & Modelo relacional, pgvector, API REST \\ \hline
+\textbf{pgvector} & Búsqueda semántica & Vectores en BD, sin servicios externos \\ \hline
+\textbf{spaCy (es\_core\_news\_md)} & NLP en español & Tokenización, lematización, vectores \\ \hline
+\textbf{RapidFuzz 3.0+} & Fuzzy matching & 10-100x más rápido que difflib \\ \hline
+\textbf{python-dotenv} & Variables de entorno & Seguridad, configuración por entorno \\ \hline
+\textbf{Visual Studio Code} & IDE principal & Extensiones Python, LaTeX, Git \\ \hline
+\textbf{Git \& GitHub} & Control de versiones & Historial, colaboración, CI/CD \\ \hline
+\textbf{Microsoft Teams} & Comunicación tutor & Videollamadas, compartir archivos \\ \hline
+\textbf{Overleaf} & Edición LaTeX & Colaborativo, compilación en cloud \\ \hline
+\textbf{Markdown \& Mermaid} & Documentación técnica & Legibilidad, diagramas como código \\ \hline
+\end{tabular}
+\caption{Resumen de herramientas utilizadas, su función y razón de elección.}
+\label{tab:resumen-herramientas}
+\end{table}
+
+\section{Decisiones técnicas clave}
+
+A lo largo del desarrollo del proyecto se tomaron varias decisiones técnicas fundamentales:
+
+\begin{enumerate}
+    \item \textbf{Migración a Ollama (Sprint 3)}: La decisión más impactante fue migrar de Gemini API a Ollama, resultando en mejoras de 5-15x en velocidad y eliminando costes recurrentes de API.
+
+    \item \textbf{Sistema Text-to-SQL}: En lugar de definir manualmente todas las posibles consultas, se implementó un sistema que genera SQL dinámicamente usando LLMs, permitiendo mayor flexibilidad en las preguntas de los usuarios.
+
+    \item \textbf{Cache en memoria}: Las asignaturas de la titulación activa se cargan una vez por sesión, eliminando consultas repetidas a la base de datos y mejorando tiempos de respuesta.
+
+    \item \textbf{Cliente HTTP para Ollama}: Se implementó un cliente HTTP personalizado que mantiene el modelo LLM cargado en memoria entre consultas, evitando tiempos de carga de 20-30 segundos en cada interacción.
+
+    \item \textbf{Respuestas naturales con LLM}: Todas las respuestas del bot pasan por un proceso de generación de lenguaje natural usando el LLM, eliminando respuestas robóticas y mejorando la experiencia de usuario.
+\end{enumerate}
+
+Estas decisiones, basadas en métricas de rendimiento y experiencia de usuario, fueron fundamentales para alcanzar los tiempos de respuesta de 2-4 segundos que ofrece actualmente el sistema.

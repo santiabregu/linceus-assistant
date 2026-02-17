@@ -1,0 +1,280 @@
+% !TEX root = ../proyect.tex
+
+\chapter{Marco tecnológico}\label{cap:marco-tecnologico}
+
+Este capítulo describe el conjunto de tecnologías, frameworks y paradigmas que conforman la base técnica del proyecto LinceUS Assistant. Se detallan las decisiones arquitectónicas tomadas y se justifica la elección de cada componente del stack tecnológico.
+
+\section{Arquitectura del sistema}\label{sec:arquitectura}
+
+LinceUS Assistant se estructura en tres capas principales:
+
+\begin{enumerate}
+    \item \textbf{Capa de presentación}: Interfaz web desarrollada en Node.js que permite la interacción del usuario con el asistente.
+    \item \textbf{Capa de procesamiento conversacional}: Motor Rasa que gestiona el flujo de diálogo, comprensión de intenciones y ejecución de acciones.
+    \item \textbf{Capa de datos}: Base de datos PostgreSQL (Supabase) que almacena información académica, vectores de embeddings y configuraciones.
+\end{enumerate}
+
+% TODO: Descomentar cuando se genere la imagen
+% \figura{0.8}{img/arquitectura}{Arquitectura general del sistema LinceUS Assistant}{fig:arquitectura}{}
+
+\section{Tecnologías de procesamiento conversacional}\label{sec:procesamiento-conversacional}
+
+\subsection{Rasa Framework}
+
+Rasa es un framework de código abierto para la construcción de asistentes conversacionales basados en IA. A diferencia de soluciones comerciales como Dialogflow o Lex de AWS, Rasa ofrece:
+
+\begin{itemize}
+    \item \textbf{Control total sobre el modelo}: Los datos de entrenamiento y los modelos permanecen bajo control del desarrollador
+    \item \textbf{Personalización completa}: Políticas de diálogo y pipelines de NLU totalmente configurables
+    \item \textbf{Ejecución local}: No depende de servicios externos para funcionar
+    \item \textbf{Multilenguaje}: Soporte nativo para español mediante modelos de spaCy
+\end{itemize}
+
+\subsubsection{Componentes de Rasa utilizados}
+
+\textbf{Rasa NLU (Natural Language Understanding)}
+
+Rasa NLU se encarga de interpretar la entrada del usuario y extraer:
+\begin{itemize}
+    \item \textbf{Intenciones (intents)}: ¿Qué quiere hacer el usuario? (e.g., \texttt{consultar\_horario}, \texttt{buscar\_asignatura})
+    \item \textbf{Entidades (entities)}: Información específica mencionada por el usuario (e.g., nombre de asignatura, curso, centro)
+\end{itemize}
+
+\textbf{Rasa Core}
+
+Rasa Core gestiona el flujo de conversación mediante:
+\begin{itemize}
+    \item \textbf{Stories}: Conversaciones de ejemplo que entrenan el modelo de diálogo
+    \item \textbf{Rules}: Reglas determinísticas para situaciones específicas
+    \item \textbf{Políticas}: Algoritmos de aprendizaje que deciden la siguiente acción del bot
+\end{itemize}
+
+\textbf{Rasa Actions}
+
+Las acciones personalizadas permiten al bot ejecutar código Python para:
+\begin{itemize}
+    \item Consultar la base de datos
+    \item Generar respuestas dinámicas
+    \item Llamar a APIs externas
+    \item Procesar lógica de negocio compleja
+\end{itemize}
+
+\subsection{Procesamiento de Lenguaje Natural}
+
+\subsubsection{spaCy}
+
+spaCy proporciona capacidades avanzadas de NLP en español:
+
+\begin{itemize}
+    \item \textbf{Tokenización}: Separación del texto en palabras y signos de puntuación
+    \item \textbf{Lematización}: Reducción de palabras a su forma base
+    \item \textbf{Análisis morfológico}: Identificación de categorías gramaticales
+    \item \textbf{Vectores de palabras}: Representaciones numéricas del significado de las palabras
+\end{itemize}
+
+El modelo \texttt{es\_core\_news\_md} incluye vocabulario específico del español y ha sido entrenado en corpus de textos en español.
+
+\subsubsection{Coincidencia difusa (Fuzzy Matching)}
+
+La librería RapidFuzz implementa algoritmos de distancia de cadenas que permiten:
+
+\begin{itemize}
+    \item Tolerar errores ortográficos (e.g., "Fundamnetos de Programacion")
+    \item Reconocer abreviaturas (e.g., "FP" por "Fundamentos de Programación")
+    \item Manejar variaciones en la escritura (e.g., mayúsculas, tildes)
+\end{itemize}
+
+Se utiliza el algoritmo de \textit{Levenshtein distance} con un umbral de similitud del 80\% para considerar coincidencias válidas.
+
+\section{Tecnologías de Inteligencia Artificial}\label{sec:ia}
+
+\subsection{Ollama y modelos de lenguaje grandes (LLMs)}
+
+Ollama es una plataforma que permite ejecutar modelos de lenguaje de gran tamaño localmente, sin necesidad de conexión a servicios cloud. En LinceUS Assistant se utiliza para dos propósitos principales:
+
+\subsubsection{Text-to-SQL}
+
+El sistema implementa un pipeline de generación de consultas SQL a partir de lenguaje natural:
+
+\begin{enumerate}
+    \item El usuario formula una pregunta en lenguaje natural
+    \item Ollama (usando un modelo como Llama 3 o Mistral) genera la consulta SQL correspondiente
+    \item La consulta se valida y ejecuta contra la base de datos
+    \item Los resultados se procesan y formatean para presentarlos al usuario
+\end{enumerate}
+
+Este enfoque permite consultas complejas sin necesidad de definir explícitamente todas las posibles preguntas.
+
+\subsubsection{Generación de respuestas contextualizadas}
+
+Para consultas que no se ajustan a patrones predefinidos, el modelo LLM genera respuestas naturales basándose en:
+
+\begin{itemize}
+    \item El contexto de la conversación
+    \item La información recuperada de la base de datos
+    \item El conocimiento previo del modelo
+\end{itemize}
+
+\subsection{Embeddings y búsqueda semántica}
+
+Para la recuperación de información de documentos (planes docentes, información de trámites), se utiliza:
+
+\begin{itemize}
+    \item \textbf{Modelos de embeddings}: Transforman texto en vectores numéricos que capturan el significado semántico
+    \item \textbf{pgvector}: Extensión de PostgreSQL que permite almacenar y buscar vectores eficientemente
+    \item \textbf{Búsqueda de similitud}: Encuentra documentos relevantes usando distancia coseno entre vectores
+\end{itemize}
+
+Este enfoque implementa un sistema RAG (\textit{Retrieval-Augmented Generation}) que mejora la precisión de las respuestas al combinar búsqueda semántica con generación de lenguaje.
+
+\section{Tecnologías de base de datos}\label{sec:base-datos}
+
+\subsection{PostgreSQL}
+
+PostgreSQL es el sistema de gestión de bases de datos relacional utilizado. Se ha elegido por:
+
+\begin{itemize}
+    \item \textbf{Robustez}: Base de datos ACID con alta integridad de datos
+    \item \textbf{Extensibilidad}: Soporte para tipos de datos personalizados y extensiones
+    \item \textbf{Rendimiento}: Optimización de consultas complejas y soporte para índices avanzados
+    \item \textbf{Código abierto}: Sin costes de licencia y comunidad activa
+\end{itemize}
+
+\subsection{Supabase}
+
+Supabase proporciona una capa de servicios sobre PostgreSQL:
+
+\begin{itemize}
+    \item \textbf{API REST automática}: Generación automática de endpoints para operaciones CRUD
+    \item \textbf{Real-time}: Suscripciones a cambios en la base de datos
+    \item \textbf{Autenticación}: Sistema de usuarios y permisos integrado
+    \item \textbf{Almacenamiento}: Para archivos y documentos
+    \item \textbf{Funciones Edge}: Ejecución de código serverless
+\end{itemize}
+
+La API REST de Supabase simplifica la integración con el backend de Python, eliminando la necesidad de escribir queries SQL manualmente para operaciones básicas.
+
+\subsection{pgvector}
+
+La extensión pgvector añade capacidades de búsqueda vectorial a PostgreSQL:
+
+\begin{itemize}
+    \item Almacenamiento eficiente de vectores de alta dimensionalidad (hasta 16,000 dimensiones)
+    \item Índices IVFFlat y HNSW para búsquedas rápidas de vecinos más cercanos
+    \item Operadores de similitud (distancia euclidiana, producto punto, similitud coseno)
+\end{itemize}
+
+Esto permite implementar búsqueda semántica directamente en la base de datos, sin necesidad de sistemas externos como Pinecone o Weaviate.
+
+\section{Tecnologías de frontend}\label{sec:frontend}
+
+\subsection{Node.js}
+
+El frontend del asistente está desarrollado usando Node.js, que proporciona:
+
+\begin{itemize}
+    \item \textbf{JavaScript del lado del servidor}: Mismo lenguaje en frontend y backend de la interfaz
+    \item \textbf{NPM}: Gestor de paquetes con millones de librerías disponibles
+    \item \textbf{Rendimiento}: Motor V8 de alta velocidad
+\end{itemize}
+
+\subsection{Framework web}
+
+Se utiliza un framework minimalista que permite:
+
+\begin{itemize}
+    \item Servir la interfaz de chat web
+    \item Gestionar la conexión WebSocket con el backend de Rasa
+    \item Renderizar mensajes con formato enriquecido (tablas, enlaces, imágenes)
+\end{itemize}
+
+\section{Herramientas de desarrollo}\label{sec:herramientas-desarrollo-marco}
+
+\subsection{Control de versiones}
+
+\textbf{Git} es el sistema de control de versiones utilizado, con \textbf{GitHub} como plataforma de hosting. La estructura del repositorio incluye:
+
+\begin{itemize}
+    \item \texttt{/actions}: Acciones personalizadas de Rasa
+    \item \texttt{/data}: Datos de entrenamiento (intents, stories, rules)
+    \item \texttt{/models}: Modelos entrenados de Rasa
+    \item \texttt{/frontend}: Código de la interfaz web
+    \item \texttt{/docs}: Documentación del proyecto
+\end{itemize}
+
+\subsection{Gestión de dependencias}
+
+Las dependencias de Python se gestionan mediante:
+
+\begin{itemize}
+    \item \textbf{requirements.txt}: Lista de todas las librerías necesarias con versiones específicas
+    \item \textbf{Entorno virtual (venv)}: Aislamiento de dependencias del sistema
+\end{itemize}
+
+\subsection{Variables de entorno}
+
+La librería \texttt{python-dotenv} gestiona la configuración mediante archivos \texttt{.env}:
+
+\begin{itemize}
+    \item Credenciales de Supabase (URL, API key)
+    \item Configuración de Ollama (URL del servidor, modelo a utilizar)
+    \item Parámetros de configuración del sistema
+\end{itemize}
+
+Esto permite cambiar la configuración sin modificar el código y evita exponer credenciales en el repositorio público.
+
+\section{Consideraciones de seguridad}\label{sec:seguridad}
+
+\subsection{Protección de datos}
+
+\begin{itemize}
+    \item \textbf{Credenciales}: Nunca se almacenan en el código, siempre en variables de entorno
+    \item \textbf{API keys}: Se utilizan claves específicas con permisos mínimos necesarios
+    \item \textbf{Conexiones}: HTTPS para todas las comunicaciones con servicios externos
+\end{itemize}
+
+\subsection{Validación de entrada}
+
+\begin{itemize}
+    \item Sanitización de consultas SQL para prevenir inyección SQL
+    \item Validación de tipos de datos en entradas de usuario
+    \item Limitación de longitud de mensajes
+\end{itemize}
+
+\subsection{Ejecución local de modelos}
+
+El uso de Ollama para ejecutar modelos localmente aporta beneficios de privacidad:
+
+\begin{itemize}
+    \item Las consultas de los usuarios no se envían a servicios externos
+    \item No hay dependencia de APIs comerciales que puedan cambiar términos de uso
+    \item Control total sobre los datos procesados
+\end{itemize}
+
+\section{Stack tecnológico completo}\label{sec:stack-completo}
+
+La siguiente tabla resume todas las tecnologías empleadas en el proyecto:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Capa} & \textbf{Tecnología} & \textbf{Versión} \\ \hline
+Frontend & Node.js & 18.x \\ \hline
+Frontend & HTML/CSS/JavaScript & ES6+ \\ \hline
+Backend conversacional & Python & 3.10 \\ \hline
+Backend conversacional & Rasa & 3.6.21 \\ \hline
+Backend conversacional & Rasa SDK & 3.6.2 \\ \hline
+Backend conversacional & spaCy & 3.8.0 \\ \hline
+IA y LLMs & Ollama & latest \\ \hline
+IA y LLMs & Modelos LLM & Llama 3 / Mistral \\ \hline
+Base de datos & PostgreSQL & 15.x \\ \hline
+Base de datos & pgvector & 0.5.0 \\ \hline
+Plataforma BD & Supabase & cloud \\ \hline
+Librerías NLP & RapidFuzz & 3.0.0 \\ \hline
+Librerías NLP & python-dotenv & 1.0.0 \\ \hline
+Control versiones & Git \& GitHub & 2.x \\ \hline
+\end{tabular}
+\caption{Stack tecnológico completo del proyecto LinceUS Assistant.}
+\label{tab:stack-tecnologico}
+\end{table}

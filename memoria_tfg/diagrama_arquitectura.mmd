@@ -1,0 +1,39 @@
+graph TB
+    subgraph "Capa de Presentación"
+        A[Frontend Web<br/>Node.js + HTML/CSS/JS]
+    end
+
+    subgraph "Capa de Procesamiento Conversacional"
+        B[Rasa NLU<br/>Comprensión de Intenciones]
+        C[Rasa Core<br/>Gestión de Diálogo]
+        D[Rasa Actions<br/>Python Custom Actions]
+        E[Ollama<br/>Text-to-SQL + LLMs]
+        F[spaCy<br/>Procesamiento NLP]
+    end
+
+    subgraph "Capa de Datos"
+        G[PostgreSQL<br/>Supabase]
+        H[pgvector<br/>Búsqueda Semántica]
+        I[Base de Datos Académica<br/>Asignaturas, Horarios, etc.]
+    end
+
+    A -->|WebSocket| B
+    B --> C
+    C --> D
+    D --> E
+    D --> F
+    D -->|SQL Queries| G
+    D -->|Búsqueda Vectorial| H
+    E -->|Text-to-SQL| G
+    H --> I
+    G --> I
+
+    style A fill:#e1f5e1
+    style B fill:#e3f2fd
+    style C fill:#e3f2fd
+    style D fill:#e3f2fd
+    style E fill:#fff3e0
+    style F fill:#fff3e0
+    style G fill:#fce4ec
+    style H fill:#fce4ec
+    style I fill:#fce4ec
