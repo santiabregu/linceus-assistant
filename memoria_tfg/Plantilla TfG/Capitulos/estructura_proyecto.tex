@@ -1,0 +1,153 @@
+% !TEX root = ../proyect.tex
+
+\chapter{Estructura del proyecto}\label{cap:estructura-proyecto}
+
+Este capítulo describe la organización del repositorio LinceUS Assistant, detallando el propósito de cada directorio y fichero relevante. La estructura ha sido diseñada para separar claramente las responsabilidades entre los distintos módulos del sistema y facilitar el mantenimiento y la escalabilidad del proyecto.
+
+\section{Visión general del repositorio}\label{sec:vision-general}
+
+El repositorio sigue una organización modular en la que cada directorio agrupa elementos con una responsabilidad concreta dentro del sistema. La separación entre la lógica conversacional, los datos de entrenamiento, la capa de acceso a datos, la interfaz de usuario y la documentación responde al principio de separación de responsabilidades (\textit{Separation of Concerns}).
+
+El árbol de directorios principal es el siguiente:
+
+\begin{verbatim}
+linceus-assistant/
++-- actions/
+|   +-- __init__.py
+|   +-- actions.py
+|   +-- asignaturas.py
+|   +-- config.py
+|   +-- contexto.py
+|   +-- db.py
+|   +-- gemini_client.py
+|   +-- ollama_client.py
+|   \-- text_to_sql.py
++-- data/
+|   +-- nlu/
+|   |   +-- asignaturas.yml
+|   |   +-- contexto.yml
+|   |   \-- general.yml
+|   +-- rules.yml
+|   \-- stories.yml
++-- docs/
+|   +-- sprints/
+|   \-- other/
++-- frontend/
+|   +-- chatbot-widget.js
+|   +-- chatbot-icon.html
+|   +-- pagina-principal.html
+|   \-- pagina-principal.css
++-- memoria_tfg/
++-- tests/
+|   \-- test_stories.yml
++-- config.yml
++-- domain.yml
++-- credentials.yml
++-- endpoints.yml
+\-- requirements.txt
+\end{verbatim}
+
+\section{Directorio raíz}\label{sec:directorio-raiz}
+
+Los ficheros situados en la raíz del repositorio configuran el comportamiento global del sistema Rasa y la gestión de dependencias del proyecto.
+
+\begin{itemize}
+    \item \texttt{config.yml}: Define el pipeline de procesamiento de lenguaje natural (NLU) y las políticas de diálogo de Rasa. Especifica los componentes utilizados para tokenización, extracción de características e identificación de intenciones y entidades.
+    \item \texttt{domain.yml}: Declara el universo del asistente: intenciones, entidades, slots, acciones y respuestas predefinidas. Es el fichero central que Rasa utiliza para construir el modelo de diálogo.
+    \item \texttt{credentials.yml}: Contiene las credenciales de conexión con los canales de comunicación externos (REST, Slack, etc.). Las claves sensibles se gestionan mediante variables de entorno para no exponerlas en el repositorio.
+    \item \texttt{endpoints.yml}: Configura los endpoints de los servicios externos con los que se comunica Rasa, como el servidor de acciones personalizadas (\textit{action server}).
+    \item \texttt{requirements.txt}: Lista todas las dependencias de Python necesarias para ejecutar el proyecto, con versiones fijas para garantizar la reproducibilidad del entorno.
+\end{itemize}
+
+\section{Directorio \texttt{actions/}}\label{sec:actions}
+
+El directorio \texttt{actions/} contiene la lógica de negocio del asistente, implementada como acciones personalizadas de Rasa. Cuando el motor conversacional determina que debe ejecutar una acción, invoca el código Python correspondiente de este directorio a través del \textit{action server}.
+
+\subsection{Organización de los módulos}
+
+Cada fichero encapsula una responsabilidad específica:
+
+\begin{itemize}
+    \item \texttt{actions.py}: Punto de entrada principal. Define las acciones de Rasa (\texttt{ActionQueryAsignaturas}, \texttt{ActionFallback}, etc.) y orquesta las llamadas al resto de módulos según la intención detectada.
+    \item \texttt{asignaturas.py}: Módulo especializado en la consulta de información sobre asignaturas. Implementa la lógica de búsqueda por nombre, curso, tipología y otras características, integrando coincidencia difusa (\textit{fuzzy matching}) para tolerancia a errores ortográficos.
+    \item \texttt{db.py}: Capa de acceso a datos. Centraliza todas las operaciones contra la base de datos Supabase (PostgreSQL), abstrayendo las consultas SQL del resto de la lógica de negocio.
+    \item \texttt{config.py}: Carga y expone la configuración del sistema a partir de variables de entorno. Gestiona credenciales de Supabase, parámetros de Ollama y otros ajustes globales.
+    \item \texttt{contexto.py}: Gestiona la memoria de contexto de la conversación. Mantiene información sobre la sesión del usuario (asignatura mencionada previamente, curso, etc.) para responder de forma coherente a preguntas de seguimiento.
+    \item \texttt{text\_to\_sql.py}: Implementa el pipeline de generación de consultas SQL a partir de lenguaje natural mediante un modelo de lenguaje grande (LLM). Transforma preguntas del usuario en consultas SQL válidas para su ejecución contra la base de datos.
+    \item \texttt{gemini\_client.py}: Cliente de integración con la API de Gemini (Google). Gestiona las llamadas al modelo para la detección dinámica de intenciones y la generación de respuestas enriquecidas.
+    \item \texttt{ollama\_client.py}: Cliente de integración con Ollama para la ejecución local de modelos de lenguaje grande. Permite realizar inferencias sin depender de servicios externos en la nube.
+\end{itemize}
+
+\subsection{Flujo de ejecución de una acción}
+
+Cuando el asistente recibe una consulta, el flujo típico dentro del directorio \texttt{actions/} es el siguiente:
+
+\begin{enumerate}
+    \item \texttt{actions.py} recibe la petición del \textit{action server} de Rasa.
+    \item Se extrae la intención y las entidades identificadas del tracker de Rasa.
+    \item Se consulta \texttt{contexto.py} para recuperar información de la sesión activa.
+    \item Se delega en el módulo específico (\texttt{asignaturas.py}, etc.) que ejecuta la consulta a través de \texttt{db.py}.
+    \item Si la consulta requiere generación de lenguaje natural, se invoca \texttt{gemini\_client.py} u \texttt{ollama\_client.py}.
+    \item La respuesta se devuelve a Rasa para ser enviada al usuario.
+\end{enumerate}
+
+\section{Directorio \texttt{data/}}\label{sec:data}
+
+El directorio \texttt{data/} contiene todos los datos de entrenamiento del modelo Rasa. Estos ficheros en formato YAML definen el comportamiento conversacional del asistente.
+
+\subsection{Subdirectorio \texttt{nlu/}}
+
+El subdirectorio \texttt{nlu/} agrupa los ficheros de entrenamiento del componente de comprensión del lenguaje natural (NLU), organizados temáticamente:
+
+\begin{itemize}
+    \item \texttt{asignaturas.yml}: Ejemplos de entrenamiento para intenciones relacionadas con consultas sobre asignaturas: créditos, tipología, curso, duración, etc.
+    \item \texttt{contexto.yml}: Ejemplos para intenciones de seguimiento contextual, como referencias anafóricas («¿y esa asignatura?», «¿cuántos créditos tiene?»).
+    \item \texttt{general.yml}: Intenciones generales del asistente: saludo, despedida, afirmación, negación, solicitud de ayuda y gestión del fallback.
+\end{itemize}
+
+\subsection{Ficheros de flujo conversacional}
+
+\begin{itemize}
+    \item \texttt{stories.yml}: Historias de entrenamiento que definen conversaciones de ejemplo. Rasa Core aprende de estas secuencias para predecir la siguiente acción del bot ante nuevas interacciones.
+    \item \texttt{rules.yml}: Reglas determinísticas de alto nivel. A diferencia de las historias, las reglas se aplican siempre que se cumpla la condición, sin aprendizaje estadístico. Se utilizan para comportamientos críticos como el manejo del fallback o la finalización de formularios.
+\end{itemize}
+
+\section{Directorio \texttt{frontend/}}\label{sec:frontend-estructura}
+
+El directorio \texttt{frontend/} contiene la interfaz web del asistente. Está diseñado como un widget embebible que puede integrarse en cualquier página web institucional.
+
+\begin{itemize}
+    \item \texttt{chatbot-widget.js}: Componente principal del chat. Implementa la lógica de comunicación con el servidor Rasa mediante la API REST, gestiona el estado de la conversación en el cliente y renderiza los mensajes del asistente con soporte para texto enriquecido.
+    \item \texttt{chatbot-icon.html}: Página de demostración que muestra el widget integrado con el icono flotante característico del asistente.
+    \item \texttt{pagina-principal.html} y \texttt{pagina-principal.css}: Prototipo de la página principal de LinceUS, que sirve como entorno de prueba de la integración del chatbot en un contexto universitario real.
+\end{itemize}
+
+\section{Directorio \texttt{data/} de Rasa vs. \texttt{docs/}}\label{sec:docs}
+
+El directorio \texttt{docs/} almacena la documentación técnica del proyecto, organizada en sprints y documentos de referencia:
+
+\begin{itemize}
+    \item \texttt{sprints/}: Carpetas por sprint con los documentos de planificación, decisiones técnicas y resultados de cada iteración del desarrollo.
+    \item \texttt{other/}: Documentos de referencia transversales, como el esquema de la base de datos, investigaciones sobre tecnologías alternativas y planes de implementación.
+\end{itemize}
+
+\section{Directorio \texttt{tests/}}\label{sec:tests}
+
+El directorio \texttt{tests/} contiene los casos de prueba del sistema conversacional.
+
+\begin{itemize}
+    \item \texttt{test\_stories.yml}: Historias de prueba end-to-end siguiendo el formato nativo de Rasa para testing conversacional. Cada historia simula una conversación completa y verifica que el asistente responde con las acciones correctas en cada turno.
+\end{itemize}
+
+La estrategia de pruebas se complementa con scripts externos ubicados en \texttt{docs/other/}, que cubren pruebas de integración del pipeline Text-to-SQL y del módulo de contexto conversacional.
+
+\section{Separación de responsabilidades}\label{sec:separacion-responsabilidades}
+
+La estructura del repositorio refleja una separación clara entre los distintos módulos del sistema, lo que aporta las siguientes ventajas:
+
+\begin{itemize}
+    \item \textbf{Mantenibilidad}: Cada módulo puede modificarse de forma independiente sin afectar al resto del sistema, siempre que se respete la interfaz entre capas.
+    \item \textbf{Testabilidad}: Los módulos de acceso a datos y de clientes de IA pueden probarse de forma aislada mediante mocks.
+    \item \textbf{Escalabilidad}: Añadir soporte para nuevas épicas (profesores, horarios, trámites) implica crear nuevos ficheros en \texttt{actions/} y ampliar los datos en \texttt{data/nlu/}, sin modificar la arquitectura existente.
+    \item \textbf{Colaboración}: La organización modular facilita el trabajo paralelo en distintas partes del sistema.
+\end{itemize}
