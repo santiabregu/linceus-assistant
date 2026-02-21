@@ -24,6 +24,7 @@ Este documento registra los cambios realizados en cada versión del chatbot sigu
 | v2.0.0 | 2026-02 | Infraestructura | Migración completa a Text-to-SQL con Ollama |
 | v2.1.0 | 2026-02 | Infraestructura | Sistema multi-titulación funcional con selección obligatoria |
 | v2.1.1 | 2026-02 | Infraestructura | Mejora NLU cambio titulación + consulta de titulaciones disponibles |
+| v2.1.2 | 2026-02 | Asignaturas | Detección de titulación en mensaje vía LLM + cambio de contexto inline |
 
 ---
 
@@ -669,6 +670,59 @@ Dime cuál te interesa para consultar sus asignaturas.
 - ✅ Reconocimiento robusto de cambio de titulación con múltiples variantes
 - ✅ Usuarios pueden explorar qué titulaciones hay disponibles antes de seleccionar
 - ✅ Información de número de asignaturas por titulación (transparencia)
+
+---
+
+---
+
+### v2.1.2 - Detección de Titulación Inline con LLM
+**Fecha:** Febrero 2026  
+**Tipo:** PATCH - Mejora de UX y robustez
+
+**Cambios:**
+- **Eliminado fuzzy matching hardcodeado para titulaciones**:
+  - Eliminada dependencia de `rapidfuzz` en `asignaturas.py`
+  - Eliminado el diccionario `TITULACION_MAP` estático
+- **Nuevo sistema de detección de titulación dinámica**:
+  - `_cargar_titulaciones_desde_bd()`: consulta `SELECT codigo, nombre FROM titulaciones WHERE activa = true` en cada comprobación
+  - `_detectar_titulacion_con_llm()`: pasa el mensaje del usuario + lista real de titulaciones al LLM (Gemini) y obtiene el código directamente
+  - `_construir_lista_titulaciones()`: genera el mensaje de opciones consultando la BD (con fallback si no hay conexión)
+  - Si se añade una titulación nueva a la BD, el bot la reconoce automáticamente sin tocar código
+- **Detección y cambio de contexto inline**:
+  - `comprobar_titulacion()` acepta ahora el parámetro `mensaje` y devuelve `Tuple[Optional[str], List]`
+  - Las 3 actions (`ActionConsultaEspecifica`, `ActionConsultaListado`, `ActionConsultaConteo`) pasan la pregunta del usuario a `comprobar_titulacion`
+  - Si el mensaje menciona una titulación (ej. "en GIS, cuántas asignaturas hay"), se detecta, se usa para la consulta Y se persiste en el slot en un único turno
+  - Prioridad: titulación en mensaje > slot guardado
+- **Prompt LLM endurecido para evitar alucinaciones**:
+  - Lista explícita de códigos válidos en el prompt
+  - Instrucción prohibiendo inventar titulaciones fuera de la lista
+  - Formato `"Respuesta:"` al final para guiar la generación
+- **Nuevos ejemplos NLU para TFG como asignatura**:
+  - 12 ejemplos con `[TFG](nombre_asignatura)` y `[trabajo fin de grado](nombre_asignatura)` en `asignaturas.yml`
+  - Resuelve que "cuando se hace el TFG" clasificara como listado en lugar de consulta específica
+
+**Archivos modificados:**
+- `actions/asignaturas.py` - Eliminado fuzzy, añadidas 3 funciones nuevas, `comprobar_titulacion` con nueva firma + propagación de `SlotSet` en las 3 actions
+- `data/nlu/asignaturas.yml` - 12 ejemplos nuevos para TFG como `nombre_asignatura`
+
+**Flujo nuevo:**
+```
+Usuario: "en ingeniería de software, cuántas obligatorias hay en primero"
+    ↓
+ActionConsultaConteo detecta la pregunta → llama comprobar_titulacion(pregunta)
+    ↓
+LLM recibe: mensaje + lista BD → responde "GII-IS"
+    ↓
+SlotSet(contexto_titulacion, "GII-IS") + ejecutar consulta con GII-IS
+    ↓ (todo en el mismo turno, sin pedir la titulación)
+Bot: "En Ingeniería del Software hay 8 asignaturas obligatorias en primero."
+```
+
+**Funcionalidades nuevas:**
+- ✅ Consultas compuestas: titulación + filtro en un solo mensaje
+- ✅ Cambio de contexto académico inline sin intent explícito
+- ✅ Reconocimiento automático de nuevas titulaciones añadidas a la BD
+- ✅ Consultas sobre TFG clasificadas correctamente como asignatura específica
 
 ---
 

@@ -77,7 +77,30 @@ nlu:
     - y esa de que curso es?
     - y esa?
     - y cuantos creditos?
-    - que creditos tiene?
+    - en que curso se hace el [TFG](nombre_asignatura)
+    - cuando se imparte el [TFG](nombre_asignatura)
+    - en que año se hace el [trabajo fin de grado](nombre_asignatura)
+    - cuando se hace el [trabajo fin de grado](nombre_asignatura)
+    - en que curso está el [TFG](nombre_asignatura)
+    - el [TFG](nombre_asignatura) en que año es
+    - cuándo se hace el [TFG](nombre_asignatura)
+    - el [trabajo fin de grado](nombre_asignatura) en que curso se imparte
+    - [TFG](nombre_asignatura) en que año
+    - información sobre el [TFG](nombre_asignatura)
+    - dime sobre el [TFG](nombre_asignatura)
+    - que es el [TFG](nombre_asignatura)
+    - en ingenieria del software cuando se imparte [Redes](nombre_asignatura)
+    - en IS cuantos creditos tiene [Calculo](nombre_asignatura)
+    - en computadores que curso es [ADDA](nombre_asignatura)
+    - en TI informacion de [Sistemas Operativos](nombre_asignatura)
+    - en ingenieria de computadores cuando se comparte [Redes](nombre_asignatura)
+    - en software hablame de [Estadistica](nombre_asignatura)
+    - en tecnologias informaticas dime sobre [Bases de Datos](nombre_asignatura)
+    - en IS que tipo es [Fundamentos de Programacion](nombre_asignatura)
+    - en GIS cuando se comparte el [TFG](nombre_asignatura)
+    - en IC cuantos creditos tiene [Algebra](nombre_asignatura)
+    - en IT dime de [Inteligencia Artificial](nombre_asignatura)
+    - en computadores es obligatoria [Arquitectura](nombre_asignatura)
 
 # =============================================================================
 # INTENT 2: LISTADO - Pide una LISTA de asignaturas con filtros
@@ -162,6 +185,18 @@ nlu:
     - todas las obligatorias
     - dame la lista de primero
     - quiero la lista de segundo
+    - en ingenieria del software asignaturas de primero
+    - en IS dame las optativas de cuarto
+    - en computadores que asignaturas hay en tercero
+    - en TI obligatorias de segundo
+    - en ingenieria de computadores asignaturas del segundo cuatrimestre
+    - en software las asignaturas de segundo
+    - en tecnologias informaticas optativas de cuarto
+    - en IS asignaturas de formacion basica
+    - en GIS asignaturas de tercero
+    - en IC dame las asignaturas de primero
+    - en IT asignaturas obligatorias de tercero
+    - en computadores cuales son las optativas de cuarto
 
 # =============================================================================
 # INTENT 3: CONTEO - Pregunta por CANTIDAD de asignaturas
@@ -199,6 +234,17 @@ nlu:
     - cuantas son optativas
     - cuantas son obligatorias
     - cuantas asignaturas de primero hay
+    - en ingenieria del software cuantas asignaturas hay en primero
+    - en IS cuantas optativas de cuarto
+    - en computadores cuantas obligatorias hay en tercero
+    - en TI cuantas asignaturas tiene el segundo
+    - en ingenieria de computadores cuantas asignaturas anuales hay
+    - en software cuantas de formacion basica hay
+    - en tecnologias informaticas cuantas optativas hay en cuarto
+    - en GIS cuantas asignaturas obligatorias hay en el primer cuatri
+    - en IC cuantas asignaturas tiene primero
+    - en IT cuantas asignaturas tiene el tercero
+    - en computadores cuantas son optativas
 
 # =============================================================================
 # INTENT: PEDIR MÁS RESULTADOS (paginación)

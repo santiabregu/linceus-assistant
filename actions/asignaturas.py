@@ -3,11 +3,11 @@ Actions de Rasa para consultas de asignaturas.
 Arquitectura con 3 intents separados + Text-to-SQL dinámico.
 """
 
-from typing import Any, Text, Dict, List, Optional
-from rapidfuzz import fuzz, process
+from typing import Any, Text, Dict, List, Optional, Tuple
 import json
 import re
 import unicodedata
+from .gemini_client import llamar_gemini
 
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
@@ -23,54 +23,209 @@ from .text_to_sql import (
 )
 
 from .config import BotConfig
+from .db import db_client
 
 
 # ============================================================================
 # UTILIDADES
 # ============================================================================
 
-TITULACIONES_DISPONIBLES = (
-    "• **Ingeniería del Software** (IS)\n"
-    "• **Tecnologías Informáticas** (TI)\n"
-    "• **Ingeniería de Computadores** (IC)"
-)
-
-
-def comprobar_titulacion(tracker, dispatcher) -> Optional[str]:
-    """
-    Comprueba si hay titulación seleccionada.
-    Si no la hay, pide al usuario que la indique y devuelve None.
-    Si la hay, devuelve el código de titulación.
-    """
-    titulacion = tracker.get_slot("contexto_titulacion")
-    if not titulacion:
-        dispatcher.utter_message(
-            text=f"Antes de consultar asignaturas, necesito saber tu titulación:\n\n"
-                 f"{TITULACIONES_DISPONIBLES}\n\n"
-                 f"Dime cuál cursas."
-        )
-        return None
-    return titulacion
-
 def normalizar_texto(texto: str) -> str:
     """Normaliza texto para búsqueda (sin tildes, minúsculas, sin espacios extra)."""
     if not texto:
         return ""
-    # Quitar tildes
     texto = unicodedata.normalize('NFKD', texto)
     texto = ''.join(c for c in texto if not unicodedata.combining(c))
-    # Minúsculas y espacios
     texto = texto.lower().strip()
     texto = re.sub(r'\s+', ' ', texto)
     return texto
 
 
-def extraer_nombre_asignatura(tracker) -> Optional[str]:
-    """Extrae el nombre de asignatura del mensaje actual."""
-    # Primero intentar extraer de entidades
+def obtener_historial_reciente(tracker, max_turnos: int = 2) -> str:
+    """
+    Extrae los últimos turnos de conversación del tracker de Rasa.
+    Devuelve un string con formato "Usuario: ... / Bot: ..." para dar contexto al LLM.
+    Solo incluye turnos de usuario y respuestas del bot (no eventos internos).
+    """
+    eventos = tracker.events
+    turnos = []
+    turno_actual = {}
+
+    for evento in eventos:
+        if evento.get("event") == "user":
+            # Si hay un turno previo pendiente, guardarlo
+            if turno_actual.get("user"):
+                turnos.append(turno_actual)
+            turno_actual = {"user": evento.get("text", ""), "bot": ""}
+        elif evento.get("event") == "bot" and turno_actual.get("user"):
+            # Solo guardar la primera respuesta del bot por turno
+            if not turno_actual.get("bot"):
+                turno_actual["bot"] = evento.get("text", "")
+
+    # No incluir el turno actual (ya es la pregunta que estamos procesando)
+    # Los turnos relevantes son los anteriores al último
+    turnos_previos = turnos[-max_turnos:] if turnos else []
+
+    if not turnos_previos:
+        return ""
+
+    lineas = []
+    for t in turnos_previos:
+        lineas.append(f"Usuario: {t['user']}")
+        if t['bot']:
+            # Truncar respuestas largas del bot para no saturar el prompt
+            bot_text = t['bot'][:200] + "..." if len(t['bot']) > 200 else t['bot']
+            lineas.append(f"Bot: {bot_text}")
+    return "\n".join(lineas)
+
+
+def _cargar_titulaciones_desde_bd() -> List[Dict]:
+    """
+    Obtiene todas las titulaciones activas de la BD.
+    Devuelve lista de dicts con 'codigo' y 'nombre'.
+    Devuelve lista vacía si hay error de conexión.
+    """
+    try:
+        conn = db_client.get_connection()
+        if not conn:
+            return []
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT codigo, nombre FROM titulaciones WHERE activa = true ORDER BY nombre"
+        )
+        filas = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return [{"codigo": f[0], "nombre": f[1]} for f in filas]
+    except Exception as e:
+        print(f"Error cargando titulaciones: {e}")
+        return []
+
+
+def _detectar_titulacion_con_llm(mensaje: str) -> Optional[str]:
+    """
+    Usa el LLM para detectar si el mensaje del usuario menciona una titulación.
+    Obtiene las titulaciones reales de la BD y las pasa al LLM en el prompt.
+    Devuelve el código (ej. 'GII-IS') o None si no hay referencia.
+    """
+    if not mensaje:
+        return None
+
+    titulaciones = _cargar_titulaciones_desde_bd()
+    if not titulaciones:
+        return None
+
+    lista_txt = "\n".join(
+        f"- {t['codigo']}: {t['nombre']}" for t in titulaciones
+    )
+    codigos_validos = [t['codigo'] for t in titulaciones]
+
+    codigos_str = ", ".join(codigos_validos)
+
+    prompt = f"""Analiza el mensaje del usuario y determina si hace referencia a alguna de las siguientes titulaciones universitarias.
+
+TITULACIONES DISPONIBLES (únicamente estas, no hay más):
+{lista_txt}
+
+Mensaje del usuario: "{mensaje}"
+
+INSTRUCCIONES ESTRICTAS:
+- Si el mensaje menciona o alude a una titulación de la lista, responde SOLO con su código exacto (ejemplos: {codigos_str}).
+- Si no hay referencia a ninguna titulación de la lista, responde SOLO con: ninguna
+- Está PROHIBIDO inventar o deducir titulaciones que no aparezcan en la lista. 
+- No escribas nada más, ni puntos, ni explicaciones.
+
+Respuesta:"""
+
+    respuesta = llamar_gemini(prompt, timeout=120, options={"num_predict": 20, "temperature": 0.0})
+    if not respuesta:
+        return None
+
+    respuesta_limpia = respuesta.strip().upper().replace(".", "").replace("\n", "")
+    print(f"   → LLM titulación detection: '{respuesta_limpia}'")
+
+    # Comprobar si la respuesta es un código válido
+    if respuesta_limpia in codigos_validos:
+        return respuesta_limpia
+
+    # Tolerancia: el LLM a veces añade texto extra, buscar si hay algún código válido
+    for codigo in codigos_validos:
+        if codigo in respuesta_limpia:
+            return codigo
+
+    return None
+
+
+def _construir_lista_titulaciones() -> str:
+    """Construye el texto de titulaciones disponibles consultando la BD."""
+    titulaciones = _cargar_titulaciones_desde_bd()
+    if titulaciones:
+        return "\n".join(
+            f"• **{t['nombre']}** ({t['codigo']})"
+            for t in titulaciones
+        )
+    # Fallback si la BD no está disponible
+    return (
+        "• **Ingeniería del Software** (GII-IS)\n"
+        "• **Tecnologías Informáticas** (GII-TI)\n"
+        "• **Ingeniería de Computadores** (GII-IC)"
+    )
+
+
+def comprobar_titulacion(
+    tracker, dispatcher, mensaje: str = None
+) -> Tuple[Optional[str], List]:
+    """
+    Comprueba si hay titulación disponible para la consulta.
+    Primero intenta detectarla en el texto del mensaje (consultando la BD);
+    si no, la lee del slot. Si no hay ninguna, pide al usuario que la indique.
+
+    Devuelve (codigo_titulacion, eventos_rasa).
+    - codigo_titulacion: str o None.
+    - eventos_rasa: [SlotSet] si se detectó del mensaje, [] en caso contrario.
+    """
+    eventos: List = []
+
+    titulacion_en_mensaje = _detectar_titulacion_con_llm(mensaje) if mensaje else None
+    titulacion = titulacion_en_mensaje or tracker.get_slot("contexto_titulacion")
+
+    if titulacion_en_mensaje:
+        eventos = [SlotSet("contexto_titulacion", titulacion_en_mensaje)]
+        nombre = BotConfig.get_nombre_titulacion(titulacion_en_mensaje)
+        print(f"   → Titulación detectada en mensaje: {nombre} ({titulacion_en_mensaje})")
+
+    if not titulacion:
+        lista = _construir_lista_titulaciones()
+        dispatcher.utter_message(
+            text=f"Antes de consultar asignaturas, necesito saber tu titulación:\n\n"
+                 f"{lista}\n\n"
+                 f"Dime cuál cursas."
+        )
+        return None, []
+
+    return titulacion, eventos
+
+
+
+def extraer_nombre_asignatura(tracker, titulacion_detectada_en_mensaje: bool = False) -> Optional[str]:
+    """Extrae el nombre de asignatura del mensaje actual.
+    Si se detectó titulación inline, valida que la entidad no sea parte del nombre de la titulación."""
     for entity in tracker.latest_message.get('entities', []):
         if entity.get('entity') == 'nombre_asignatura':
-            return entity.get('value')
+            valor = entity.get('value', '')
+            # Si se detectó titulación en el mensaje, validar que la entidad
+            # no sea basura (parte del nombre de la titulación)
+            if titulacion_detectada_en_mensaje and valor:
+                valor_lower = normalizar_texto(valor)
+                # Descartar si es demasiado corto o parece parte de titulación
+                fragmentos_titulacion = [
+                    'software', 'computador', 'telematic', 'informatica',
+                    'ingenieria', 'grado', 'tecnolog'
+                ]
+                if len(valor_lower) < 4 or any(f in valor_lower for f in fragmentos_titulacion):
+                    print(f"   ⚠ Entidad NLU descartada (parece titulación): '{valor}'")
+                    return None
+            return valor
     
     # Si no hay entidad, el LLM lo extraerá del texto
     return None
@@ -101,7 +256,8 @@ class ActionConsultaEspecifica(Action):
     ) -> List[Dict[Text, Any]]:
 
         pregunta = tracker.latest_message.get("text", "")
-        contexto_titulacion = comprobar_titulacion(tracker, dispatcher)
+        historial = obtener_historial_reciente(tracker)
+        contexto_titulacion, eventos_contexto = comprobar_titulacion(tracker, dispatcher, pregunta)
         if not contexto_titulacion:
             return []
         ultimo_codigo = tracker.get_slot("ultimo_codigo_consultado")
@@ -114,7 +270,8 @@ class ActionConsultaEspecifica(Action):
         print(f"{'='*60}")
 
         # Extraer nombre de asignatura
-        nombre_asignatura = extraer_nombre_asignatura(tracker)
+        titulacion_inline = len(eventos_contexto) > 0  # Si hay eventos, se detectó del mensaje
+        nombre_asignatura = extraer_nombre_asignatura(tracker, titulacion_inline)
         
         # Detectar si es pregunta de seguimiento (sin nombre explícito)
         es_seguimiento = self._es_seguimiento(pregunta, nombre_asignatura)
@@ -123,17 +280,16 @@ class ActionConsultaEspecifica(Action):
             nombre_asignatura = ultimo_nombre
             print(f"   → Usando contexto previo: {nombre_asignatura}")
         
+        # Si no hay entidad, dejar que el LLM extraiga del texto completo
         if not nombre_asignatura:
-            dispatcher.utter_message(
-                text="No pude identificar la asignatura. ¿Puedes decirme el nombre?"
-            )
-            return []
+            print(f"   → Sin entidad NLU, el LLM extraerá de la pregunta completa")
 
-        # Generar SQL con Ollama
+        # Generar SQL con LLM
         resultado_sql = generar_sql_especifica(
             pregunta=pregunta,
             nombre_asignatura=nombre_asignatura,
-            contexto_titulacion=contexto_titulacion
+            contexto_titulacion=contexto_titulacion,
+            historial=historial
         )
 
         print(f"   SQL generada: {resultado_sql.get('sql', '')[:100]}...")
@@ -147,21 +303,22 @@ class ActionConsultaEspecifica(Action):
 
         if not exito or not resultados:
             # Intentar búsqueda más flexible (con filtro de titulación)
-            from .text_to_sql import _inyectar_filtro_titulacion
-            sql_flexible = """
-                SELECT codigo, nombre, curso, creditos, duracion, tipologia, 
-                       es_formacion_basica, es_optativa 
-                FROM asignaturas 
-                WHERE activa = true AND nombre_normalizado ILIKE %s
-            """
-            sql_flexible = _inyectar_filtro_titulacion(sql_flexible, contexto_titulacion)
-            nombre_norm = f"%{normalizar_texto(nombre_asignatura)}%"
-            exito, resultados = ejecutar_query(sql_flexible, [nombre_norm])
+            if nombre_asignatura:
+                from .text_to_sql import _inyectar_filtro_titulacion, _expandir_alias
+                nombre_expandido = _expandir_alias(nombre_asignatura)
+                sql_flexible = """
+                    SELECT codigo, nombre, curso, creditos, duracion, tipologia, 
+                           es_formacion_basica, es_optativa 
+                    FROM asignaturas 
+                    WHERE activa = true AND nombre_normalizado ILIKE %s
+                """
+                sql_flexible = _inyectar_filtro_titulacion(sql_flexible, contexto_titulacion)
+                nombre_norm = f"%{normalizar_texto(nombre_expandido)}%"
+                exito, resultados = ejecutar_query(sql_flexible, [nombre_norm])
             
             if not exito or not resultados:
-                dispatcher.utter_message(
-                    text=f"No encontré ninguna asignatura llamada '{nombre_asignatura}'."
-                )
+                msg = f"No encontré ninguna asignatura llamada '{nombre_asignatura}'." if nombre_asignatura else "No pude identificar la asignatura en tu pregunta. ¿Puedes decirme el nombre?"
+                dispatcher.utter_message(text=msg)
                 return []
 
         # Tomar el primer resultado (más relevante)
@@ -176,7 +333,7 @@ class ActionConsultaEspecifica(Action):
 
         dispatcher.utter_message(text=respuesta)
 
-        return [
+        return eventos_contexto + [
             SlotSet("ultimo_codigo_consultado", asignatura.get('codigo')),
             SlotSet("ultimo_nombre_asignatura", asignatura.get('nombre'))
         ]
@@ -230,7 +387,8 @@ class ActionConsultaListado(Action):
     ) -> List[Dict[Text, Any]]:
 
         pregunta = tracker.latest_message.get("text", "")
-        contexto_titulacion = comprobar_titulacion(tracker, dispatcher)
+        historial = obtener_historial_reciente(tracker)
+        contexto_titulacion, eventos_contexto = comprobar_titulacion(tracker, dispatcher, pregunta)
         if not contexto_titulacion:
             return []
 
@@ -239,10 +397,11 @@ class ActionConsultaListado(Action):
         print(f"   Titulación: {contexto_titulacion}")
         print(f"{'='*60}")
 
-        # Generar SQL con Ollama
+        # Generar SQL con LLM
         resultado_sql = generar_sql_listado(
             pregunta=pregunta,
-            contexto_titulacion=contexto_titulacion
+            contexto_titulacion=contexto_titulacion,
+            historial=historial
         )
 
         print(f"   SQL generada: {resultado_sql.get('sql', '')[:100]}...")
@@ -283,9 +442,9 @@ class ActionConsultaListado(Action):
             dispatcher.utter_message(
                 text=f"Hay {len(resultados) - MAX_MOSTRAR} más. ¿Quieres ver todas?"
             )
-            return [SlotSet("ultimos_resultados_asignaturas", resultados)]
+            return eventos_contexto + [SlotSet("ultimos_resultados_asignaturas", resultados)]
 
-        return []
+        return eventos_contexto
 
 
 # ============================================================================
@@ -313,7 +472,8 @@ class ActionConsultaConteo(Action):
     ) -> List[Dict[Text, Any]]:
 
         pregunta = tracker.latest_message.get("text", "")
-        contexto_titulacion = comprobar_titulacion(tracker, dispatcher)
+        historial = obtener_historial_reciente(tracker)
+        contexto_titulacion, eventos_contexto = comprobar_titulacion(tracker, dispatcher, pregunta)
         if not contexto_titulacion:
             return []
 
@@ -322,10 +482,11 @@ class ActionConsultaConteo(Action):
         print(f"   Titulación: {contexto_titulacion}")
         print(f"{'='*60}")
 
-        # Generar SQL con Ollama
+        # Generar SQL con LLM
         resultado_sql = generar_sql_conteo(
             pregunta=pregunta,
-            contexto_titulacion=contexto_titulacion
+            contexto_titulacion=contexto_titulacion,
+            historial=historial
         )
 
         print(f"   SQL generada: {resultado_sql.get('sql', '')}")
@@ -352,7 +513,7 @@ class ActionConsultaConteo(Action):
 
         dispatcher.utter_message(text=respuesta)
 
-        return []
+        return eventos_contexto
 
 
 # ============================================================================

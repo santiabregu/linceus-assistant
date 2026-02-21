@@ -11,8 +11,8 @@ from typing import Dict, Any, Optional
 
 # Configuración de Ollama
 OLLAMA_API_URL = "http://localhost:11434/api/generate"
-OLLAMA_MODEL = "gemma2:2b"  # Optimizado para CPU (5-10s vs 38s)
-DEFAULT_TIMEOUT = 30  # segundos
+OLLAMA_MODEL = "llama3.2:3b"  # Más rápido en CPU
+DEFAULT_TIMEOUT = 120  # segundos (Ollama en CPU es lento)
 
 
 def limpiar_ansi(texto: str) -> str:

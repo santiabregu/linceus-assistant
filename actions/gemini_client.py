@@ -13,7 +13,7 @@ load_dotenv()
 
 # Configuración de Gemini
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL = "gemini-2.5-flash-lite"  # Modelo económico y rápido, ideal para SQL/JSON
+GEMINI_MODEL = "gemma-3-27b-it"  # 15K req/día gratis, muy capaz para SQL/JSON
 DEFAULT_TIMEOUT = 30  # segundos
 
 

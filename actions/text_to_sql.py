@@ -114,6 +114,31 @@ SINONIMOS_VALORES = {
     '4º': '4',
 }
 
+# Mapeos de abreviaturas/alias comunes de asignaturas → nombre real en BD
+ALIAS_ASIGNATURAS = {
+    'tfg': 'trabajo fin de grado',
+    'fp': 'fundamentos de programacion',
+    'adda': 'analisis y diseno de datos y algoritmos',
+    'ia': 'inteligencia artificial',
+    'is1': 'introduccion a la ingenieria del software',
+    'is2': 'diseno y pruebas',
+    'dp1': 'diseno y pruebas',
+    'dp2': 'diseno y pruebas',
+    'iso': 'introduccion a la ingenieria del software y los sistemas de informacion',
+    'so': 'sistemas operativos',
+    'pgpi': 'planificacion y gestion de proyectos informaticos',
+    'egc': 'evolucion y gestion de la configuracion',
+    'iissi': 'introduccion a la ingenieria del software y los si',
+}
+
+
+def _expandir_alias(nombre: str) -> str:
+    """Expande alias/abreviaturas comunes al nombre real."""
+    if not nombre:
+        return nombre
+    nombre_lower = nombre.lower().strip()
+    return ALIAS_ASIGNATURAS.get(nombre_lower, nombre)
+
 
 # ============================================================================
 # GENERACIÓN DE SQL CON OLLAMA
@@ -122,7 +147,8 @@ SINONIMOS_VALORES = {
 def generar_sql_especifica(
     pregunta: str,
     nombre_asignatura: str = None,
-    contexto_titulacion: str = None
+    contexto_titulacion: str = None,
+    historial: str = ""
 ) -> Dict[str, Any]:
     """
     Genera una query SQL para obtener información de UNA asignatura específica.
@@ -131,16 +157,22 @@ def generar_sql_especifica(
         pregunta: Pregunta del usuario en lenguaje natural
         nombre_asignatura: Nombre/código de la asignatura (si se extrajo)
         contexto_titulacion: ID de la titulación activa
+        historial: Turnos previos de conversación para contexto
     
     Returns:
         Dict con 'sql', 'parametros', 'atributo_solicitado', 'explicacion'
     """
     
+    contexto_conversacional = ""
+    if historial:
+        contexto_conversacional = f"""\nCONTEXTO DE LA CONVERSACIÓN PREVIA (usa esto para entender referencias implícitas):
+{historial}\n"""
+
     prompt = f"""Eres un experto en SQL. Tu tarea es generar una query SELECT para obtener información de UNA asignatura específica.
 
 SCHEMA DE LA TABLA:
 {ASIGNATURAS_SCHEMA}
-
+{contexto_conversacional}
 PREGUNTA DEL USUARIO: "{pregunta}"
 {f'ASIGNATURA MENCIONADA: "{nombre_asignatura}"' if nombre_asignatura else ''}
 
@@ -165,7 +197,7 @@ JSON:"""
     try:
         respuesta = llamar_llm(
             prompt, 
-            timeout=45,
+            timeout=120,
             options={
                 "temperature": 0.0,
                 "num_predict": 100,
@@ -191,6 +223,7 @@ JSON:"""
         print(f"Error generando SQL específica: {e}")
     
     # Fallback: query segura predefinida
+    nombre_buscar = _expandir_alias(nombre_asignatura) if nombre_asignatura else nombre_asignatura
     sql_fallback = """SELECT codigo, nombre, curso, creditos, duracion, tipologia, 
                          es_formacion_basica, es_optativa 
                   FROM asignaturas 
@@ -198,7 +231,7 @@ JSON:"""
     sql_fallback = _inyectar_filtro_titulacion(sql_fallback, contexto_titulacion)
     return {
         'sql': sql_fallback,
-        'parametros': [f'%{nombre_asignatura}%', f'%{nombre_asignatura}%'] if nombre_asignatura else ['%%', '%%'],
+        'parametros': [f'%{nombre_buscar}%', f'%{nombre_buscar}%'] if nombre_buscar else ['%%', '%%'],
         'atributo_solicitado': 'general',
         'explicacion': 'fallback - búsqueda por nombre',
         'valido': True
@@ -207,14 +240,16 @@ JSON:"""
 
 def generar_sql_listado(
     pregunta: str,
-    contexto_titulacion: str = None
+    contexto_titulacion: str = None,
+    historial: str = ""
 ) -> Dict[str, Any]:
     """
-    Genera una query SQL para LISTAR asignaturas con filtros.
+    Genera una query SQL para listar asignaturas con filtros.
     
     Args:
         pregunta: Pregunta del usuario
         contexto_titulacion: UUID de la titulación activa
+        historial: Turnos previos de conversación para contexto
     
     Returns:
         Dict con 'sql', 'parametros', 'filtros_aplicados', 'explicacion'
@@ -223,7 +258,13 @@ def generar_sql_listado(
     # Construir parte del WHERE para titulación (subquery por código)
     where_titulacion = f" AND titulacion_id = {_subquery_titulacion(contexto_titulacion)}" if contexto_titulacion else ""
     
+    contexto_conversacional = ""
+    if historial:
+        contexto_conversacional = f"""\nCONTEXTO DE LA CONVERSACIÓN PREVIA (si la pregunta actual es ambigua, usa el contexto para deducir filtros implícitos como curso, tipología, etc.):
+{historial}\n"""
+
     prompt = f"""Genera SQL para listar asignaturas según esta pregunta: "{pregunta}"
+{contexto_conversacional}
 
 TABLA asignaturas:
 - curso: INTEGER (1, 2, 3, 4)
@@ -254,7 +295,7 @@ GENERA SOLO EL JSON (sin explicaciones):"""
     try:
         respuesta = llamar_llm(
             prompt, 
-            timeout=45,
+            timeout=120,
             options={
                 "temperature": 0.0,      # Determinístico para SQL
                 "num_predict": 120,      # Solo necesitamos ~250 chars de JSON
@@ -301,7 +342,8 @@ GENERA SOLO EL JSON (sin explicaciones):"""
 
 def generar_sql_conteo(
     pregunta: str,
-    contexto_titulacion: str = None
+    contexto_titulacion: str = None,
+    historial: str = ""
 ) -> Dict[str, Any]:
     """
     Genera una query SQL COUNT para contar asignaturas.
@@ -309,16 +351,22 @@ def generar_sql_conteo(
     Args:
         pregunta: Pregunta del usuario
         contexto_titulacion: ID de la titulación activa
+        historial: Turnos previos de conversación para contexto
     
     Returns:
         Dict con 'sql', 'parametros', 'filtros_aplicados', 'explicacion'
     """
     
+    contexto_conversacional = ""
+    if historial:
+        contexto_conversacional = f"""\nCONTEXTO DE LA CONVERSACIÓN PREVIA (si la pregunta actual es ambigua, usa el contexto para deducir filtros implícitos):
+{historial}\n"""
+
     prompt = f"""Eres un experto en SQL. Tu tarea es generar una query COUNT para contar asignaturas.
 
 SCHEMA DE LA TABLA:
 {ASIGNATURAS_SCHEMA}
-
+{contexto_conversacional}
 PREGUNTA DEL USUARIO: "{pregunta}"
 
 EXTRAE LOS FILTROS DE LA PREGUNTA:
@@ -345,7 +393,7 @@ JSON:"""
     try:
         respuesta = llamar_llm(
             prompt, 
-            timeout=45,
+            timeout=120,
             options={
                 "temperature": 0.0,
                 "num_predict": 100,
@@ -660,7 +708,7 @@ Respuesta:"""
     try:
         respuesta = llamar_llm(
             prompt,
-            timeout=45,  # Aumentado para evitar timeouts en respuestas largas
+            timeout=120,  # Aumentado para Ollama en CPU
             options={
                 "temperature": 0.3,    # Algo más creativo para prosa natural
                 "num_predict": 200,    # Reducido para respuestas más rápidas
