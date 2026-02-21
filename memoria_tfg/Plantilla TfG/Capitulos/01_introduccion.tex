@@ -1,0 +1,67 @@
+\chapter{Introducción}
+\label{cap:introduccion}
+
+Este proyecto tiene como finalidad el diseño y desarrollo de un chatbot inteligente orientado a facilitar el acceso a información académica y administrativa en la Universidad de Sevilla, mediante técnicas de procesamiento del lenguaje natural y recuperación aumentada por generación (RAG).
+
+\section{Contexto}
+\label{sec:contexto}
+
+En la actualidad, el alumnado de la Universidad de Sevilla se enfrenta a una notable dispersión informativa. La información académica y administrativa se encuentra repartida entre múltiples plataformas y páginas web, cada una gestionada de forma independiente por distintas facultades, servicios y departamentos. Esta fragmentación dificulta el acceso eficiente a datos esenciales como horarios, contacto con profesorado, requisitos para trámites o metodologías de asignaturas.
+
+Además, muchos contenidos relevantes no se presentan de forma unificada ni están estructurados para su consulta directa, sino que requieren navegar por documentos PDF (como proyectos docentes), correos informativos, páginas institucionales específicas u otros portales como Sevius. Esta situación resulta especialmente compleja para estudiantes de nuevo ingreso o internacionales, que no siempre conocen el funcionamiento interno del entorno universitario y, en muchos casos, deben enfrentarse también a la barrera del idioma, lo que dificulta aún más la comprensión de la información disponible.
+
+La ausencia de un punto de acceso único, interactivo y orientado al usuario final pone de manifiesto la necesidad de una herramienta conversacional que permita acceder a la información de manera contextual, simplificada y guiada. En este sentido, un chatbot capaz de interpretar consultas abiertas en lenguaje natural y conectarse con diferentes fuentes de información representa una solución innovadora, alineada con los principios de accesibilidad, automatización y modernización de los servicios universitarios.
+
+\section{Motivación}
+\label{sec:motivacion}
+
+La motivación principal de este proyecto surge de la necesidad de centralizar el acceso a información académica dispersa y mejorar la experiencia del estudiante en su interacción con los sistemas universitarios. Los estudiantes, especialmente aquellos de nuevo ingreso o de programas de intercambio, se enfrentan con frecuencia a dificultades para localizar información básica como horarios de clase, datos de contacto del profesorado o documentación necesaria para realizar trámites administrativos.
+
+Esta problemática no solo genera frustración y pérdida de tiempo, sino que también puede afectar negativamente al rendimiento académico y a la integración del estudiante en la comunidad universitaria. La dispersión de la información en múltiples fuentes web, documentos PDF y portales específicos dificulta la autonomía informativa del alumnado, que debe dedicar un esfuerzo significativo a buscar respuestas que deberían estar disponibles de forma inmediata.
+
+Por tanto, el desarrollo de un asistente conversacional capaz de responder de forma rápida, precisa y en lenguaje natural constituye una mejora sustancial en la calidad del servicio universitario, promoviendo la autonomía del estudiante y reduciendo la carga administrativa de los servicios de atención.
+
+\section{Objetivos}
+\label{sec:objetivos}
+
+\subsection{Objetivo general}
+\label{subsec:objetivo-general}
+
+El objetivo principal de este proyecto es diseñar y desarrollar un chatbot inteligente que proporcione a los estudiantes de la Universidad de Sevilla una vía centralizada, accesible y eficiente para consultar información académica y administrativa relevante. La solución pretende integrar capacidades de comprensión del lenguaje natural mediante modelos de Inteligencia Artificial Generativa, junto con búsquedas en bases de datos estructuradas y vectorizadas, permitiendo resolver dudas frecuentes relacionadas con horarios, profesorado, documentación, normativas o localización de espacios universitarios. El asistente está especialmente orientado a facilitar la autonomía informativa de estudiantes de nuevo ingreso, internacionales o aquellos menos familiarizados con los procedimientos institucionales de la Universidad de Sevilla.
+
+\subsection{Objetivos técnicos}
+\label{subsec:objetivos-tecnicos}
+
+Los objetivos técnicos específicos del proyecto incluyen:
+
+\begin{itemize}
+    \item Implementar un sistema conversacional basado en Rasa que permita gestionar flujos de diálogo complejos y contextuales.
+    \item Integrar la API de Gemini para la detección de intenciones y generación de respuestas enriquecidas mediante lenguaje natural.
+    \item Diseñar y desarrollar una base de datos híbrida en Supabase que combine información estructurada (horarios, profesorado, trámites) con embeddings vectoriales para búsquedas semánticas.
+    \item Desarrollar acciones personalizadas en Python que permitan consultar datos estructurados y realizar búsquedas por similitud en documentación académica.
+    \item Implementar un frontend web en React que ofrezca una interfaz intuitiva y accesible para la interacción con el chatbot.
+    \item Garantizar el cumplimiento de normativas de privacidad (RGPD) mediante despliegue local y control de acceso a datos sensibles.
+\end{itemize}
+
+\subsection{Objetivos académicos y personales}
+\label{subsec:objetivos-academicos}
+
+Desde el punto de vista académico y personal, este proyecto permite:
+
+\begin{itemize}
+    \item Aplicar conocimientos adquiridos durante el Grado en Ingeniería del Software en un proyecto real de desarrollo de software.
+    \item Adquirir experiencia práctica en el diseño de sistemas conversacionales y en la integración de modelos de inteligencia artificial generativa.
+    \item Profundizar en el uso de técnicas de Retrieval Augmented Generation (RAG) y bases de datos vectoriales.
+    \item Desarrollar competencias en metodologías ágiles aplicadas a proyectos individuales.
+    \item Contribuir a la mejora de los servicios universitarios mediante una solución tecnológica innovadora y accesible.
+    \item Demostrar la capacidad de diseñar, implementar y documentar un sistema completo de forma autónoma.
+\end{itemize}
+
+\section{Estructura de la memoria}
+\label{sec:estructura-memoria}
+
+Esta memoria se organiza en dos partes principales:
+
+\textbf{Parte I: Introducción y Conceptos}, donde se contextualiza el proyecto, se justifica su necesidad, se definen los objetivos y se describen los conceptos técnicos fundamentales relacionados con sistemas conversacionales, procesamiento del lenguaje natural y arquitectura del sistema.
+
+\textbf{Parte II: Metodología y Planificación}, que detalla la metodología de desarrollo empleada (SCRUM adaptado), las herramientas utilizadas y la planificación temporal del proyecto, incluyendo el backlog de tareas y la distribución en sprints.

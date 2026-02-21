@@ -1,0 +1,165 @@
+erDiagram
+    UNIVERSIDADES ||--o{ CENTROS : tiene
+    UNIVERSIDADES ||--o{ DEPARTAMENTOS : tiene
+    CENTROS ||--o{ TITULACIONES : ofrece
+    CENTROS ||--o{ AULAS : tiene
+
+    TITULACIONES ||--o{ ASIGNATURAS : contiene
+    DEPARTAMENTOS ||--o{ ASIGNATURAS : imparte
+    DEPARTAMENTOS ||--o{ PROFESORES : pertenece
+
+    ASIGNATURAS ||--o{ PLANES_DOCENTES : tiene
+    ASIGNATURAS ||--o{ GRUPOS_CLASE : tiene
+    ASIGNATURAS ||--o{ PROFESOR_ASIGNATURA : asignada
+
+    PLANES_DOCENTES ||--o{ PLANES_DOCENTES_CHUNKS : vectorizado
+
+    PROFESORES ||--o{ TUTORIAS : ofrece
+    PROFESORES ||--o{ PROFESOR_ASIGNATURA : imparte
+    PROFESORES ||--o{ HORARIOS : da_clase
+
+    GRUPOS_CLASE ||--o{ HORARIOS : tiene
+    AULAS ||--o{ HORARIOS : usa
+
+    CATEGORIAS_TRAMITES ||--o{ TRAMITES : agrupa
+    UNIVERSIDADES ||--o{ TRAMITES : tiene
+    TRAMITES ||--o{ TRAMITES_CHUNKS : vectorizado
+
+    UNIVERSIDADES {
+        uuid id PK
+        varchar codigo UK
+        varchar nombre
+        varchar ciudad
+        boolean activa
+    }
+
+    CENTROS {
+        uuid id PK
+        uuid universidad_id FK
+        varchar codigo UK
+        varchar nombre
+        varchar direccion
+        boolean activo
+    }
+
+    DEPARTAMENTOS {
+        uuid id PK
+        uuid universidad_id FK
+        varchar codigo
+        varchar nombre
+        varchar siglas
+        boolean activo
+    }
+
+    TITULACIONES {
+        uuid id PK
+        uuid centro_id FK
+        varchar codigo
+        varchar nombre
+        varchar tipo
+        int creditos_totales
+        boolean activa
+    }
+
+    ASIGNATURAS {
+        uuid id PK
+        uuid titulacion_id FK
+        uuid departamento_id FK
+        varchar codigo
+        varchar nombre
+        int curso
+        decimal creditos
+        varchar duracion
+        boolean activa
+    }
+
+    PLANES_DOCENTES {
+        uuid id PK
+        uuid asignatura_id FK
+        varchar curso_academico
+        varchar grupo
+        varchar estado_rag
+    }
+
+    PLANES_DOCENTES_CHUNKS {
+        uuid id PK
+        uuid plan_docente_id FK
+        text contenido
+        vector embedding
+        varchar seccion
+        int numero_pagina
+    }
+
+    PROFESORES {
+        uuid id PK
+        uuid departamento_id FK
+        varchar nombre
+        varchar apellidos
+        varchar email
+        varchar despacho
+        boolean activo
+    }
+
+    TUTORIAS {
+        uuid id PK
+        uuid profesor_id FK
+        int dia_semana
+        time hora_inicio
+        time hora_fin
+        varchar modalidad
+        boolean activa
+    }
+
+    AULAS {
+        uuid id PK
+        uuid centro_id FK
+        varchar codigo
+        varchar nombre
+        int capacidad
+        boolean activa
+    }
+
+    GRUPOS_CLASE {
+        uuid id PK
+        uuid asignatura_id FK
+        varchar codigo
+        varchar tipo
+        boolean activo
+    }
+
+    HORARIOS {
+        uuid id PK
+        uuid grupo_id FK
+        uuid aula_id FK
+        uuid profesor_id FK
+        int dia_semana
+        time hora_inicio
+        time hora_fin
+        boolean activo
+    }
+
+    CATEGORIAS_TRAMITES {
+        uuid id PK
+        varchar codigo UK
+        varchar nombre
+        int orden
+        boolean activa
+    }
+
+    TRAMITES {
+        uuid id PK
+        uuid categoria_id FK
+        uuid universidad_id FK
+        varchar codigo
+        varchar nombre
+        text descripcion
+        boolean activo
+    }
+
+    TRAMITES_CHUNKS {
+        uuid id PK
+        uuid tramite_id FK
+        text contenido
+        vector embedding
+        varchar seccion
+    }

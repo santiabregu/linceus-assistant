@@ -1,0 +1,80 @@
+\makeatletter
+% Título del índice general como cabecera con línea debajo
+\renewcommand\tableofcontents{%%
+  \begingroup
+    \parindent\z@
+    \thispagestyle{plain}% quita cabecera rara de la página, deja solo número abajo
+    \vspace*{1.5cm}% espacio desde la parte superior útil de la página
+    {\normalfont\Large\bfseries Índice general\par}% título alineado a la izquierda, más grande
+    \vspace{0.25cm}% pequeño espacio
+    \hrule height 0.4pt% única línea justo debajo del título
+    \vspace{1cm}% espacio antes de las entradas del índice
+    \@starttoc{toc}% contenido del índice
+  \endgroup
+}
+
+% Formato para índice de figuras (mismo estilo)
+\renewcommand\listoffigures{%%
+  \begingroup
+    \parindent\z@
+    \thispagestyle{plain}%
+    \vspace*{1.5cm}%
+    {\normalfont\Large\bfseries Índice de figuras\par}%
+    \vspace{0.25cm}%
+    \hrule height 0.4pt%
+    \vspace{1cm}%
+    \@starttoc{lof}%
+  \endgroup
+}
+
+% Formato para índice de tablas (mismo estilo)
+\renewcommand\listoftables{%%
+  \begingroup
+    \parindent\z@
+    \thispagestyle{plain}%
+    \vspace*{1.5cm}%
+    {\normalfont\Large\bfseries Índice de tablas\par}%
+    \vspace{0.25cm}%
+    \hrule height 0.4pt%
+    \vspace{1cm}%
+    \@starttoc{lot}%
+  \endgroup
+}
+
+% Formato para índice de código (mismo estilo)
+\renewcommand\lstlistoflistings{%%
+  \begingroup
+    \parindent\z@
+    \thispagestyle{plain}%
+    \vspace*{1.5cm}%
+    {\normalfont\Large\bfseries Índice de código\par}%
+    \vspace{0.25cm}%
+    \hrule height 0.4pt%
+    \vspace{1cm}%
+    \@starttoc{lol}%
+  \endgroup
+}
+
+% Formato para partes en el índice (en el índice general)
+\renewcommand*\l@part[2]{%
+  \ifnum \c@tocdepth >-2\relax
+    \addpenalty{-\@highpenalty}%
+    \addvspace{1.0em \@plus\p@}%
+    \setlength\@tempdima{3em}%
+    \begingroup
+      \parindent \z@ \rightskip \@pnumwidth
+      \parfillskip -\@pnumwidth
+      \raggedright
+      {\leavevmode
+       \Large\bfseries\rmfamily #1}\par
+       \nobreak
+         \global\@nobreaktrue
+         \everypar{\global\@nobreakfalse\everypar{}}%
+    \endgroup
+  \fi}
+\renewcommand*\l@section{\@dottedtocline{1}{0em}{2.5em}}
+\renewcommand*\l@subsection{\@dottedtocline{2}{1.5em}{3.2em}}
+\renewcommand*\l@subsubsection{\@dottedtocline{3}{4.3em}{3.2em}}
+\makeatother
+
+\renewcommand{\frontmatter}{\pagenumbering{Roman}}

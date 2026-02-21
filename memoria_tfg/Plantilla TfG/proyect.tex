@@ -1,0 +1,72 @@
+% !TEX encoding = UTF-8 Unicode
+\documentclass{pclass}
+\usepackage[utf8]{inputenc} % para linux y mac 
+%\usepackage[latin1]{inputenc} % para windows
+  
+
+%DIFERENTES TIPOS DE LETRA
+%\usepackage{palatino}
+\usepackage{times}   
+
+% Numeración de tablas y figuras por capítulo
+\usepackage{chngcntr}
+\counterwithin{table}{chapter}
+\counterwithin{figure}{chapter}
+
+
+\begin{document}
+\tipo{Grado}   % Grado o M\'aster
+\titulopro{Especificaciones de formato}
+\tutor{Junta de Centro}
+\departamento{Comisi\'on de Trabajos fin de Grado de la E.T.S.I.I.}
+%\autores{Nombre 1}{Nombre 2}  % Dos autores
+\autores{(ponente): Jos\'e Ra. Portillo Fernández}{{\ }}   % Un autor
+\dia{1 de marzo de 2017 (v.0.91)}
+\titulacion{GIC, GIS y GITI}
+
+\hacerportada
+
+	\input{tocdef}
+\frontmatter
+
+	\tableofcontents % Índice general
+
+	\clearpage
+	\listoffigures   % Índice de figuras
+
+	\clearpage
+	\listoftables    % Índice de tablas
+
+	\clearpage
+	\lstlistoflistings % Índice de extractos de código
+
+ \mainmatter
+
+% =====================================================
+% PARTE I: INTRODUCCIÓN Y CONCEPTOS
+% =====================================================
+\part{Introducción y Conceptos}
+
+     \input{Capitulos/01_introduccion}
+     \input{Capitulos/02_preparacion}
+     \input{Capitulos/03_conceptos}
+
+% =====================================================
+% PARTE II: METODOLOGÍA Y PLANIFICACIÓN
+% =====================================================
+\part{Metodología y Planificación}
+
+     \input{Capitulos/04_metodologia}
+     \input{Capitulos/05_planificacion}
+
+\backmatter
+
+% \input{Capitulos/apendices}
+
+% Bibliografía
+\clearpage
+\bibliographystyle{apacite}
+\nocite{*}  % Muestra todas las referencias sin necesidad de \cite{}
+\bibliography{pfcbib}
+
+\end{document}

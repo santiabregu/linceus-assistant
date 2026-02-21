@@ -1,0 +1,87 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {part}{I\hspace {1em}Introducción y Conceptos}{1}{}%
+\contentsline {chapter}{\numberline {1}Introducción}{2}{}%
+\contentsline {section}{\numberline {1.1}Contexto}{2}{}%
+\contentsline {section}{\numberline {1.2}Motivación}{2}{}%
+\contentsline {section}{\numberline {1.3}Objetivos}{3}{}%
+\contentsline {subsection}{\numberline {1.3.1}Objetivo general}{3}{}%
+\contentsline {subsection}{\numberline {1.3.2}Objetivos técnicos}{3}{}%
+\contentsline {subsection}{\numberline {1.3.3}Objetivos académicos y personales}{3}{}%
+\contentsline {section}{\numberline {1.4}Estructura de la memoria}{4}{}%
+\contentsline {chapter}{\numberline {2}Preparación del proyecto}{5}{}%
+\contentsline {section}{\numberline {2.1}Estudio de las tecnologías y toma de decisiones}{5}{}%
+\contentsline {subsection}{\numberline {2.1.1}Decisión de frameworks conversacionales}{5}{}%
+\contentsline {subsubsection}{Frameworks analizados}{5}{}%
+\contentsline {subsubsection}{Comparación detallada}{5}{}%
+\contentsline {paragraph}{Flujo conversacional}{5}{}%
+\contentsline {paragraph}{Testing}{6}{}%
+\contentsline {paragraph}{Compatibilidad con RAG y embeddings}{6}{}%
+\contentsline {paragraph}{Despliegue local y privacidad}{7}{}%
+\contentsline {paragraph}{Comunidad y documentación}{7}{}%
+\contentsline {subsubsection}{Decisión final}{7}{}%
+\contentsline {subsubsection}{Tabla de comparación detallada de frameworks}{7}{}%
+\contentsline {subsection}{\numberline {2.1.2}Decisión de base de datos}{7}{}%
+\contentsline {subsubsection}{Bases de Datos analizadas}{7}{}%
+\contentsline {subsubsection}{Comparación detallada}{8}{}%
+\contentsline {paragraph}{Modelo de datos}{8}{}%
+\contentsline {paragraph}{Búsqueda vectorial}{8}{}%
+\contentsline {paragraph}{Despliegue local y facilidad}{8}{}%
+\contentsline {paragraph}{Seguridad y RGPD}{8}{}%
+\contentsline {paragraph}{Comunidad y documentación}{9}{}%
+\contentsline {subsubsection}{Decisión final}{9}{}%
+\contentsline {subsubsection}{Tabla de comparación de bases de datos}{9}{}%
+\contentsline {subsection}{\numberline {2.1.3}Decisión de API de LLM}{9}{}%
+\contentsline {subsubsection}{APIs analizadas}{9}{}%
+\contentsline {subsubsection}{Comparación detallada}{10}{}%
+\contentsline {paragraph}{Coste y accesibilidad}{10}{}%
+\contentsline {paragraph}{Calidad y rendimiento}{10}{}%
+\contentsline {paragraph}{Integración y soporte técnico}{11}{}%
+\contentsline {paragraph}{Privacidad y cumplimiento (RGPD)}{11}{}%
+\contentsline {subsubsection}{Decisión final}{11}{}%
+\contentsline {subsubsection}{Tabla de comparación detallada de APIs de LLM}{12}{}%
+\contentsline {section}{\numberline {2.2}Infraestructura del sistema}{12}{}%
+\contentsline {subsection}{\numberline {2.2.1}Arquitectura del sistema}{12}{}%
+\contentsline {subsection}{\numberline {2.2.2}Componentes tecnológicos del sistema}{13}{}%
+\contentsline {section}{\numberline {2.3}Casos de uso principales}{13}{}%
+\contentsline {subsection}{\numberline {2.3.1}Consulta sobre horarios de clases}{13}{}%
+\contentsline {subsubsection}{Consultar horario por asignatura}{13}{}%
+\contentsline {subsubsection}{Consultar horario por grupo}{13}{}%
+\contentsline {subsubsection}{Consultar horario por carrera/curso}{13}{}%
+\contentsline {subsection}{\numberline {2.3.2}Consulta sobre documentación necesaria para trámites}{13}{}%
+\contentsline {subsubsection}{Consultar documentación para matrícula}{13}{}%
+\contentsline {subsubsection}{Consultar documentación para becas}{14}{}%
+\contentsline {subsubsection}{Consultar documentación para certificados académicos}{14}{}%
+\contentsline {subsubsection}{Consultar documentación para convalidaciones/traslados}{14}{}%
+\contentsline {subsubsection}{Comparar trámites similares (opcional)}{14}{}%
+\contentsline {subsection}{\numberline {2.3.3}Consulta sobre datos de contacto y tutorías del profesorado}{14}{}%
+\contentsline {subsubsection}{Consultar despacho de un profesor}{14}{}%
+\contentsline {subsubsection}{Consultar correo electrónico de un profesor}{14}{}%
+\contentsline {subsubsection}{Consultar horario de tutorías}{14}{}%
+\contentsline {subsubsection}{Búsqueda por asignatura}{15}{}%
+\contentsline {subsubsection}{Búsqueda por departamento (opcional)}{15}{}%
+\contentsline {subsection}{\numberline {2.3.4}Consulta sobre información de una asignatura}{15}{}%
+\contentsline {subsubsection}{Consultar fórmula de calificación}{15}{}%
+\contentsline {subsubsection}{Consultar sistema de evaluación}{15}{}%
+\contentsline {subsubsection}{Consultar metodologías docentes}{15}{}%
+\contentsline {subsubsection}{Consultar bibliografía recomendada}{15}{}%
+\contentsline {subsubsection}{Consultar competencias de la asignatura (opcional)}{15}{}%
+\contentsline {subsection}{\numberline {2.3.5}Consulta sobre normas y documentación de la Universidad}{16}{}%
+\contentsline {subsubsection}{Consultar convocatorias de examen}{16}{}%
+\contentsline {subsubsection}{Consultar tiempos de examen}{16}{}%
+\contentsline {subsubsection}{Consultar número máximo de suspensos permitidos}{16}{}%
+\contentsline {subsubsection}{Consultar plazos de revisión de exámenes (opcional)}{16}{}%
+\contentsline {chapter}{\numberline {3}Conceptos iniciales}{17}{}%
+\contentsline {section}{\numberline {3.1}Sistema conversacional y componentes de Rasa}{17}{}%
+\contentsline {section}{\numberline {3.2}Procesamiento del lenguaje natural}{17}{}%
+\contentsline {section}{\numberline {3.3}Gestión del diálogo}{17}{}%
+\contentsline {section}{\numberline {3.4}Backend y persistencia de datos}{17}{}%
+\contentsline {part}{II\hspace {1em}Metodología y Planificación}{18}{}%
+\contentsline {chapter}{\numberline {4}Metodología}{19}{}%
+\contentsline {section}{\numberline {4.1}SCRUM ajustado en la ejecución}{19}{}%
+\contentsline {section}{\numberline {4.2}Herramientas}{19}{}%
+\contentsline {chapter}{\numberline {5}Planificación}{20}{}%
+\contentsline {section}{\numberline {5.1}Backlog}{20}{}%
+\contentsline {section}{\numberline {5.2}Planificación de sprints}{20}{}%
+\contentsline {section}{\numberline {5.3}Cronograma}{20}{}%
+\contentsline {chapter}{Referencias}{21}{}%
+\contentsfinish 

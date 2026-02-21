@@ -1,0 +1,327 @@
+% !TEX root = ../proyect.tex
+
+\chapter{Estructura de la base de datos}\label{cap:estructura-bd}
+
+Este capítulo describe el diseño y la estructura de la base de datos de LinceUS Assistant. La base de datos constituye el núcleo del sistema, almacenando toda la información académica necesaria para responder a las consultas de los estudiantes.
+
+\section{Diseño conceptual}\label{sec:diseno-conceptual}
+
+El diseño de la base de datos se ha estructurado siguiendo el modelo relacional, organizando la información en entidades que representan los elementos principales del dominio universitario: universidades, centros, titulaciones, asignaturas, profesores, horarios y trámites administrativos.
+
+\subsection{Principios de diseño}
+
+El esquema de base de datos se ha diseñado siguiendo los siguientes principios:
+
+\begin{enumerate}
+    \item \textbf{Normalización}: Las tablas están normalizadas hasta la tercera forma normal (3NF) para evitar redundancia y mantener la integridad referencial
+    \item \textbf{Escalabilidad}: El diseño permite añadir nuevas universidades, centros y titulaciones sin modificar la estructura
+    \item \textbf{Flexibilidad}: Campos de metadatos en formato JSONB permiten almacenar información variable sin alterar el esquema
+    \item \textbf{Búsqueda semántica}: Tablas de chunks con vectores de embeddings para búsqueda basada en similitud
+    \item \textbf{Trazabilidad}: Campos de timestamp (created\_at, updated\_at) en todas las tablas principales
+\end{enumerate}
+
+\section{Modelo entidad-relación}\label{sec:modelo-er}
+
+% El diagrama entidad-relación completo del sistema se muestra en la Figura \ref{fig:diagrama-er}.
+A continuación se detallan las principales entidades y sus relaciones del sistema.
+
+% TODO: Descomentar cuando se genere la imagen
+% \figura{0.95}{img/diagrama_er}{Diagrama entidad-relación de la base de datos LinceUS}{fig:diagrama-er}{}
+
+\section{Entidades principales}\label{sec:entidades}
+
+\subsection{Universidades}
+
+La tabla \texttt{UNIVERSIDADES} almacena la información básica de cada universidad. Aunque el sistema está diseñado inicialmente para la Universidad de Sevilla, la estructura permite incorporar múltiples instituciones.
+
+\cuadro{|l|l|p{6cm}|}{Estructura de la tabla UNIVERSIDADES}{tab:universidades}{
+\textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} \\ \hline
+id & uuid & Identificador único (PK) \\ \hline
+codigo & varchar & Código de la universidad (e.g., "US") \\ \hline
+nombre & varchar & Nombre completo de la universidad \\ \hline
+nombre\_corto & varchar & Nombre abreviado \\ \hline
+dominio\_web & varchar & Dominio web oficial (e.g., "us.es") \\ \hline
+ciudad & varchar & Ciudad donde se ubica \\ \hline
+activa & boolean & Indica si está operativa \\ \hline
+created\_at & timestamptz & Fecha de creación del registro \\ \hline
+updated\_at & timestamptz & Fecha de última actualización \\ \hline
+}
+
+\subsection{Centros}
+
+Los centros representan las escuelas y facultades de cada universidad (e.g., ETSII, Facultad de Química).
+
+\cuadro{|l|l|p{6cm}|}{Estructura de la tabla CENTROS}{tab:centros}{
+\textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} \\ \hline
+id & uuid & Identificador único (PK) \\ \hline
+universidad\_id & uuid & Referencia a UNIVERSIDADES (FK) \\ \hline
+codigo & varchar & Código del centro (e.g., "ETSII") \\ \hline
+nombre & varchar & Nombre completo del centro \\ \hline
+nombre\_corto & varchar & Nombre abreviado \\ \hline
+direccion & varchar & Dirección física del centro \\ \hline
+telefono & varchar & Teléfono de contacto \\ \hline
+email & varchar & Email de contacto \\ \hline
+web & varchar & URL del sitio web del centro \\ \hline
+activo & boolean & Indica si está operativo \\ \hline
+}
+
+\subsection{Departamentos}
+
+Los departamentos son unidades organizativas que agrupan profesores e imparten asignaturas.
+
+\cuadro{|l|l|p{6cm}|}{Estructura de la tabla DEPARTAMENTOS}{tab:departamentos}{
+\textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} \\ \hline
+id & uuid & Identificador único (PK) \\ \hline
+universidad\_id & uuid & Referencia a UNIVERSIDADES (FK) \\ \hline
+codigo & varchar & Código del departamento \\ \hline
+nombre & varchar & Nombre completo \\ \hline
+siglas & varchar & Siglas del departamento (e.g., "LSI") \\ \hline
+email & varchar & Email de contacto \\ \hline
+web & varchar & URL del sitio web \\ \hline
+activo & boolean & Indica si está operativo \\ \hline
+}
+
+\subsection{Titulaciones}
+
+Las titulaciones representan los grados, másteres y doctorados ofrecidos por los centros.
+
+\cuadro{|l|l|p{6cm}|}{Estructura de la tabla TITULACIONES}{tab:titulaciones}{
+\textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} \\ \hline
+id & uuid & Identificador único (PK) \\ \hline
+centro\_id & uuid & Referencia a CENTROS (FK) \\ \hline
+codigo & varchar & Código interno (e.g., "GII-IS") \\ \hline
+codigo\_oficial & varchar & Código RUCT oficial \\ \hline
+nombre & varchar & Nombre completo de la titulación \\ \hline
+nombre\_corto & varchar & Nombre abreviado \\ \hline
+tipo & varchar & GRADO, MASTER o DOCTORADO \\ \hline
+plan\_estudios\_anio & int & Año del plan de estudios vigente \\ \hline
+creditos\_totales & int & Créditos ECTS totales \\ \hline
+duracion\_anios & int & Duración en años \\ \hline
+requisito\_idioma & varchar & Nivel de idioma requerido (e.g., "B1") \\ \hline
+activa & boolean & Indica si está vigente \\ \hline
+}
+
+\subsection{Asignaturas}
+
+Las asignaturas son las materias que componen cada titulación.
+
+\cuadro{|l|l|p{5.5cm}|}{Estructura de la tabla ASIGNATURAS}{tab:asignaturas}{
+\textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} \\ \hline
+id & uuid & Identificador único (PK) \\ \hline
+titulacion\_id & uuid & Referencia a TITULACIONES (FK) \\ \hline
+departamento\_id & uuid & Referencia a DEPARTAMENTOS (FK) \\ \hline
+codigo & varchar & Código de la asignatura \\ \hline
+nombre & varchar & Nombre oficial de la asignatura \\ \hline
+curso & int & Curso en el que se imparte (1-4) \\ \hline
+creditos & decimal & Créditos ECTS \\ \hline
+duracion & varchar & A (anual), C1 (1er cuatr.), C2 (2º cuatr.) \\ \hline
+tipologia & varchar & TRONCAL, OBLIGATORIA, OPTATIVA \\ \hline
+es\_formacion\_basica & boolean & Si es de formación básica \\ \hline
+es\_optativa & boolean & Si es optativa \\ \hline
+nombre\_normalizado & varchar & Nombre sin tildes ni mayúsculas \\ \hline
+palabras\_clave & text[] & Array de palabras clave \\ \hline
+activa & boolean & Indica si está vigente \\ \hline
+}
+
+El campo \texttt{nombre\_normalizado} facilita la búsqueda tolerante a errores, mientras que \texttt{palabras\_clave} permite búsquedas por términos relacionados.
+
+\subsection{Profesores}
+
+La tabla de profesores almacena la información del personal docente.
+
+\cuadro{|l|l|p{6cm}|}{Estructura de la tabla PROFESORES}{tab:profesores}{
+\textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} \\ \hline
+id & uuid & Identificador único (PK) \\ \hline
+departamento\_id & uuid & Referencia a DEPARTAMENTOS (FK) \\ \hline
+nombre & varchar & Nombre del profesor \\ \hline
+apellidos & varchar & Apellidos del profesor \\ \hline
+nombre\_completo & varchar & Nombre completo (generado) \\ \hline
+nombre\_normalizado & varchar & Versión normalizada para búsqueda \\ \hline
+email & varchar & Email de contacto \\ \hline
+telefono & varchar & Teléfono de contacto \\ \hline
+despacho & varchar & Número de despacho (e.g., "F1.45") \\ \hline
+edificio & varchar & Edificio donde se ubica \\ \hline
+planta & varchar & Planta del despacho \\ \hline
+web\_personal & varchar & URL de página personal \\ \hline
+orcid & varchar & Identificador ORCID \\ \hline
+activo & boolean & Indica si está en activo \\ \hline
+}
+
+\subsection{Tutorías}
+
+Las tutorías representan los horarios de atención a estudiantes por parte de los profesores.
+
+\cuadro{|l|l|p{6cm}|}{Estructura de la tabla TUTORIAS}{tab:tutorias}{
+\textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} \\ \hline
+id & uuid & Identificador único (PK) \\ \hline
+profesor\_id & uuid & Referencia a PROFESORES (FK) \\ \hline
+dia\_semana & int & Día de la semana (1=lunes, 5=viernes) \\ \hline
+hora\_inicio & time & Hora de inicio de la tutoría \\ \hline
+hora\_fin & time & Hora de fin de la tutoría \\ \hline
+ubicacion & varchar & Lugar donde se realiza \\ \hline
+modalidad & varchar & presencial, online o mixta \\ \hline
+enlace\_online & varchar & URL para tutorías online \\ \hline
+curso\_academico & varchar & Curso académico (e.g., "2025-26") \\ \hline
+cuatrimestre & varchar & C1, C2 o A (anual) \\ \hline
+notas & text & Observaciones adicionales \\ \hline
+activa & boolean & Indica si está vigente \\ \hline
+}
+
+\subsection{Horarios}
+
+Los horarios relacionan grupos de clase con aulas, profesores y franjas horarias.
+
+\cuadro{|l|l|p{6cm}|}{Estructura de la tabla HORARIOS}{tab:horarios}{
+\textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} \\ \hline
+id & uuid & Identificador único (PK) \\ \hline
+grupo\_id & uuid & Referencia a GRUPOS\_CLASE (FK) \\ \hline
+aula\_id & uuid & Referencia a AULAS (FK) \\ \hline
+profesor\_id & uuid & Referencia a PROFESORES (FK) \\ \hline
+dia\_semana & int & Día de la semana (1-5) \\ \hline
+hora\_inicio & time & Hora de inicio de la clase \\ \hline
+hora\_fin & time & Hora de fin de la clase \\ \hline
+fecha\_inicio & date & Fecha de inicio del periodo \\ \hline
+fecha\_fin & date & Fecha de fin del periodo \\ \hline
+notas & text & Observaciones \\ \hline
+activo & boolean & Indica si está vigente \\ \hline
+}
+
+\section{Tablas de vectorización (RAG)}\label{sec:vectorizacion}
+
+Para implementar el sistema RAG (\textit{Retrieval-Augmented Generation}), se han diseñado tablas especializadas que almacenan fragmentos de documentos junto con sus representaciones vectoriales.
+
+\subsection{Planes docentes}
+
+\cuadro{|l|l|p{6cm}|}{Estructura de la tabla PLANES\_DOCENTES}{tab:planes-docentes}{
+\textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} \\ \hline
+id & uuid & Identificador único (PK) \\ \hline
+asignatura\_id & uuid & Referencia a ASIGNATURAS (FK) \\ \hline
+curso\_academico & varchar & Curso académico (e.g., "2025-26") \\ \hline
+grupo & varchar & Grupo al que corresponde \\ \hline
+url\_documento & varchar & URL del PDF original \\ \hline
+hash\_documento & varchar & Hash SHA256 del documento \\ \hline
+fecha\_documento & date & Fecha del documento \\ \hline
+coordinador\_nombre & varchar & Nombre del coordinador \\ \hline
+estado\_rag & varchar & pendiente, procesando, completado, error \\ \hline
+fecha\_procesamiento & timestamptz & Fecha de procesamiento \\ \hline
+error\_procesamiento & text & Mensaje de error si lo hay \\ \hline
+updated\_at & timestamptz & Última actualización \\ \hline
+}
+
+\subsection{Chunks de planes docentes}
+
+\cuadro{|l|l|p{5.5cm}|}{Estructura de la tabla PLANES\_DOCENTES\_CHUNKS}{tab:chunks-planes}{
+\textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} \\ \hline
+id & uuid & Identificador único (PK) \\ \hline
+plan\_docente\_id & uuid & Referencia a PLANES\_DOCENTES (FK) \\ \hline
+contenido & text & Texto del fragmento \\ \hline
+embedding & vector & Vector de 768 dimensiones \\ \hline
+seccion & varchar & Sección del documento (e.g., "Evaluación") \\ \hline
+subseccion & varchar & Subsección si aplica \\ \hline
+numero\_pagina & int & Número de página del PDF \\ \hline
+orden\_chunk & int & Orden del chunk en el documento \\ \hline
+metadata & jsonb & Metadatos adicionales en formato JSON \\ \hline
+updated\_at & timestamptz & Última actualización \\ \hline
+}
+
+El campo \texttt{embedding} utiliza el tipo \texttt{vector} proporcionado por la extensión pgvector. Los vectores se generan usando modelos de embeddings especializados y permiten búsquedas de similitud semántica mediante consultas como:
+
+\begin{verbatim}
+SELECT contenido, embedding <=> query_vector AS distance
+FROM planes_docentes_chunks
+ORDER BY distance
+LIMIT 5;
+\end{verbatim}
+
+\section{Tablas de trámites administrativos}\label{sec:tramites}
+
+\subsection{Categorías de trámites}
+
+\cuadro{|l|l|p{6cm}|}{Estructura de la tabla CATEGORIAS\_TRAMITES}{tab:categorias-tramites}{
+\textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} \\ \hline
+id & uuid & Identificador único (PK) \\ \hline
+codigo & varchar & Código de la categoría (e.g., "matricula") \\ \hline
+nombre & varchar & Nombre de la categoría \\ \hline
+descripcion & text & Descripción detallada \\ \hline
+icono & varchar & Nombre del icono a mostrar \\ \hline
+orden & int & Orden de presentación \\ \hline
+activa & boolean & Indica si está activa \\ \hline
+}
+
+\subsection{Trámites}
+
+\cuadro{|l|l|p{6cm}|}{Estructura de la tabla TRAMITES}{tab:tramites}{
+\textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} \\ \hline
+id & uuid & Identificador único (PK) \\ \hline
+categoria\_id & uuid & Referencia a CATEGORIAS\_TRAMITES (FK) \\ \hline
+universidad\_id & uuid & Referencia a UNIVERSIDADES (FK) \\ \hline
+codigo & varchar & Código del trámite \\ \hline
+nombre & varchar & Nombre del trámite \\ \hline
+descripcion & text & Descripción detallada \\ \hline
+url\_oficial & varchar & URL oficial del trámite \\ \hline
+url\_formulario & varchar & URL del formulario si existe \\ \hline
+palabras\_clave & text[] & Palabras clave para búsqueda \\ \hline
+estado\_rag & varchar & Estado del procesamiento RAG \\ \hline
+fecha\_procesamiento & timestamptz & Fecha de procesamiento \\ \hline
+activo & boolean & Indica si está vigente \\ \hline
+}
+
+\section{Relaciones entre entidades}\label{sec:relaciones}
+
+Las principales relaciones del modelo son:
+
+\begin{itemize}
+    \item Una \textbf{universidad} tiene múltiples \textbf{centros} y \textbf{departamentos}
+    \item Un \textbf{centro} ofrece múltiples \textbf{titulaciones} y tiene múltiples \textbf{aulas}
+    \item Una \textbf{titulación} contiene múltiples \textbf{asignaturas}
+    \item Una \textbf{asignatura} es impartida por un \textbf{departamento} y tiene múltiples \textbf{planes docentes} y \textbf{grupos de clase}
+    \item Un \textbf{departamento} agrupa a múltiples \textbf{profesores}
+    \item Un \textbf{profesor} imparte múltiples \textbf{asignaturas}, ofrece \textbf{tutorías} y está asignado a \textbf{horarios}
+    \item Un \textbf{grupo de clase} tiene un conjunto de \textbf{horarios} asociados
+    \item Un \textbf{horario} relaciona un \textbf{grupo}, un \textbf{aula} y un \textbf{profesor}
+\end{itemize}
+
+\section{Índices y optimización}\label{sec:indices}
+
+Para garantizar un rendimiento óptimo en las consultas, se han creado los siguientes índices:
+
+\begin{itemize}
+    \item \textbf{Índices B-tree}: En todas las claves primarias y foráneas
+    \item \textbf{Índices de texto}: En campos \texttt{nombre\_normalizado} para búsquedas rápidas
+    \item \textbf{Índices GIN}: En campos de array (\texttt{palabras\_clave}) y JSONB (\texttt{metadata})
+    \item \textbf{Índices IVFFlat}: En campos \texttt{embedding} para búsquedas de similitud vectorial
+\end{itemize}
+
+Ejemplo de creación de índice vectorial:
+
+\begin{verbatim}
+CREATE INDEX idx_planes_chunks_embedding
+ON planes_docentes_chunks
+USING ivfflat (embedding vector_cosine_ops)
+WITH (lists = 100);
+\end{verbatim}
+
+\section{Integridad referencial}\label{sec:integridad}
+
+Todas las relaciones entre tablas están protegidas por restricciones de clave foránea con políticas de borrado apropiadas:
+
+\begin{itemize}
+    \item \textbf{ON DELETE CASCADE}: En relaciones donde el hijo no tiene sentido sin el padre (e.g., chunks sin plan docente)
+    \item \textbf{ON DELETE RESTRICT}: En relaciones donde se debe prevenir el borrado accidental (e.g., no borrar una universidad con centros asociados)
+    \item \textbf{ON DELETE SET NULL}: En relaciones opcionales donde el padre puede desaparecer sin eliminar al hijo
+\end{itemize}
+
+\section{Estrategia de datos de prueba}\label{sec:datos-prueba}
+
+Para el desarrollo y pruebas del sistema se han creado datos de prueba que incluyen:
+
+\begin{itemize}
+    \item Universidad de Sevilla con varios centros (ETSII, Facultad de Informática)
+    \item Titulaciones de Ingeniería Informática (IS, IC, TI)
+    \item Conjunto representativo de asignaturas de cada titulación
+    \item Profesores del Departamento de Lenguajes y Sistemas Informáticos
+    \item Horarios del curso 2025-2026
+    \item Planes docentes y trámites administrativos más consultados
+\end{itemize}
+
+Los datos de prueba permiten validar el funcionamiento del sistema sin necesidad de tener acceso a datos reales completos.

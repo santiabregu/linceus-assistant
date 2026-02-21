@@ -1,0 +1,501 @@
+\chapter{Preparación del proyecto}
+\label{cap:preparacion}
+
+En esta fase previa se llevó a cabo un análisis exhaustivo de las tecnologías disponibles para construir el sistema conversacional, evaluando alternativas en función de criterios como coste, facilidad de integración, capacidad de despliegue local y compatibilidad con técnicas de RAG. Asimismo, se definió la arquitectura técnica del sistema y se identificaron los casos de uso principales que guiarían el desarrollo del proyecto.
+
+\section{Estudio de las tecnologías y toma de decisiones}
+\label{sec:estudio-tecnologias}
+
+\subsection{Decisión de frameworks conversacionales}
+
+\subsubsection{Frameworks analizados}
+
+Se han considerado distintos frameworks de chatbot \textbf{open source} que cumplen con los requisitos de despliegue local, integración en Python y soporte para RAG. Los principales son:
+
+\begin{itemize}
+    \item \textbf{Rasa}, centrado en Python y con gran control de flujo.
+    \item \textbf{Botpress (OSS)}, que destaca por su editor visual de flujos.
+    \item \textbf{DeepPavlov}, más orientado a NLP avanzado con módulos reutilizables.
+    \item \textbf{OpenDialog}, centrado en diseño visual y contextos conversacionales.
+    \item \textbf{Tock} y \textbf{Botonic}, opciones alternativas con características interesantes, aunque con menor adopción o diferente enfoque tecnológico.
+\end{itemize}
+
+\subsubsection{Comparación detallada}
+
+\paragraph{Flujo conversacional}
+
+El flujo conversacional se refiere a la capacidad del framework para \textbf{definir, controlar y gestionar el diálogo entre el usuario y el sistema}. Incluye cómo se modelan las intenciones, las respuestas, los contextos y la memoria de la conversación, así como el grado de flexibilidad para manejar \textbf{diálogos no lineales, interrupciones o escenarios complejos}. Un buen manejo del flujo conversacional permite que el chatbot no solo siga guiones rígidos, sino que pueda adaptarse dinámicamente a las necesidades del usuario, manteniendo coherencia y contexto a lo largo de la interacción.
+
+\begin{itemize}
+    \item \textbf{Rasa} ofrece máximo control mediante historias y reglas, permitiendo modelar diálogos complejos y contextuales.
+    \item \textbf{Botpress} facilita el diseño con nodos visuales, aunque está más orientado a flujos rígidos y predefinidos.
+    \item \textbf{DeepPavlov} permite construir agentes multi-skill, pero requiere definir manualmente los pipelines.
+    \item \textbf{OpenDialog} sobresale en el modelado de escenarios y contextos, aunque su dependencia de PHP limita la integración con Python.
+    \item \textbf{Tock/Botonic} permiten definir historias o rutas conversacionales, pero con menor madurez que Rasa.
+\end{itemize}
+
+\paragraph{Testing}
+
+La capacidad de testing en un framework de chatbots hace referencia a las \textbf{herramientas disponibles para validar la calidad y el correcto funcionamiento del agente conversacional}. Esto incluye desde pruebas unitarias (validación de intenciones, entidades y respuestas individuales) hasta pruebas end-to-end (que simulan conversaciones completas para comprobar flujos y contextos). Un buen soporte de testing permite \textbf{automatizar la detección de errores, reducir el riesgo de alucinaciones o respuestas incoherentes y asegurar la estabilidad} del sistema a medida que evoluciona. Cuanto más integrado esté el testing en el framework, más fácil será mantener y escalar el chatbot con garantías de calidad.
+
+\begin{itemize}
+    \item \textbf{Rasa} incorpora herramientas para pruebas unitarias y end-to-end, automatizando la validación de intenciones y flujos.
+    \item \textbf{Botpress} ofrece principalmente un simulador manual, sin suite de pruebas automatizadas robusta.
+    \item \textbf{DeepPavlov} no incluye framework específico, por lo que las pruebas deben hacerse con scripts en Python.
+    \item \textbf{OpenDialog} y \textbf{Botonic} dependen casi exclusivamente de pruebas manuales.
+\end{itemize}
+
+\paragraph{Compatibilidad con RAG y embeddings}
+
+La compatibilidad con \textbf{RAG (Retrieval Augmented Generation)} y el uso de \textbf{embeddings} mide hasta qué punto un framework permite integrar modelos de lenguaje con bases de datos vectoriales para mejorar las respuestas. Esta característica es clave cuando se trabaja con \textbf{información documental extensa o cambiante}. Un buen soporte en este ámbito asegura que el chatbot pueda \textbf{ofrecer respuestas actualizadas, precisas y fundamentadas en datos externos}, reduciendo el riesgo de respuestas inventadas (alucinaciones).
+
+\begin{itemize}
+    \item \textbf{Rasa} se integra de forma natural con bases vectoriales (pgvector, Qdrant, FAISS), permitiendo retrieval augmented generation.
+    \item \textbf{Botpress} dispone de un módulo de \textit{Knowledge Base} que admite cargar documentos, aunque menos flexible en personalización.
+    \item \textbf{DeepPavlov} destaca en Q\&A y FAQ matching, aunque el RAG debe construirse manualmente.
+    \item \textbf{OpenDialog} y \textbf{Botonic} no tienen soporte nativo, siendo necesaria integración externa.
+\end{itemize}
+
+\paragraph{Despliegue local y privacidad}
+
+El despliegue local y la gestión de la privacidad se refieren a la \textbf{posibilidad de ejecutar el framework en entornos controlados (on-premise o en servidores propios)} sin depender necesariamente de servicios en la nube. Esta característica es importante cuando se manejan \textbf{datos sensibles o confidenciales}, ya que permite aplicar políticas de seguridad personalizadas y cumplir con normativas como el RGPD. Además, la facilidad de despliegue (con Docker, instaladores nativos o stacks ligeros) influye directamente en la \textbf{rapidez de la puesta en marcha y en la capacidad de mantener el control total sobre la información del usuario}.
+
+\begin{itemize}
+    \item \textbf{Rasa} y \textbf{Botpress} son fácilmente desplegables en local mediante Docker o instalación directa.
+    \item \textbf{DeepPavlov} funciona como librería Python o servicio REST.
+    \item \textbf{OpenDialog} requiere un stack PHP más pesado.
+    \item \textbf{Tock} es estable en entornos locales, mientras que Botonic se orienta a proyectos en Node/React.
+\end{itemize}
+
+\paragraph{Comunidad y documentación}
+
+La comunidad y la documentación de un framework son indicadores clave de su madurez, accesibilidad y sostenibilidad a largo plazo. Una comunidad activa ofrece foros, repositorios y soporte colaborativo que facilitan la resolución de problemas y el intercambio de buenas prácticas. Al mismo tiempo, una documentación clara, actualizada y completa reduce la curva de aprendizaje y permite implementar soluciones más rápido.
+
+\begin{itemize}
+    \item \textbf{Rasa} tiene la comunidad más amplia y documentación extensa.
+    \item \textbf{Botpress} dispone de foros y Discord activos, pero con menor alcance.
+    \item \textbf{DeepPavlov} cuenta con una comunidad académica sólida, aunque más técnica.
+    \item \textbf{OpenDialog} y \textbf{Botonic} tienen comunidades pequeñas y más limitadas.
+\end{itemize}
+
+\subsubsection{Decisión final}
+
+El framework seleccionado es \textbf{Rasa}, ya que combina:
+
+\begin{itemize}
+    \item Máximo control sobre el flujo conversacional.
+    \item Capacidades de testing integradas y automatizables.
+    \item Soporte probado para RAG y bases vectoriales.
+    \item Despliegue local sencillo y seguro, compatible con RGPD.
+    \item Amplia comunidad y documentación, lo que garantiza sostenibilidad del proyecto.
+\end{itemize}
+
+\subsubsection{Tabla de comparación detallada de frameworks}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{|l|c|c|c|c|c|c|}
+\hline
+\textbf{Característica / Framework} & \textbf{Rasa} & \textbf{Botpress} & \textbf{DeepPavlov} & \textbf{OpenDialog} & \textbf{Tock} & \textbf{Botonic} \\ \hline
+Flujo conversacional & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star$ & $\star$ \\ \hline
+Testing & $\star\star\star$ & $\star$ & $\star$ & $\star$ & $\star$ & $\star$ \\ \hline
+Compatibilidad con RAG y embeddings & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star$ & $\star$ & $\star$ \\ \hline
+Despliegue local y privacidad & $\star\star\star$ & $\star\star\star$ & $\star\star$ & $\star$ & $\star\star$ & $\star\star$ \\ \hline
+Comunidad y documentación & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star$ & $\star$ & $\star$ \\ \hline
+\textbf{Resultado global} & \textbf{$\star$ 15} & \textbf{$\star$ 10} & \textbf{$\star$ 9} & \textbf{$\star$ 6} & \textbf{$\star$ 6} & \textbf{$\star$ 6} \\ \hline
+\end{tabular}
+\caption{Comparación de frameworks conversacionales}
+\label{tab:frameworks}
+\end{table}
+
+\subsection{Decisión de base de datos}
+
+\subsubsection{Bases de Datos analizadas}
+
+Se revisaron diferentes opciones open source para almacenar tanto información estructurada como embeddings:
+
+\begin{itemize}
+    \item \textbf{Supabase (Postgres + pgvector)}.
+    \item \textbf{PostgreSQL autogestionado con pgvector}.
+    \item \textbf{Appwrite}, \textbf{PocketBase}, \textbf{Directus}, \textbf{Hasura}.
+    \item Motores vectoriales dedicados: \textbf{Qdrant, Weaviate, Milvus, FAISS.}
+\end{itemize}
+
+\subsubsection{Comparación detallada}
+
+\paragraph{Modelo de datos}
+
+El modelo de datos define cómo se organiza, almacena y consulta la información dentro de una base de datos o motor de persistencia. Dependiendo de la tecnología, este modelo puede ser relacional (tablas y relaciones SQL), orientado a documentos (estructuras tipo JSON), o especializado en vectores (espacios multidimensionales para embeddings). La elección del modelo es clave para garantizar la eficiencia, flexibilidad y escalabilidad del sistema, ya que influye directamente en cómo se estructuran los datos de los usuarios, los recursos académicos y los embeddings utilizados en búsquedas semánticas o RAG.
+
+\paragraph{Búsqueda vectorial}
+
+\begin{itemize}
+    \item \textbf{Supabase/Postgres} soportan pgvector, adecuado para corpus medianos.
+    \item \textbf{Qdrant, Weaviate y Milvus} son más eficientes en grandes volúmenes de vectores.
+    \item \textbf{FAISS} funciona muy bien embebido en Python, pero no es una base de datos como tal.
+    \item El resto (Appwrite, PocketBase, Directus, Hasura) carecen de soporte nativo y requieren integraciones manuales.
+\end{itemize}
+
+\paragraph{Despliegue local y facilidad}
+
+El despliegue local y la facilidad de instalación miden la \textbf{complejidad técnica y los recursos necesarios para poner en marcha una base de datos en un entorno controlado}. Algunas soluciones ofrecen entornos ligeros y rápidos de ejecutar (como binarios únicos o imágenes Docker sencillas), mientras que otras requieren stacks más pesados y múltiples dependencias. Esta característica es importante porque impacta directamente en la \textbf{rapidez de la configuración inicial, la curva de aprendizaje y los costes de mantenimiento}.
+
+\begin{itemize}
+    \item \textbf{Supabase} y \textbf{Postgres} se despliegan fácilmente con Docker.
+    \item \textbf{PocketBase} es el más liviano (un solo binario).
+    \item \textbf{Appwrite} y \textbf{Directus} requieren más dependencias.
+    \item \textbf{Qdrant/Weaviate/Milvus} añaden complejidad, aunque escalables.
+\end{itemize}
+
+\paragraph{Seguridad y RGPD}
+
+La seguridad y el cumplimiento normativo son aspectos fundamentales en la gestión de datos, especialmente cuando se trabaja con información sensible de estudiantes o usuarios. Esta característica evalúa las \textbf{mecanismos nativos de autenticación, autorización y control de acceso} que ofrece cada base de datos, así como la posibilidad de aplicar políticas de privacidad. Tecnologías que incluyen funciones como \textbf{Row-Level Security, roles definidos o autenticación integrada} facilitan el cumplimiento legal y reducen riesgos. En cambio, los motores que carecen de seguridad propia obligan a implementar medidas adicionales en la capa de aplicación, aumentando la complejidad y la responsabilidad del equipo de desarrollo.
+
+\begin{itemize}
+    \item \textbf{Supabase} ofrece Row-Level Security (RLS) y autenticación JWT.
+    \item \textbf{Postgres} tradicional depende de roles SQL.
+    \item \textbf{Appwrite/Directus/Hasura} ofrecen mecanismos de auth integrados.
+    \item \textbf{Motores vectoriales} carecen de autenticación propia, requiriendo protección adicional en la aplicación.
+\end{itemize}
+
+\paragraph{Comunidad y documentación}
+
+La comunidad y la documentación determinan el \textbf{nivel de soporte, recursos y acompañamiento disponibles para desarrolladores}. Una base de datos con una comunidad amplia y activa facilita la resolución de problemas, la existencia de librerías y la mejora continua del sistema. Al mismo tiempo, una documentación clara, actualizada y con ejemplos prácticos acelera la adopción de la tecnología y reduce la curva de aprendizaje.
+
+\begin{itemize}
+    \item \textbf{Postgres} es el más maduro y con mayor soporte.
+    \item \textbf{Supabase} ha crecido mucho, con amplia documentación y ejemplos de IA.
+    \item \textbf{Qdrant y Weaviate} cuentan con comunidades activas en el ámbito de vectores.
+    \item \textbf{Appwrite, PocketBase, Directus} tienen comunidades menores pero en expansión.
+\end{itemize}
+
+\subsubsection{Decisión final}
+
+La base de datos seleccionada es \textbf{Supabase (Postgres + pgvector)}, porque:
+
+\begin{itemize}
+    \item Permite unificar datos estructurados y vectores en una sola plataforma.
+    \item Ofrece autenticación, reglas de seguridad a nivel de fila y APIs listas para consumir desde Python y React.
+    \item Facilita el despliegue local sin costes de licencias.
+    \item Su comunidad y documentación reducen la curva de aprendizaje.
+    \item Cumple los requisitos de RAG con un volumen de datos manejable para el caso académico.
+\end{itemize}
+
+\subsubsection{Tabla de comparación de bases de datos}
+
+\begin{table}[h]
+\centering
+\scriptsize
+\begin{tabular}{|l|c|c|c|c|c|c|c|c|c|c|}
+\hline
+\textbf{Característica / BD} & \textbf{Supabase} & \textbf{Postgres} & \textbf{Appwrite} & \textbf{PocketBase} & \textbf{Directus} & \textbf{Hasura} & \textbf{Qdrant} & \textbf{Weaviate} & \textbf{Milvus} & \textbf{FAISS} \\ \hline
+Modelo de datos & $\star\star\star$ & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ \\ \hline
+Búsqueda vectorial & $\star\star$ & $\star\star$ & $\star$ & $\star$ & $\star$ & $\star$ & $\star\star\star$ & $\star\star\star$ & $\star\star\star$ & $\star\star$ \\ \hline
+Despliegue local y facilidad & $\star\star\star$ & $\star\star\star$ & $\star\star$ & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ \\ \hline
+Seguridad y RGPD & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star$ & $\star\star$ & $\star\star$ & $\star$ & $\star$ & $\star$ & $\star$ \\ \hline
+Comunidad y documentación & $\star\star\star$ & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ \\ \hline
+\textbf{Resultado global} & \textbf{$\star$ 14} & \textbf{$\star$ 13} & \textbf{$\star$ 9} & \textbf{$\star$ 9} & \textbf{$\star$ 9} & \textbf{$\star$ 9} & \textbf{$\star$ 10} & \textbf{$\star$ 10} & \textbf{$\star$ 10} & \textbf{$\star$ 9} \\ \hline
+\end{tabular}
+\caption{Comparación de bases de datos}
+\label{tab:databases}
+\end{table}
+
+\subsection{Decisión de API de LLM}
+
+\subsubsection{APIs analizadas}
+
+Se han considerado diferentes opciones de APIs de modelos de lenguaje de gran tamaño (LLMs) open source o con planes gratuitos/educativos:
+
+\begin{itemize}
+    \item \textbf{Gemini (Google AI / DeepMind)}
+    \item \textbf{OpenAI GPT (GPT-4o, GPT-4o mini)}
+    \item \textbf{DeepSeek}
+    \item \textbf{Hugging Face Inference API}
+    \item \textbf{Cohere y Anthropic (Claude)}
+\end{itemize}
+
+\subsubsection{Comparación detallada}
+
+\paragraph{Coste y accesibilidad}
+
+El coste y la accesibilidad hacen referencia a la \textbf{disponibilidad económica y facilidad de uso de los modelos de lenguaje (LLMs)}. En un contexto académico, donde no suele existir presupuesto, es esencial contar con opciones que permitan \textbf{experimentar gratuitamente o con bajos costes iniciales}. Además del precio, influyen factores como los límites de uso en los planes gratuitos, la velocidad de respuesta, la estabilidad del servicio y la facilidad de registro o integración. Esta característica resulta clave para asegurar que el proyecto pueda desarrollarse de forma \textbf{sostenible y realista}, sin que los costes de las llamadas a la API se conviertan en una barrera.
+
+\begin{itemize}
+    \item Gemini ofrece un plan gratuito con un número considerable de llamadas mensuales, lo que permite experimentar y probar sin coste, factor clave en un TFG sin presupuesto.
+    \item OpenAI GPT tiene un coste asociado desde la primera llamada más allá de GPT-3.5, lo que lo hace menos viable económicamente.
+    \item DeepSeek tiene una API gratuita, pero con menos garantías de estabilidad y soporte.
+    \item Hugging Face API ofrece acceso a modelos open source, pero el plan gratuito tiene fuertes limitaciones de velocidad y peticiones.
+    \item Claude (Anthropic) y Cohere requieren suscripción desde el inicio, menos atractivas en un contexto universitario.
+\end{itemize}
+
+\paragraph{Calidad y rendimiento}
+
+La calidad y el rendimiento de un modelo de lenguaje se refieren a su capacidad para \textbf{comprender instrucciones, generar texto coherente y relevante, y mantener el contexto a lo largo de la conversación}. Estos aspectos suelen evaluarse mediante \textbf{pruebas comparativas de comprensión, razonamiento y generación en varios idiomas}. Además, influyen factores prácticos como la \textbf{velocidad de respuesta, la estabilidad del modelo y su habilidad para manejar entradas extensas sin pérdida de coherencia}. Una mayor calidad en este ámbito se traduce en \textbf{respuestas más útiles, precisas y naturales}, lo que resulta fundamental para un chatbot académico que debe manejar información variada con fiabilidad.
+
+Estudios comparativos muestran que Gemini compite con GPT-4 en comprensión y generación de texto, especialmente en multilingüe y razonamiento.
+
+\begin{itemize}
+    \item GPT sigue siendo referencia en benchmarks de calidad, pero con coste.
+    \item DeepSeek ha demostrado buen rendimiento en ciertas tareas de razonamiento matemático, aunque en comprensión semántica y contexto extenso suele quedar por debajo de Gemini y GPT.
+    \item Hugging Face API depende mucho del modelo seleccionado (ej. LLaMA, Mistral, Falcon), pero requieren más trabajo de fine-tuning y optimización para igualar a Gemini/GPT en calidad.
+\end{itemize}
+
+\paragraph{Integración y soporte técnico}
+
+La integración y el soporte técnico se refieren a la \textbf{facilidad con la que un LLM puede incorporarse en el stack tecnológico existente} y al nivel de recursos disponibles para resolver problemas durante el desarrollo. Factores como la existencia de \textbf{SDKs oficiales, librerías en distintos lenguajes, ejemplos prácticos y documentación clara} determinan la rapidez de adopción. Además, contar con un ecosistema sólido y acuerdos institucionales (como convenios académicos) puede simplificar la integración y asegurar \textbf{mayor estabilidad a largo plazo}. Esta característica es clave, ya que permite centrar el esfuerzo en el desarrollo del chatbot sin tener que invertir demasiado tiempo en resolver barreras técnicas de conexión con el modelo.
+
+\begin{itemize}
+    \item Gemini ofrece SDKs y buena integración en Python/JavaScript, lo que encaja perfectamente con tu stack (Python + React).
+    \item GPT también tiene SDKs muy maduros, aunque con la barrera de costes.
+    \item DeepSeek todavía no cuenta con ecosistema sólido.
+    \item Hugging Face API es flexible pero requiere seleccionar y mantener modelos específicos.
+    \item Gemini además está alineado con acuerdos académicos, como el que mantiene la \textbf{Universidad de Sevilla con Google} en diferentes ámbitos, lo que puede facilitar futuras integraciones oficiales del chatbot.
+\end{itemize}
+
+\paragraph{Privacidad y cumplimiento (RGPD)}
+
+La privacidad y el cumplimiento normativo son esenciales al utilizar modelos de lenguaje que procesan datos de usuarios. Esta característica evalúa el \textbf{nivel de control sobre dónde y cómo se almacenan los datos}, si el servicio cumple con estándares legales de protección de información y si existe la opción de \textbf{despliegue on-premise}. Los LLMs en la nube suelen garantizar cumplimiento básico de GDPR, pero limitan el control directo. En cambio, los modelos auto-hospedados ofrecen \textbf{mayor soberanía sobre los datos}, aunque requieren más infraestructura y experiencia técnica. En un contexto universitario, suele ser más relevante encontrar un equilibrio entre \textbf{facilidad de uso, coste cero o reducido y garantías mínimas de privacidad}.
+
+\begin{itemize}
+    \item Gemini y GPT ofrecen despliegues en la nube con cumplimiento GDPR, aunque el control on-premise es limitado.
+    \item Los modelos de Hugging Face pueden auto-hospedarse, lo que da mayor control, pero a costa de infraestructura.
+    \item En un contexto académico, la facilidad de uso y el plan gratuito de Gemini pesan más que el control absoluto.
+\end{itemize}
+
+\subsubsection{Decisión final}
+
+La API seleccionada es \textbf{Gemini}, porque:
+
+\begin{itemize}
+    \item Dispone de un plan gratuito generoso en número de llamadas.
+    \item Ofrece calidad comparable a GPT-4 en muchos benchmarks, especialmente en español y razonamiento.
+    \item Tiene SDKs oficiales para Python y JavaScript, encajando con el stack técnico del proyecto.
+    \item Permite asegurar continuidad futura gracias a posibles acuerdos institucionales con la Universidad de Sevilla.
+    \item Representa la opción más equilibrada entre calidad, coste, facilidad de integración y proyección académica.
+\end{itemize}
+
+\subsubsection{Tabla de comparación detallada de APIs de LLM}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{|l|c|c|c|c|c|c|}
+\hline
+\textbf{Característica / API} & \textbf{Gemini} & \textbf{OpenAI GPT} & \textbf{DeepSeek} & \textbf{Hugging Face API} & \textbf{Cohere} & \textbf{Claude} \\ \hline
+Coste y accesibilidad & $\star\star\star$ & $\star$ & $\star\star$ & $\star\star$ & $\star$ & $\star$ \\ \hline
+Calidad y rendimiento & $\star\star\star$ & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star\star$ \\ \hline
+Integración y soporte técnico & $\star\star\star$ & $\star\star\star$ & $\star$ & $\star\star$ & $\star\star$ & $\star\star$ \\ \hline
+Privacidad y cumplimiento (RGPD) & $\star\star$ & $\star\star$ & $\star$ & $\star\star\star$ & $\star\star$ & $\star\star$ \\ \hline
+\textbf{Resultado global} & \textbf{$\star$ 11} & \textbf{$\star$ 9} & \textbf{$\star$ 6} & \textbf{$\star$ 9} & \textbf{$\star$ 7} & \textbf{$\star$ 8} \\ \hline
+\end{tabular}
+\caption{Comparación de APIs de LLM}
+\label{tab:llm}
+\end{table}
+
+\section{Infraestructura del sistema}
+\label{sec:infraestructura}
+
+La infraestructura técnica del sistema se basa en tecnologías de código abierto y servicios gratuitos que permiten una implementación funcional sin coste. Durante el desarrollo y pruebas del sistema, todos los componentes se ejecutan en entorno local, aunque se contempla la posibilidad de desplegarlos posteriormente en un entorno en la nube.
+
+El framework Rasa se ejecuta en un servidor local utilizando Python como lenguaje base. Las acciones personalizadas del chatbot también están desarrolladas en Python y permiten la integración con otros servicios. Para la comprensión de lenguaje natural, se utiliza la API de Gemini, accedida mediante una clave gratuita proporcionada por Google AI Studio. El almacenamiento y recuperación de datos estructurados y vectoriales se realiza en Supabase, una plataforma que ofrece una base de datos PostgreSQL con soporte para la extensión pgvector. Esto permite centralizar tanto la información relacional (como horarios y datos de profesores) como los vectores semánticos necesarios para las búsquedas por similitud.
+
+La interfaz web del asistente está desarrollada en React y se conecta al backend de Rasa mediante HTTP, funcionando como punto de interacción para el usuario final.
+
+\subsection{Arquitectura del sistema}
+
+La arquitectura del sistema propuesto se basa en un enfoque modular que combina un marco conversacional, técnicas de procesamiento del lenguaje natural mediante modelos generativos, y el uso de bases de datos tanto estructuradas como vectoriales. El sistema está diseñado para ofrecer respuestas útiles a los estudiantes de la Universidad de Sevilla a través de un asistente conversacional accesible desde una interfaz web.
+
+Cuando un usuario realiza una consulta, esta es enviada al motor principal del sistema, construido sobre el framework Rasa, que se encarga de controlar el flujo de la conversación. Para la comprensión de la intención del usuario, el sistema puede operar en dos modos: uno basado en el entrenamiento tradicional de Rasa NLU con ejemplos, y otro utilizando la API del modelo de lenguaje Gemini para detectar la intención de forma dinámica.
+
+Según la intención detectada, el sistema puede acceder a una base de datos estructurada (por ejemplo, para obtener información sobre horarios, profesorado, o fórmulas de calificación) o bien a una base de datos vectorial que contiene fragmentos semánticos extraídos de sitios web oficiales y documentación académica. Esta última permite realizar búsquedas por similitud y obtener información no estructurada de forma precisa.
+
+Si el sistema no logra proporcionar una respuesta satisfactoria, se activa un mecanismo de recuperación (fallback) que consulta una base de datos de enlaces útiles asociados a cada tema. De este modo, se garantiza que el usuario siempre reciba algún tipo de orientación.
+
+\subsection{Componentes tecnológicos del sistema}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{|l|p{9cm}|}
+\hline
+\textbf{Tecnología} & \textbf{Rol en el sistema} \\ \hline
+\textbf{Rasa} & Framework principal para la gestión del diálogo y flujo de conversación. \\ \hline
+\textbf{Python} & Lenguaje principal para el backend y acciones personalizadas. \\ \hline
+\textbf{Gemini (API)} & Modelo generativo utilizado para la detección de intención y generación de respuestas naturales. \\ \hline
+\textbf{Supabase} & Plataforma de base de datos que permite almacenar información estructurada y vectores semánticos. \\ \hline
+\textbf{pgvector} & Extensión de PostgreSQL para el almacenamiento y búsqueda de vectores. \\ \hline
+\textbf{React} & Desarrollo de la interfaz web del chatbot. \\ \hline
+\textbf{FAISS (opcional)} & Motor local alternativo para búsqueda vectorial (solo si se opta por no usar Supabase). \\ \hline
+\textbf{Google AI Studio} & Plataforma utilizada para obtener la API key de Gemini y gestionar el modelo. \\ \hline
+\end{tabular}
+\caption{Componentes tecnológicos del sistema}
+\label{tab:tech-stack}
+\end{table}
+
+\section{Casos de uso principales}
+\label{sec:casos-uso}
+
+\subsection{Consulta sobre horarios de clases}
+
+\subsubsection{Consultar horario por asignatura}
+
+\begin{itemize}
+    \item Escenario positivo: El usuario introduce \textit{``Horario de Bases de Datos II''} y el asistente devuelve su planificación semanal.
+    \item Escenario negativo: El usuario consulta \textit{``Horario de Bases de Datos 7''} (asignatura inexistente) y el asistente informa que no encuentra coincidencias.
+\end{itemize}
+
+\subsubsection{Consultar horario por grupo}
+
+\begin{itemize}
+    \item Escenario positivo: El usuario pide \textit{``Horario del Grupo A de Ingeniería de Software''} y obtiene la tabla completa.
+    \item Escenario negativo: El usuario introduce un grupo no registrado (\textit{``Grupo Z''}) y el asistente responde que ese grupo no existe.
+\end{itemize}
+
+\subsubsection{Consultar horario por carrera/curso}
+
+\begin{itemize}
+    \item Escenario positivo: El usuario solicita \textit{``Horario de 3º de Informática''} y recibe la planificación de todas las asignaturas de ese curso.
+    \item Escenario negativo: El usuario introduce \textit{``Horario de 9º de Informática''} y el asistente aclara que no existe tal curso.
+\end{itemize}
+
+\subsection{Consulta sobre documentación necesaria para trámites}
+
+\subsubsection{Consultar documentación para matrícula}
+
+\begin{itemize}
+    \item Escenario positivo: El usuario pregunta \textit{``¿Qué necesito para matricularme en primero de carrera?''} y el asistente lista DNI, resguardo de pago, etc.
+    \item Escenario negativo: El usuario introduce \textit{``Necesito pasaporte para matrícula de nacional español''} y el asistente aclara que ese requisito no aplica.
+\end{itemize}
+
+\subsubsection{Consultar documentación para becas}
+
+\begin{itemize}
+    \item Escenario positivo: El usuario pregunta \textit{``¿Qué documentos hacen falta para la beca general?''} y el asistente devuelve la lista oficial (DNI, renta familiar, matrícula).
+    \item Escenario negativo: El usuario consulta \textit{``Puedo solicitar beca solo con una carta de recomendación''} y el asistente indica que no es suficiente.
+\end{itemize}
+
+\subsubsection{Consultar documentación para certificados académicos}
+
+\begin{itemize}
+    \item Escenario positivo: El usuario pide \textit{``Documentación necesaria para solicitar certificado de notas''} y el asistente responde con los requisitos (DNI, impreso de solicitud, pago de tasas).
+    \item Escenario negativo: El usuario pregunta \textit{``Puedo pedir certificado de notas sin identificarme''} y el asistente informa que no es posible.
+\end{itemize}
+
+\subsubsection{Consultar documentación para convalidaciones/traslados}
+
+\begin{itemize}
+    \item Escenario positivo: El usuario solicita \textit{``Requisitos para traslado de expediente''} y el asistente muestra la normativa aplicable.
+    \item Escenario negativo: El usuario introduce \textit{``Convalidar asignaturas sin entregar plan de estudios''} y el asistente explica que falta documentación esencial.
+\end{itemize}
+
+\subsubsection{Comparar trámites similares (opcional)}
+
+\begin{itemize}
+    \item Escenario positivo: El usuario consulta \textit{``Diferencia entre certificado simple y compulsado''} y el asistente explica la distinción.
+    \item Escenario negativo: El usuario pide \textit{``Compulsar sin documento original''} y el asistente indica que no se puede realizar.
+\end{itemize}
+
+\subsection{Consulta sobre datos de contacto y tutorías del profesorado}
+
+\subsubsection{Consultar despacho de un profesor}
+
+\begin{itemize}
+    \item Escenario positivo: El usuario pregunta \textit{``Despacho del profesor Juan Pérez''} y el asistente devuelve la ubicación.
+    \item Escenario negativo: El usuario introduce un nombre inexistente y el asistente indica que no lo encuentra.
+\end{itemize}
+
+\subsubsection{Consultar correo electrónico de un profesor}
+
+\begin{itemize}
+    \item Escenario positivo: El usuario pide \textit{``Correo de la profesora Ana López''} y el asistente devuelve su email institucional.
+    \item Escenario negativo: El usuario solicita \textit{``Correo personal de la profesora Ana López''} y el asistente aclara que solo puede dar la dirección oficial.
+\end{itemize}
+
+\subsubsection{Consultar horario de tutorías}
+
+\begin{itemize}
+    \item Escenario positivo: El usuario pregunta \textit{``Horario de tutorías de Miguel García''} y el asistente devuelve día y hora.
+    \item Escenario negativo: El usuario consulta fuera de rango (\textit{``Tutorías a medianoche''}) y el asistente indica que no existen en ese horario.
+\end{itemize}
+
+\subsubsection{Búsqueda por asignatura}
+
+\begin{itemize}
+    \item Escenario positivo: El usuario pregunta \textit{``¿Quién da Programación Avanzada?''} y el asistente devuelve los profesores con sus datos de contacto.
+    \item Escenario negativo: El usuario pide \textit{``Profesor de Programación Interplanetaria''} (asignatura inexistente) y el asistente informa del error.
+\end{itemize}
+
+\subsubsection{Búsqueda por departamento (opcional)}
+
+\begin{itemize}
+    \item Escenario positivo: El usuario solicita \textit{``Profesores del Departamento de Lenguajes y Sistemas Informáticos''} y obtiene la lista.
+    \item Escenario negativo: El usuario pide un departamento inexistente y el asistente indica que no figura en la base de datos.
+\end{itemize}
+
+\subsection{Consulta sobre información de una asignatura}
+
+\subsubsection{Consultar fórmula de calificación}
+
+\begin{itemize}
+    \item Escenario positivo: El usuario pregunta \textit{``¿Cómo se califica Ingeniería del Software II?''} y el asistente responde \textit{``40\% prácticas, 60\% examen''}.
+    \item Escenario negativo: El usuario introduce \textit{``100\% aprobado automático''} y el asistente aclara que no existe esa modalidad.
+\end{itemize}
+
+\subsubsection{Consultar sistema de evaluación}
+
+\begin{itemize}
+    \item Escenario positivo: El usuario pide \textit{``Sistema de evaluación de Matemáticas Discretas''} y el asistente devuelve convocatorias y requisitos.
+    \item Escenario negativo: El usuario consulta \textit{``Aprobar sin presentarse''} y el asistente aclara que no es válido.
+\end{itemize}
+
+\subsubsection{Consultar metodologías docentes}
+
+\begin{itemize}
+    \item Escenario positivo: El usuario pregunta \textit{``Metodología de Programación Avanzada''} y el asistente devuelve que es aprendizaje basado en proyectos.
+    \item Escenario negativo: El usuario pide \textit{``Metodología libre, sin clases''} y el asistente indica que no corresponde con la asignatura.
+\end{itemize}
+
+\subsubsection{Consultar bibliografía recomendada}
+
+\begin{itemize}
+    \item Escenario positivo: El usuario pide \textit{``Bibliografía de Sistemas Operativos''} y el asistente devuelve libros y artículos recomendados.
+    \item Escenario negativo: El usuario solicita \textit{``Bibliografía de TikTok''} y el asistente aclara que no es material académico válido.
+\end{itemize}
+
+\subsubsection{Consultar competencias de la asignatura (opcional)}
+
+\begin{itemize}
+    \item Escenario positivo: El usuario pregunta \textit{``Competencias de Bases de Datos I''} y el asistente responde con los objetivos formativos.
+    \item Escenario negativo: El usuario pide \textit{``Competencias de Asignatura XYZ inventada''} y el asistente aclara que no existe.
+\end{itemize}
+
+\subsection{Consulta sobre normas y documentación de la Universidad}
+
+\subsubsection{Consultar convocatorias de examen}
+
+\begin{itemize}
+    \item Escenario positivo: El usuario pregunta \textit{``¿Cuántas convocatorias de examen hay en cada asignatura de grado?''} y el asistente responde que, por norma, existen dos por curso.
+    \item Escenario negativo: El usuario pide \textit{``Convocatorias ilimitadas''} y el asistente aclara que no es correcto.
+\end{itemize}
+
+\subsubsection{Consultar tiempos de examen}
+
+\begin{itemize}
+    \item Escenario positivo: El usuario consulta \textit{``Duración del examen oficial de Matemáticas I''} y el asistente responde que son 2 horas.
+    \item Escenario negativo: El usuario pregunta \textit{``Examen de 10 minutos''} y el asistente indica que ese dato no es válido.
+\end{itemize}
+
+\subsubsection{Consultar número máximo de suspensos permitidos}
+
+\begin{itemize}
+    \item Escenario positivo: El usuario pide \textit{``¿Cuántas veces se puede suspender una asignatura antes de perder el derecho a examen?''} y el asistente responde que hay un límite (ej. 6).
+    \item Escenario negativo: El usuario consulta \textit{``Suspender infinitas veces''} y el asistente informa que no es posible.
+\end{itemize}
+
+\subsubsection{Consultar plazos de revisión de exámenes (opcional)}
+
+\begin{itemize}
+    \item Escenario positivo: El usuario pregunta \textit{``¿Cuántos días tengo para pedir revisión de examen tras publicarse las notas?''} y el asistente responde que son 7 días hábiles.
+    \item Escenario negativo: El usuario consulta \textit{``Revisar un examen de hace 3 años''} y el asistente aclara que el plazo ya expiró.
+\end{itemize}
