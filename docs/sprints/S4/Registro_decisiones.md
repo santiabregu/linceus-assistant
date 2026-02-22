@@ -12,6 +12,7 @@
 2. [Actions para Detección de Intents vs Pipeline NLU Custom](#decisión-2-actions-para-detección-de-intents-vs-pipeline-nlu-custom)
 3. [Actions como Responsables de Generación de SQL](#decisión-3-actions-como-responsables-de-generación-de-sql)
 4. [Estrategia Dual: Gemini para Desarrollo, Ollama como Fallback](#decisión-4-estrategia-dual-gemini-para-desarrollo-ollama-como-fallback)
+5. [Obtención de Planes Docentes mediante Web Scraping de Sevius4](#decisión-5-obtención-de-planes-docentes-mediante-web-scraping-de-sevius4)
 
 ---
 
@@ -637,6 +638,176 @@ GEMINI_MODEL=gemini-2.5-flash-lite
 
 ---
 
+---
+
+## Decisión 5: Obtención de Planes Docentes mediante Web Scraping de Sevius4
+
+### Contexto
+Para implementar la Épica 3 (RAG sobre Planes Docentes) es necesario disponer de los PDFs de los proyectos docentes de cada asignatura y grupo. La Universidad de Sevilla publica estos documentos en el portal **Sevius4** (`sevius4.us.es`), pero no ofrece ninguna API ni exportación masiva. El acceso es únicamente mediante formularios HTML POST.
+
+**Problema:** Con 47 asignaturas y entre 1 y 5 grupos por asignatura, descargar los PDFs manualmente sería inviable. Era necesario un proceso automatizado que:
+- Detectara los grupos disponibles para el curso vigente (2025-26)
+- Descargara el PDF correspondiente a cada grupo
+- Fuera idempotente (re-ejecutable sin duplicar descargas)
+
+### Análisis del Portal Sevius4
+
+Mediante inspección del HTML se descubrió la mecánica del portal:
+
+1. **Listado de grupos**: GET a
+   ```
+   https://sevius4.us.es/index.php?PyP=LISTA&codcentro=3&titulacion=205&asignatura={codigo}
+   ```
+   Devuelve una tabla HTML organizada por cursos académicos. Cada grupo del curso 2025-26 aparece como un `<th>` con un formulario `<form>` oculto que contiene un campo `<input name="proyecto" value="{codigo}/{curso}/{version}/{grupo}"/>`.
+
+2. **Descarga del PDF**: POST a `https://sevius4.us.es/index.php?PyP=LISTA` con el parámetro `proyecto={valor}`. El servidor responde directamente con `Content-Type: application/pdf`.
+
+**Ejemplo del valor `proyecto`:**
+```
+2050006/2025-26/1099319/1
+└─ codigo ─┘└─ curso ─┘└─ version ─┘└ grupo
+```
+
+### Decisión Tomada
+**Desarrollar un script Python de scraping (`crear_carpetas_asignaturas.py`) que automatice la descarga de todos los PDFs del curso 2025-26.**
+
+### Arquitectura del Script
+
+```
+proyectos_docentes/ing_software/   ← carpetas previas (una por asignatura)
+    Administración de Empresas (2050006)/
+    Acceso Inteligente a la Información (2050027)/
+    ...
+        ↓  El script lee estas carpetas y extrae el código
+
+Por cada asignatura:
+  1. GET  sevius4.us.es?...&asignatura={codigo}  → HTML
+  2. Parsear HTML con BeautifulSoup
+     → Localizar sección "Curso 2025-26"
+     → Extraer filas "Proyecto del grupo X" + valor form
+  3. Por cada grupo:
+     a. Crear subcarpeta  Grupo N/
+     b. POST sevius4.us.es con proyecto={valor}
+        → Respuesta: application/pdf
+     c. Guardar como  proyecto_docente.pdf
+        (si ya existe, se salta — idempotente)
+```
+
+**Estructura resultante:**
+```
+proyectos_docentes/ing_software/
+    Administración de Empresas (2050006)/
+        Grupo 1/
+            proyecto_docente.pdf
+        Grupo 2/
+            proyecto_docente.pdf
+        ...
+    Acceso Inteligente a la Información (2050027)/
+        Grupo 1/
+            proyecto_docente.pdf
+        Grupo 2/
+            proyecto_docente.pdf
+```
+
+### Implementación Clave
+
+**Parsing del HTML (sección 2025-26):**
+```python
+def obtener_grupos_25_26(codigo_asignatura: str) -> list[dict]:
+    soup = BeautifulSoup(requests.get(url).text, "html.parser")
+
+    for th_curso in soup.find_all("th", string=lambda t: t and "2025-26" in t):
+        tabla = th_curso.find_parent("table")
+        recolectando = False
+
+        for tr in tabla.find_all("tr"):
+            textos = [th.get_text(strip=True) for th in tr.find_all("th")]
+
+            if "2025-26" in " ".join(textos):
+                recolectando = True; continue
+            if any(re.search(r'Curso \d{4}-\d{2}', t) for t in textos):
+                break  # Otro curso → parar
+
+            for th in tr.find_all("th"):
+                m = re.search(r'Proyecto del grupo\s+(.+)', th.get_text())
+                if m:
+                    inp = th.find("input", {"name": "proyecto"})
+                    grupos.append({
+                        "nombre": f"Grupo {m.group(1).strip()}",
+                        "proyecto": inp["value"] if inp else None
+                    })
+    return grupos
+```
+
+**Descarga del PDF:**
+```python
+def descargar_pdf(valor_proyecto: str, ruta_destino: str) -> bool:
+    resp = requests.post(
+        "https://sevius4.us.es/index.php?PyP=LISTA",
+        data={"proyecto": valor_proyecto},
+        timeout=30,
+        stream=True,
+    )
+    if "application/pdf" not in resp.headers.get("Content-Type", ""):
+        return False
+    with open(ruta_destino, "wb") as f:
+        for chunk in resp.iter_content(chunk_size=8192):
+            f.write(chunk)
+    return True
+```
+
+### Alternativas Consideradas
+
+| Opción | Pros | Contras | Decisión |
+|--------|------|---------|----------|
+| **Descarga manual** | Sin desarrollo | Inviable con 47 × N grupos | ❌ |
+| **Selenium/Playwright** | Soporta JS dinámico | Más complejo, requiere browser | ❌ No necesario (HTML estático) |
+| **requests + BeautifulSoup** | Simple, ligero, sin browser | Depende de estructura HTML | ✅ **ELEGIDO** |
+| **API oficial US** | Estable, estructurada | No existe API pública | ❌ No disponible |
+
+Se descartó Selenium porque la inspección del HTML mostró que toda la información (incluidos los valores de los formularios) está en el HTML estático inicial, sin necesidad de ejecutar JavaScript.
+
+### Consideraciones Técnicas
+
+**Idempotencia:** Si el script se interrumpe o se re-ejecuta, omite PDFs ya descargados (`if os.path.exists(ruta_pdf)`). Permite lanzarlo varias veces sin duplicar trabajo.
+
+**Cortesía con el servidor:** Pausa de 0.5 s entre cada petición (`PAUSA_ENTRE_PETICIONES`) para no saturar el servidor de la universidad.
+
+**Robustez:** Cada asignatura se procesa con `try/except` de red independiente; si una falla, el script continúa con las demás.
+
+**Número variable de grupos:** Algunas asignaturas tienen 1 grupo, otras 5. El script no asume ningún número fijo, simplemente crea tantas subcarpetas como grupos encuentre en sevius.
+
+### Resultados
+
+| Métrica | Valor |
+|---------|-------|
+| Asignaturas procesadas | 47 |
+| Grupos detectados por asignatura | 1 – 5 (variable) |
+| PDFs descargados por ejecución | ~150-200 (estimado) |
+| Tiempo de ejecución estimado | ~5-10 min (con pausas) |
+| Tamaño típico de PDF | 50-150 KB |
+
+### Impacto en el Proyecto
+
+Este script es el **primer paso del pipeline RAG** (Épica 3):
+```
+Sevius4 → [crear_carpetas_asignaturas.py] → PDFs locales
+                                                 ↓
+                                    chunking + embeddings
+                                                 ↓
+                                    planes_docentes_chunks (pgvector)
+```
+
+Los PDFs descargados en `proyectos_docentes/ing_software/` serán la entrada del siguiente script de procesamiento que extraiga texto, genere chunks y los vectorice para el RAG.
+
+### Referencias
+- Script completo: `crear_carpetas_asignaturas.py` (raíz del proyecto)
+- Portal Sevius4: https://sevius4.us.es
+- Épica 3 (RAG Planes Docentes): Sprint 9-11 según planificación
+- Schema BD destino: `planes_docentes` y `planes_docentes_chunks` (ver `docs/sprints/S2/Schema_inicial.md`)
+
+---
+
 ## Resumen de Decisiones Clave
 
 | # | Decisión | Impacto | Estado |
@@ -645,6 +816,7 @@ GEMINI_MODEL=gemini-2.5-flash-lite
 | 2 | Actions para NLU avanzado (no pipeline custom) | Sin costo Rasa Pro | ✅ Implementado |
 | 3 | Actions generan SQL dinámico | Flexibilidad + seguridad | ✅ Implementado |
 | 4 | Ollama como fallback | Resiliencia + offline | ⏳ Parcial |
+| 5 | Web scraping Sevius4 para PDFs planes docentes | Automatización descarga RAG | ✅ Implementado |
 
 ---
 
