@@ -19,7 +19,8 @@ from .text_to_sql import (
     generar_sql_conteo,
     ejecutar_query,
     ejecutar_count,
-    generar_respuesta_natural
+    generar_respuesta_natural,
+    _expandir_alias,
 )
 
 from .config import BotConfig
@@ -232,6 +233,79 @@ def extraer_nombre_asignatura(tracker, titulacion_detectada_en_mensaje: bool = F
 
 
 # ============================================================================
+# RAG: BÚSQUEDA EN PLANES DOCENTES
+# ============================================================================
+
+def _buscar_codigo_por_nombre(nombre: str, titulacion: str) -> Optional[str]:
+    """Resuelve nombre de asignatura a código vía SQL rápido."""
+    if not nombre:
+        return None
+    nombre_expandido = _expandir_alias(nombre)
+    nombre_norm = f"%{normalizar_texto(nombre_expandido)}%"
+
+    conn = db_client.get_connection()
+    if not conn:
+        return None
+    try:
+        cursor = conn.cursor()
+        sql = ("SELECT codigo FROM asignaturas "
+               "WHERE activa = true AND (nombre_normalizado ILIKE %s OR codigo ILIKE %s)")
+        params = [nombre_norm, f"%{nombre}%"]
+        if titulacion:
+            sql += (" AND titulacion_id = "
+                    "(SELECT id FROM titulaciones WHERE codigo = %s LIMIT 1)")
+            params.append(titulacion)
+        sql += " LIMIT 1"
+        cursor.execute(sql, params)
+        row = cursor.fetchone()
+        cursor.close()
+        return row[0] if row else None
+    except Exception as e:
+        print(f"  ❌ Error buscando código: {e}")
+        return None
+    finally:
+        conn.close()
+
+
+def _generar_respuesta_rag(
+    pregunta: str, chunks: list, nombre_asignatura: str
+) -> Optional[str]:
+    """Genera respuesta natural a partir de chunks del plan docente."""
+    if not chunks:
+        return None
+
+    contexto = "\n\n---\n\n".join(
+        f"[{c.get('seccion', 'general')}]\n{c['contenido']}"
+        for c in chunks
+    )
+
+    prompt = f"""Eres Linceus, un asistente universitario de la ETSII (Universidad de Sevilla).
+Responde a la pregunta del usuario usando SOLO la información del plan docente proporcionada.
+
+PREGUNTA DEL USUARIO: "{pregunta}"
+ASIGNATURA: {nombre_asignatura}
+
+INFORMACIÓN DEL PLAN DOCENTE:
+{contexto}
+
+REGLAS:
+- Responde de forma natural, cercana y concisa
+- Usa solo la información proporcionada, no inventes datos
+- Puedes usar markdown para formatear (negritas, listas)
+- No menciones que consultaste un "plan docente" ni "chunks"
+- Si la información no es suficiente para responder, dilo amablemente
+
+Respuesta:"""
+
+    respuesta = llamar_gemini(
+        prompt,
+        timeout=30,
+        options={"temperature": 0.3, "num_predict": 300},
+    )
+    return respuesta.strip() if respuesta else None
+
+
+# ============================================================================
 # ACTION: CONSULTA ESPECÍFICA
 # ============================================================================
 
@@ -292,10 +366,12 @@ class ActionConsultaEspecifica(Action):
             historial=historial
         )
 
+        necesita_rag = resultado_sql.get('necesita_rag', False)
         print(f"   SQL generada: {resultado_sql.get('sql', '')[:100]}...")
         print(f"   Parámetros: {resultado_sql.get('parametros', [])}")
+        print(f"   Necesita RAG: {necesita_rag}")
 
-        # Ejecutar query
+        # Ejecutar query (siempre, para resolver la asignatura)
         exito, resultados = ejecutar_query(
             resultado_sql['sql'],
             resultado_sql.get('parametros', [])
@@ -304,18 +380,18 @@ class ActionConsultaEspecifica(Action):
         if not exito or not resultados:
             # Intentar búsqueda más flexible (con filtro de titulación)
             if nombre_asignatura:
-                from .text_to_sql import _inyectar_filtro_titulacion, _expandir_alias
+                from .text_to_sql import _inyectar_filtro_titulacion
                 nombre_expandido = _expandir_alias(nombre_asignatura)
                 sql_flexible = """
-                    SELECT codigo, nombre, curso, creditos, duracion, tipologia, 
-                           es_formacion_basica, es_optativa 
-                    FROM asignaturas 
+                    SELECT codigo, nombre, curso, creditos, duracion, tipologia,
+                           es_formacion_basica, es_optativa
+                    FROM asignaturas
                     WHERE activa = true AND nombre_normalizado ILIKE %s
                 """
                 sql_flexible = _inyectar_filtro_titulacion(sql_flexible, contexto_titulacion)
                 nombre_norm = f"%{normalizar_texto(nombre_expandido)}%"
                 exito, resultados = ejecutar_query(sql_flexible, [nombre_norm])
-            
+
             if not exito or not resultados:
                 msg = f"No encontré ninguna asignatura llamada '{nombre_asignatura}'." if nombre_asignatura else "No pude identificar la asignatura en tu pregunta. ¿Puedes decirme el nombre?"
                 dispatcher.utter_message(text=msg)
@@ -324,7 +400,30 @@ class ActionConsultaEspecifica(Action):
         # Tomar el primer resultado (más relevante)
         asignatura = resultados[0]
 
-        # Generar respuesta natural con Ollama
+        # --- RAG: si el LLM detectó que la pregunta necesita plan docente ---
+        if necesita_rag:
+            print(f"   📚 Redirigiendo a búsqueda RAG para {asignatura.get('nombre')}")
+            try:
+                from rag.buscar import buscar_en_plan_docente
+                chunks = buscar_en_plan_docente(
+                    pregunta,
+                    codigo_asignatura=asignatura.get('codigo'),
+                )
+                if chunks:
+                    respuesta_rag = _generar_respuesta_rag(
+                        pregunta, chunks, asignatura.get('nombre')
+                    )
+                    if respuesta_rag:
+                        dispatcher.utter_message(text=respuesta_rag)
+                        return eventos_contexto + [
+                            SlotSet("ultimo_codigo_consultado", asignatura.get('codigo')),
+                            SlotSet("ultimo_nombre_asignatura", asignatura.get('nombre'))
+                        ]
+                print(f"   ⚠ RAG sin resultados, usando respuesta SQL como fallback")
+            except Exception as e:
+                print(f"   ⚠ Error en RAG ({e}), usando respuesta SQL como fallback")
+
+        # --- Respuesta SQL (flujo original) ---
         respuesta = generar_respuesta_natural(
             pregunta=pregunta,
             datos=asignatura,

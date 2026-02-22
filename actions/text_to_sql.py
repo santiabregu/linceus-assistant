@@ -140,6 +140,29 @@ def _expandir_alias(nombre: str) -> str:
     return ALIAS_ASIGNATURAS.get(nombre_lower, nombre)
 
 
+# Palabras clave que indican que la pregunta requiere RAG (plan docente)
+_PALABRAS_RAG = [
+    'evalua', 'evaluacion', 'evaluación', 'califica', 'calificacion', 'calificación',
+    'nota', 'notas', 'puntua', 'puntuacion', 'puntuación', 'porcentaje',
+    'examen', 'examenes', 'exámenes', 'parcial', 'parciales', 'prueba',
+    'temario', 'tema', 'temas', 'contenido', 'contenidos', 'programa',
+    'bibliografia', 'bibliografía', 'libro', 'libros', 'material',
+    'metodologia', 'metodología', 'metodo', 'método',
+    'profesor', 'profesora', 'profesores', 'profesorado', 'docente', 'imparte',
+    'horario', 'horarios', 'clase', 'clases', 'aula',
+    'objetivo', 'objetivos', 'competencia', 'competencias',
+    'actividad', 'actividades', 'practica', 'prácticas', 'práctica',
+    'idioma', 'lengua', 'tribunal', 'tribunales',
+    'aprueba', 'aprobar', 'suspender', 'convocatoria',
+]
+
+
+def _necesita_rag_heuristica(pregunta: str) -> bool:
+    """Detecta si la pregunta requiere RAG basándose en palabras clave."""
+    pregunta_lower = pregunta.lower()
+    return any(palabra in pregunta_lower for palabra in _PALABRAS_RAG)
+
+
 # ============================================================================
 # GENERACIÓN DE SQL CON OLLAMA
 # ============================================================================
@@ -183,12 +206,14 @@ INSTRUCCIONES:
 4. Si preguntan por un atributo específico (créditos, curso, etc.), también inclúyelo
 5. Siempre añade: WHERE activa = true
 6. Usa %s como placeholder para el nombre de la asignatura
+7. Si la pregunta es sobre algo que NO está en la tabla (evaluación, bibliografía, metodología, profesorado, horarios, temario, exámenes, objetivos, competencias, actividades, idioma, tribunales, calificación, etc.), pon "necesita_rag": true. Si se puede responder con los campos de la tabla, pon "necesita_rag": false.
 
 RESPONDE SOLO CON JSON VÁLIDO:
 {{
     "sql": "SELECT ... FROM asignaturas WHERE ...",
     "parametros": ["%valor%"],
     "atributo_solicitado": "creditos|curso|duracion|tipologia|general",
+    "necesita_rag": false,
     "explicacion": "busca por nombre parcial"
 }}
 
@@ -218,21 +243,26 @@ JSON:"""
                 if sql_validada:
                     data['sql'] = _inyectar_filtro_titulacion(sql_validada, contexto_titulacion)
                     data['valido'] = True
+                    # Override: si la heurística detecta RAG pero el LLM no lo hizo
+                    if not data.get('necesita_rag') and _necesita_rag_heuristica(pregunta):
+                        data['necesita_rag'] = True
+                        print(f"   → Heurística override: necesita_rag = True")
                     return data
     except Exception as e:
         print(f"Error generando SQL específica: {e}")
     
     # Fallback: query segura predefinida
     nombre_buscar = _expandir_alias(nombre_asignatura) if nombre_asignatura else nombre_asignatura
-    sql_fallback = """SELECT codigo, nombre, curso, creditos, duracion, tipologia, 
-                         es_formacion_basica, es_optativa 
-                  FROM asignaturas 
+    sql_fallback = """SELECT codigo, nombre, curso, creditos, duracion, tipologia,
+                         es_formacion_basica, es_optativa
+                  FROM asignaturas
                   WHERE activa = true AND (nombre_normalizado ILIKE %s OR codigo ILIKE %s)"""
     sql_fallback = _inyectar_filtro_titulacion(sql_fallback, contexto_titulacion)
     return {
         'sql': sql_fallback,
         'parametros': [f'%{nombre_buscar}%', f'%{nombre_buscar}%'] if nombre_buscar else ['%%', '%%'],
         'atributo_solicitado': 'general',
+        'necesita_rag': _necesita_rag_heuristica(pregunta),
         'explicacion': 'fallback - búsqueda por nombre',
         'valido': True
     }
@@ -503,6 +533,10 @@ def validar_sql(sql: str, tipo: str = 'select') -> Optional[str]:
                             print(f"⚠️ SQL rechazada: columna no permitida '{col_limpia}'")
                             return None
     
+    # 6. Limpiar placeholders: el LLM a veces genera '%s' en vez de %s
+    #    psycopg2 gestiona el quoting, así que las comillas sobran
+    sql = re.sub(r"'(%s)'", r'\1', sql)
+
     print(f"✅ SQL validada: {sql[:80]}...")
     return sql
 

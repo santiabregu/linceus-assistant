@@ -25,6 +25,7 @@ Este documento registra los cambios realizados en cada versión del chatbot sigu
 | v2.1.0 | 2026-02 | Infraestructura | Sistema multi-titulación funcional con selección obligatoria |
 | v2.1.1 | 2026-02 | Infraestructura | Mejora NLU cambio titulación + consulta de titulaciones disponibles |
 | v2.1.2 | 2026-02 | Asignaturas | Detección de titulación en mensaje vía LLM + cambio de contexto inline |
+| v2.2.0 | 2026-02 | RAG | Pipeline de vectorización de planes docentes + búsqueda semántica |
 
 ---
 
@@ -726,11 +727,80 @@ Bot: "En Ingeniería del Software hay 8 asignaturas obligatorias en primero."
 
 ---
 
+---
+
+### v2.2.0 - RAG: Planes Docentes Vectorizados
+**Fecha:** Febrero 2026
+**Tipo:** MINOR - Nueva funcionalidad de recuperación semántica
+
+**Cambios:**
+- **Pipeline de vectorización** (`rag/pipeline.py`):
+  - Descubre PDFs en `proyectos_docentes/ing_software/`
+  - Extrae texto con `pdfplumber` (`rag/extraer_pdf.py`)
+  - Segmenta en chunks con overlap (`rag/chunking.py`)
+  - Genera embeddings con `gemini-embedding-001` (2000 dims) (`rag/embeddings.py`)
+  - Inserta chunks + vectores en tabla `planes_docentes_chunks` (`rag/db_vectores.py`)
+  - Deduplicación por hash SHA256 del PDF
+  - Flags `--dry-run`, `--asignatura`, `--forzar`, `--solo-errores`, `--stats`
+- **Búsqueda en runtime** (`rag/buscar.py`):
+  - `buscar_en_plan_docente()`: genera embedding de la pregunta → búsqueda coseno via función SQL `buscar_plan_docente`
+  - Fallback automático a búsqueda por palabras clave (`ILIKE`) si el embedding falla (cuota agotada)
+  - Por defecto consulta Grupo 1 (planes suficientemente similares entre grupos)
+- **Routing SQL → RAG en `ActionConsultaEspecifica`**:
+  - El prompt de `generar_sql_especifica` ahora incluye campo `necesita_rag: true/false`
+  - El LLM decide si la pregunta es sobre campos de la tabla (créditos, curso...) o del plan docente (evaluación, bibliografía...)
+  - Si `necesita_rag: true` → resuelve la asignatura vía SQL → búsqueda vectorial → respuesta con contexto de chunks
+  - Fallback: si RAG no devuelve resultados, responde con los datos SQL
+- **Nuevos ejemplos NLU** en `data/nlu/asignaturas.yml`:
+  - ~45 ejemplos de preguntas sobre plan docente para `consulta_asignatura_especifica`
+  - Cubren evaluación, bibliografía, profesorado, temario, horarios, objetivos, metodología, idioma, exámenes
+
+**Archivos nuevos:**
+- `rag/buscar.py` - Búsqueda vectorial + fallback keyword en runtime
+- `rag/pipeline.py` - Orquestador completo de vectorización
+- `rag/embeddings.py` - Cliente Gemini Embeddings
+- `rag/chunking.py` - Segmentación con overlap
+- `rag/extraer_pdf.py` - Extracción de texto PDF
+- `rag/db_vectores.py` - Operaciones BD para chunks
+- `rag/sql/buscar_plan_docente.sql` - Función SQL + índice HNSW
+
+**Archivos modificados:**
+- `actions/asignaturas.py` - Routing RAG + helpers `_buscar_codigo_por_nombre`, `_generar_respuesta_rag`
+- `actions/text_to_sql.py` - Campo `necesita_rag` en prompt y fallback
+- `data/nlu/asignaturas.yml` - ~45 ejemplos nuevos de preguntas plan docente
+
+**Datos vectorizados:**
+- 125/156 planes docentes completados (cuota API hit durante indexación)
+- Modelo: `gemini-embedding-001`, dimensiones: 2000 (reducidas de 3072 nativo)
+- Índice HNSW en pgvector (m=16, ef_construction=64) para búsqueda eficiente
+
+**Flujo:**
+```
+Usuario: "¿Cómo se evalúa Redes?"
+    ↓
+LLM genera SQL + necesita_rag: true
+    ↓
+SQL resuelve: codigo = "2050001", nombre = "Redes de Computadores"
+    ↓
+buscar_en_plan_docente("¿Cómo se evalúa Redes?", "2050001")
+    ↓
+Embedding query → coseno similarity → top-3 chunks de evaluación
+    ↓
+LLM genera respuesta con contexto del plan docente
+```
+
+**Funcionalidades nuevas:**
+- ✅ Preguntas sobre evaluación, bibliografía, metodología, profesorado, horarios, temario, objetivos
+- ✅ Fallback keyword automático cuando el embedding API no está disponible
+- ✅ Reindexación incremental con `--solo-errores` para retomar tras cuota agotada
+- ✅ Deduplicación por hash: no re-vectoriza si el PDF no cambió
+
+---
+
 ## Próximas Versiones Planificadas
 
 | Versión | Épica | Descripción |
 |---------|-------|-------------|
-| v2.2.0 | Horarios | Consulta de horarios por asignatura/grupo |
+| v2.3.0 | Horarios | Consulta de horarios por asignatura/grupo |
 | v3.0.0 | Profesores | Información sobre profesorado |
 | v4.0.0 | Trámites | Documentación administrativa |
-| v5.0.0 | RAG | Respuestas basadas en documentos con embeddings |
