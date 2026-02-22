@@ -20,3 +20,6 @@ rapidfuzz>=3.0.0
 
 # Gemini API para consultas inteligentes (nueva biblioteca)
 google-genai>=0.2.0
+
+# RAG: Extracción de PDFs de proyectos docentes
+pdfplumber>=0.10.0

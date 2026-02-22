@@ -13,6 +13,7 @@
 3. [Actions como Responsables de Generación de SQL](#decisión-3-actions-como-responsables-de-generación-de-sql)
 4. [Estrategia Dual: Gemini para Desarrollo, Ollama como Fallback](#decisión-4-estrategia-dual-gemini-para-desarrollo-ollama-como-fallback)
 5. [Obtención de Planes Docentes mediante Web Scraping de Sevius4](#decisión-5-obtención-de-planes-docentes-mediante-web-scraping-de-sevius4)
+6. [Pipeline RAG: Vectorización de Proyectos Docentes con Gemini Embeddings](#decisión-6-pipeline-rag-vectorización-de-proyectos-docentes-con-gemini-embeddings)
 
 ---
 
@@ -817,6 +818,232 @@ Los PDFs descargados en `proyectos_docentes/ing_software/` serán la entrada del
 | 3 | Actions generan SQL dinámico | Flexibilidad + seguridad | ✅ Implementado |
 | 4 | Ollama como fallback | Resiliencia + offline | ⏳ Parcial |
 | 5 | Web scraping Sevius4 para PDFs planes docentes | Automatización descarga RAG | ✅ Implementado |
+| 6 | Pipeline RAG con Gemini Embeddings + chunking genérico | Búsqueda semántica sobre planes docentes | ✅ Implementado |
+
+---
+
+## Decisión 6: Pipeline RAG: Vectorización de Proyectos Docentes con Gemini Embeddings
+
+### Contexto
+Tras descargar los 156 PDFs de proyectos docentes de Sevius4 (Decisión 5), el siguiente paso es vectorizarlos para habilitar búsqueda semántica (RAG). El usuario podrá preguntar cosas como *"¿cómo se evalúa Fundamentos de Programación?"* y el sistema encontrará los fragmentos relevantes del proyecto docente.
+
+**Volumen de datos:**
+
+| Dato | Valor |
+|---|---|
+| PDFs totales | 156 |
+| Asignaturas | 47 |
+| Grupos por asignatura | 1 – 5 |
+| Tamaño medio por PDF | ~70 KB (9 páginas) |
+| Chunks estimados (~800 chars/chunk) | ~1.500 – 2.500 |
+| Curso académico | 2025-26 |
+
+### Decisión Tomada
+**Usar Gemini `text-embedding-004` con chunking genérico por overlap (sin depender de estructura del documento) y procesamiento en batches.**
+
+### Justificación del Modelo de Embedding
+
+| Opción | Dims | Español | Coste | Límites free tier | Decisión |
+|--------|------|---------|-------|-------------------|----------|
+| **Gemini `text-embedding-004`** | 768 | Bueno | Gratis | 100 RPM, 1.500 RPD | ✅ **ELEGIDO** |
+| Sentence-Transformers (`all-MiniLM-L6-v2`) | 384 | Medio | Gratis, local | Sin límites | ❌ Peor en español |
+| OpenAI `text-embedding-3-small` | 1536 | Excelente | De pago | - | ❌ Coste |
+| Ollama + `nomic-embed-text` | 768 | Medio | Gratis, local | Sin límites | ❌ Lento en CPU |
+
+**Razones principales:**
+- Ya usamos Gemini API (misma key, sin configuración extra)
+- 768 dimensiones coincide con el schema de `planes_docentes_chunks`
+- Free tier cubre de sobra: ~2.500 chunks con batch de 100 → ~25 requests → 1 min
+- Buen rendimiento en español
+
+### Justificación del Chunking Genérico (sin segmentación por secciones)
+
+Se evaluaron dos estrategias de chunking:
+
+| Estrategia | Pros | Contras |
+|---|---|---|
+| **Segmentación por secciones** (regex sobre títulos del PDF) | Chunks semánticamente coherentes | Frágil: si otro documento tiene secciones distintas, los regex fallan |
+| **Chunking por overlap** (genérico) | Funciona con cualquier documento; la búsqueda vectorial encuentra lo relevante | Algunos chunks pueden cruzar secciones |
+
+**Decisión: chunking genérico por overlap con etiquetado de sección best-effort.**
+
+- El chunking **no depende** de la estructura del documento
+- Si se detecta un título de sección dentro del chunk, se etiqueta como metadata (útil para citar fuente: *"Según la sección de Evaluación..."*)
+- Si no se detecta, el chunk se marca como `"general"` y funciona exactamente igual para la búsqueda vectorial
+- En el futuro, si se vectorizan documentos de otra facultad o universidad, el pipeline funciona sin cambios
+
+### Arquitectura del Pipeline
+
+```
+proyectos_docentes/ing_software/                 (156 PDFs locales)
+    Asignatura (codigo)/
+        Grupo N/
+            proyecto_docente.pdf
+                ↓
+┌──────────────────────────────────────────────────────────────────┐
+│  rag/pipeline.py  (orquestador CLI)                             │
+│                                                                  │
+│  1. Descubrir PDFs (recorrer carpetas)                          │
+│  2. Por cada PDF:                                                │
+│     a. Calcular hash SHA256                                      │
+│     b. ¿Hash cambió respecto a BD?                               │
+│        - No → skip (ya vectorizado)                              │
+│        - Sí → borrar chunks antiguos, re-procesar               │
+│     c. Extraer texto (pdfplumber)              → extraer_pdf.py │
+│     d. Chunking con overlap (800 chars, 100 overlap)             │
+│        + etiquetado de sección best-effort     → chunking.py    │
+│     e. Generar embeddings (Gemini batch API)   → embeddings.py  │
+│     f. Insertar chunks + vectores en Supabase  → db_vectores.py │
+│     g. Actualizar estado_rag = 'completado'                     │
+└──────────────────────────────────────────────────────────────────┘
+                ↓
+┌──────────────────────────────────────────────────────────────────┐
+│  Supabase (pgvector)                                             │
+│                                                                  │
+│  planes_docentes        (1 fila por PDF: hash, estado_rag)      │
+│       ↓ FK                                                       │
+│  planes_docentes_chunks (N filas: contenido, embedding, metadata)│
+│       ↓ índice HNSW                                              │
+│  buscar_plan_docente()  (función SQL de búsqueda vectorial)     │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### Procesamiento en Batches
+
+Sí, los embeddings se procesan en batches. El flujo es:
+
+1. **Nivel PDF** (secuencial): cada PDF se procesa uno a uno (extracción → chunking → embedding → inserción)
+2. **Nivel embedding** (batch): los chunks de un PDF se envían en batches de 100 textos por request a Gemini
+
+```python
+# embeddings.py
+BATCH_SIZE = 100              # textos por request (máximo de Gemini)
+PAUSA_ENTRE_BATCHES = 1.0     # segundos entre requests (100 RPM → 0.6s mín)
+```
+
+**Ejemplo con Fundamentos de Programación (9 páginas, ~15 chunks):**
+- 1 sola request de embedding (15 < 100) → ~1-2s
+- 1 INSERT batch en Supabase → ~0.5s
+- Total por PDF: ~3-4s
+
+**Estimación para los 156 PDFs completos:**
+- ~2.500 chunks totales → ~25 requests de embedding
+- Con pausas: ~30-40s en embeddings
+- Con extracción + BD: ~10-15 min total
+
+Si se alcanza rate limit (429), el pipeline espera 60s automáticamente y reintenta.
+
+### Gestión de Actualizaciones
+
+Cada PDF tiene un hash SHA256 almacenado en `planes_docentes.hash_documento`. Al re-ejecutar el pipeline:
+
+| Situación | Acción |
+|---|---|
+| PDF nuevo (no existe en BD) | Crear plan_docente + chunks + embeddings |
+| PDF sin cambios (hash coincide) | Skip automático |
+| PDF actualizado (hash distinto) | Borrar chunks antiguos → re-procesar |
+| Flag `--forzar` | Re-procesar todo ignorando hash |
+
+Esto permite re-ejecutar el pipeline de forma segura cuando se actualicen los proyectos docentes de 2026-27.
+
+### Ejecución
+
+```bash
+# Activar entorno virtual
+.\rasa_env\Scripts\Activate.ps1
+
+# Ver qué haría sin ejecutar cambios
+python -m rag.pipeline --dry-run
+
+# Procesar solo una asignatura (para probar)
+python -m rag.pipeline --asignatura 2050001
+
+# Procesar todos los PDFs (ejecución completa)
+python -m rag.pipeline
+
+# Forzar re-procesamiento (ignora hash)
+python -m rag.pipeline --forzar
+
+# Ver estadísticas actuales
+python -m rag.pipeline --stats
+```
+
+### Metadata de cada Chunk (JSONB)
+
+Cada chunk almacenado en `planes_docentes_chunks.metadata` contiene:
+
+```json
+{
+  "asignatura_codigo": "2050001",
+  "asignatura_nombre": "Fundamentos de Programación",
+  "curso_academico": "2025-26",
+  "grupo": "Grupo 1",
+  "seccion": "evaluacion_grupo",
+  "titulacion": "GII-IS"
+}
+```
+
+La sección es best-effort. Si no se detecta, se guarda como `"general"`.
+
+Además, la relación `plan_docente_id → planes_docentes → asignaturas` permite filtrar por asignatura con JOINs SQL sin depender del JSONB.
+
+### Función SQL de Búsqueda
+
+Se creó `buscar_plan_docente()` en `rag/sql/buscar_plan_docente.sql` con:
+- Índice **HNSW** para búsqueda vectorial rápida (`vector_cosine_ops`)
+- Filtro por asignatura (código o UUID), grupo, sección y curso académico
+- Umbral de similitud configurable (default 0.5)
+- Devuelve chunks con similitud, nombre de asignatura y metadata para citar fuente
+
+### Estructura de Archivos
+
+```
+rag/
+├── __init__.py           # Paquete
+├── extraer_pdf.py        # Extracción de texto con pdfplumber
+├── chunking.py           # Chunking genérico con overlap + etiquetado best-effort
+├── embeddings.py         # Embeddings con Gemini text-embedding-004 (batch)
+├── db_vectores.py        # CRUD planes_docentes + chunks en Supabase
+├── pipeline.py           # Orquestador CLI (descubrir → procesar → insertar)
+└── sql/
+    └── buscar_plan_docente.sql   # Función SQL + índices HNSW
+```
+
+### Dependencias Añadidas
+
+```
+# requirements.txt
+pdfplumber>=0.10.0        # Extracción de texto de PDFs
+google-genai>=0.2.0       # Ya existía (se usa embed_content API)
+```
+
+### Alternativas Descartadas
+
+| Alternativa | Motivo de descarte |
+|---|---|
+| LangChain/LlamaIndex | Overkill para 156 PDFs; añade dependencia pesada |
+| Embeddings locales (Ollama) | Lento en CPU, peor calidad en español |
+| Chunking por secciones rígido | Frágil si la estructura del documento cambia |
+| Almacenar embeddings en archivos | No escalable, pierde las ventajas de pgvector |
+
+### Impacto en el Proyecto
+
+Este pipeline completa la cadena iniciada en la Decisión 5:
+
+```
+Sevius4 → [scraping] → PDFs locales → [pipeline RAG] → pgvector → [búsqueda semántica]
+                                                                         ↓
+                                                              Actions de Rasa
+                                                              (próximo sprint)
+```
+
+### Referencias
+- Pipeline: `rag/pipeline.py`
+- Embeddings: `rag/embeddings.py`
+- Chunking: `rag/chunking.py`
+- Función SQL: `rag/sql/buscar_plan_docente.sql`
+- Schema BD: `docs/sprints/S2/Schema_inicial.md`
+- Gemini Embedding docs: https://ai.google.dev/gemini-api/docs/embeddings
 
 ---
 
