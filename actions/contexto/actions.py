@@ -8,8 +8,8 @@ from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import SlotSet
 
-from .config import BotConfig
-from .db import db_client
+from ..shared.config import BotConfig
+from ..shared.db import db_client
 
 
 class ActionCambiarContexto(Action):

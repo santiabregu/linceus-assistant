@@ -6,8 +6,8 @@ Usa Gemini API para generar queries SQL seguras a partir de lenguaje natural.
 import re
 import json
 from typing import Dict, Any, List, Optional, Tuple
-from .gemini_client import llamar_gemini as llamar_llm
-from .db import db_client
+from ..shared.gemini_client import llamar_gemini as llamar_llm
+from ..shared.db import db_client
 
 
 # ============================================================================
@@ -61,18 +61,27 @@ def _inyectar_filtro_titulacion(sql: str, codigo_titulacion: str) -> str:
     """
     Inyecta filtro de titulación en una query SQL.
     Si la query ya contiene filtro de titulacion_id, no lo añade.
+    Busca 'WHERE activa = true' primero; si no está, inserta tras cualquier WHERE.
     """
     if not codigo_titulacion:
         return sql
     if 'titulacion_id' in sql.lower():
         return sql
     subquery = _subquery_titulacion(codigo_titulacion)
-    # Insertar después de 'WHERE activa = true'
     sql_lower = sql.lower()
+
+    # Caso 1: hay 'WHERE activa = true' → insertar a continuación
     idx = sql_lower.find('where activa = true')
     if idx != -1:
         insert_pos = idx + len('WHERE activa = true')
-        sql = sql[:insert_pos] + f" AND titulacion_id = {subquery}" + sql[insert_pos:]
+        return sql[:insert_pos] + f" AND titulacion_id = {subquery}" + sql[insert_pos:]
+
+    # Caso 2: hay WHERE pero sin 'activa = true' → insertar al comienzo del WHERE
+    idx_where = sql_lower.find(' where ')
+    if idx_where != -1:
+        insert_pos = idx_where + len(' where ')
+        return sql[:insert_pos] + f"titulacion_id = {subquery} AND " + sql[insert_pos:]
+
     return sql
 
 # Mapeo de sinónimos para valores (normalización)
@@ -149,6 +158,7 @@ _PALABRAS_RAG = [
     'bibliografia', 'bibliografía', 'libro', 'libros', 'material',
     'metodologia', 'metodología', 'metodo', 'método',
     'profesor', 'profesora', 'profesores', 'profesorado', 'docente', 'imparte',
+    'coordinador', 'coordinadora', 'coordinadores', 'responsable',
     'horario', 'horarios', 'clase', 'clases', 'aula',
     'objetivo', 'objetivos', 'competencia', 'competencias',
     'actividad', 'actividades', 'practica', 'prácticas', 'práctica',

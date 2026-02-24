@@ -12,7 +12,7 @@ from datetime import datetime
 # Reutilizar la conexión del proyecto
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from actions.db import db_client
+from actions.shared.db import db_client
 
 
 def calcular_hash_pdf(ruta_pdf: Path) -> str:

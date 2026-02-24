@@ -16,7 +16,7 @@ from typing import List, Dict, Optional
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from rag.embeddings import generar_embedding
-from actions.db import db_client
+from actions.shared.db import db_client
 
 CURSO_ACADEMICO = "2025-26"
 GRUPO_DEFAULT = "Grupo 1"
@@ -31,9 +31,9 @@ def _normalizar(texto: str) -> str:
 def buscar_en_plan_docente(
     pregunta: str,
     codigo_asignatura: str = None,
-    grupo: str = GRUPO_DEFAULT,
+    grupo: Optional[str] = None,
     limite: int = 3,
-    umbral: float = 0.3,
+    umbral: float = 0.0,
 ) -> List[Dict]:
     """
     Busca chunks relevantes en los planes docentes.
@@ -53,7 +53,7 @@ def buscar_en_plan_docente(
         Lista de dicts con contenido, seccion, similitud (o None), etc.
     """
     # --- Intento 1: búsqueda vectorial ---
-    embedding = generar_embedding(pregunta)
+    embedding = generar_embedding(pregunta, task_type="SEMANTIC_SIMILARITY")
     if embedding:
         resultados = _buscar_vectorial(
             embedding, codigo_asignatura, grupo, limite, umbral
@@ -70,7 +70,7 @@ def buscar_en_plan_docente(
 def _buscar_vectorial(
     embedding: List[float],
     codigo_asignatura: Optional[str],
-    grupo: str,
+    grupo: Optional[str],
     limite: int,
     umbral: float,
 ) -> List[Dict]:
@@ -120,7 +120,7 @@ def _buscar_vectorial(
 def _buscar_por_keywords(
     pregunta: str,
     codigo_asignatura: Optional[str],
-    grupo: str,
+    grupo: Optional[str],
     limite: int,
 ) -> List[Dict]:
     """
@@ -167,6 +167,13 @@ def _buscar_por_keywords(
             where_asig = ""
             asig_params = []
 
+        if grupo:
+            where_grupo = "AND pd.grupo = %s"
+            grupo_params = [grupo]
+        else:
+            where_grupo = ""
+            grupo_params = []
+
         sql = f"""
             SELECT
                 c.id        AS chunk_id,
@@ -183,7 +190,7 @@ def _buscar_por_keywords(
             JOIN asignaturas a      ON a.id  = pd.asignatura_id
             WHERE pd.estado_rag = 'completado'
               AND pd.curso_academico = %s
-              AND pd.grupo = %s
+              {where_grupo}
               {where_asig}
               {where_keywords}
             ORDER BY c.orden_chunk
@@ -191,7 +198,8 @@ def _buscar_por_keywords(
         """
 
         params = (
-            [CURSO_ACADEMICO, grupo]
+            [CURSO_ACADEMICO]
+            + grupo_params
             + asig_params
             + keyword_params
             + [limite]

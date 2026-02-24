@@ -7,7 +7,7 @@ from typing import Any, Text, Dict, List, Optional, Tuple
 import json
 import re
 import unicodedata
-from .gemini_client import llamar_gemini
+from ..shared.gemini_client import llamar_gemini
 
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
@@ -23,8 +23,8 @@ from .text_to_sql import (
     _expandir_alias,
 )
 
-from .config import BotConfig
-from .db import db_client
+from ..shared.config import BotConfig
+from ..shared.db import db_client
 
 
 # ============================================================================
@@ -187,8 +187,15 @@ def comprobar_titulacion(
     """
     eventos: List = []
 
-    titulacion_en_mensaje = _detectar_titulacion_con_llm(mensaje) if mensaje else None
-    titulacion = titulacion_en_mensaje or tracker.get_slot("contexto_titulacion")
+    titulacion_slot = tracker.get_slot("contexto_titulacion")
+
+    # Solo detectar titulación del mensaje si el usuario NO tiene una ya asignada
+    if not titulacion_slot and mensaje:
+        titulacion_en_mensaje = _detectar_titulacion_con_llm(mensaje)
+    else:
+        titulacion_en_mensaje = None
+
+    titulacion = titulacion_en_mensaje or titulacion_slot
 
     if titulacion_en_mensaje:
         eventos = [SlotSet("contexto_titulacion", titulacion_en_mensaje)]
@@ -235,6 +242,48 @@ def extraer_nombre_asignatura(tracker, titulacion_detectada_en_mensaje: bool = F
 # ============================================================================
 # RAG: BÚSQUEDA EN PLANES DOCENTES
 # ============================================================================
+
+def _resolver_nombre_desde_texto(pregunta: str, titulacion: str) -> Optional[str]:
+    """
+    Intenta encontrar una asignatura en la BD a partir del texto libre del usuario.
+    Usa fuzzy matching contra nombres reales de la BD.
+    Devuelve el nombre real de la asignatura o None.
+    """
+    from rapidfuzz import fuzz, process
+
+    conn = db_client.get_connection()
+    if not conn:
+        return None
+    try:
+        cursor = conn.cursor()
+        sql = "SELECT nombre FROM asignaturas WHERE activa = true"
+        params = []
+        if titulacion:
+            sql += " AND titulacion_id = (SELECT id FROM titulaciones WHERE codigo = %s LIMIT 1)"
+            params.append(titulacion)
+        cursor.execute(sql, params)
+        nombres_bd = [row[0] for row in cursor.fetchall()]
+        cursor.close()
+    finally:
+        conn.close()
+
+    if not nombres_bd:
+        return None
+
+    # Normalizar la pregunta y buscar fuzzy contra los nombres de la BD
+    pregunta_norm = normalizar_texto(pregunta)
+    resultado = process.extractOne(
+        pregunta_norm,
+        [normalizar_texto(n) for n in nombres_bd],
+        scorer=fuzz.partial_ratio,
+        score_cutoff=75,
+    )
+
+    if resultado:
+        # resultado = (matched_text, score, index)
+        return nombres_bd[resultado[2]]
+    return None
+
 
 def _buscar_codigo_por_nombre(nombre: str, titulacion: str) -> Optional[str]:
     """Resuelve nombre de asignatura a código vía SQL rápido."""
@@ -354,9 +403,13 @@ class ActionConsultaEspecifica(Action):
             nombre_asignatura = ultimo_nombre
             print(f"   → Usando contexto previo: {nombre_asignatura}")
         
-        # Si no hay entidad, dejar que el LLM extraiga del texto completo
+        # Si no hay entidad NLU, intentar resolver por fuzzy match en BD
         if not nombre_asignatura:
-            print(f"   → Sin entidad NLU, el LLM extraerá de la pregunta completa")
+            nombre_asignatura = _resolver_nombre_desde_texto(pregunta, contexto_titulacion)
+            if nombre_asignatura:
+                print(f"   → Nombre resuelto por fuzzy BD: {nombre_asignatura}")
+            else:
+                print(f"   → Sin entidad NLU ni match en BD, el LLM extraerá de la pregunta")
 
         # Generar SQL con LLM
         resultado_sql = generar_sql_especifica(
@@ -367,13 +420,19 @@ class ActionConsultaEspecifica(Action):
         )
 
         necesita_rag = resultado_sql.get('necesita_rag', False)
-        print(f"   SQL generada: {resultado_sql.get('sql', '')[:100]}...")
+
+        # Inyectar filtro de titulación en la SQL del LLM (puede que no lo incluya)
+        from .text_to_sql import _inyectar_filtro_titulacion
+        sql_con_titulacion = _inyectar_filtro_titulacion(
+            resultado_sql['sql'], contexto_titulacion
+        )
+        print(f"   SQL generada: {sql_con_titulacion[:100]}...")
         print(f"   Parámetros: {resultado_sql.get('parametros', [])}")
         print(f"   Necesita RAG: {necesita_rag}")
 
         # Ejecutar query (siempre, para resolver la asignatura)
         exito, resultados = ejecutar_query(
-            resultado_sql['sql'],
+            sql_con_titulacion,
             resultado_sql.get('parametros', [])
         )
 
@@ -402,26 +461,35 @@ class ActionConsultaEspecifica(Action):
 
         # --- RAG: si el LLM detectó que la pregunta necesita plan docente ---
         if necesita_rag:
-            print(f"   📚 Redirigiendo a búsqueda RAG para {asignatura.get('nombre')}")
+            codigo_rag = asignatura.get('codigo')
+            print(f"   📚 Redirigiendo a búsqueda RAG para {asignatura.get('nombre')} (código={codigo_rag!r})")
+            print(f"   📝 Pregunta RAG: {pregunta!r}")
             try:
                 from rag.buscar import buscar_en_plan_docente
                 chunks = buscar_en_plan_docente(
                     pregunta,
-                    codigo_asignatura=asignatura.get('codigo'),
+                    codigo_asignatura=codigo_rag,
                 )
+                print(f"   📊 Chunks encontrados: {len(chunks) if chunks else 0}")
                 if chunks:
+                    for i, c in enumerate(chunks):
+                        sim = c.get('similitud')
+                        sim_str = f"{sim:.3f}" if sim is not None else "keyword"
+                        print(f"     [{i+1}] sim={sim_str} | {c.get('seccion')} | {c.get('contenido','')[:60]}...")
                     respuesta_rag = _generar_respuesta_rag(
                         pregunta, chunks, asignatura.get('nombre')
                     )
                     if respuesta_rag:
                         dispatcher.utter_message(text=respuesta_rag)
                         return eventos_contexto + [
-                            SlotSet("ultimo_codigo_consultado", asignatura.get('codigo')),
+                            SlotSet("ultimo_codigo_consultado", codigo_rag),
                             SlotSet("ultimo_nombre_asignatura", asignatura.get('nombre'))
                         ]
                 print(f"   ⚠ RAG sin resultados, usando respuesta SQL como fallback")
             except Exception as e:
-                print(f"   ⚠ Error en RAG ({e}), usando respuesta SQL como fallback")
+                import traceback
+                print(f"   ⚠ Error en RAG: {e}")
+                print(traceback.format_exc())
 
         # --- Respuesta SQL (flujo original) ---
         respuesta = generar_respuesta_natural(

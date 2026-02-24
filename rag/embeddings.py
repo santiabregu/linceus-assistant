@@ -27,23 +27,31 @@ BATCH_SIZE = 100
 PAUSA_ENTRE_BATCHES = 1.0
 
 
-def generar_embedding(texto: str) -> Optional[List[float]]:
+def generar_embedding(
+    texto: str,
+    task_type: str = "SEMANTIC_SIMILARITY",
+) -> Optional[List[float]]:
     """
     Genera un embedding para un solo texto.
 
     Args:
         texto: Texto a vectorizar.
+        task_type: Tipo de tarea para Gemini. Usar "RETRIEVAL_QUERY" para
+                   preguntas de búsqueda y "RETRIEVAL_DOCUMENT" para documentos.
 
     Returns:
-        Lista de floats (768 dims) o None si hay error.
+        Lista de floats (EMBEDDING_DIMS dims) o None si hay error.
     """
-    resultado = generar_embeddings_batch([texto])
+    resultado = generar_embeddings_batch([texto], task_type=task_type)
     if resultado and resultado[0]:
         return resultado[0]
     return None
 
 
-def generar_embeddings_batch(textos: List[str]) -> List[Optional[List[float]]]:
+def generar_embeddings_batch(
+    textos: List[str],
+    task_type: str = "RETRIEVAL_DOCUMENT",
+) -> List[Optional[List[float]]]:
     """
     Genera embeddings para una lista de textos usando batch API.
 
@@ -52,6 +60,8 @@ def generar_embeddings_batch(textos: List[str]) -> List[Optional[List[float]]]:
 
     Args:
         textos: Lista de textos a vectorizar.
+        task_type: Tipo de tarea para Gemini. Usar "RETRIEVAL_DOCUMENT" para
+                   el pipeline de vectorización y "RETRIEVAL_QUERY" para búsquedas.
 
     Returns:
         Lista de embeddings (mismo orden que los textos de entrada).
@@ -80,6 +90,7 @@ def generar_embeddings_batch(textos: List[str]) -> List[Optional[List[float]]]:
                 contents=batch,
                 config={
                     "output_dimensionality": EMBEDDING_DIMS,
+                    "task_type": task_type,
                 },
             )
 
