@@ -8,4 +8,20 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {6.1}{\ignorespaces Stack tecnológico completo del proyecto LinceUS Assistant.}}{27}{}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {8.1}{\ignorespaces Estructura de la tabla UNIVERSIDADES}}{34}{}%
+\contentsline {table}{\numberline {8.2}{\ignorespaces Estructura de la tabla CENTROS}}{34}{}%
+\contentsline {table}{\numberline {8.3}{\ignorespaces Estructura de la tabla DEPARTAMENTOS}}{35}{}%
+\contentsline {table}{\numberline {8.4}{\ignorespaces Estructura de la tabla TITULACIONES}}{35}{}%
+\contentsline {table}{\numberline {8.5}{\ignorespaces Estructura de la tabla ASIGNATURAS}}{35}{}%
+\contentsline {table}{\numberline {8.6}{\ignorespaces Estructura de la tabla PROFESORES}}{36}{}%
+\contentsline {table}{\numberline {8.7}{\ignorespaces Estructura de la tabla TUTORIAS}}{36}{}%
+\contentsline {table}{\numberline {8.8}{\ignorespaces Estructura de la tabla HORARIOS}}{37}{}%
+\contentsline {table}{\numberline {8.9}{\ignorespaces Estructura de la tabla PLANES\_DOCENTES}}{37}{}%
+\contentsline {table}{\numberline {8.10}{\ignorespaces Estructura de la tabla PLANES\_DOCENTES\_CHUNKS}}{38}{}%
+\contentsline {table}{\numberline {8.11}{\ignorespaces Estructura de la tabla CATEGORIAS\_TRAMITES}}{38}{}%
+\contentsline {table}{\numberline {8.12}{\ignorespaces Estructura de la tabla TRAMITES}}{38}{}%
 \contentsfinish 

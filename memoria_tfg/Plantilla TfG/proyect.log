@@ -1,13 +1,13 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.2.12)  14 FEB 2026 23:03
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.2.12)  21 FEB 2026 10:35
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**"c:/Users/santi/Desktop/cuarto/TFG/linceus-assistant/TFG_Santia/Plantilla TfG
-/proyect.tex"
+**"c:/Users/santi/Desktop/cuarto/TFG/linceus-assistant/memoria_tfg/Plantilla Tf
+G/proyect.tex"
 
-(c:/Users/santi/Desktop/cuarto/TFG/linceus-assistant/TFG_Santia/Plantilla TfG/p
-royect.tex
+(c:/Users/santi/Desktop/cuarto/TFG/linceus-assistant/memoria_tfg/Plantilla TfG/
+proyect.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
 (pclass.cls
@@ -490,30 +490,42 @@ LaTeX Font Info:    Trying to load font information for U+lasy on input line 4.
 
 (C:\Users\santi\AppData\Local\Programs\MiKTeX\tex/latex/base\ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
-))
+) [1
+
+]
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 1
+19.
+
+(C:\Program Files\MiKTeX\tex/latex/psnfss\ot1pcr.fd
+File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
+)
+
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 13.59999pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[2])
 \tf@toc=\write3
 \openout3 = `proyect.toc'.
 
-
-[1
-
-] (proyect.lof)
+ [3] (proyect.lof)
 \tf@lof=\write4
 \openout4 = `proyect.lof'.
 
- [2
+ [4
 
 ] (proyect.lot)
 \tf@lot=\write5
 \openout5 = `proyect.lot'.
 
- [3
+ [5
 
 ] (proyect.lol)
 \tf@lol=\write6
 \openout6 = `proyect.lol'.
 
- [4
+ [6
 
 ] [1
 
@@ -526,14 +538,7 @@ Cap\'{\i }tulo 1.
 ]
 Package babel Info: 'spanish' activates 'spanish' shorthands.
 (babel)             Reported on input line 56.
-
-
-Package Fancyhdr Warning: \headheight is too small (12.0pt): 
- Make it at least 13.59999pt.
- We now make it that large for the rest of the document.
- This may cause the page layout to be inconsistent, however.
-
-[3]) (Capitulos/02_preparacion.tex [4]
+ [3]) (Capitulos/02_preparacion.tex [4]
 Cap\'{\i }tulo 2.
 [5
 
@@ -579,13 +584,78 @@ Cap\'{\i }tulo 4.
 Cap\'{\i }tulo 5.
 ) [20
 
-] (proyect.bbl
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 2
-6.
- (C:\Program Files\MiKTeX\tex/latex/psnfss\ot1pcr.fd
-File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
-))
-[21
+] [21
+
+] (Capitulos/marco_tecnologico.tex
+Cap\'{\i }tulo 6.
+
+Overfull \hbox (80.70044pt too wide) in paragraph at lines 39--40
+[]\OT1/ptm/b/n/10.95 Intenciones (in-tents)\OT1/ptm/m/n/10.95 : ?`Qu[]e quie-re
+ ha-cer el usua-rio? (e.g., \OT1/pcr/m/n/10.95 consultar[]horario\OT1/ptm/m/n/1
+0.95 , \OT1/pcr/m/n/10.95 buscar[]asignatura\OT1/ptm/m/n/10.95 ) 
+ []
+
+[22
+
+] [23] [24] [25] [26]) (Capitulos/estructura_proyecto.tex [27]
+Cap\'{\i }tulo 7.
+
+Overfull \hbox (0.58757pt too wide) in paragraph at lines 5--6
+[]\OT1/ptm/m/n/10.95 Este cap[]^^Ptu-lo des-cri-be la or-ga-ni-za-ci[]on del re
+-po-si-to-rio Lin-ceUS As-sis-tant, de-ta-llan-do el prop[]osi-
+ []
+
+[28
+
+]
+Overfull \hbox (61.52663pt too wide) in paragraph at lines 71--72
+[]\OT1/pcr/m/n/10.95 actions.py\OT1/ptm/m/n/10.95 : Pun-to de en-tra-da prin-ci
+-pal. De-fi-ne las ac-cio-nes de Ra-sa (\OT1/pcr/m/n/10.95 ActionQueryAsignatur
+as\OT1/ptm/m/n/10.95 ,
+ []
+
+[29] [30]
+Overfull \hbox (2.52565pt too wide) in paragraph at lines 122--123
+[]\OT1/pcr/m/n/10.95 pagina-principal.html \OT1/ptm/m/n/10.95 y \OT1/pcr/m/n/10
+.95 pagina-principal.css\OT1/ptm/m/n/10.95 : Pro-to-ti-po de la p[]agi-na prin-
+
+ []
+
+[31]) (Capitulos/estructura_bd.tex [32]
+Cap\'{\i }tulo 8.
+[33
+
+]
+Underfull \hbox (badness 10000) in paragraph at lines 124--124
+[]\OT1/ptm/m/n/10.95 Referencia a TI-TU-LA-CIO-NES
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 148--148
+[]\OT1/ptm/m/n/10.95 Referencia a DE-PAR-TA-MEN-TOS
+ []
+
+[34] [35]
+Underfull \hbox (badness 6910) in paragraph at lines 209--209
+[]\OT1/ptm/m/n/10.95 pendiente, pro-ce-san-do, com-ple-ta-do,
+ []
+
+[36]
+Underfull \hbox (badness 10000) in paragraph at lines 225--225
+[]\OT1/ptm/m/n/10.95 Referencia a PLA-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 225--225
+[]\OT1/ptm/m/n/10.95 Secci[]on del do-cu-men-to (e.g.,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 267--267
+[]\OT1/ptm/m/n/10.95 Referencia a CA-TE-GO-
+ []
+
+[37] [38] [39]) [40] (proyect.bbl) [41
 
 
 
@@ -596,26 +666,28 @@ L3 programming layer <2025-12-24>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 8100 strings out of 467871
- 123595 string characters out of 5418376
- 569993 words of memory out of 5000000
- 36789 multiletter control sequences out of 15000+600000
- 663717 words of font info for 111 fonts, out of 8000000 for 9000
+ 8194 strings out of 467871
+ 125855 string characters out of 5418376
+ 586034 words of memory out of 5000000
+ 36869 multiletter control sequences out of 15000+600000
+ 666646 words of font info for 118 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 72i,12n,79p,998b,516s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 72i,12n,79p,999b,534s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/
 cmmi10.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
 fonts/cm/cmmi8.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/pu
 blic/amsfonts/cm/cmsy10.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts
-/type1/urw/courier/ucrr8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fon
-ts/type1/urw/helvetic/uhvb8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/
-fonts/type1/urw/times/utmb8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/
-fonts/type1/urw/times/utmb8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/
-fonts/type1/urw/times/utmr8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/
-fonts/type1/urw/times/utmri8a.pfb>
-Output written on proyect.pdf (26 pages, 208918 bytes).
+/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users/santi/AppData/Local/Programs/MiKT
+eX/fonts/type1/urw/courier/ucrb8a.pfb><C:/Users/santi/AppData/Local/Programs/Mi
+KTeX/fonts/type1/urw/courier/ucrr8a.pfb><C:/Users/santi/AppData/Local/Programs/
+MiKTeX/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Users/santi/AppData/Local/Progra
+ms/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/santi/AppData/Local/Progra
+ms/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/santi/AppData/Local/Progra
+ms/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/santi/AppData/Local/Progra
+ms/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
+Output written on proyect.pdf (48 pages, 293411 bytes).
 PDF statistics:
- 133 PDF objects out of 1000 (max. 8388607)
+ 214 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 

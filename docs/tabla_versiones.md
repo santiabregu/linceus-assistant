@@ -22,6 +22,10 @@ Este documento registra los cambios realizados en cada versión del chatbot sigu
 | v1.4.3 | 2026-01 | General | Intent pedir_ayuda para mostrar capacidades del bot |
 | v1.4.4 | 2026-01 | Asignaturas | Ver todas: reutilizar filtros de consulta anterior |
 | v2.0.0 | 2026-02 | Infraestructura | Migración completa a Text-to-SQL con Ollama |
+| v2.1.0 | 2026-02 | Infraestructura | Sistema multi-titulación funcional con selección obligatoria |
+| v2.1.1 | 2026-02 | Infraestructura | Mejora NLU cambio titulación + consulta de titulaciones disponibles |
+| v2.1.2 | 2026-02 | Asignaturas | Detección de titulación en mensaje vía LLM + cambio de contexto inline |
+| v2.2.0 | 2026-02 | RAG | Pipeline de vectorización de planes docentes + búsqueda semántica |
 
 ---
 
@@ -530,11 +534,273 @@ Usuario: "cuántos créditos tiene Redes"
 
 ---
 
+### v2.1.0 - Sistema Multi-Titulación Funcional
+**Fecha:** Febrero 2026  
+**Tipo:** MINOR - Nueva funcionalidad crítica de infraestructura
+
+**Cambios:**
+- **Flujo de saludo con selección de titulación obligatoria**:
+  - `utter_greet` ahora presenta a Linceus y muestra las 3 titulaciones disponibles (IS, TI, IC)
+  - Nueva respuesta `utter_pedir_titulacion` para solicitar titulación a mitad de conversación
+  - Actualizada `utter_ayuda` con recordatorio de indicar titulación
+- **Cambio de titulación funcional con fuzzy matching**:
+  - Fuzzy matching con `rapidfuzz` en `contexto.py` (score cutoff: 70%)
+  - Reconoce códigos (IS, TI, IC, GII-IS, GII-TI, GII-IC)
+  - Reconoce nombres completos y parciales ("software", "computadores", "tecnologías")
+  - Eliminada referencia a GII-SI (no existe en la base de datos)
+- **Fix crítico de filtrado SQL por titulación**:
+  - **Bug detectado**: `contexto_titulacion` almacena código ('GII-IS') pero se usaba directamente como `titulacion_id` (UUID) → nunca funcionaba el filtrado
+  - **Solución**: Nuevas funciones `_subquery_titulacion()` y `_inyectar_filtro_titulacion()` en `text_to_sql.py`
+  - Genera subquery: `(SELECT id FROM titulaciones WHERE codigo = 'GII-IS' LIMIT 1)`
+  - Se aplica en los 3 generadores SQL + todos los fallbacks
+  - Inyección automática después de `WHERE activa = true`
+- **Bloqueo de consultas sin titulación**:
+  - Nueva función `comprobar_titulacion()` en `asignaturas.py`
+  - Aplicada en las 3 actions (específica, listado, conteo)
+  - Muestra mensaje con las 3 opciones si no hay titulación seleccionada
+  - Fallback de búsqueda flexible ahora también filtra por titulación
+- **Expansión de datos NLU**:
+  - `contexto.yml` expandido de ~8 a ~27 ejemplos (eliminados IC y GII-SI explícitos para testing de generalización)
+  - Códigos sueltos, frases naturales ("soy de", "estudio"), comandos ("ponme en", "seleccionar")
+- **Nuevas stories para flujo de titulación**:
+  - Saludo → selección de titulación
+  - Saludo → selección → consulta (listado/específica)
+  - Cambio de titulación en medio de conversación → consulta
+- **Arquitectura Text-to-SQL mejorada**:
+  - Tablas permitidas: ASIGNATURAS + TITULACIONES (para validación)
+  - Eliminada instrucción `FILTRAR POR TITULACION` del prompt de conteo (conflicto con inyector)
+
+**Archivos modificados:**
+- `actions/text_to_sql.py` - Funciones de subquery e inyección + fix en 3 generadores
+- `actions/asignaturas.py` - Comprobación de titulación + import de inyector en fallback
+- `actions/contexto.py` - Eliminado GII-SI del mapeo y mensaje fallback
+- `domain.yml` - Actualizado `utter_greet`, añadido `utter_pedir_titulacion`, actualizado `utter_ayuda`
+- `data/nlu/contexto.yml` - Expandido con más ejemplos, eliminados IC/SI para testing
+- `data/stories.yml` - 5 nuevas stories para flujos de titulación
+- `data/rules.yml` - Sin cambios (ya tenía las rules correctas)
+
+**Flujo completo:**
+```
+Usuario: "Hola"
+    ↓
+Bot: "¡Hola! Soy Linceus... ¿Cuál cursas?
+      • Ingeniería del Software (IS)
+      • Tecnologías Informáticas (TI)
+      • Ingeniería de Computadores (IC)"
+    ↓
+Usuario: "Quiero ver software"
+    ↓
+Bot: "✅ Cambiado a: Grado en Ing. Informática - Ing. del Software"
+    ↓
+Usuario: "Dame las optativas de cuarto"
+    ↓
+SQL generado: SELECT ... WHERE activa = true 
+              AND titulacion_id = (SELECT id FROM titulaciones WHERE codigo = 'GII-IS' LIMIT 1)
+              AND curso = 4 AND tipologia = 'OPTATIVA'
+    ↓
+Bot: [Lista de optativas filtradas correctamente por GII-IS]
+```
+
+**Datos en base de datos:**
+- 3 titulaciones activas: GII-IS (42 asignaturas), GII-TI (52 asignaturas), GII-IC (44 asignaturas)
+- Total: 138 asignaturas en Sprint 4
+- Documentado en `docs/sprints/S4/datos_DB.md`
+
+**Testing de generalización NLU:**
+- Eliminados todos los ejemplos de IC/Computadores de `contexto.yml`
+- El sistema debe reconocer "IC", "computadores", "Ingeniería de Computadores" por generalización del patrón aprendido
+- El fuzzy matching en `contexto.py` resuelve cualquier variación sin necesidad de ejemplos explícitos
+
+**Funcionalidades nuevas:**
+- ✅ Selección de titulación obligatoria en primer contacto
+- ✅ Cambio de titulación en medio de conversación
+- ✅ Filtrado SQL correcto por titulación (bug crítico resuelto)
+- ✅ Bloqueo de consultas sin contexto académico
+- ✅ Generalización NLU más allá de ejemplos explícitos
+
+---
+
+### v2.1.1 - Mejoras de Reconocimiento de Titulación y Consulta de Catálogo
+**Fecha:** Febrero 2026  
+**Tipo:** PATCH - Mejoras de UX y nueva funcionalidad menor
+
+**Cambios:**
+- **Mejora NLU para cambio de titulación**:
+  - Añadidos ~25 ejemplos nuevos en `contexto.yml` para `cambiar_contexto_academico`
+  - Incluidos ejemplos con frases completas: "cambia a ingeniería del software", "cambia a ingenieria de computadores" (sin tildes)
+  - Restaurados todos los ejemplos de IC/computadores (eliminados en v2.1.0 para testing)
+  - Variantes: "cambiar carrera a", "quiero cambiar a", "pasame a", "ahora quiero ver"
+  - **Fix**: Frases como "cambia a ingenieria de computadores" ya no se confunden con consultas de asignaturas
+- **Nueva funcionalidad: consulta de titulaciones disponibles**:
+  - Nuevo intent `consulta_titulaciones` con 17 ejemplos de entrenamiento
+  - Nueva action `action_consulta_titulaciones` que consulta la base de datos
+  - Muestra todas las titulaciones activas agrupadas por centro
+  - Incluye número de asignaturas por titulación
+  - Permite al usuario preguntar: "¿qué carreras hay en la ETSII?"
+- **Actualizaciones de configuración**:
+  - `domain.yml` - Añadido intent `consulta_titulaciones` y action `action_consulta_titulaciones`
+  - `data/rules.yml` - Nueva rule para consulta de titulaciones
+  - `actions/contexto.py` - Implementada `ActionConsultaTitulaciones` con query SQL JOIN
+
+**Archivos modificados:**
+- `data/nlu/contexto.yml` - Expandido de ~27 a ~57 ejemplos para `cambiar_contexto_academico` + 17 nuevos para `consulta_titulaciones`
+- `actions/contexto.py` - Añadida nueva action con consulta a BD
+- `domain.yml` - Nuevo intent + action
+- `data/rules.yml` - Nueva rule
+
+**Ejemplo de uso (consulta de titulaciones):**
+```
+Usuario: "¿qué carreras hay en la ETSII?"
+
+Bot: 
+📚 **Titulaciones disponibles:**
+
+**Escuela Técnica Superior de Ingeniería Informática:**
+• **Grado en Ing. Informática - Ing. del Software** (GII-IS) - 42 asignaturas
+• **Grado en Ing. Informática - Tecnologías Informáticas** (GII-TI) - 52 asignaturas
+• **Grado en Ing. Informática - Ing. de Computadores** (GII-IC) - 44 asignaturas
+
+Dime cuál te interesa para consultar sus asignaturas.
+```
+
+**Problema resuelto:**
+- El usuario reportaba que "cambia a ingenieria de computadores" se interpretaba como consulta de la asignatura "Estructura de Computadores" en lugar de cambio de titulación
+- Solución: Ampliación masiva de ejemplos NLU con todas las variantes posibles de cambio de titulación
+
+**Mejoras de UX:**
+- ✅ Reconocimiento robusto de cambio de titulación con múltiples variantes
+- ✅ Usuarios pueden explorar qué titulaciones hay disponibles antes de seleccionar
+- ✅ Información de número de asignaturas por titulación (transparencia)
+
+---
+
+---
+
+### v2.1.2 - Detección de Titulación Inline con LLM
+**Fecha:** Febrero 2026  
+**Tipo:** PATCH - Mejora de UX y robustez
+
+**Cambios:**
+- **Eliminado fuzzy matching hardcodeado para titulaciones**:
+  - Eliminada dependencia de `rapidfuzz` en `asignaturas.py`
+  - Eliminado el diccionario `TITULACION_MAP` estático
+- **Nuevo sistema de detección de titulación dinámica**:
+  - `_cargar_titulaciones_desde_bd()`: consulta `SELECT codigo, nombre FROM titulaciones WHERE activa = true` en cada comprobación
+  - `_detectar_titulacion_con_llm()`: pasa el mensaje del usuario + lista real de titulaciones al LLM (Gemini) y obtiene el código directamente
+  - `_construir_lista_titulaciones()`: genera el mensaje de opciones consultando la BD (con fallback si no hay conexión)
+  - Si se añade una titulación nueva a la BD, el bot la reconoce automáticamente sin tocar código
+- **Detección y cambio de contexto inline**:
+  - `comprobar_titulacion()` acepta ahora el parámetro `mensaje` y devuelve `Tuple[Optional[str], List]`
+  - Las 3 actions (`ActionConsultaEspecifica`, `ActionConsultaListado`, `ActionConsultaConteo`) pasan la pregunta del usuario a `comprobar_titulacion`
+  - Si el mensaje menciona una titulación (ej. "en GIS, cuántas asignaturas hay"), se detecta, se usa para la consulta Y se persiste en el slot en un único turno
+  - Prioridad: titulación en mensaje > slot guardado
+- **Prompt LLM endurecido para evitar alucinaciones**:
+  - Lista explícita de códigos válidos en el prompt
+  - Instrucción prohibiendo inventar titulaciones fuera de la lista
+  - Formato `"Respuesta:"` al final para guiar la generación
+- **Nuevos ejemplos NLU para TFG como asignatura**:
+  - 12 ejemplos con `[TFG](nombre_asignatura)` y `[trabajo fin de grado](nombre_asignatura)` en `asignaturas.yml`
+  - Resuelve que "cuando se hace el TFG" clasificara como listado en lugar de consulta específica
+
+**Archivos modificados:**
+- `actions/asignaturas.py` - Eliminado fuzzy, añadidas 3 funciones nuevas, `comprobar_titulacion` con nueva firma + propagación de `SlotSet` en las 3 actions
+- `data/nlu/asignaturas.yml` - 12 ejemplos nuevos para TFG como `nombre_asignatura`
+
+**Flujo nuevo:**
+```
+Usuario: "en ingeniería de software, cuántas obligatorias hay en primero"
+    ↓
+ActionConsultaConteo detecta la pregunta → llama comprobar_titulacion(pregunta)
+    ↓
+LLM recibe: mensaje + lista BD → responde "GII-IS"
+    ↓
+SlotSet(contexto_titulacion, "GII-IS") + ejecutar consulta con GII-IS
+    ↓ (todo en el mismo turno, sin pedir la titulación)
+Bot: "En Ingeniería del Software hay 8 asignaturas obligatorias en primero."
+```
+
+**Funcionalidades nuevas:**
+- ✅ Consultas compuestas: titulación + filtro en un solo mensaje
+- ✅ Cambio de contexto académico inline sin intent explícito
+- ✅ Reconocimiento automático de nuevas titulaciones añadidas a la BD
+- ✅ Consultas sobre TFG clasificadas correctamente como asignatura específica
+
+---
+
+---
+
+### v2.2.0 - RAG: Planes Docentes Vectorizados
+**Fecha:** Febrero 2026
+**Tipo:** MINOR - Nueva funcionalidad de recuperación semántica
+
+**Cambios:**
+- **Pipeline de vectorización** (`rag/pipeline.py`):
+  - Descubre PDFs en `proyectos_docentes/ing_software/`
+  - Extrae texto con `pdfplumber` (`rag/extraer_pdf.py`)
+  - Segmenta en chunks con overlap (`rag/chunking.py`)
+  - Genera embeddings con `gemini-embedding-001` (2000 dims) (`rag/embeddings.py`)
+  - Inserta chunks + vectores en tabla `planes_docentes_chunks` (`rag/db_vectores.py`)
+  - Deduplicación por hash SHA256 del PDF
+  - Flags `--dry-run`, `--asignatura`, `--forzar`, `--solo-errores`, `--stats`
+- **Búsqueda en runtime** (`rag/buscar.py`):
+  - `buscar_en_plan_docente()`: genera embedding de la pregunta → búsqueda coseno via función SQL `buscar_plan_docente`
+  - Fallback automático a búsqueda por palabras clave (`ILIKE`) si el embedding falla (cuota agotada)
+  - Por defecto consulta Grupo 1 (planes suficientemente similares entre grupos)
+- **Routing SQL → RAG en `ActionConsultaEspecifica`**:
+  - El prompt de `generar_sql_especifica` ahora incluye campo `necesita_rag: true/false`
+  - El LLM decide si la pregunta es sobre campos de la tabla (créditos, curso...) o del plan docente (evaluación, bibliografía...)
+  - Si `necesita_rag: true` → resuelve la asignatura vía SQL → búsqueda vectorial → respuesta con contexto de chunks
+  - Fallback: si RAG no devuelve resultados, responde con los datos SQL
+- **Nuevos ejemplos NLU** en `data/nlu/asignaturas.yml`:
+  - ~45 ejemplos de preguntas sobre plan docente para `consulta_asignatura_especifica`
+  - Cubren evaluación, bibliografía, profesorado, temario, horarios, objetivos, metodología, idioma, exámenes
+
+**Archivos nuevos:**
+- `rag/buscar.py` - Búsqueda vectorial + fallback keyword en runtime
+- `rag/pipeline.py` - Orquestador completo de vectorización
+- `rag/embeddings.py` - Cliente Gemini Embeddings
+- `rag/chunking.py` - Segmentación con overlap
+- `rag/extraer_pdf.py` - Extracción de texto PDF
+- `rag/db_vectores.py` - Operaciones BD para chunks
+- `rag/sql/buscar_plan_docente.sql` - Función SQL + índice HNSW
+
+**Archivos modificados:**
+- `actions/asignaturas.py` - Routing RAG + helpers `_buscar_codigo_por_nombre`, `_generar_respuesta_rag`
+- `actions/text_to_sql.py` - Campo `necesita_rag` en prompt y fallback
+- `data/nlu/asignaturas.yml` - ~45 ejemplos nuevos de preguntas plan docente
+
+**Datos vectorizados:**
+- 125/156 planes docentes completados (cuota API hit durante indexación)
+- Modelo: `gemini-embedding-001`, dimensiones: 2000 (reducidas de 3072 nativo)
+- Índice HNSW en pgvector (m=16, ef_construction=64) para búsqueda eficiente
+
+**Flujo:**
+```
+Usuario: "¿Cómo se evalúa Redes?"
+    ↓
+LLM genera SQL + necesita_rag: true
+    ↓
+SQL resuelve: codigo = "2050001", nombre = "Redes de Computadores"
+    ↓
+buscar_en_plan_docente("¿Cómo se evalúa Redes?", "2050001")
+    ↓
+Embedding query → coseno similarity → top-3 chunks de evaluación
+    ↓
+LLM genera respuesta con contexto del plan docente
+```
+
+**Funcionalidades nuevas:**
+- ✅ Preguntas sobre evaluación, bibliografía, metodología, profesorado, horarios, temario, objetivos
+- ✅ Fallback keyword automático cuando el embedding API no está disponible
+- ✅ Reindexación incremental con `--solo-errores` para retomar tras cuota agotada
+- ✅ Deduplicación por hash: no re-vectoriza si el PDF no cambió
+
+---
+
 ## Próximas Versiones Planificadas
 
 | Versión | Épica | Descripción |
 |---------|-------|-------------|
-| v2.0.0 | Horarios | Consulta de horarios por asignatura/grupo |
+| v2.3.0 | Horarios | Consulta de horarios por asignatura/grupo |
 | v3.0.0 | Profesores | Información sobre profesorado |
 | v4.0.0 | Trámites | Documentación administrativa |
-| v5.0.0 | RAG | Respuestas basadas en documentos con embeddings |

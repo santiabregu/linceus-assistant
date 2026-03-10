@@ -1,8 +1,3 @@
-from typing import Any, Text, Dict, List
-
-from rasa_sdk import Action, Tracker
-from rasa_sdk.executor import CollectingDispatcher
-
 from .asignaturas import (
     ActionConsultaEspecifica,
     ActionConsultaListado,
@@ -13,6 +8,7 @@ from .asignaturas import (
 from .contexto import (
     ActionCambiarContexto,
     ActionConsultarContexto,
+    ActionConsultaTitulaciones,
 )
 
 __all__ = [
@@ -22,4 +18,5 @@ __all__ = [
     'ActionMostrarTodasAsignaturas',
     'ActionCambiarContexto',
     'ActionConsultarContexto',
+    'ActionConsultaTitulaciones',
 ]

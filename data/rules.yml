@@ -37,6 +37,11 @@ rules:
   - intent: consultar_contexto_academico
   - action: action_consultar_contexto
 
+- rule: Consulta de titulaciones disponibles
+  steps:
+  - intent: consulta_titulaciones
+  - action: action_consulta_titulaciones
+
 # =============================================================================
 # REGLAS PARA CONSULTAS DE ASIGNATURAS (Text-to-SQL)
 # =============================================================================

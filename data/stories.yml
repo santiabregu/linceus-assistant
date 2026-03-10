@@ -20,6 +20,53 @@ stories:
   - action: utter_goodbye
 
 # =============================================================================
+# STORIES: FLUJO SALUDO → SELECCIÓN TITULACIÓN → CONSULTA
+# =============================================================================
+
+- story: saludo y seleccion de titulacion
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: cambiar_contexto_academico
+  - action: action_cambiar_contexto
+
+- story: saludo y seleccion titulacion y consulta
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: cambiar_contexto_academico
+  - action: action_cambiar_contexto
+  - intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
+
+- story: saludo y seleccion titulacion y especifica
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: cambiar_contexto_academico
+  - action: action_cambiar_contexto
+  - intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+
+# =============================================================================
+# STORIES: CAMBIO DE TITULACIÓN EN MEDIO DE CONVERSACIÓN
+# =============================================================================
+
+- story: cambiar titulacion y consultar
+  steps:
+  - intent: cambiar_contexto_academico
+  - action: action_cambiar_contexto
+  - intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
+
+- story: cambiar titulacion y consulta especifica
+  steps:
+  - intent: cambiar_contexto_academico
+  - action: action_cambiar_contexto
+  - intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+
+# =============================================================================
 # STORIES: CONSULTAS DE ASIGNATURAS (Text-to-SQL)
 # =============================================================================
 
