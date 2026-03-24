@@ -28,12 +28,43 @@ def _normalizar(texto: str) -> str:
     return texto.lower().strip()
 
 
+def _resolver_grupo(codigo_asignatura: str, grupo: str) -> str:
+    """
+    Resuelve el nombre exacto del grupo en la BD.
+
+    Maneja variantes como 'Grupo 5INGLES' cuando el detector devuelve 'Grupo 5'.
+    Si no encuentra coincidencia exacta pero sí un LIKE, devuelve la variante real.
+    """
+    conn = db_client.get_connection()
+    if not conn:
+        return grupo
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT DISTINCT pd.grupo
+            FROM planes_docentes pd
+            JOIN asignaturas a ON a.id = pd.asignatura_id
+            WHERE a.codigo = %s AND pd.grupo LIKE %s
+            ORDER BY pd.grupo
+            LIMIT 1
+            """,
+            (codigo_asignatura, f"{grupo}%"),
+        )
+        row = cur.fetchone()
+        return row[0] if row else grupo
+    except Exception:
+        return grupo
+    finally:
+        conn.close()
+
+
 def buscar_en_plan_docente(
     pregunta: str,
     codigo_asignatura: str = None,
     grupo: Optional[str] = None,
-    limite: int = 3,
-    umbral: float = 0.0,
+    limite: int = 6,
+    umbral: float = 0.5,
 ) -> List[Dict]:
     """
     Busca chunks relevantes en los planes docentes.
@@ -52,6 +83,10 @@ def buscar_en_plan_docente(
     Returns:
         Lista de dicts con contenido, seccion, similitud (o None), etc.
     """
+    # Resolver nombre exacto del grupo (ej. 'Grupo 5' → 'Grupo 5INGLES')
+    if grupo and codigo_asignatura:
+        grupo = _resolver_grupo(codigo_asignatura, grupo)
+
     # --- Intento 1: búsqueda vectorial ---
     embedding = generar_embedding(pregunta, task_type="SEMANTIC_SIMILARITY")
     if embedding:

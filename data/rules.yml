@@ -27,6 +27,11 @@ rules:
   - intent: nlu_fallback
   - action: utter_default
 
+- rule: Pregunta fuera de ambito
+  steps:
+  - intent: out_of_scope
+  - action: utter_default
+
 - rule: Cambiar contexto academico
   steps:
   - intent: cambiar_contexto_academico

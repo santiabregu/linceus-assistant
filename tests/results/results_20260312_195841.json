@@ -1,0 +1,2436 @@
+[
+  {
+    "test_id": "E-P01",
+    "run_number": 1,
+    "query": "¿Cuántos créditos tiene Redes?",
+    "timestamp": "2026-03-12T19:48:36.414442",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 24,
+        "end": 29,
+        "confidence_entity": 0.999625563621521,
+        "value": "Redes",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ],
+    "bot_responses": [
+      "Redes tiene 6 créditos ECTS."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-P01",
+    "run_number": 2,
+    "query": "¿Cuántos créditos tiene Redes?",
+    "timestamp": "2026-03-12T19:48:41.795743",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 24,
+        "end": 29,
+        "confidence_entity": 0.999625563621521,
+        "value": "Redes",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ],
+    "bot_responses": [
+      "Redes tiene 6 créditos ECTS."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-P02",
+    "run_number": 1,
+    "query": "¿En qué curso está Cálculo?",
+    "timestamp": "2026-03-12T19:48:50.287439",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 19,
+        "end": 26,
+        "confidence_entity": 0.9989655017852783,
+        "value": "Cálculo",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "Cálculo está en **1º curso**."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-P02",
+    "run_number": 2,
+    "query": "¿En qué curso está Cálculo?",
+    "timestamp": "2026-03-12T19:48:54.862967",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 19,
+        "end": 26,
+        "confidence_entity": 0.9989655017852783,
+        "value": "Cálculo",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "Cálculo está en **1º curso**."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-P03",
+    "run_number": 1,
+    "query": "¿Fundamentos de Programación es anual?",
+    "timestamp": "2026-03-12T19:49:00.575587",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 1,
+        "end": 31,
+        "confidence_entity": 0.7852267026901245,
+        "value": "Fundamentos de Programación es",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "No encontré ninguna asignatura llamada 'Fundamentos de Programación es'."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-P03",
+    "run_number": 2,
+    "query": "¿Fundamentos de Programación es anual?",
+    "timestamp": "2026-03-12T19:49:06.107168",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 1,
+        "end": 31,
+        "confidence_entity": 0.7852267026901245,
+        "value": "Fundamentos de Programación es",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "Sí, según la información disponible, la asignatura Fundamentos de Programación tiene un periodo de impartición **anual**."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-P04",
+    "run_number": 1,
+    "query": "¿Estadística es obligatoria?",
+    "timestamp": "2026-03-12T19:49:16.903609",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 1,
+        "end": 12,
+        "confidence_entity": 0.9983356595039368,
+        "value": "Estadística",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "Sí, Estadística es de **Formación Básica**, por lo que es obligatoria. Se cursa en **1º curso** y tiene una duración de **segundo cuatrimestre**."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-P04",
+    "run_number": 2,
+    "query": "¿Estadística es obligatoria?",
+    "timestamp": "2026-03-12T19:49:24.045600",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 1,
+        "end": 12,
+        "confidence_entity": 0.9983356595039368,
+        "value": "Estadística",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "Sí, Estadística es de **Formación Básica**, por lo que es obligatoria. Se cursa en **1º curso** y tiene una duración de **segundo cuatrimestre**."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-P05",
+    "run_number": 1,
+    "query": "¿Criptografía es optativa?",
+    "timestamp": "2026-03-12T19:49:30.125971",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 1,
+        "end": 13,
+        "confidence_entity": 0.9994872808456421,
+        "value": "Criptografía",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "Sí, Criptografía es una asignatura **optativa**."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-P05",
+    "run_number": 2,
+    "query": "¿Criptografía es optativa?",
+    "timestamp": "2026-03-12T19:49:35.200725",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 1,
+        "end": 13,
+        "confidence_entity": 0.9994872808456421,
+        "value": "Criptografía",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "Sí, Criptografía es una asignatura **optativa**."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-P06",
+    "run_number": 1,
+    "query": "¿De qué cuatrimestre es IA?",
+    "timestamp": "2026-03-12T19:49:40.780950",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 24,
+        "end": 26,
+        "confidence_entity": 0.9998716115951538,
+        "value": "IA",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ],
+    "bot_responses": [
+      "IA es del segundo cuatrimestre."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-P06",
+    "run_number": 2,
+    "query": "¿De qué cuatrimestre es IA?",
+    "timestamp": "2026-03-12T19:49:46.204806",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 24,
+        "end": 26,
+        "confidence_entity": 0.9998716115951538,
+        "value": "IA",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ],
+    "bot_responses": [
+      "IA es del segundo cuatrimestre."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-P07",
+    "run_number": 1,
+    "query": "Información sobre Sistemas Operativos",
+    "timestamp": "2026-03-12T19:49:52.859972",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 18,
+        "end": 37,
+        "confidence_entity": 0.9998782873153687,
+        "value": "Sistemas Operativos",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ],
+    "bot_responses": [
+      "¡Hola! Aquí tienes la información sobre Sistemas Operativos:",
+      "*   **Código:** 2050014\n*   **Curso:** 2º\n*   **Créditos:** 6.0 ECTS\n*   **Duración:** Primer cuatrimestre\n*   **Tipología:** Obligatoria"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-P07",
+    "run_number": 2,
+    "query": "Información sobre Sistemas Operativos",
+    "timestamp": "2026-03-12T19:49:59.526687",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 18,
+        "end": 37,
+        "confidence_entity": 0.9998782873153687,
+        "value": "Sistemas Operativos",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ],
+    "bot_responses": [
+      "¡Hola! Aquí tienes la información sobre Sistemas Operativos:",
+      "*   **Código:** 2050014\n*   **Curso:** 2º\n*   **Créditos:** 6.0 ECTS\n*   **Duración:** Primer cuatrimestre\n*   **Tipología:** Obligatoria"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-P08",
+    "run_number": 1,
+    "query": "Háblame de Diseño y Pruebas",
+    "timestamp": "2026-03-12T19:50:06.742819",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 8,
+        "end": 10,
+        "confidence_entity": 0.9992745518684387,
+        "value": "de",
+        "extractor": "DIETClassifier"
+      },
+      {
+        "entity": "nombre_asignatura",
+        "start": 11,
+        "end": 27,
+        "confidence_entity": 0.9965181350708008,
+        "value": "Diseño y Pruebas",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "Hola! Por lo que veo en la información disponible, \"Diseño y Pruebas\" no es una asignatura en sí misma, sino que se aborda a través de la resolución de problemas. Algunos de estos problemas se resuelven en clase, otros en el laboratorio (con ordenadores y software específico) y el resto de forma individual. En el laboratorio, el profesor repasa conceptos y resuelve ejercicios con la participación de los alumnos.",
+      "La evaluación de la asignatura se basa en evaluación continua y/o exámenes finales prácticos divididos en dos partes (una por cuatrimestre)."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-P08",
+    "run_number": 2,
+    "query": "Háblame de Diseño y Pruebas",
+    "timestamp": "2026-03-12T19:50:15.000520",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 8,
+        "end": 10,
+        "confidence_entity": 0.9992745518684387,
+        "value": "de",
+        "extractor": "DIETClassifier"
+      },
+      {
+        "entity": "nombre_asignatura",
+        "start": 11,
+        "end": 27,
+        "confidence_entity": 0.9965181350708008,
+        "value": "Diseño y Pruebas",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "Hola! Por lo que veo en la información disponible, \"Diseño y Pruebas\" no se menciona explícitamente como un tema dentro de la asignatura Fundamentos de Programación. Sin embargo, sí se indica que en las prácticas de laboratorio se resolverán ejercicios de un boletín de problemas, y el profesor planteará y resolverá varios de ellos con la participación de los alumnos. Esto podría incluir aspectos relacionados con el diseño y pruebas de programas.",
+      "Si necesitas más detalles, te recomiendo consultar los horarios del grupo en este enlace: https://www.informatica.us.es/index.php/horarios."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-P08",
+    "run_number": 3,
+    "query": "Háblame de Diseño y Pruebas",
+    "timestamp": "2026-03-12T19:50:23.936674",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 8,
+        "end": 10,
+        "confidence_entity": 0.9992745518684387,
+        "value": "de",
+        "extractor": "DIETClassifier"
+      },
+      {
+        "entity": "nombre_asignatura",
+        "start": 11,
+        "end": 27,
+        "confidence_entity": 0.9965181350708008,
+        "value": "Diseño y Pruebas",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "Hola! Por lo que veo en la información disponible, \"Diseño y Pruebas\" no es una asignatura en sí misma, sino que se aborda a través de la resolución de problemas. Algunos de estos problemas se resuelven en clase, otros en el laboratorio (con la ayuda de un profesor y en subgrupos) y el resto de forma individual. El examen final es de carácter práctico y se compone de dos partes, una por cuatrimestre."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-P09",
+    "run_number": 1,
+    "query": "¿Qué es ADDA?",
+    "timestamp": "2026-03-12T19:50:32.216604",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 8,
+        "end": 12,
+        "confidence_entity": 0.9999600648880005,
+        "value": "ADDA",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ],
+    "bot_responses": [
+      "ADDA es la asignatura de **Análisis y Diseño de Datos y Algoritmos**. Se cursa en **2º curso** y es de tipo **obligatoria**. Tiene una duración de un **primer cuatrimestre** y cuenta con **6.0 ECTS**."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-P09",
+    "run_number": 2,
+    "query": "¿Qué es ADDA?",
+    "timestamp": "2026-03-12T19:50:39.244385",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 8,
+        "end": 12,
+        "confidence_entity": 0.9999600648880005,
+        "value": "ADDA",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ],
+    "bot_responses": [
+      "ADDA es la asignatura de **Análisis y Diseño de Datos y Algoritmos**. Se cursa en **2º curso** y es de tipo **obligatoria**. Tiene una duración de un **primer cuatrimestre** y otorga **6.0 ECTS**."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-P09",
+    "run_number": 3,
+    "query": "¿Qué es ADDA?",
+    "timestamp": "2026-03-12T19:50:45.277657",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 8,
+        "end": 12,
+        "confidence_entity": 0.9999600648880005,
+        "value": "ADDA",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ],
+    "bot_responses": [
+      "ADDA es la asignatura de **Análisis y Diseño de Datos y Algoritmos**. Se cursa en **2º curso** y es de tipo **obligatoria**. Tiene una duración de un **primer cuatrimestre** y otorga **6.0 ECTS**."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-P10",
+    "run_number": 1,
+    "query": "Dame info del TFG",
+    "timestamp": "2026-03-12T19:50:50.943452",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 14,
+        "end": 17,
+        "confidence_entity": 0.9997132420539856,
+        "value": "TFG",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ],
+    "bot_responses": [
+      "El Trabajo Fin de Grado (TFG) tiene las siguientes características:",
+      "*   **Código:** 2050045\n*   **Curso:** 4º\n*   **Créditos:** 12 ECTS\n*   **Duración:** Segundo cuatrimestre\n*   **Tipología:** TFG"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-P10",
+    "run_number": 2,
+    "query": "Dame info del TFG",
+    "timestamp": "2026-03-12T19:50:56.759739",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 14,
+        "end": 17,
+        "confidence_entity": 0.9997132420539856,
+        "value": "TFG",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ],
+    "bot_responses": [
+      "El Trabajo Fin de Grado (TFG) tiene las siguientes características:",
+      "*   **Código:** 2050045\n*   **Curso:** 4º\n*   **Créditos:** 12 ECTS\n*   **Duración:** Segundo cuatrimestre\n*   **Tipología:** TFG"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-P11",
+    "run_number": 1,
+    "query": "Datos de PGPI",
+    "timestamp": "2026-03-12T19:51:02.402782",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 6,
+        "end": 13,
+        "confidence_entity": 0.5682293176651001,
+        "value": "de PGPI",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "No encontré ninguna asignatura llamada 'de PGPI'."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": false,
+    "overall_pass": false,
+    "notes": "Esperaba contener 'Planificación y Gestión de Proyectos Informáticos'. Response: 'no encontré ninguna asignatura llamada 'de pgpi'.'. "
+  },
+  {
+    "test_id": "E-P11",
+    "run_number": 2,
+    "query": "Datos de PGPI",
+    "timestamp": "2026-03-12T19:51:07.301744",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 6,
+        "end": 13,
+        "confidence_entity": 0.5682293176651001,
+        "value": "de PGPI",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "No encontré ninguna asignatura llamada 'de PGPI'."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": false,
+    "overall_pass": false,
+    "notes": "Esperaba contener 'Planificación y Gestión de Proyectos Informáticos'. Response: 'no encontré ninguna asignatura llamada 'de pgpi'.'. "
+  },
+  {
+    "test_id": "E-P11",
+    "run_number": 3,
+    "query": "Datos de PGPI",
+    "timestamp": "2026-03-12T19:51:11.151727",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 6,
+        "end": 13,
+        "confidence_entity": 0.5682293176651001,
+        "value": "de PGPI",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "No encontré ninguna asignatura llamada 'de PGPI'."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": false,
+    "overall_pass": false,
+    "notes": "Esperaba contener 'Planificación y Gestión de Proyectos Informáticos'. Response: 'no encontré ninguna asignatura llamada 'de pgpi'.'. "
+  },
+  {
+    "test_id": "E-P12",
+    "run_number": 1,
+    "query": "¿Qué asignatura es la 2050001?",
+    "timestamp": "2026-03-12T19:51:15.461385",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 0.9642748832702637,
+    "entities_detected": [],
+    "bot_responses": [
+      "La asignatura con código 2050001 es **Fundamentos de Programación**. Es de 1º curso y tiene 12 ECTS, siendo una asignatura de Formación Básica que se imparte de forma anual."
+    ],
+    "intent_ok": false,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": false,
+    "notes": "Intent: esperado=consulta_asignatura_especifica, obtenido=consulta_asignaturas_listado (0.96). "
+  },
+  {
+    "test_id": "E-P12",
+    "run_number": 2,
+    "query": "¿Qué asignatura es la 2050001?",
+    "timestamp": "2026-03-12T19:51:21.341351",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 0.9642748832702637,
+    "entities_detected": [],
+    "bot_responses": [
+      "La asignatura con código 2050001 es **Fundamentos de Programación**. Es de 1º curso y tiene 12 ECTS, siendo una asignatura de Formación Básica que se imparte de forma anual."
+    ],
+    "intent_ok": false,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": false,
+    "notes": "Intent: esperado=consulta_asignatura_especifica, obtenido=consulta_asignaturas_listado (0.96). "
+  },
+  {
+    "test_id": "E-S01",
+    "run_number": 1,
+    "query": "¿Y cuántos créditos tiene?",
+    "timestamp": "2026-03-12T19:51:28.535957",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "Tiene 6 ECTS."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-S01",
+    "run_number": 2,
+    "query": "¿Y cuántos créditos tiene?",
+    "timestamp": "2026-03-12T19:51:42.540623",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "Tiene 6 ECTS."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-S02",
+    "run_number": 1,
+    "query": "¿Es obligatoria?",
+    "timestamp": "2026-03-12T19:51:56.194408",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "Sí, es de **Formación Básica**."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-S02",
+    "run_number": 2,
+    "query": "¿Es obligatoria?",
+    "timestamp": "2026-03-12T19:52:07.822384",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "Sí, es de **Formación Básica**."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-S03",
+    "run_number": 1,
+    "query": "¿Y esa de qué curso es?",
+    "timestamp": "2026-03-12T19:52:20.322916",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "Es de 4º curso."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-S03",
+    "run_number": 2,
+    "query": "¿Y esa de qué curso es?",
+    "timestamp": "2026-03-12T19:52:36.705668",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "Es de 4º curso."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-N01",
+    "run_number": 1,
+    "query": "¿Cuántos créditos tiene Biología?",
+    "timestamp": "2026-03-12T19:52:50.733424",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 24,
+        "end": 32,
+        "confidence_entity": 0.7333023548126221,
+        "value": "Biología",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "No encontré ninguna asignatura llamada 'Biología'."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-N01",
+    "run_number": 2,
+    "query": "¿Cuántos créditos tiene Biología?",
+    "timestamp": "2026-03-12T19:52:54.749345",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 24,
+        "end": 32,
+        "confidence_entity": 0.7333023548126221,
+        "value": "Biología",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "No encontré ninguna asignatura llamada 'Biología'."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-N02",
+    "run_number": 1,
+    "query": "Información sobre Derecho Penal",
+    "timestamp": "2026-03-12T19:52:59.270310",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 0.9999996423721313,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 26,
+        "end": 31,
+        "confidence_entity": 0.5829511284828186,
+        "value": "Penal",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "No encontré ninguna asignatura llamada 'Penal'."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-N02",
+    "run_number": 2,
+    "query": "Información sobre Derecho Penal",
+    "timestamp": "2026-03-12T19:53:03.065419",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 0.9999996423721313,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 26,
+        "end": 31,
+        "confidence_entity": 0.5829511284828186,
+        "value": "Penal",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "No encontré ninguna asignatura llamada 'Penal'."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-N03",
+    "run_number": 1,
+    "query": "¿Qué es Química Orgánica?",
+    "timestamp": "2026-03-12T19:53:07.635383",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 16,
+        "end": 24,
+        "confidence_entity": 0.8124969601631165,
+        "value": "Orgánica",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "No encontré ninguna asignatura llamada 'Orgánica'."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-N03",
+    "run_number": 2,
+    "query": "¿Qué es Química Orgánica?",
+    "timestamp": "2026-03-12T19:53:11.350490",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 16,
+        "end": 24,
+        "confidence_entity": 0.8124969601631165,
+        "value": "Orgánica",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "No encontré ninguna asignatura llamada 'Orgánica'."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-T01",
+    "run_number": 1,
+    "query": "¿Cuántos créditos tiene Redes?",
+    "timestamp": "2026-03-12T19:53:16.452396",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 24,
+        "end": 29,
+        "confidence_entity": 0.999625563621521,
+        "value": "Redes",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ],
+    "bot_responses": [
+      "Redes tiene 6 créditos ECTS."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-T01",
+    "run_number": 2,
+    "query": "¿Cuántos créditos tiene Redes?",
+    "timestamp": "2026-03-12T19:53:21.659595",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 24,
+        "end": 29,
+        "confidence_entity": 0.999625563621521,
+        "value": "Redes",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ],
+    "bot_responses": [
+      "Redes tiene 6 créditos ECTS."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-T02",
+    "run_number": 1,
+    "query": "Info de IA",
+    "timestamp": "2026-03-12T19:53:26.880284",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 5,
+        "end": 7,
+        "confidence_entity": 0.5821345448493958,
+        "value": "de",
+        "extractor": "DIETClassifier"
+      },
+      {
+        "entity": "nombre_asignatura",
+        "start": 8,
+        "end": 10,
+        "confidence_entity": 0.9989699125289917,
+        "value": "IA",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ],
+    "bot_responses": [
+      "Veo que te interesa la asignatura de IA. En primer curso tenemos **Fundamentos de Programación** (código 2060001), que es de formación básica y dura un año completo. Tiene un total de **12 ECTS**."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": false,
+    "overall_pass": false,
+    "notes": "Esperaba contener 'Inteligencia Artificial'. Response: 'veo que te interesa la asignatura de ia. en primer curso tenemos **fundamentos de programación** (código 2060001), que es de formación básica y dura un año completo. tiene un total de **12 ects**.'. "
+  },
+  {
+    "test_id": "E-T02",
+    "run_number": 2,
+    "query": "Info de IA",
+    "timestamp": "2026-03-12T19:53:33.532669",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 5,
+        "end": 7,
+        "confidence_entity": 0.5821345448493958,
+        "value": "de",
+        "extractor": "DIETClassifier"
+      },
+      {
+        "entity": "nombre_asignatura",
+        "start": 8,
+        "end": 10,
+        "confidence_entity": 0.9989699125289917,
+        "value": "IA",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ],
+    "bot_responses": [
+      "Veo que te interesa la asignatura de IA. En primer curso tenemos **Fundamentos de Programación** (código 2060001), que es de formación básica y dura un año completo. Tiene un total de **12 ECTS**."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": false,
+    "overall_pass": false,
+    "notes": "Esperaba contener 'Inteligencia Artificial'. Response: 'veo que te interesa la asignatura de ia. en primer curso tenemos **fundamentos de programación** (código 2060001), que es de formación básica y dura un año completo. tiene un total de **12 ects**.'. "
+  },
+  {
+    "test_id": "E-T03",
+    "run_number": 1,
+    "query": "¿Cuántos créditos tiene Redes?",
+    "timestamp": "2026-03-12T19:53:40.678095",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 24,
+        "end": 29,
+        "confidence_entity": 0.999625563621521,
+        "value": "Redes",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ],
+    "bot_responses": [
+      "Redes tiene 6 créditos ECTS."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": false,
+    "overall_pass": false,
+    "notes": "Esperaba que pidiera titulación. Response: 'redes tiene 6 créditos ects.'. "
+  },
+  {
+    "test_id": "E-T03",
+    "run_number": 2,
+    "query": "¿Cuántos créditos tiene Redes?",
+    "timestamp": "2026-03-12T19:53:47.557270",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 24,
+        "end": 29,
+        "confidence_entity": 0.999625563621521,
+        "value": "Redes",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ],
+    "bot_responses": [
+      "Redes tiene 6 créditos ECTS."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": false,
+    "overall_pass": false,
+    "notes": "Esperaba que pidiera titulación. Response: 'redes tiene 6 créditos ects.'. "
+  },
+  {
+    "test_id": "E-T04",
+    "run_number": 1,
+    "query": "Dime sobre Redes en ingeniería del software",
+    "timestamp": "2026-03-12T19:53:54.125351",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 11,
+        "end": 16,
+        "confidence_entity": 0.7840585708618164,
+        "value": "Redes",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      },
+      {
+        "entity": "nombre_titulacion",
+        "start": 20,
+        "end": 43,
+        "confidence_entity": 0.7198745012283325,
+        "value": "Ingeniería del Software",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ],
+    "bot_responses": [
+      "En la ETSII tenemos una asignatura llamada **Redes de Computadores** que se imparte en **2º curso**. Es una asignatura **obligatoria** de **6 ECTS** y se estudia en el **primer cuatrimestre**."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-T04",
+    "run_number": 2,
+    "query": "Dime sobre Redes en ingeniería del software",
+    "timestamp": "2026-03-12T19:54:02.372474",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 11,
+        "end": 16,
+        "confidence_entity": 0.7840585708618164,
+        "value": "Redes",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      },
+      {
+        "entity": "nombre_titulacion",
+        "start": 20,
+        "end": 43,
+        "confidence_entity": 0.7198745012283325,
+        "value": "Ingeniería del Software",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ],
+    "bot_responses": [
+      "En la ETSII tenemos una asignatura llamada **Redes de Computadores**, que se imparte en **segundo curso**. Es una asignatura **obligatoria** de **6 ECTS** y se estudia durante el **primer cuatrimestre**."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "E-T04",
+    "run_number": 3,
+    "query": "Dime sobre Redes en ingeniería del software",
+    "timestamp": "2026-03-12T19:54:11.229628",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 11,
+        "end": 16,
+        "confidence_entity": 0.7840585708618164,
+        "value": "Redes",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      },
+      {
+        "entity": "nombre_titulacion",
+        "start": 20,
+        "end": 43,
+        "confidence_entity": 0.7198745012283325,
+        "value": "Ingeniería del Software",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ],
+    "bot_responses": [
+      "En la ETSII tenemos una asignatura llamada **Redes de Computadores**, que se imparte en **2º curso**. Es una asignatura **obligatoria** de **6 ECTS** y se estudia durante el **primer cuatrimestre**."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-P01",
+    "run_number": 1,
+    "query": "Dame las asignaturas de primero",
+    "timestamp": "2026-03-12T19:54:17.592409",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "¡Hola! Aquí tienes las asignaturas de primero:",
+      "*   Administración de Empresas\n*   Álgebra Lineal y Numérica\n*   Cálculo Infinitesimal y Numérico\n*   Circuitos Electrónicos Digitales\n*   Estadística\n*   Estructura de Computadores\n*   Fundamentos de Programación\n*   Fundamentos Físicos de la Informática",
+      "Hay 1 más. ¿Quieres ver todas?"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-P01",
+    "run_number": 2,
+    "query": "Dame las asignaturas de primero",
+    "timestamp": "2026-03-12T19:54:23.203546",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "¡Hola! Aquí tienes las asignaturas de primero:",
+      "*   Administración de Empresas\n*   Álgebra Lineal y Numérica\n*   Cálculo Infinitesimal y Numérico\n*   Circuitos Electrónicos Digitales\n*   Estadística\n*   Estructura de Computadores\n*   Fundamentos de Programación\n*   Fundamentos Físicos de la Informática",
+      "Hay 1 más. ¿Quieres ver todas?"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-P02",
+    "run_number": 1,
+    "query": "Asignaturas de cuarto",
+    "timestamp": "2026-03-12T19:54:29.254346",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "En cuarto curso tienes las siguientes asignaturas:",
+      "*   Acceso Inteligente a la Información (OPTATIVA - Primer cuatrimestre)\n*   Ampliación de Administración de Empresas (OPTATIVA - Primer cuatrimestre)\n*   Aplicaciones de Soft Computing (OPTATIVA - Primer cuatrimestre)\n*   Computación en la Nube y Big Data (OPTATIVA - Segundo cuatrimestre)\n*   Criptografía (OPTATIVA - Primer cuatrimestre)\n*   Derecho en la Informática (OPTATIVA - Primer cuatrimestre)\n*   Emprendimiento Corporativo (OPTATIVA - Segundo cuatrimestre)\n*   Evolución y Gestión de la Configuración (OBLIGATORIA - Primer cuatrimestre)",
+      "En total, hay 8 asignaturas disponibles.",
+      "Hay 11 más. ¿Quieres ver todas?"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-P02",
+    "run_number": 2,
+    "query": "Asignaturas de cuarto",
+    "timestamp": "2026-03-12T19:54:37.958200",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "En cuarto curso tienes las siguientes asignaturas:",
+      "*   Acceso Inteligente a la Información (OPTATIVA - Primer cuatrimestre)\n*   Ampliación de Administración de Empresas (OPTATIVA - Primer cuatrimestre)\n*   Aplicaciones de Soft Computing (OPTATIVA - Primer cuatrimestre)\n*   Computación en la Nube y Big Data (OPTATIVA - Segundo cuatrimestre)\n*   Criptografía (OPTATIVA - Primer cuatrimestre)\n*   Derecho en la Informática (OPTATIVA - Primer cuatrimestre)\n*   Emprendimiento Corporativo (OPTATIVA - Segundo cuatrimestre)\n*   Evolución y Gestión de la Configuración (OBLIGATORIA - Primer cuatrimestre)",
+      "En total, hay 8 asignaturas disponibles.",
+      "Hay 11 más. ¿Quieres ver todas?"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-P03",
+    "run_number": 1,
+    "query": "¿Qué optativas hay?",
+    "timestamp": "2026-03-12T19:54:44.921336",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "¡Hola! Para el 4º curso, tienes las siguientes asignaturas optativas disponibles:",
+      "*   Acceso Inteligente a la Información (Primer cuatrimestre)\n*   Ampliación de Administración de Empresas (Primer cuatrimestre)\n*   Aplicaciones de Soft Computing (Primer cuatrimestre)\n*   Computación en la Nube y Big Data (Segundo cuatrimestre)\n*   Criptografía (Primer cuatrimestre)\n*   Derecho en la Informática (Primer cuatrimestre)\n*   Emprendimiento Corporativo (Segundo cuatrimestre)\n*   Gestión de la Información Empresarial (Primer cuatrimestre)",
+      "¡Espero que te sirva!",
+      "Hay 7 más. ¿Quieres ver todas?"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-P03",
+    "run_number": 2,
+    "query": "¿Qué optativas hay?",
+    "timestamp": "2026-03-12T19:54:51.476813",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "¡Hola! Hay 8 asignaturas optativas disponibles en 4º curso:",
+      "*   Acceso Inteligente a la Información (Primer cuatrimestre)\n*   Ampliación de Administración de Empresas (Primer cuatrimestre)\n*   Aplicaciones de Soft Computing (Primer cuatrimestre)\n*   Computación en la Nube y Big Data (Segundo cuatrimestre)\n*   Criptografía (Primer cuatrimestre)\n*   Derecho en la Informática (Primer cuatrimestre)\n*   Emprendimiento Corporativo (Segundo cuatrimestre)\n*   Gestión de la Información Empresarial (Primer cuatrimestre)",
+      "Hay 7 más. ¿Quieres ver todas?"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-P04",
+    "run_number": 1,
+    "query": "Asignaturas anuales",
+    "timestamp": "2026-03-12T19:54:58.225071",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "Hay dos asignaturas anuales:",
+      "*   **Fundamentos de Programación** (1º curso)\n*   **Prácticas Externas** (4º curso)"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-P04",
+    "run_number": 2,
+    "query": "Asignaturas anuales",
+    "timestamp": "2026-03-12T19:55:03.959092",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "Hay dos asignaturas anuales:",
+      "*   **Fundamentos de Programación** (1º curso)\n*   **Prácticas Externas** (4º curso)"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-P05",
+    "run_number": 1,
+    "query": "Asignaturas de formación básica",
+    "timestamp": "2026-03-12T19:55:09.691190",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "Las asignaturas de formación básica son:",
+      "*   Administración de Empresas (1º curso, 6.0 ECTS, Segundo cuatrimestre)\n*   Álgebra Lineal y Numérica (1º curso, 6.0 ECTS, Segundo cuatrimestre)\n*   Cálculo Infinitesimal y Numérico (1º curso, 6.0 ECTS, Primer cuatrimestre)\n*   Circuitos Electrónicos Digitales (1º curso, 6.0 ECTS, Primer cuatrimestre)\n*   Estadística (1º curso, 6.0 ECTS, Segundo cuatrimestre)\n*   Estructura de Computadores (1º curso, 6.0 ECTS, Segundo cuatrimestre)\n*   Fundamentos de Programación (1º curso, 12.0 ECTS, Anual)\n*   Fund",
+      "Hay 1 más. ¿Quieres ver todas?"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-P05",
+    "run_number": 2,
+    "query": "Asignaturas de formación básica",
+    "timestamp": "2026-03-12T19:55:17.576989",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "Las asignaturas de formación básica son:",
+      "*   Administración de Empresas (1º curso, 6.0 ECTS, Segundo cuatrimestre)\n*   Álgebra Lineal y Numérica (1º curso, 6.0 ECTS, Segundo cuatrimestre)\n*   Cálculo Infinitesimal y Numérico (1º curso, 6.0 ECTS, Primer cuatrimestre)\n*   Circuitos Electrónicos Digitales (1º curso, 6.0 ECTS, Primer cuatrimestre)\n*   Estadística (1º curso, 6.0 ECTS, Segundo cuatrimestre)\n*   Estructura de Computadores (1º curso, 6.0 ECTS, Segundo cuatrimestre)\n*   Fundamentos de Programación (1º curso, 12.0 ECTS, Anual)\n*   Fund",
+      "Hay 1 más. ¿Quieres ver todas?"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-P06",
+    "run_number": 1,
+    "query": "Optativas de cuarto",
+    "timestamp": "2026-03-12T19:55:25.207260",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "En cuarto curso tienes disponibles las siguientes optativas:",
+      "*   Acceso Inteligente a la Información (Primer cuatrimestre)\n*   Ampliación de Administración de Empresas (Primer cuatrimestre)\n*   Aplicaciones de Soft Computing (Primer cuatrimestre)\n*   Computación en la Nube y Big Data (Segundo cuatrimestre)\n*   Criptografía (Primer cuatrimestre)\n*   Derecho en la Informática (Primer cuatrimestre)\n*   Emprendimiento Corporativo (Segundo cuatrimestre)\n*   Gestión de la Información Empresarial (Primer cuatrimestre)",
+      "Todas ellas tienen una carga de 6 ECTS.",
+      "Hay 7 más. ¿Quieres ver todas?"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-P06",
+    "run_number": 2,
+    "query": "Optativas de cuarto",
+    "timestamp": "2026-03-12T19:55:33.974214",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "En cuarto curso tienes disponibles las siguientes optativas:",
+      "*   Acceso Inteligente a la Información (Primer cuatrimestre)\n*   Ampliación de Administración de Empresas (Primer cuatrimestre)\n*   Aplicaciones de Soft Computing (Primer cuatrimestre)\n*   Computación en la Nube y Big Data (Segundo cuatrimestre)\n*   Criptografía (Primer cuatrimestre)\n*   Derecho en la Informática (Primer cuatrimestre)\n*   Emprendimiento Corporativo (Segundo cuatrimestre)\n*   Gestión de la Información Empresarial (Primer cuatrimestre)",
+      "Todas ellas tienen una carga de 6 ECTS.",
+      "Hay 7 más. ¿Quieres ver todas?"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-P07",
+    "run_number": 1,
+    "query": "Obligatorias de segundo",
+    "timestamp": "2026-03-12T19:55:41.031531",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "Las asignaturas obligatorias de segundo curso son:",
+      "*   Análisis y Diseño de Datos y Algoritmos (Primer cuatrimestre)\n*   Arquitectura de Computadores (Segundo cuatrimestre)\n*   Arquitectura e Integración de Sistemas Software (Segundo cuatrimestre)\n*   Introducción a la Ingeniería del Software y los Sistemas de Información I (Primer cuatrimestre)\n*   Introducción a la Ingeniería del Software y los Sistemas de Información II (Segundo cuatrimestre)\n*   Lógica Informática (Primer cuatrimestre)\n*   Matemática Discreta (Segundo cuatrimestre)\n*   Redes de Computadores (Primer cuatrimestre)",
+      "En total, hay 8 asignaturas obligatorias en segundo curso.",
+      "Hay 1 más. ¿Quieres ver todas?"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-P07",
+    "run_number": 2,
+    "query": "Obligatorias de segundo",
+    "timestamp": "2026-03-12T19:55:47.659658",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "Las asignaturas obligatorias de segundo curso son:",
+      "*   Análisis y Diseño de Datos y Algoritmos (Primer cuatrimestre)\n*   Arquitectura de Computadores (Segundo cuatrimestre)\n*   Arquitectura e Integración de Sistemas Software (Segundo cuatrimestre)\n*   Introducción a la Ingeniería del Software y los Sistemas de Información I (Primer cuatrimestre)\n*   Introducción a la Ingeniería del Software y los Sistemas de Información II (Segundo cuatrimestre)\n*   Lógica Informática (Primer cuatrimestre)\n*   Matemática Discreta (Segundo cuatrimestre)\n*   Redes de Computadores (Primer cuatrimestre)",
+      "En total, hay 8 asignaturas obligatorias en segundo curso.",
+      "Hay 1 más. ¿Quieres ver todas?"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-P08",
+    "run_number": 1,
+    "query": "Asignaturas de tercero del primer cuatrimestre",
+    "timestamp": "2026-03-12T19:55:54.968397",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "En el primer cuatrimestre de tercero, tienes estas asignaturas:",
+      "*   **Diseño y Pruebas I**\n*   **Ingeniería de Requisitos**\n*   **Modelado y Simulación Numérica**\n*   **Procesamiento de Señales Multimedia**\n*   **Proceso Software y Gestión I**"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-P08",
+    "run_number": 2,
+    "query": "Asignaturas de tercero del primer cuatrimestre",
+    "timestamp": "2026-03-12T19:56:02.341669",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "En el primer cuatrimestre de tercero, tienes estas asignaturas:",
+      "*   **Diseño y Pruebas I**\n*   **Ingeniería de Requisitos**\n*   **Modelado y Simulación Numérica**\n*   **Procesamiento de Señales Multimedia**\n*   **Proceso Software y Gestión I**"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-P08",
+    "run_number": 3,
+    "query": "Asignaturas de tercero del primer cuatrimestre",
+    "timestamp": "2026-03-12T19:56:10.216616",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "En el primer cuatrimestre de tercero, tienes estas asignaturas:",
+      "*   **Diseño y Pruebas I**\n*   **Ingeniería de Requisitos**\n*   **Modelado y Simulación Numérica**\n*   **Procesamiento de Señales Multimedia**\n*   **Proceso Software y Gestión I**"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-P09",
+    "run_number": 1,
+    "query": "Asignaturas de 12 créditos",
+    "timestamp": "2026-03-12T19:56:16.221678",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 0.9999996423721313,
+    "entities_detected": [],
+    "bot_responses": [
+      "Hay dos asignaturas de 12 créditos:",
+      "*   **Fundamentos de Programación** (1º curso, Anual)\n*   **Trabajo Fin de Grado** (4º curso, Segundo cuatrimestre)"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-P09",
+    "run_number": 2,
+    "query": "Asignaturas de 12 créditos",
+    "timestamp": "2026-03-12T19:56:22.922332",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 0.9999996423721313,
+    "entities_detected": [],
+    "bot_responses": [
+      "Hay dos asignaturas de 12 créditos:",
+      "*   **Fundamentos de Programación** (1º curso, Anual)\n*   **Trabajo Fin de Grado** (4º curso, Segundo cuatrimestre)"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-P10",
+    "run_number": 1,
+    "query": "Dame todas las asignaturas",
+    "timestamp": "2026-03-12T19:56:29.582516",
+    "intent_detected": "pedir_mas_resultados",
+    "intent_confidence": 0.998484194278717,
+    "entities_detected": [],
+    "bot_responses": [
+      "No hay resultados pendientes de mostrar."
+    ],
+    "intent_ok": false,
+    "entity_ok": true,
+    "response_ok": false,
+    "overall_pass": false,
+    "notes": "Esperaba contener 'más'. Intent: esperado=consulta_asignaturas_listado, obtenido=pedir_mas_resultados (1.00). Response: 'no hay resultados pendientes de mostrar.'. "
+  },
+  {
+    "test_id": "L-P10",
+    "run_number": 2,
+    "query": "Dame todas las asignaturas",
+    "timestamp": "2026-03-12T19:56:29.791358",
+    "intent_detected": "pedir_mas_resultados",
+    "intent_confidence": 0.998484194278717,
+    "entities_detected": [],
+    "bot_responses": [
+      "No hay resultados pendientes de mostrar."
+    ],
+    "intent_ok": false,
+    "entity_ok": true,
+    "response_ok": false,
+    "overall_pass": false,
+    "notes": "Esperaba contener 'más'. Intent: esperado=consulta_asignaturas_listado, obtenido=pedir_mas_resultados (1.00). Response: 'no hay resultados pendientes de mostrar.'. "
+  },
+  {
+    "test_id": "L-N01",
+    "run_number": 1,
+    "query": "Optativas de primero",
+    "timestamp": "2026-03-12T19:56:29.956104",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "No encontré asignaturas con esos criterios."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-N01",
+    "run_number": 2,
+    "query": "Optativas de primero",
+    "timestamp": "2026-03-12T19:56:34.905935",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "No encontré asignaturas con esos criterios."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-N02",
+    "run_number": 1,
+    "query": "Asignaturas de quinto curso",
+    "timestamp": "2026-03-12T19:56:39.124597",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "No encontré asignaturas con esos criterios."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-N02",
+    "run_number": 2,
+    "query": "Asignaturas de quinto curso",
+    "timestamp": "2026-03-12T19:56:42.393654",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "No encontré asignaturas con esos criterios."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-T01",
+    "run_number": 1,
+    "query": "Asignaturas de primero",
+    "timestamp": "2026-03-12T19:56:45.785679",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "En primero, las asignaturas que tienes son:",
+      "*   Administración de Empresas (6 ECTS, Primer cuatrimestre)\n*   Álgebra Lineal y Numérica (6 ECTS, Primer cuatrimestre)\n*   Cálculo Infinitesimal y Numérico (6 ECTS, Segundo cuatrimestre)\n*   Circuitos Electrónicos Digitales (6 ECTS, Primer cuatrimestre)\n*   Estadística (6 ECTS, Segundo cuatrimestre)\n*   Estructura de Computadores (6 ECTS, Segundo cuatrimestre)\n*   Fundamentos de Programación (12 ECTS, Anual)\n*   Fundamentos Físicos de la Informática (6 ECTS, Segundo cuatrimestre)",
+      "Hay 1 más. ¿Quieres ver todas?"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-T01",
+    "run_number": 2,
+    "query": "Asignaturas de primero",
+    "timestamp": "2026-03-12T19:56:53.438216",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "En primero, las asignaturas que tienes son:",
+      "*   Administración de Empresas (6 ECTS, Primer cuatrimestre)\n*   Álgebra Lineal y Numérica (6 ECTS, Primer cuatrimestre)\n*   Cálculo Infinitesimal y Numérico (6 ECTS, Segundo cuatrimestre)\n*   Circuitos Electrónicos Digitales (6 ECTS, Primer cuatrimestre)\n*   Estadística (6 ECTS, Segundo cuatrimestre)\n*   Estructura de Computadores (6 ECTS, Segundo cuatrimestre)\n*   Fundamentos de Programación (12 ECTS, Anual)\n*   Fundamentos Físicos de la Informática (6 ECTS, Segundo cuatrimestre)",
+      "Hay 1 más. ¿Quieres ver todas?"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-T02",
+    "run_number": 1,
+    "query": "Optativas de cuarto",
+    "timestamp": "2026-03-12T19:57:01.515548",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "En cuarto curso tienes las siguientes optativas disponibles:",
+      "*   Acceso Inteligente a la Información (Segundo cuatrimestre)\n*   Administración de Sistemas de Información (Primer cuatrimestre)\n*   Aplicaciones de Soft Computing (Segundo cuatrimestre)\n*   Computación Móvil (Segundo cuatrimestre)\n*   Criptografía (Segundo cuatrimestre)\n*   Estadística Computacional (Segundo cuatrimestre)\n*   Gestión de la Producción (Segundo cuatrimestre)\n*   Gestión de Procesos y Servicios (Primer cuatrimestre)",
+      "Todas ellas tienen una carga de 6 ECTS.",
+      "Hay 13 más. ¿Quieres ver todas?"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-T02",
+    "run_number": 2,
+    "query": "Optativas de cuarto",
+    "timestamp": "2026-03-12T19:57:09.312958",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "En cuarto curso tienes las siguientes optativas disponibles:",
+      "*   Acceso Inteligente a la Información (Segundo cuatrimestre)\n*   Administración de Sistemas de Información (Primer cuatrimestre)\n*   Aplicaciones de Soft Computing (Segundo cuatrimestre)\n*   Computación Móvil (Segundo cuatrimestre)\n*   Criptografía (Segundo cuatrimestre)\n*   Estadística Computacional (Segundo cuatrimestre)\n*   Gestión de la Producción (Segundo cuatrimestre)\n*   Gestión de Procesos y Servicios (Primer cuatrimestre)",
+      "Todas ellas tienen una carga de 6 ECTS.",
+      "Hay 13 más. ¿Quieres ver todas?"
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-T03",
+    "run_number": 1,
+    "query": "Dame las asignaturas de segundo",
+    "timestamp": "2026-03-12T19:57:16.946955",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "Antes de consultar asignaturas, necesito saber tu titulación:",
+      "• **Grado en Ingeniería Informática - Ingeniería de Computadores** (GII-IC)\n• **Grado en Ingeniería Informática - Ingeniería del Software** (GII-IS)\n• **Grado en Ingeniería Informática - Tecnologías Informáticas** (GII-TI)",
+      "Dime cuál cursas."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "L-T03",
+    "run_number": 2,
+    "query": "Dame las asignaturas de segundo",
+    "timestamp": "2026-03-12T19:57:18.892191",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "Antes de consultar asignaturas, necesito saber tu titulación:",
+      "• **Grado en Ingeniería Informática - Ingeniería de Computadores** (GII-IC)\n• **Grado en Ingeniería Informática - Ingeniería del Software** (GII-IS)\n• **Grado en Ingeniería Informática - Tecnologías Informáticas** (GII-TI)",
+      "Dime cuál cursas."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "C-P01",
+    "run_number": 1,
+    "query": "¿Cuántas asignaturas hay en primero?",
+    "timestamp": "2026-03-12T19:57:21.314430",
+    "intent_detected": "consulta_asignaturas_conteo",
+    "intent_confidence": 0.9999401569366455,
+    "entities_detected": [],
+    "bot_responses": [
+      "En primero hay un total de 9 asignaturas."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "C-P01",
+    "run_number": 2,
+    "query": "¿Cuántas asignaturas hay en primero?",
+    "timestamp": "2026-03-12T19:57:25.870349",
+    "intent_detected": "consulta_asignaturas_conteo",
+    "intent_confidence": 0.9999401569366455,
+    "entities_detected": [],
+    "bot_responses": [
+      "En primero hay un total de 9 asignaturas."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "C-P02",
+    "run_number": 1,
+    "query": "¿Cuántas optativas hay en cuarto?",
+    "timestamp": "2026-03-12T19:57:33.262057",
+    "intent_detected": "consulta_asignaturas_conteo",
+    "intent_confidence": 0.9989303946495056,
+    "entities_detected": [],
+    "bot_responses": [
+      "En cuarto hay un total de 15 asignaturas optativas."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "C-P02",
+    "run_number": 2,
+    "query": "¿Cuántas optativas hay en cuarto?",
+    "timestamp": "2026-03-12T19:57:37.982454",
+    "intent_detected": "consulta_asignaturas_conteo",
+    "intent_confidence": 0.9989303946495056,
+    "entities_detected": [],
+    "bot_responses": [
+      "En cuarto curso hay un total de 15 asignaturas optativas."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "C-P03",
+    "run_number": 1,
+    "query": "¿Cuántas asignaturas tiene la carrera?",
+    "timestamp": "2026-03-12T19:57:42.636616",
+    "intent_detected": "consulta_titulaciones",
+    "intent_confidence": 0.8663555383682251,
+    "entities_detected": [],
+    "bot_responses": [
+      "📚 **Titulaciones disponibles:**",
+      "**Escuela Técnica Superior de Ingeniería Informática:**\n• **Grado en Ingeniería Informática - Ingeniería de Computadores** (GII-IC) - 48 asignaturas\n• **Grado en Ingeniería Informática - Ingeniería del Software** (GII-IS) - 47 asignaturas\n• **Grado en Ingeniería Informática - Tecnologías Informáticas** (GII-TI) - 54 asignaturas",
+      "Dime cuál te interesa para consultar sus asignaturas."
+    ],
+    "intent_ok": false,
+    "entity_ok": true,
+    "response_ok": false,
+    "overall_pass": false,
+    "notes": "Esperaba count=42, números encontrados: ['48', '47', '54']. Intent: esperado=consulta_asignaturas_conteo, obtenido=consulta_titulaciones (0.87). Response: '📚 **titulaciones disponibles:** **escuela técnica superior de ingeniería informática:**\n• **grado en ingeniería informática - ingeniería de computadores** (gii-ic) - 48 asignaturas\n• **grado en ingeni'. "
+  },
+  {
+    "test_id": "C-P03",
+    "run_number": 2,
+    "query": "¿Cuántas asignaturas tiene la carrera?",
+    "timestamp": "2026-03-12T19:57:43.200599",
+    "intent_detected": "consulta_titulaciones",
+    "intent_confidence": 0.8663555383682251,
+    "entities_detected": [],
+    "bot_responses": [
+      "📚 **Titulaciones disponibles:**",
+      "**Escuela Técnica Superior de Ingeniería Informática:**\n• **Grado en Ingeniería Informática - Ingeniería de Computadores** (GII-IC) - 48 asignaturas\n• **Grado en Ingeniería Informática - Ingeniería del Software** (GII-IS) - 47 asignaturas\n• **Grado en Ingeniería Informática - Tecnologías Informáticas** (GII-TI) - 54 asignaturas",
+      "Dime cuál te interesa para consultar sus asignaturas."
+    ],
+    "intent_ok": false,
+    "entity_ok": true,
+    "response_ok": false,
+    "overall_pass": false,
+    "notes": "Esperaba count=42, números encontrados: ['48', '47', '54']. Intent: esperado=consulta_asignaturas_conteo, obtenido=consulta_titulaciones (0.87). Response: '📚 **titulaciones disponibles:** **escuela técnica superior de ingeniería informática:**\n• **grado en ingeniería informática - ingeniería de computadores** (gii-ic) - 48 asignaturas\n• **grado en ingeni'. "
+  },
+  {
+    "test_id": "C-P04",
+    "run_number": 1,
+    "query": "¿Cuántas obligatorias de tercero?",
+    "timestamp": "2026-03-12T19:57:43.822540",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 0.9999992847442627,
+    "entities_detected": [],
+    "bot_responses": [
+      "Encontré una asignatura obligatoria de tercero."
+    ],
+    "intent_ok": false,
+    "entity_ok": true,
+    "response_ok": false,
+    "overall_pass": false,
+    "notes": "Esperaba count=10, números encontrados: []. Intent: esperado=consulta_asignaturas_conteo, obtenido=consulta_asignaturas_listado (1.00). Response: 'encontré una asignatura obligatoria de tercero.'. "
+  },
+  {
+    "test_id": "C-P04",
+    "run_number": 2,
+    "query": "¿Cuántas obligatorias de tercero?",
+    "timestamp": "2026-03-12T19:57:47.705184",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 0.9999992847442627,
+    "entities_detected": [],
+    "bot_responses": [
+      "Encontré una asignatura obligatoria de tercero."
+    ],
+    "intent_ok": false,
+    "entity_ok": true,
+    "response_ok": false,
+    "overall_pass": false,
+    "notes": "Esperaba count=10, números encontrados: []. Intent: esperado=consulta_asignaturas_conteo, obtenido=consulta_asignaturas_listado (1.00). Response: 'encontré una asignatura obligatoria de tercero.'. "
+  },
+  {
+    "test_id": "C-P05",
+    "run_number": 1,
+    "query": "Número de asignaturas anuales",
+    "timestamp": "2026-03-12T19:57:51.537004",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "Hay una asignatura disponible."
+    ],
+    "intent_ok": false,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": false,
+    "notes": "Intent: esperado=consulta_asignaturas_conteo, obtenido=consulta_asignaturas_listado (1.00). "
+  },
+  {
+    "test_id": "C-P05",
+    "run_number": 2,
+    "query": "Número de asignaturas anuales",
+    "timestamp": "2026-03-12T19:57:56.713819",
+    "intent_detected": "consulta_asignaturas_listado",
+    "intent_confidence": 1.0,
+    "entities_detected": [],
+    "bot_responses": [
+      "Hay una asignatura disponible."
+    ],
+    "intent_ok": false,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": false,
+    "notes": "Intent: esperado=consulta_asignaturas_conteo, obtenido=consulta_asignaturas_listado (1.00). "
+  },
+  {
+    "test_id": "C-P06",
+    "run_number": 1,
+    "query": "¿Cuántas de 12 créditos hay?",
+    "timestamp": "2026-03-12T19:58:00.543035",
+    "intent_detected": "consulta_asignaturas_conteo",
+    "intent_confidence": 0.9935342073440552,
+    "entities_detected": [],
+    "bot_responses": [
+      "Hay 2 asignaturas de 12 créditos."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "C-P06",
+    "run_number": 2,
+    "query": "¿Cuántas de 12 créditos hay?",
+    "timestamp": "2026-03-12T19:58:04.811834",
+    "intent_detected": "consulta_asignaturas_conteo",
+    "intent_confidence": 0.9935342073440552,
+    "entities_detected": [],
+    "bot_responses": [
+      "Hay 2 asignaturas de 12 créditos."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "C-N01",
+    "run_number": 1,
+    "query": "¿Cuántas optativas hay en primero?",
+    "timestamp": "2026-03-12T19:58:11.876040",
+    "intent_detected": "consulta_asignaturas_conteo",
+    "intent_confidence": 0.9893269538879395,
+    "entities_detected": [],
+    "bot_responses": [
+      "No hay optativas en primero, al menos según la información que tengo disponible."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": false,
+    "overall_pass": false,
+    "notes": "Esperaba count=0, números encontrados: []. Response: 'no hay optativas en primero, al menos según la información que tengo disponible.'. "
+  },
+  {
+    "test_id": "C-N01",
+    "run_number": 2,
+    "query": "¿Cuántas optativas hay en primero?",
+    "timestamp": "2026-03-12T19:58:16.988732",
+    "intent_detected": "consulta_asignaturas_conteo",
+    "intent_confidence": 0.9893269538879395,
+    "entities_detected": [],
+    "bot_responses": [
+      "No hay optativas en primero, al menos según la información que tengo disponible."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": false,
+    "overall_pass": false,
+    "notes": "Esperaba count=0, números encontrados: []. Response: 'no hay optativas en primero, al menos según la información que tengo disponible.'. "
+  },
+  {
+    "test_id": "C-N02",
+    "run_number": 1,
+    "query": "¿Cuántas asignaturas de quinto?",
+    "timestamp": "2026-03-12T19:58:22.414405",
+    "intent_detected": "consulta_asignaturas_conteo",
+    "intent_confidence": 0.9905216693878174,
+    "entities_detected": [],
+    "bot_responses": [
+      "No encuentro ninguna asignatura listada para quinto curso."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": false,
+    "overall_pass": false,
+    "notes": "Esperaba count=0, números encontrados: []. Response: 'no encuentro ninguna asignatura listada para quinto curso.'. "
+  },
+  {
+    "test_id": "C-N02",
+    "run_number": 2,
+    "query": "¿Cuántas asignaturas de quinto?",
+    "timestamp": "2026-03-12T19:58:27.237341",
+    "intent_detected": "consulta_asignaturas_conteo",
+    "intent_confidence": 0.9905216693878174,
+    "entities_detected": [],
+    "bot_responses": [
+      "No encuentro ninguna asignatura listada para quinto curso."
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": false,
+    "overall_pass": false,
+    "notes": "Esperaba count=0, números encontrados: []. Response: 'no encuentro ninguna asignatura listada para quinto curso.'. "
+  },
+  {
+    "test_id": "C-T01",
+    "run_number": 1,
+    "query": "¿Cuántas asignaturas tiene la carrera?",
+    "timestamp": "2026-03-12T19:58:31.697110",
+    "intent_detected": "consulta_titulaciones",
+    "intent_confidence": 0.8663555383682251,
+    "entities_detected": [],
+    "bot_responses": [
+      "📚 **Titulaciones disponibles:**",
+      "**Escuela Técnica Superior de Ingeniería Informática:**\n• **Grado en Ingeniería Informática - Ingeniería de Computadores** (GII-IC) - 48 asignaturas\n• **Grado en Ingeniería Informática - Ingeniería del Software** (GII-IS) - 47 asignaturas\n• **Grado en Ingeniería Informática - Tecnologías Informáticas** (GII-TI) - 54 asignaturas",
+      "Dime cuál te interesa para consultar sus asignaturas."
+    ],
+    "intent_ok": false,
+    "entity_ok": true,
+    "response_ok": false,
+    "overall_pass": false,
+    "notes": "Esperaba count=44, números encontrados: ['48', '47', '54']. Intent: esperado=consulta_asignaturas_conteo, obtenido=consulta_titulaciones (0.87). Response: '📚 **titulaciones disponibles:** **escuela técnica superior de ingeniería informática:**\n• **grado en ingeniería informática - ingeniería de computadores** (gii-ic) - 48 asignaturas\n• **grado en ingeni'. "
+  },
+  {
+    "test_id": "C-T01",
+    "run_number": 2,
+    "query": "¿Cuántas asignaturas tiene la carrera?",
+    "timestamp": "2026-03-12T19:58:32.540111",
+    "intent_detected": "consulta_titulaciones",
+    "intent_confidence": 0.8663555383682251,
+    "entities_detected": [],
+    "bot_responses": [
+      "📚 **Titulaciones disponibles:**",
+      "**Escuela Técnica Superior de Ingeniería Informática:**\n• **Grado en Ingeniería Informática - Ingeniería de Computadores** (GII-IC) - 48 asignaturas\n• **Grado en Ingeniería Informática - Ingeniería del Software** (GII-IS) - 47 asignaturas\n• **Grado en Ingeniería Informática - Tecnologías Informáticas** (GII-TI) - 54 asignaturas",
+      "Dime cuál te interesa para consultar sus asignaturas."
+    ],
+    "intent_ok": false,
+    "entity_ok": true,
+    "response_ok": false,
+    "overall_pass": false,
+    "notes": "Esperaba count=44, números encontrados: ['48', '47', '54']. Intent: esperado=consulta_asignaturas_conteo, obtenido=consulta_titulaciones (0.87). Response: '📚 **titulaciones disponibles:** **escuela técnica superior de ingeniería informática:**\n• **grado en ingeniería informática - ingeniería de computadores** (gii-ic) - 48 asignaturas\n• **grado en ingeni'. "
+  },
+  {
+    "test_id": "C-T02",
+    "run_number": 1,
+    "query": "¿Cuántas asignaturas tiene la carrera?",
+    "timestamp": "2026-03-12T19:58:34.338949",
+    "intent_detected": "consulta_titulaciones",
+    "intent_confidence": 0.8663555383682251,
+    "entities_detected": [],
+    "bot_responses": [
+      "📚 **Titulaciones disponibles:**",
+      "**Escuela Técnica Superior de Ingeniería Informática:**\n• **Grado en Ingeniería Informática - Ingeniería de Computadores** (GII-IC) - 48 asignaturas\n• **Grado en Ingeniería Informática - Ingeniería del Software** (GII-IS) - 47 asignaturas\n• **Grado en Ingeniería Informática - Tecnologías Informáticas** (GII-TI) - 54 asignaturas",
+      "Dime cuál te interesa para consultar sus asignaturas."
+    ],
+    "intent_ok": false,
+    "entity_ok": true,
+    "response_ok": false,
+    "overall_pass": false,
+    "notes": "Esperaba count=52, números encontrados: ['48', '47', '54']. Intent: esperado=consulta_asignaturas_conteo, obtenido=consulta_titulaciones (0.87). Response: '📚 **titulaciones disponibles:** **escuela técnica superior de ingeniería informática:**\n• **grado en ingeniería informática - ingeniería de computadores** (gii-ic) - 48 asignaturas\n• **grado en ingeni'. "
+  },
+  {
+    "test_id": "C-T02",
+    "run_number": 2,
+    "query": "¿Cuántas asignaturas tiene la carrera?",
+    "timestamp": "2026-03-12T19:58:35.013889",
+    "intent_detected": "consulta_titulaciones",
+    "intent_confidence": 0.8663555383682251,
+    "entities_detected": [],
+    "bot_responses": [
+      "📚 **Titulaciones disponibles:**",
+      "**Escuela Técnica Superior de Ingeniería Informática:**\n• **Grado en Ingeniería Informática - Ingeniería de Computadores** (GII-IC) - 48 asignaturas\n• **Grado en Ingeniería Informática - Ingeniería del Software** (GII-IS) - 47 asignaturas\n• **Grado en Ingeniería Informática - Tecnologías Informáticas** (GII-TI) - 54 asignaturas",
+      "Dime cuál te interesa para consultar sus asignaturas."
+    ],
+    "intent_ok": false,
+    "entity_ok": true,
+    "response_ok": false,
+    "overall_pass": false,
+    "notes": "Esperaba count=52, números encontrados: ['48', '47', '54']. Intent: esperado=consulta_asignaturas_conteo, obtenido=consulta_titulaciones (0.87). Response: '📚 **titulaciones disponibles:** **escuela técnica superior de ingeniería informática:**\n• **grado en ingeniería informática - ingeniería de computadores** (gii-ic) - 48 asignaturas\n• **grado en ingeni'. "
+  },
+  {
+    "test_id": "F-01",
+    "run_number": 1,
+    "query": "¿Cuál es la capital de Francia?",
+    "timestamp": "2026-03-12T19:58:35.749274",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 23,
+        "end": 30,
+        "confidence_entity": 0.7263081669807434,
+        "value": "Francia",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "Antes de consultar asignaturas, necesito saber tu titulación:",
+      "• **Grado en Ingeniería Informática - Ingeniería de Computadores** (GII-IC)\n• **Grado en Ingeniería Informática - Ingeniería del Software** (GII-IS)\n• **Grado en Ingeniería Informática - Tecnologías Informáticas** (GII-TI)",
+      "Dime cuál cursas."
+    ],
+    "intent_ok": false,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": false,
+    "notes": "Intent: esperado=nlu_fallback, obtenido=consulta_asignatura_especifica (1.00). "
+  },
+  {
+    "test_id": "F-01",
+    "run_number": 2,
+    "query": "¿Cuál es la capital de Francia?",
+    "timestamp": "2026-03-12T19:58:39.469051",
+    "intent_detected": "consulta_asignatura_especifica",
+    "intent_confidence": 1.0,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 23,
+        "end": 30,
+        "confidence_entity": 0.7263081669807434,
+        "value": "Francia",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "Antes de consultar asignaturas, necesito saber tu titulación:",
+      "• **Grado en Ingeniería Informática - Ingeniería de Computadores** (GII-IC)\n• **Grado en Ingeniería Informática - Ingeniería del Software** (GII-IS)\n• **Grado en Ingeniería Informática - Tecnologías Informáticas** (GII-TI)",
+      "Dime cuál cursas."
+    ],
+    "intent_ok": false,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": false,
+    "notes": "Intent: esperado=nlu_fallback, obtenido=consulta_asignatura_especifica (1.00). "
+  },
+  {
+    "test_id": "F-02",
+    "run_number": 1,
+    "query": "¿Me puedes contar un chiste?",
+    "timestamp": "2026-03-12T19:58:41.220171",
+    "intent_detected": "pedir_ayuda",
+    "intent_confidence": 0.9481111764907837,
+    "entities_detected": [],
+    "bot_responses": [
+      "**Soy Linceus, tu asistente de la ETSII.** Puedo ayudarte con:",
+      "**Asignaturas:**\n- \"Háblame de Redes de Computadores\"\n- \"Cuántos créditos tiene IS2?\"\n- \"Qué asignaturas obligatorias hay en primero?\"\n- \"Dame las optativas de cuarto\"",
+      "**Contexto académico:**\n- \"Qué carrera estoy consultando?\"\n- \"Cambiar a Tecnologías Informáticas\"",
+      "⚠️ Recuerda indicar tu titulación para que las consultas sean correctas.",
+      "¡Pregúntame lo que necesites!"
+    ],
+    "intent_ok": false,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": false,
+    "notes": "Intent: esperado=nlu_fallback, obtenido=pedir_ayuda (0.95). "
+  },
+  {
+    "test_id": "F-02",
+    "run_number": 2,
+    "query": "¿Me puedes contar un chiste?",
+    "timestamp": "2026-03-12T19:58:41.317233",
+    "intent_detected": "pedir_ayuda",
+    "intent_confidence": 0.9481111764907837,
+    "entities_detected": [],
+    "bot_responses": [
+      "**Soy Linceus, tu asistente de la ETSII.** Puedo ayudarte con:",
+      "**Asignaturas:**\n- \"Háblame de Redes de Computadores\"\n- \"Cuántos créditos tiene IS2?\"\n- \"Qué asignaturas obligatorias hay en primero?\"\n- \"Dame las optativas de cuarto\"",
+      "**Contexto académico:**\n- \"Qué carrera estoy consultando?\"\n- \"Cambiar a Tecnologías Informáticas\"",
+      "⚠️ Recuerda indicar tu titulación para que las consultas sean correctas.",
+      "¡Pregúntame lo que necesites!"
+    ],
+    "intent_ok": false,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": false,
+    "notes": "Intent: esperado=nlu_fallback, obtenido=pedir_ayuda (0.95). "
+  },
+  {
+    "test_id": "F-03",
+    "run_number": 1,
+    "query": "¿Qué tiempo hará mañana?",
+    "timestamp": "2026-03-12T19:58:41.414724",
+    "intent_detected": "nlu_fallback",
+    "intent_confidence": 0.6,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 5,
+        "end": 11,
+        "confidence_entity": 0.808376669883728,
+        "value": "tiempo",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "No estoy seguro de entender tu pregunta.",
+      "Puedo ayudarte con informacion sobre **asignaturas**:\n- Creditos ECTS\n- Curso (1, 2, 3, 4)\n- Tipo (obligatoria, optativa, formacion basica)\n- Cuatrimestre (anual, C1, C2)",
+      "Prueba preguntando:\n- \"Cuantos creditos tiene Redes?\"\n- \"Dame las optativas de cuarto\"\n- \"Que asignaturas hay en primero?\""
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "F-03",
+    "run_number": 2,
+    "query": "¿Qué tiempo hará mañana?",
+    "timestamp": "2026-03-12T19:58:41.515759",
+    "intent_detected": "nlu_fallback",
+    "intent_confidence": 0.6,
+    "entities_detected": [
+      {
+        "entity": "nombre_asignatura",
+        "start": 5,
+        "end": 11,
+        "confidence_entity": 0.808376669883728,
+        "value": "tiempo",
+        "extractor": "DIETClassifier"
+      }
+    ],
+    "bot_responses": [
+      "No estoy seguro de entender tu pregunta.",
+      "Puedo ayudarte con informacion sobre **asignaturas**:\n- Creditos ECTS\n- Curso (1, 2, 3, 4)\n- Tipo (obligatoria, optativa, formacion basica)\n- Cuatrimestre (anual, C1, C2)",
+      "Prueba preguntando:\n- \"Cuantos creditos tiene Redes?\"\n- \"Dame las optativas de cuarto\"\n- \"Que asignaturas hay en primero?\""
+    ],
+    "intent_ok": true,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": true,
+    "notes": ""
+  },
+  {
+    "test_id": "F-04",
+    "run_number": 1,
+    "query": "Quiero pedir una pizza",
+    "timestamp": "2026-03-12T19:58:41.611872",
+    "intent_detected": "bot_challenge",
+    "intent_confidence": 0.8618422746658325,
+    "entities_detected": [],
+    "bot_responses": [
+      "Soy un chatbot universitario creado con Rasa para ayudarte con informacion academica."
+    ],
+    "intent_ok": false,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": false,
+    "notes": "Intent: esperado=nlu_fallback, obtenido=bot_challenge (0.86). "
+  },
+  {
+    "test_id": "F-04",
+    "run_number": 2,
+    "query": "Quiero pedir una pizza",
+    "timestamp": "2026-03-12T19:58:41.709968",
+    "intent_detected": "bot_challenge",
+    "intent_confidence": 0.8618422746658325,
+    "entities_detected": [],
+    "bot_responses": [
+      "Soy un chatbot universitario creado con Rasa para ayudarte con informacion academica."
+    ],
+    "intent_ok": false,
+    "entity_ok": true,
+    "response_ok": true,
+    "overall_pass": false,
+    "notes": "Intent: esperado=nlu_fallback, obtenido=bot_challenge (0.86). "
+  }
+]

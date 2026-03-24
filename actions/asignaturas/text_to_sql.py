@@ -138,15 +138,108 @@ ALIAS_ASIGNATURAS = {
     'pgpi': 'planificacion y gestion de proyectos informaticos',
     'egc': 'evolucion y gestion de la configuracion',
     'iissi': 'introduccion a la ingenieria del software y los si',
+    'psg': 'proceso software y gestion',
+    'psg1': 'proceso software y gestion',
+    'psg2': 'proceso software y gestion',
+    'ssi': 'seguridad de sistemas de informacion',
+    'aii': 'acceso inteligente a la informacion',
+    'cripto': 'criptografia',
+    'cbd': 'complementos de base de datos',
 }
 
 
-def _expandir_alias(nombre: str) -> str:
-    """Expande alias/abreviaturas comunes al nombre real."""
+def _parece_acronimo(texto: str) -> bool:
+    """Detecta si un texto parece un acrónimo/alias (corto, mayúsculas, sin espacios)."""
+    limpio = texto.strip()
+    if not limpio:
+        return False
+    # Acrónimos típicos: cortos y sin espacios (PGPI, IA, SO, ADDA, IS2, DP1)
+    if len(limpio) <= 6 and ' ' not in limpio:
+        return True
+    # Todo mayúsculas independientemente de longitud
+    if limpio == limpio.upper() and limpio.isalpha():
+        return True
+    return False
+
+
+# Palabras que se ignoran al generar acrónimos (preposiciones, artículos, conjunciones)
+_STOP_WORDS_ACRONIMO = {'de', 'del', 'la', 'el', 'las', 'los', 'y', 'e', 'en', 'a', 'al'}
+
+
+def _generar_acronimo(nombre: str) -> str:
+    """Genera el acrónimo de un nombre de asignatura (primera letra de cada palabra significativa)."""
+    import unicodedata
+    # Normalizar: quitar tildes y pasar a minúsculas
+    texto = unicodedata.normalize('NFKD', nombre)
+    texto = ''.join(c for c in texto if not unicodedata.combining(c))
+    palabras = texto.lower().split()
+    return ''.join(p[0] for p in palabras if p not in _STOP_WORDS_ACRONIMO and len(p) > 1)
+
+
+def _buscar_por_acronimo_en_bd(acronimo: str, titulacion: str = None) -> str | None:
+    """
+    Busca en la BD una asignatura cuyo acrónimo generado coincida con el input.
+    Devuelve el nombre real de la asignatura o None.
+    """
+    from ..shared.db import db_client
+
+    conn = db_client.get_connection()
+    if not conn:
+        return None
+    try:
+        cursor = conn.cursor()
+        sql = "SELECT nombre FROM asignaturas WHERE activa = true"
+        params = []
+        if titulacion:
+            sql += " AND titulacion_id = (SELECT id FROM titulaciones WHERE codigo = %s LIMIT 1)"
+            params.append(titulacion)
+        cursor.execute(sql, params)
+        nombres_bd = [row[0] for row in cursor.fetchall()]
+        cursor.close()
+    finally:
+        conn.close()
+
+    acronimo_lower = acronimo.lower().strip()
+    for nombre_bd in nombres_bd:
+        if _generar_acronimo(nombre_bd) == acronimo_lower:
+            return nombre_bd
+    return None
+
+
+def _expandir_alias(nombre: str, titulacion: str = None) -> str:
+    """
+    Expande alias/abreviaturas al nombre real de la asignatura.
+    Orden de prioridad:
+      1. Tabla manual de alias conocidos
+      2. Generación automática de acrónimos desde la BD
+      3. Devuelve el nombre original sin cambios
+    """
     if not nombre:
         return nombre
     nombre_lower = nombre.lower().strip()
-    return ALIAS_ASIGNATURAS.get(nombre_lower, nombre)
+    # 1. Buscar en tabla manual
+    if nombre_lower in ALIAS_ASIGNATURAS:
+        print(f"   → Alias manual: '{nombre}' → '{ALIAS_ASIGNATURAS[nombre_lower]}'")
+        return ALIAS_ASIGNATURAS[nombre_lower]
+    # Limpiar prefijos comunes del NLU iterativamente (ej: "Datos de PGPI" → "de PGPI" → "PGPI")
+    import re
+    limpio = nombre_lower
+    for _ in range(3):  # máximo 3 pasadas
+        nuevo = re.sub(r'^(de|del|la|el|las|los|sobre|info|datos)\s+', '', limpio).strip()
+        if nuevo == limpio:
+            break
+        limpio = nuevo
+    if limpio and limpio != nombre_lower and limpio in ALIAS_ASIGNATURAS:
+        print(f"   → Alias manual (limpio): '{nombre}' → '{ALIAS_ASIGNATURAS[limpio]}'")
+        return ALIAS_ASIGNATURAS[limpio]
+    # 2. Si parece acrónimo, buscar por generación automática en BD
+    texto_buscar = limpio if limpio != nombre_lower else nombre_lower
+    if _parece_acronimo(texto_buscar):
+        nombre_bd = _buscar_por_acronimo_en_bd(texto_buscar, titulacion)
+        if nombre_bd:
+            print(f"   → Acrónimo auto-detectado: '{nombre}' → '{nombre_bd}'")
+            return nombre_bd
+    return nombre
 
 
 # Palabras clave que indican que la pregunta requiere RAG (plan docente)
@@ -164,6 +257,7 @@ _PALABRAS_RAG = [
     'actividad', 'actividades', 'practica', 'prácticas', 'práctica',
     'idioma', 'lengua', 'tribunal', 'tribunales',
     'aprueba', 'aprobar', 'suspender', 'convocatoria',
+    'hora', 'horas', 'teoria', 'teoría', 'laboratorio',
 ]
 
 
@@ -262,7 +356,7 @@ JSON:"""
         print(f"Error generando SQL específica: {e}")
     
     # Fallback: query segura predefinida
-    nombre_buscar = _expandir_alias(nombre_asignatura) if nombre_asignatura else nombre_asignatura
+    nombre_buscar = _expandir_alias(nombre_asignatura, contexto_titulacion) if nombre_asignatura else nombre_asignatura
     sql_fallback = """SELECT codigo, nombre, curso, creditos, duracion, tipologia,
                          es_formacion_basica, es_optativa
                   FROM asignaturas

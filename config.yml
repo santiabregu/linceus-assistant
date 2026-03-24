@@ -48,7 +48,7 @@ pipeline:
     
   # Step 9: Fallback Detection - When confidence is too low
   - name: FallbackClassifier
-    threshold: 0.6
+    threshold: 0.7
     ambiguity_threshold: 0.15
 
 # # No configuration for the NLU pipeline was provided. The following default pipeline was used to train your model.

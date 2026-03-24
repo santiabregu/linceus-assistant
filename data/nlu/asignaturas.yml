@@ -111,6 +111,16 @@ nlu:
     - como es el examen de [Estadistica](nombre_asignatura)
     - hay parcial en [Redes](nombre_asignatura)
     - cuantas convocatorias tiene [Algebra](nombre_asignatura)
+    - que condiciones debe cumplir un alumno del grupo 4 de [Circuitos Electronicos Digitales](nombre_asignatura) para superar la asignatura por evaluacion continua sin ir al examen final
+    - como puedo aprobar [Redes](nombre_asignatura) sin ir al examen final
+    - condiciones para superar [IS2](nombre_asignatura) por evaluacion continua
+    - que necesito para aprobar [ADDA](nombre_asignatura) sin examen final
+    - puedo aprobar [Calculo](nombre_asignatura) sin ir al examen
+    - requisitos de evaluacion continua de [Fundamentos de Programacion](nombre_asignatura) grupo 3
+    - como funciona la evaluacion continua de [Circuitos Electronicos Digitales](nombre_asignatura) grupo 1
+    - que pasa si suspendo un parcial en [Sistemas Operativos](nombre_asignatura)
+    - se guarda el aprobado de practicas en [Bases de Datos](nombre_asignatura)
+    - hasta cuantas convocatorias se guarda el aprobado de [Redes](nombre_asignatura)
     - bibliografia de [Fundamentos de Programacion](nombre_asignatura)
     - que libros se usan en [Redes](nombre_asignatura)
     - bibliografia recomendada de [IS2](nombre_asignatura)
@@ -145,6 +155,22 @@ nlu:
     - cuando son los examenes de [Calculo](nombre_asignatura)
     - fecha del examen de [IS2](nombre_asignatura)
     - calendario de examenes de [Redes](nombre_asignatura)
+    - informacion sobre [Derecho Penal](nombre_asignatura)
+    - que sabes de [Economia](nombre_asignatura)
+    - dime sobre [Matematicas Aplicadas](nombre_asignatura)
+    - cuantos creditos tiene [Biologia](nombre_asignatura)
+    - [Quimica Organica](nombre_asignatura) es obligatoria?
+    - hablame de [Historia del Arte](nombre_asignatura)
+    - info de [Contabilidad](nombre_asignatura)
+    - que es [Psicologia Social](nombre_asignatura)
+    - cuantas horas tiene [Calculo](nombre_asignatura)
+    - cuantas horas son las clases de [Fundamentos de Programacion](nombre_asignatura)
+    - cuantas horas de teoria tiene [Redes](nombre_asignatura)
+    - cuantas horas de laboratorio hay en [IS2](nombre_asignatura)
+    - cuantas horas totales son las clases de teoria y de laboratorio del grupo 1 de la asignatura de [Calculo infinitesimal](nombre_asignatura)
+    - cuantas horas de clase tiene [Bases de Datos](nombre_asignatura)
+    - horas de teoria de [Sistemas Operativos](nombre_asignatura)
+    - horas de practicas de [ADDA](nombre_asignatura)
 
 # =============================================================================
 # INTENT 2: LISTADO - Pide una LISTA de asignaturas con filtros
@@ -241,6 +267,14 @@ nlu:
     - en IC dame las asignaturas de primero
     - en IT asignaturas obligatorias de tercero
     - en computadores cuales son las optativas de cuarto
+    - dame todas las asignaturas
+    - quiero ver todas las asignaturas
+    - listado completo de asignaturas
+    - todas las asignaturas de la carrera
+    - muestrame todas las asignaturas
+    - ensenname todas las asignaturas
+    - dame todas las asignaturas del grado
+    - quiero todas las asignaturas
 
 # =============================================================================
 # INTENT 3: CONTEO - Pregunta por CANTIDAD de asignaturas
@@ -251,6 +285,10 @@ nlu:
     - cuantas asignaturas del segundo cuatrimestre
     - cuantas obligatorias hay en tercero
     - cuantas optativas de cuarto curso
+    - cuantas optativas hay en cuarto
+    - cuantas optativas hay en primero
+    - cuantas optativas hay en segundo
+    - cuantas optativas hay en tercero
     - cuantas asignaturas anuales hay
     - cuantas asignaturas segundo cuatri
     - y cuantas hay en segundo
@@ -289,6 +327,45 @@ nlu:
     - en IC cuantas asignaturas tiene primero
     - en IT cuantas asignaturas tiene el tercero
     - en computadores cuantas son optativas
+    - cuantas asignaturas tiene la carrera
+    - cuantas asignaturas tiene el grado
+    - total de asignaturas de la carrera
+    - cuantas asignaturas tiene la carrera en total
+    - numero de asignaturas del grado
+    - cuantas asignaturas hay en la carrera
+    - cuantas obligatorias de tercero
+    - cuantas obligatorias hay en tercero
+    - cuantas obligatorias tiene tercero
+    - numero de asignaturas obligatorias de tercero
+    - numero de asignaturas anuales
+    - cuantas asignaturas anuales tiene la carrera
+    - numero de optativas de cuarto
+    - cuantas optativas tiene el grado
+    - cuantas basicas tiene la carrera
+    - numero de obligatorias de segundo
+    - cuantas de formacion basica tiene el grado
+    - numero de anuales
+    - cantidad de asignaturas anuales
+    - total de anuales
+    - numero de asignaturas de formacion basica
+    - cantidad de obligatorias de primero
+    - total de optativas
+    - cantidad de asignaturas de segundo
+    - numero de asignaturas del primer cuatrimestre
+    - cantidad de asignaturas de 6 creditos
+    - numero de asignaturas optativas
+    - numero de asignaturas optativas de cuarto
+    - numero de asignaturas obligatorias
+    - numero total de anuales
+    - cantidad total de optativas de cuarto
+    - cantidad de anuales en la carrera
+
+# =============================================================================
+# REGEX FEATURES
+# =============================================================================
+- regex: conteo_signal
+  examples: |
+    - (cuant[oa]s|numero de|cantidad de|total de)
 
 # =============================================================================
 # INTENT: PEDIR MÁS RESULTADOS (paginación)
@@ -298,7 +375,6 @@ nlu:
     - todas
     - ver todas
     - mostrar todas
-    - todas las asignaturas
     - quiero ver todas
     - dame todas
     - muestrame todas

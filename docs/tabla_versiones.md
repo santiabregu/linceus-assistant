@@ -26,7 +26,10 @@ Este documento registra los cambios realizados en cada versión del chatbot sigu
 | v2.1.1 | 2026-02 | Infraestructura | Mejora NLU cambio titulación + consulta de titulaciones disponibles |
 | v2.1.2 | 2026-02 | Asignaturas | Detección de titulación en mensaje vía LLM + cambio de contexto inline |
 | v2.2.0 | 2026-02 | RAG | Pipeline de vectorización de planes docentes + búsqueda semántica |
-
+| v2.2.1 | 2026-02 | RAG | Mejorar ejemplos NLU tras ejecución de pruebas |
+| v2.2.2 | 2026-03 | RAG | Mejorar ejemplos NLU tras ejecución de pruebas v2 |
+| v2.2.3 | 2026-03 | RAG | Mejorar ejemplos NLU tras ejecución de pruebas v2 |
+| v2.2.4 | 2026-03 | RAG | Mejorar ejemplos NLU tras ejecución de pruebas v2 (horas) |
 ---
 
 ## Detalle por Versión

@@ -18,6 +18,7 @@ intents:
   - consulta_asignaturas_listado     # "Dame las optativas de cuarto"
   - consulta_asignaturas_conteo      # "¿Cuántas asignaturas hay en primero?"
   - pedir_mas_resultados
+  - out_of_scope
 
 entities:
   - nombre_centro
@@ -115,18 +116,16 @@ responses:
 
   utter_default:
   - text: |
-      No estoy seguro de entender tu pregunta.
+      No estoy seguro de entender tu pregunta. Puedo ayudarte con informacion sobre **asignaturas** de la ETSII.
 
-      Puedo ayudarte con informacion sobre **asignaturas**:
-      - Creditos ECTS
-      - Curso (1, 2, 3, 4)
-      - Tipo (obligatoria, optativa, formacion basica)
-      - Cuatrimestre (anual, C1, C2)
-
-      Prueba preguntando:
+      Prueba preguntando cosas como:
       - "Cuantos creditos tiene Redes?"
       - "Dame las optativas de cuarto"
       - "Que asignaturas hay en primero?"
+
+      Tambien te pueden ser utiles estos enlaces:
+      - [SEVIUS - Portal del Estudiante](https://sevius.us.es)
+      - [Universidad de Sevilla](https://www.us.es)
 
   utter_pedir_titulacion:
   - text: |
