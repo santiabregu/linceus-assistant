@@ -171,6 +171,33 @@ nlu:
     - cuantas horas de clase tiene [Bases de Datos](nombre_asignatura)
     - horas de teoria de [Sistemas Operativos](nombre_asignatura)
     - horas de practicas de [ADDA](nombre_asignatura)
+    - cuantas horas tiene [Logica Informatica](nombre_asignatura) en el grupo 3
+    - cuantas horas de clase tiene [Logica](nombre_asignatura) grupo 3
+    - horas de [Estadistica](nombre_asignatura) grupo 1
+    - cuantas horas tiene [Redes](nombre_asignatura) en el grupo 2
+    - son 12 horas de clases teorica en [Diseno y Pruebas](nombre_asignatura)?
+    - son 6 creditos en [Redes](nombre_asignatura)?
+    - [Calculo](nombre_asignatura) tiene 46 horas de teoria?
+    - es verdad que [IS2](nombre_asignatura) tiene 36 horas?
+    - [Fundamentos de Programacion](nombre_asignatura) son 12 creditos?
+    - quien da clase en el grupo 2 de [Proceso Software](nombre_asignatura)
+    - profesorado de [Proceso Software y Gestion](nombre_asignatura)
+    - quien imparte [Proceso Software](nombre_asignatura) en el grupo 1
+    - como se evalua [Proceso Software](nombre_asignatura) grupo 3
+    - evaluacion de [Proceso Software y Gestion](nombre_asignatura)
+    - como se saca la nota en [Proceso Software](nombre_asignatura)
+    - temario de [Proceso Software](nombre_asignatura)
+    - bloques de [Proceso Software y Gestion](nombre_asignatura) grupo 1
+    - que se estudia en [PSG1](nombre_asignatura)
+    - quien da [PSG](nombre_asignatura) en el grupo 2
+    - el grupo 4 de [PSG1](nombre_asignatura) es en ingles?
+    - el grupo 5 de [Redes](nombre_asignatura) es en ingles?
+    - el grupo 4 de [Circuitos](nombre_asignatura) se da en ingles?
+    - en que idioma se da [Fundamentos de Programacion](nombre_asignatura) grupo 5
+    - [Logica](nombre_asignatura) grupo 5 es en ingles?
+    - se imparte en ingles el grupo 4 de [ADDA](nombre_asignatura)?
+    - las clases de [Diseno y Pruebas](nombre_asignatura) grupo 4 son en ingles?
+    - [Estadistica](nombre_asignatura) grupo 5 en que idioma se da?
 
 # =============================================================================
 # INTENT 2: LISTADO - Pide una LISTA de asignaturas con filtros

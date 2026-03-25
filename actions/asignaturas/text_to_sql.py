@@ -258,6 +258,8 @@ _PALABRAS_RAG = [
     'idioma', 'lengua', 'tribunal', 'tribunales',
     'aprueba', 'aprobar', 'suspender', 'convocatoria',
     'hora', 'horas', 'teoria', 'teoría', 'laboratorio',
+    'quien da', 'quién da', 'quien enseña', 'quién enseña',
+    'quien imparte', 'quién imparte', 'enseña', 'da clase',
 ]
 
 
@@ -265,6 +267,62 @@ def _necesita_rag_heuristica(pregunta: str) -> bool:
     """Detecta si la pregunta requiere RAG basándose en palabras clave."""
     pregunta_lower = pregunta.lower()
     return any(palabra in pregunta_lower for palabra in _PALABRAS_RAG)
+
+
+def _clasificar_necesita_rag(pregunta: str, historial: str = "") -> bool:
+    """
+    Llama a Gemini para decidir si la pregunta requiere buscar en el plan docente (RAG).
+    Separado de la generación SQL para mayor precisión.
+    Usa la heurística como fallback si el LLM falla.
+    """
+    # Cortocircuito: si la heurística ya detecta RAG, no hace falta llamar al LLM
+    if _necesita_rag_heuristica(pregunta):
+        return True
+
+    contexto = f"\nCONTEXTO PREVIO:\n{historial}\n" if historial else ""
+
+    prompt = f"""Eres un clasificador. Decide si la siguiente pregunta requiere consultar el plan docente de una asignatura universitaria.
+
+El plan docente contiene: profesorado, temario, evaluación, criterios de calificación, bibliografía, metodología, objetivos, competencias, actividades, horarios, idioma de impartición, tribunales de evaluación, horas de clase.
+
+La ficha básica (NO requiere plan docente) solo tiene: nombre, código, créditos, curso, cuatrimestre, tipo (obligatoria/optativa/troncal).
+{contexto}
+Ejemplos que SÍ requieren plan docente:
+- "quién da clase en el grupo 2" → true
+- "cómo se aprueba" → true
+- "de qué va el primer tema" → true
+- "cuántas horas tiene" → true
+- "en qué idioma se imparte" → true
+
+Ejemplos que NO requieren plan docente:
+- "cuántos créditos tiene" → false
+- "es optativa o obligatoria" → false
+- "en qué curso se da" → false
+
+PREGUNTA: "{pregunta}"
+
+Responde SOLO con: true o false"""
+
+    try:
+        respuesta = llamar_llm(
+            prompt,
+            timeout=30,
+            options={"temperature": 0.0, "num_predict": 5}
+        )
+        if respuesta:
+            respuesta_lower = respuesta.strip().lower()
+            if 'true' in respuesta_lower:
+                print(f"   → Clasificador RAG: true (LLM)")
+                return True
+            if 'false' in respuesta_lower:
+                print(f"   → Clasificador RAG: false (LLM)")
+                return False
+    except Exception as e:
+        print(f"   Error clasificando RAG: {e}")
+
+    # Fallback a heurística
+    print(f"   → Clasificador RAG: fallback a heurística")
+    return _necesita_rag_heuristica(pregunta)
 
 
 # ============================================================================
@@ -295,6 +353,9 @@ def generar_sql_especifica(
         contexto_conversacional = f"""\nCONTEXTO DE LA CONVERSACIÓN PREVIA (usa esto para entender referencias implícitas):
 {historial}\n"""
 
+    # Clasificar si necesita RAG antes de generar SQL
+    necesita_rag = _clasificar_necesita_rag(pregunta, historial)
+
     prompt = f"""Eres un experto en SQL. Tu tarea es generar una query SELECT para obtener información de UNA asignatura específica.
 
 SCHEMA DE LA TABLA:
@@ -310,14 +371,12 @@ INSTRUCCIONES:
 4. Si preguntan por un atributo específico (créditos, curso, etc.), también inclúyelo
 5. Siempre añade: WHERE activa = true
 6. Usa %s como placeholder para el nombre de la asignatura
-7. Si la pregunta es sobre algo que NO está en la tabla (evaluación, bibliografía, metodología, profesorado, horarios, temario, exámenes, objetivos, competencias, actividades, idioma, tribunales, calificación, etc.), pon "necesita_rag": true. Si se puede responder con los campos de la tabla, pon "necesita_rag": false.
 
 RESPONDE SOLO CON JSON VÁLIDO:
 {{
     "sql": "SELECT ... FROM asignaturas WHERE ...",
     "parametros": ["%valor%"],
     "atributo_solicitado": "creditos|curso|duracion|tipologia|general",
-    "necesita_rag": false,
     "explicacion": "busca por nombre parcial"
 }}
 
@@ -325,7 +384,7 @@ JSON:"""
 
     try:
         respuesta = llamar_llm(
-            prompt, 
+            prompt,
             timeout=120,
             options={
                 "temperature": 0.0,
@@ -338,7 +397,7 @@ JSON:"""
             # Buscar JSON desde primera { hasta última }
             inicio = respuesta.find('{')
             fin = respuesta.rfind('}')
-            
+
             if inicio != -1 and fin != -1 and fin > inicio:
                 json_str = respuesta[inicio:fin+1]
                 data = json.loads(json_str)
@@ -347,10 +406,7 @@ JSON:"""
                 if sql_validada:
                     data['sql'] = _inyectar_filtro_titulacion(sql_validada, contexto_titulacion)
                     data['valido'] = True
-                    # Override: si la heurística detecta RAG pero el LLM no lo hizo
-                    if not data.get('necesita_rag') and _necesita_rag_heuristica(pregunta):
-                        data['necesita_rag'] = True
-                        print(f"   → Heurística override: necesita_rag = True")
+                    data['necesita_rag'] = necesita_rag
                     return data
     except Exception as e:
         print(f"Error generando SQL específica: {e}")
@@ -366,7 +422,7 @@ JSON:"""
         'sql': sql_fallback,
         'parametros': [f'%{nombre_buscar}%', f'%{nombre_buscar}%'] if nombre_buscar else ['%%', '%%'],
         'atributo_solicitado': 'general',
-        'necesita_rag': _necesita_rag_heuristica(pregunta),
+        'necesita_rag': necesita_rag,
         'explicacion': 'fallback - búsqueda por nombre',
         'valido': True
     }

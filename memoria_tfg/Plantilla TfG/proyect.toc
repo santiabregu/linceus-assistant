@@ -80,74 +80,109 @@
 \contentsline {section}{\numberline {4.1}SCRUM ajustado en la ejecución}{19}{}%
 \contentsline {section}{\numberline {4.2}Herramientas}{19}{}%
 \contentsline {chapter}{\numberline {5}Planificación}{20}{}%
-\contentsline {section}{\numberline {5.1}Backlog}{20}{}%
-\contentsline {section}{\numberline {5.2}Planificación de sprints}{20}{}%
-\contentsline {section}{\numberline {5.3}Cronograma}{20}{}%
-\contentsline {part}{III\hspace {1em}Diseño e Implementación}{21}{}%
-\contentsline {chapter}{\numberline {6}Marco tecnológico}{22}{}%
-\contentsline {section}{\numberline {6.1}Arquitectura del sistema}{22}{}%
-\contentsline {section}{\numberline {6.2}Tecnologías de procesamiento conversacional}{22}{}%
-\contentsline {subsection}{\numberline {6.2.1}Rasa Framework}{22}{}%
-\contentsline {subsubsection}{Componentes de Rasa utilizados}{23}{}%
-\contentsline {subsection}{\numberline {6.2.2}Procesamiento de Lenguaje Natural}{23}{}%
-\contentsline {subsubsection}{spaCy}{23}{}%
-\contentsline {subsubsection}{Coincidencia difusa (Fuzzy Matching)}{23}{}%
-\contentsline {section}{\numberline {6.3}Tecnologías de Inteligencia Artificial}{24}{}%
-\contentsline {subsection}{\numberline {6.3.1}Ollama y modelos de lenguaje grandes (LLMs)}{24}{}%
-\contentsline {subsubsection}{Text-to-SQL}{24}{}%
-\contentsline {subsubsection}{Generación de respuestas contextualizadas}{24}{}%
-\contentsline {subsection}{\numberline {6.3.2}Embeddings y búsqueda semántica}{24}{}%
-\contentsline {section}{\numberline {6.4}Tecnologías de base de datos}{25}{}%
-\contentsline {subsection}{\numberline {6.4.1}PostgreSQL}{25}{}%
-\contentsline {subsection}{\numberline {6.4.2}Supabase}{25}{}%
-\contentsline {subsection}{\numberline {6.4.3}pgvector}{25}{}%
-\contentsline {section}{\numberline {6.5}Tecnologías de frontend}{25}{}%
-\contentsline {subsection}{\numberline {6.5.1}Node.js}{25}{}%
-\contentsline {subsection}{\numberline {6.5.2}Framework web}{26}{}%
-\contentsline {section}{\numberline {6.6}Herramientas de desarrollo}{26}{}%
-\contentsline {subsection}{\numberline {6.6.1}Control de versiones}{26}{}%
-\contentsline {subsection}{\numberline {6.6.2}Gestión de dependencias}{26}{}%
-\contentsline {subsection}{\numberline {6.6.3}Variables de entorno}{26}{}%
-\contentsline {section}{\numberline {6.7}Consideraciones de seguridad}{26}{}%
-\contentsline {subsection}{\numberline {6.7.1}Protección de datos}{26}{}%
-\contentsline {subsection}{\numberline {6.7.2}Validación de entrada}{27}{}%
-\contentsline {subsection}{\numberline {6.7.3}Ejecución local de modelos}{27}{}%
-\contentsline {section}{\numberline {6.8}Stack tecnológico completo}{27}{}%
-\contentsline {chapter}{\numberline {7}Estructura del proyecto}{28}{}%
-\contentsline {section}{\numberline {7.1}Visión general del repositorio}{28}{}%
-\contentsline {section}{\numberline {7.2}Directorio raíz}{29}{}%
-\contentsline {section}{\numberline {7.3}Directorio \texttt {actions/}}{29}{}%
-\contentsline {subsection}{\numberline {7.3.1}Organización de los módulos}{29}{}%
-\contentsline {subsection}{\numberline {7.3.2}Flujo de ejecución de una acción}{30}{}%
-\contentsline {section}{\numberline {7.4}Directorio \texttt {data/}}{30}{}%
-\contentsline {subsection}{\numberline {7.4.1}Subdirectorio \texttt {nlu/}}{30}{}%
-\contentsline {subsection}{\numberline {7.4.2}Ficheros de flujo conversacional}{31}{}%
-\contentsline {section}{\numberline {7.5}Directorio \texttt {frontend/}}{31}{}%
-\contentsline {section}{\numberline {7.6}Directorio \texttt {data/} de Rasa vs. \texttt {docs/}}{31}{}%
-\contentsline {section}{\numberline {7.7}Directorio \texttt {tests/}}{31}{}%
-\contentsline {section}{\numberline {7.8}Separación de responsabilidades}{32}{}%
-\contentsline {chapter}{\numberline {8}Estructura de la base de datos}{33}{}%
-\contentsline {section}{\numberline {8.1}Diseño conceptual}{33}{}%
-\contentsline {subsection}{\numberline {8.1.1}Principios de diseño}{33}{}%
-\contentsline {section}{\numberline {8.2}Modelo entidad-relación}{33}{}%
-\contentsline {section}{\numberline {8.3}Entidades principales}{34}{}%
-\contentsline {subsection}{\numberline {8.3.1}Universidades}{34}{}%
-\contentsline {subsection}{\numberline {8.3.2}Centros}{34}{}%
-\contentsline {subsection}{\numberline {8.3.3}Departamentos}{34}{}%
-\contentsline {subsection}{\numberline {8.3.4}Titulaciones}{34}{}%
-\contentsline {subsection}{\numberline {8.3.5}Asignaturas}{34}{}%
-\contentsline {subsection}{\numberline {8.3.6}Profesores}{36}{}%
-\contentsline {subsection}{\numberline {8.3.7}Tutorías}{36}{}%
-\contentsline {subsection}{\numberline {8.3.8}Horarios}{36}{}%
-\contentsline {section}{\numberline {8.4}Tablas de vectorización (RAG)}{36}{}%
-\contentsline {subsection}{\numberline {8.4.1}Planes docentes}{37}{}%
-\contentsline {subsection}{\numberline {8.4.2}Chunks de planes docentes}{37}{}%
-\contentsline {section}{\numberline {8.5}Tablas de trámites administrativos}{39}{}%
-\contentsline {subsection}{\numberline {8.5.1}Categorías de trámites}{39}{}%
-\contentsline {subsection}{\numberline {8.5.2}Trámites}{39}{}%
-\contentsline {section}{\numberline {8.6}Relaciones entre entidades}{39}{}%
-\contentsline {section}{\numberline {8.7}Índices y optimización}{39}{}%
-\contentsline {section}{\numberline {8.8}Integridad referencial}{39}{}%
-\contentsline {section}{\numberline {8.9}Estrategia de datos de prueba}{40}{}%
-\contentsline {chapter}{Referencias}{41}{}%
+\contentsline {section}{\numberline {5.1}Estructura de Descomposición del Trabajo (EDT)}{20}{}%
+\contentsline {section}{\numberline {5.2}Diccionario EDT}{20}{}%
+\contentsline {subsection}{\numberline {5.2.1}PT0 — Gestión del proyecto}{20}{}%
+\contentsline {subsection}{\numberline {5.2.2}PT1 — Investigación y preparación}{20}{}%
+\contentsline {subsection}{\numberline {5.2.3}PT2 — Épica 1: Asignaturas v1 (BD estructurada)}{22}{}%
+\contentsline {subsection}{\numberline {5.2.4}PT3 — Épica 2: Profesores}{22}{}%
+\contentsline {subsection}{\numberline {5.2.5}PT4 — Épica 3: RAG Asignaturas v2}{22}{}%
+\contentsline {subsection}{\numberline {5.2.6}PT5 — Épica 4: Horarios}{22}{}%
+\contentsline {subsection}{\numberline {5.2.7}PT6 — Épica 5: RAG Trámites}{24}{}%
+\contentsline {subsection}{\numberline {5.2.8}PT7 — Épica 6: Frontend + Piloto + Entrega}{24}{}%
+\contentsline {section}{\numberline {5.3}Resumen cuantitativo de la EDT}{24}{}%
+\contentsline {section}{\numberline {5.4}Backlog del producto}{24}{}%
+\contentsline {section}{\numberline {5.5}Planificación de sprints}{25}{}%
+\contentsline {section}{\numberline {5.6}Cronograma}{25}{}%
+\contentsline {part}{III\hspace {1em}Diseño e Implementación}{26}{}%
+\contentsline {chapter}{\numberline {6}Arquitectura del sistema y decisiones de diseño}{27}{}%
+\contentsline {section}{\numberline {6.1}Arquitectura general}{27}{}%
+\contentsline {subsection}{\numberline {6.1.1}Capa de presentación}{27}{}%
+\contentsline {subsection}{\numberline {6.1.2}Capa de procesamiento conversacional}{28}{}%
+\contentsline {subsection}{\numberline {6.1.3}Capa de datos}{28}{}%
+\contentsline {section}{\numberline {6.2}Diagrama de componentes}{28}{}%
+\contentsline {section}{\numberline {6.3}Diagrama de despliegue}{30}{}%
+\contentsline {subsection}{\numberline {6.3.1}Nodos de ejecución}{30}{}%
+\contentsline {subsection}{\numberline {6.3.2}Protocolos de comunicación}{32}{}%
+\contentsline {section}{\numberline {6.4}Decisiones de diseño}{32}{}%
+\contentsline {subsection}{\numberline {6.4.1}Text-to-SQL con LLM en lugar de reglas estáticas}{32}{}%
+\contentsline {subsection}{\numberline {6.4.2}Gemini como servicio principal con Ollama como alternativa local}{32}{}%
+\contentsline {subsection}{\numberline {6.4.3}Embeddings de 2000 dimensiones con HNSW}{32}{}%
+\contentsline {subsection}{\numberline {6.4.4}Chunking con solapamiento para preservar contexto}{33}{}%
+\contentsline {subsection}{\numberline {6.4.5}Búsqueda vectorial con fallback a búsqueda por palabras clave}{33}{}%
+\contentsline {subsection}{\numberline {6.4.6}Fuzzy matching para resolución de nombres}{33}{}%
+\contentsline {subsection}{\numberline {6.4.7}Slots conversacionales para memoria de contexto}{34}{}%
+\contentsline {subsection}{\numberline {6.4.8}Pipeline NLU de 9 etapas con doble featurización}{34}{}%
+\contentsline {subsection}{\numberline {6.4.9}Hash SHA-256 para evitar reprocesamiento de documentos}{35}{}%
+\contentsline {section}{\numberline {6.5}Patrones arquitectónicos aplicados}{35}{}%
+\contentsline {subsection}{\numberline {6.5.1}Arquitectura por capas (\textit {Layered Architecture})}{35}{}%
+\contentsline {subsection}{\numberline {6.5.2}Patrón \textit {Action Server} (microservicio de lógica)}{35}{}%
+\contentsline {subsection}{\numberline {6.5.3}Patrón \textit {Strategy} para clientes LLM}{36}{}%
+\contentsline {subsection}{\numberline {6.5.4}Patrón \textit {Pipeline} para procesamiento RAG}{36}{}%
+\contentsline {subsection}{\numberline {6.5.5}Patrón \textit {Repository} para acceso a datos}{36}{}%
+\contentsline {chapter}{\numberline {7}Marco tecnológico}{37}{}%
+\contentsline {section}{\numberline {7.1}Tecnologías de procesamiento conversacional}{37}{}%
+\contentsline {subsection}{\numberline {7.1.1}Rasa Framework}{37}{}%
+\contentsline {subsubsection}{Componentes de Rasa utilizados}{37}{}%
+\contentsline {subsection}{\numberline {7.1.2}Procesamiento de Lenguaje Natural}{38}{}%
+\contentsline {subsubsection}{spaCy}{38}{}%
+\contentsline {subsubsection}{Coincidencia difusa (Fuzzy Matching)}{38}{}%
+\contentsline {section}{\numberline {7.2}Tecnologías de Inteligencia Artificial}{38}{}%
+\contentsline {subsection}{\numberline {7.2.1}Ollama y modelos de lenguaje grandes (LLMs)}{38}{}%
+\contentsline {subsubsection}{Text-to-SQL}{39}{}%
+\contentsline {subsubsection}{Generación de respuestas contextualizadas}{39}{}%
+\contentsline {subsection}{\numberline {7.2.2}Embeddings y búsqueda semántica}{39}{}%
+\contentsline {section}{\numberline {7.3}Tecnologías de base de datos}{39}{}%
+\contentsline {subsection}{\numberline {7.3.1}PostgreSQL}{39}{}%
+\contentsline {subsection}{\numberline {7.3.2}Supabase}{40}{}%
+\contentsline {subsection}{\numberline {7.3.3}pgvector}{40}{}%
+\contentsline {section}{\numberline {7.4}Tecnologías de frontend}{40}{}%
+\contentsline {subsection}{\numberline {7.4.1}Node.js}{40}{}%
+\contentsline {subsection}{\numberline {7.4.2}Framework web}{40}{}%
+\contentsline {section}{\numberline {7.5}Herramientas de desarrollo}{41}{}%
+\contentsline {subsection}{\numberline {7.5.1}Control de versiones}{41}{}%
+\contentsline {subsection}{\numberline {7.5.2}Gestión de dependencias}{41}{}%
+\contentsline {subsection}{\numberline {7.5.3}Variables de entorno}{41}{}%
+\contentsline {section}{\numberline {7.6}Consideraciones de seguridad}{41}{}%
+\contentsline {subsection}{\numberline {7.6.1}Protección de datos}{41}{}%
+\contentsline {subsection}{\numberline {7.6.2}Validación de entrada}{41}{}%
+\contentsline {subsection}{\numberline {7.6.3}Ejecución local de modelos}{42}{}%
+\contentsline {section}{\numberline {7.7}Stack tecnológico completo}{42}{}%
+\contentsline {chapter}{\numberline {8}Estructura del proyecto}{43}{}%
+\contentsline {section}{\numberline {8.1}Visión general del repositorio}{43}{}%
+\contentsline {section}{\numberline {8.2}Directorio raíz}{44}{}%
+\contentsline {section}{\numberline {8.3}Directorio \texttt {actions/}}{44}{}%
+\contentsline {subsection}{\numberline {8.3.1}Organización de los módulos}{44}{}%
+\contentsline {subsection}{\numberline {8.3.2}Flujo de ejecución de una acción}{45}{}%
+\contentsline {section}{\numberline {8.4}Directorio \texttt {data/}}{45}{}%
+\contentsline {subsection}{\numberline {8.4.1}Subdirectorio \texttt {nlu/}}{45}{}%
+\contentsline {subsection}{\numberline {8.4.2}Ficheros de flujo conversacional}{46}{}%
+\contentsline {section}{\numberline {8.5}Directorio \texttt {frontend/}}{46}{}%
+\contentsline {section}{\numberline {8.6}Directorio \texttt {data/} de Rasa vs. \texttt {docs/}}{46}{}%
+\contentsline {section}{\numberline {8.7}Directorio \texttt {tests/}}{46}{}%
+\contentsline {section}{\numberline {8.8}Separación de responsabilidades}{47}{}%
+\contentsline {chapter}{\numberline {9}Estructura de la base de datos}{48}{}%
+\contentsline {section}{\numberline {9.1}Diseño conceptual}{48}{}%
+\contentsline {subsection}{\numberline {9.1.1}Principios de diseño}{48}{}%
+\contentsline {section}{\numberline {9.2}Modelo entidad-relación}{48}{}%
+\contentsline {section}{\numberline {9.3}Entidades principales}{49}{}%
+\contentsline {subsection}{\numberline {9.3.1}Universidades}{49}{}%
+\contentsline {subsection}{\numberline {9.3.2}Centros}{49}{}%
+\contentsline {subsection}{\numberline {9.3.3}Departamentos}{49}{}%
+\contentsline {subsection}{\numberline {9.3.4}Titulaciones}{49}{}%
+\contentsline {subsection}{\numberline {9.3.5}Asignaturas}{49}{}%
+\contentsline {subsection}{\numberline {9.3.6}Profesores}{51}{}%
+\contentsline {subsection}{\numberline {9.3.7}Tutorías}{51}{}%
+\contentsline {subsection}{\numberline {9.3.8}Horarios}{51}{}%
+\contentsline {section}{\numberline {9.4}Tablas de vectorización (RAG)}{51}{}%
+\contentsline {subsection}{\numberline {9.4.1}Planes docentes}{52}{}%
+\contentsline {subsection}{\numberline {9.4.2}Chunks de planes docentes}{52}{}%
+\contentsline {section}{\numberline {9.5}Tablas de trámites administrativos}{54}{}%
+\contentsline {subsection}{\numberline {9.5.1}Categorías de trámites}{54}{}%
+\contentsline {subsection}{\numberline {9.5.2}Trámites}{54}{}%
+\contentsline {section}{\numberline {9.6}Relaciones entre entidades}{54}{}%
+\contentsline {section}{\numberline {9.7}Índices y optimización}{54}{}%
+\contentsline {section}{\numberline {9.8}Integridad referencial}{54}{}%
+\contentsline {section}{\numberline {9.9}Estrategia de datos de prueba}{55}{}%
+\contentsline {chapter}{Referencias}{56}{}%
 \contentsfinish 

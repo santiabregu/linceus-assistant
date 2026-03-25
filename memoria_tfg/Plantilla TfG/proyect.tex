@@ -13,6 +13,10 @@
 \counterwithin{table}{chapter}
 \counterwithin{figure}{chapter}
 
+% Paquetes para diagramas TikZ (arquitectura y despliegue)
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric, fit, calc}
+
 
 \begin{document}
 \tipo{Grado}   % Grado o M\'aster
@@ -64,6 +68,7 @@
 % =====================================================
 \part{Diseño e Implementación}
 
+     \input{Capitulos/arquitectura_diseno}
      \input{Capitulos/marco_tecnologico}
      \input{Capitulos/estructura_proyecto}
      \input{Capitulos/estructura_bd}
