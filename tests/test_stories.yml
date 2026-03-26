@@ -1,91 +1,255 @@
-#### This file contains tests to evaluate that your bot behaves as expected.
-#### If you want to learn more, please see the docs: https://rasa.com/docs/rasa/testing-your-assistant
+#### Tests de stories para validar flujos de conversación del bot.
+#### Ejecutar con: rasa test --stories tests/test_stories.yml --fail-on-prediction-errors
+
+version: "3.1"
 
 stories:
-- story: happy path 1
-  steps:
-  - user: |
-      hello there!
-    intent: greet
-  - action: utter_greet
-  - user: |
-      amazing
-    intent: mood_great
-  - action: utter_happy
 
-- story: happy path 2
+# =============================================================================
+# FLUJOS BÁSICOS (greet, goodbye, bot_challenge)
+# =============================================================================
+
+- story: test saludo y despedida
   steps:
   - user: |
-      hello there!
+      hola!
     intent: greet
   - action: utter_greet
   - user: |
-      amazing
-    intent: mood_great
-  - action: utter_happy
-  - user: |
-      bye-bye!
+      adios
     intent: goodbye
   - action: utter_goodbye
 
-- story: sad path 1
+- story: test bot challenge
   steps:
   - user: |
-      hello
-    intent: greet
-  - action: utter_greet
-  - user: |
-      not good
-    intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - user: |
-      yes
-    intent: affirm
-  - action: utter_happy
-
-- story: sad path 2
-  steps:
-  - user: |
-      hello
-    intent: greet
-  - action: utter_greet
-  - user: |
-      not good
-    intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - user: |
-      not really
-    intent: deny
-  - action: utter_goodbye
-
-- story: sad path 3
-  steps:
-  - user: |
-      hi
-    intent: greet
-  - action: utter_greet
-  - user: |
-      very terrible
-    intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - user: |
-      no
-    intent: deny
-  - action: utter_goodbye
-
-- story: say goodbye
-  steps:
-  - user: |
-      bye-bye!
-    intent: goodbye
-  - action: utter_goodbye
-
-- story: bot challenge
-  steps:
-  - user: |
-      are you a bot?
+      eres un bot?
     intent: bot_challenge
   - action: utter_iamabot
+
+# =============================================================================
+# FLUJOS: SELECCIÓN TITULACIÓN → CONSULTA ASIGNATURAS
+# =============================================================================
+
+- story: test saludo + elegir titulación + consulta específica
+  steps:
+  - user: |
+      hola
+    intent: greet
+  - action: utter_greet
+  - user: |
+      quiero ver ingeniería del software
+    intent: cambiar_contexto_academico
+  - action: action_cambiar_contexto
+  - user: |
+      cuántos créditos tiene Redes?
+    intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+
+- story: test saludo + elegir titulación + consulta listado
+  steps:
+  - user: |
+      hola
+    intent: greet
+  - action: utter_greet
+  - user: |
+      estoy en computadores
+    intent: cambiar_contexto_academico
+  - action: action_cambiar_contexto
+  - user: |
+      dame las asignaturas de primero
+    intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
+
+- story: test saludo + elegir titulación + consulta conteo
+  steps:
+  - user: |
+      buenas
+    intent: greet
+  - action: utter_greet
+  - user: |
+      soy de tecnologías informáticas
+    intent: cambiar_contexto_academico
+  - action: action_cambiar_contexto
+  - user: |
+      cuántas asignaturas hay en primero?
+    intent: consulta_asignaturas_conteo
+  - action: action_consulta_conteo
+
+# =============================================================================
+# FLUJOS: CONSULTAS ESPECÍFICAS CON SEGUIMIENTO
+# =============================================================================
+
+- story: test consulta específica seguida de otra específica
+  steps:
+  - user: |
+      cuántos créditos tiene Redes?
+    intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+  - user: |
+      y Fundamentos de Programación?
+    intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+
+- story: test consulta específica + seguimiento sin nombre
+  steps:
+  - user: |
+      háblame de Estadística
+    intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+  - user: |
+      y cuántos créditos tiene?
+    intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+
+- story: test consulta específica + seguimiento es obligatoria
+  steps:
+  - user: |
+      información sobre Criptografía
+    intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+  - user: |
+      es optativa?
+    intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+
+# =============================================================================
+# FLUJOS: LISTADO CON PAGINACIÓN
+# =============================================================================
+
+- story: test listado + pedir más resultados
+  steps:
+  - user: |
+      dame todas las asignaturas
+    intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
+  - user: |
+      sí, muéstrame todas
+    intent: pedir_mas_resultados
+  - action: action_mostrar_todas_asignaturas
+
+- story: test listado + afirmación para paginación
+  steps:
+  - user: |
+      lista de asignaturas
+    intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
+  - user: |
+      ver todas
+    intent: pedir_mas_resultados
+  - action: action_mostrar_todas_asignaturas
+
+# =============================================================================
+# FLUJOS MIXTOS: COMBINAR TIPOS DE CONSULTA
+# =============================================================================
+
+- story: test específica luego listado
+  steps:
+  - user: |
+      cuántos créditos tiene IA?
+    intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+  - user: |
+      dame las optativas de cuarto
+    intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
+
+- story: test listado luego conteo
+  steps:
+  - user: |
+      asignaturas de primero
+    intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
+  - user: |
+      cuántas hay en segundo?
+    intent: consulta_asignaturas_conteo
+  - action: action_consulta_conteo
+
+- story: test conteo luego específica
+  steps:
+  - user: |
+      cuántas optativas hay en cuarto?
+    intent: consulta_asignaturas_conteo
+  - action: action_consulta_conteo
+  - user: |
+      háblame de Criptografía
+    intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+
+- story: test específica + listado + conteo encadenados
+  steps:
+  - user: |
+      info de Redes
+    intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+  - user: |
+      dame las obligatorias de segundo
+    intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
+  - user: |
+      cuántas son en total?
+    intent: consulta_asignaturas_conteo
+  - action: action_consulta_conteo
+
+# =============================================================================
+# FLUJOS: CAMBIO DE TITULACIÓN EN MEDIO DE CONVERSACIÓN
+# =============================================================================
+
+- story: test cambiar titulación entre consultas
+  steps:
+  - user: |
+      asignaturas de primero
+    intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
+  - user: |
+      cambiar a computadores
+    intent: cambiar_contexto_academico
+  - action: action_cambiar_contexto
+  - user: |
+      asignaturas de primero
+    intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
+
+# =============================================================================
+# FLUJOS: CONSULTAR CONTEXTO
+# =============================================================================
+
+- story: test consultar qué titulación tengo
+  steps:
+  - user: |
+      qué carrera estoy consultando?
+    intent: consultar_contexto_academico
+  - action: action_consultar_contexto
+
+- story: test consultar titulaciones disponibles
+  steps:
+  - user: |
+      qué carreras hay disponibles?
+    intent: consulta_titulaciones
+  - action: action_consulta_titulaciones
+
+# =============================================================================
+# FLUJOS: AYUDA Y FALLBACK
+# =============================================================================
+
+- story: test pedir ayuda
+  steps:
+  - user: |
+      ayuda
+    intent: pedir_ayuda
+  - action: utter_ayuda
+
+- story: test saludo + consulta + despedida
+  steps:
+  - user: |
+      hola
+    intent: greet
+  - action: utter_greet
+  - user: |
+      cuántos créditos tiene Redes?
+    intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+  - user: |
+      gracias, adiós
+    intent: goodbye
+  - action: utter_goodbye

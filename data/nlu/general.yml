@@ -128,3 +128,36 @@ nlu:
     - no se que preguntarte
     - que opciones tengo
     - menu
+
+- intent: out_of_scope
+  examples: |
+    - cual es la capital de Francia
+    - me puedes contar un chiste
+    - quiero pedir una pizza
+    - que tiempo hace hoy
+    - quien gano el mundial
+    - cuanto es 2 mas 2
+    - ponme una cancion
+    - que hora es
+    - recomiendame una pelicula
+    - como esta el trafico
+    - dime un dato curioso
+    - quien es el presidente
+    - cuentame un cuento
+    - que dia es hoy
+    - como se hace una tortilla
+    - traduceme esto al ingles
+    - que significa la vida
+    - pon musica
+    - reserva un restaurante
+    - cual es tu color favorito
+    - hablame del universo
+    - cuanto cuesta un vuelo a Madrid
+    - quien invento la bombilla
+    - como se llama el rio mas largo
+    - recomiendame un libro
+    - que es el bitcoin
+    - como hacer ejercicio
+    - dame una receta de cocina
+    - quien escribio el quijote
+    - cuantos planetas hay

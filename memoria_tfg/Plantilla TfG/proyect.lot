@@ -8,20 +8,32 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
+\contentsline {table}{\numberline {5.1}{\ignorespaces Diccionario EDT — PT0: Gestión del proyecto.}}{21}{}%
+\contentsline {table}{\numberline {5.2}{\ignorespaces Diccionario EDT — PT1: Investigación y preparación.}}{21}{}%
+\contentsline {table}{\numberline {5.3}{\ignorespaces Diccionario EDT — PT2: Épica 1 — Asignaturas v1.}}{22}{}%
+\contentsline {table}{\numberline {5.4}{\ignorespaces Diccionario EDT — PT3: Épica 2 — Profesores.}}{23}{}%
+\contentsline {table}{\numberline {5.5}{\ignorespaces Diccionario EDT — PT4: Épica 3 — RAG Asignaturas v2.}}{23}{}%
+\contentsline {table}{\numberline {5.6}{\ignorespaces Diccionario EDT — PT5: Épica 4 — Horarios.}}{23}{}%
+\contentsline {table}{\numberline {5.7}{\ignorespaces Diccionario EDT — PT6: Épica 5 — RAG Trámites.}}{24}{}%
+\contentsline {table}{\numberline {5.8}{\ignorespaces Diccionario EDT — PT7: Épica 6 — Frontend + Piloto + Entrega.}}{24}{}%
+\contentsline {table}{\numberline {5.9}{\ignorespaces Resumen cuantitativo de la EDT por paquete de trabajo.}}{25}{}%
+\contentsline {table}{\numberline {5.10}{\ignorespaces Priorización del backlog por épicas.}}{25}{}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {6.1}{\ignorespaces Stack tecnológico completo del proyecto LinceUS Assistant.}}{27}{}%
+\contentsline {table}{\numberline {6.1}{\ignorespaces Protocolos y puertos de comunicación entre nodos del sistema.}}{31}{}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {7.1}{\ignorespaces Stack tecnológico completo del proyecto LinceUS Assistant.}}{42}{}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {8.1}{\ignorespaces Estructura de la tabla UNIVERSIDADES}}{34}{}%
-\contentsline {table}{\numberline {8.2}{\ignorespaces Estructura de la tabla CENTROS}}{34}{}%
-\contentsline {table}{\numberline {8.3}{\ignorespaces Estructura de la tabla DEPARTAMENTOS}}{35}{}%
-\contentsline {table}{\numberline {8.4}{\ignorespaces Estructura de la tabla TITULACIONES}}{35}{}%
-\contentsline {table}{\numberline {8.5}{\ignorespaces Estructura de la tabla ASIGNATURAS}}{35}{}%
-\contentsline {table}{\numberline {8.6}{\ignorespaces Estructura de la tabla PROFESORES}}{36}{}%
-\contentsline {table}{\numberline {8.7}{\ignorespaces Estructura de la tabla TUTORIAS}}{36}{}%
-\contentsline {table}{\numberline {8.8}{\ignorespaces Estructura de la tabla HORARIOS}}{37}{}%
-\contentsline {table}{\numberline {8.9}{\ignorespaces Estructura de la tabla PLANES\_DOCENTES}}{37}{}%
-\contentsline {table}{\numberline {8.10}{\ignorespaces Estructura de la tabla PLANES\_DOCENTES\_CHUNKS}}{38}{}%
-\contentsline {table}{\numberline {8.11}{\ignorespaces Estructura de la tabla CATEGORIAS\_TRAMITES}}{38}{}%
-\contentsline {table}{\numberline {8.12}{\ignorespaces Estructura de la tabla TRAMITES}}{38}{}%
+\contentsline {table}{\numberline {9.1}{\ignorespaces Estructura de la tabla UNIVERSIDADES}}{49}{}%
+\contentsline {table}{\numberline {9.2}{\ignorespaces Estructura de la tabla CENTROS}}{49}{}%
+\contentsline {table}{\numberline {9.3}{\ignorespaces Estructura de la tabla DEPARTAMENTOS}}{50}{}%
+\contentsline {table}{\numberline {9.4}{\ignorespaces Estructura de la tabla TITULACIONES}}{50}{}%
+\contentsline {table}{\numberline {9.5}{\ignorespaces Estructura de la tabla ASIGNATURAS}}{50}{}%
+\contentsline {table}{\numberline {9.6}{\ignorespaces Estructura de la tabla PROFESORES}}{51}{}%
+\contentsline {table}{\numberline {9.7}{\ignorespaces Estructura de la tabla TUTORIAS}}{51}{}%
+\contentsline {table}{\numberline {9.8}{\ignorespaces Estructura de la tabla HORARIOS}}{52}{}%
+\contentsline {table}{\numberline {9.9}{\ignorespaces Estructura de la tabla PLANES\_DOCENTES}}{52}{}%
+\contentsline {table}{\numberline {9.10}{\ignorespaces Estructura de la tabla PLANES\_DOCENTES\_CHUNKS}}{53}{}%
+\contentsline {table}{\numberline {9.11}{\ignorespaces Estructura de la tabla CATEGORIAS\_TRAMITES}}{53}{}%
+\contentsline {table}{\numberline {9.12}{\ignorespaces Estructura de la tabla TRAMITES}}{53}{}%
 \contentsfinish 

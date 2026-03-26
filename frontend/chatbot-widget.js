@@ -126,6 +126,26 @@
             margin: 4px 0;
         }
 
+        .linceus-chat-widget .typewriter-cursor {
+            font-weight: 100;
+            color: #9e1c3f;
+            animation: blink 0.7s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        .linceus-chat-widget .chat-message.bot a {
+            color: #9e1c3f;
+            text-decoration: underline;
+            word-break: break-all;
+        }
+
+        .linceus-chat-widget .chat-message.bot a:hover {
+            color: #7a1631;
+        }
+
         .linceus-chat-widget .typing-indicator {
             display: none;
             padding: 12px 16px;
@@ -375,16 +395,18 @@
             // Ocultar indicador
             typingIndicator.classList.remove('visible');
 
-            // Mostrar respuestas del bot
+            // Mostrar respuestas del bot (agrupadas, efecto typewriter)
             if (data && data.length > 0) {
-                data.forEach(msg => {
-                    if (msg.text) {
-                        const botMessageDiv = document.createElement('div');
-                        botMessageDiv.className = 'chat-message bot';
-                        botMessageDiv.innerHTML = formatMessage(msg.text);
-                        messagesContainer.insertBefore(botMessageDiv, typingIndicator);
-                    }
-                });
+                const combinedText = data
+                    .filter(msg => msg.text)
+                    .map(msg => msg.text)
+                    .join('\n\n');
+                if (combinedText) {
+                    const botMessageDiv = document.createElement('div');
+                    botMessageDiv.className = 'chat-message bot';
+                    messagesContainer.insertBefore(botMessageDiv, typingIndicator);
+                    await typewriterEffect(botMessageDiv, combinedText);
+                }
             } else {
                 // Respuesta vacía
                 const botMessageDiv = document.createElement('div');
@@ -409,16 +431,53 @@
         scrollToBottom();
     }
 
-    // Formatear mensaje (convertir saltos de línea y listas)
+    // Efecto typewriter: revela palabra por palabra
+    function typewriterEffect(element, text) {
+        return new Promise(resolve => {
+            const words = text.split(/(\s+)/); // conservar espacios
+            let current = '';
+            let i = 0;
+            const speed = 30; // ms entre palabras
+
+            function nextWord() {
+                if (i < words.length) {
+                    current += words[i];
+                    element.innerHTML = formatMessage(current) + '<span class="typewriter-cursor">|</span>';
+                    scrollToBottom();
+                    i++;
+                    setTimeout(nextWord, words[i - 1].trim() ? speed : 0);
+                } else {
+                    // Terminado: render final sin cursor
+                    element.innerHTML = formatMessage(current);
+                    scrollToBottom();
+                    resolve();
+                }
+            }
+            nextWord();
+        });
+    }
+
+    // Formatear mensaje (convertir saltos de línea, listas y enlaces)
     function formatMessage(text) {
         // Escapar HTML
         let formatted = text
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;');
-        
+
+        // Convertir enlaces Markdown [texto](url)
+        formatted = formatted.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+            '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+
+        // Convertir URLs sueltas que no estén ya dentro de un <a>
+        formatted = formatted.replace(/(?<!href="|">)(https?:\/\/[^\s<]+)/g,
+            '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+
         // Convertir **texto** a <strong>
         formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+        // Convertir _texto_ a <em> (cursiva)
+        formatted = formatted.replace(/(?<!\w)_(.*?)_(?!\w)/g, '<em>$1</em>');
         
         // Convertir listas con viñetas (• o -)
         const lines = formatted.split('\n');

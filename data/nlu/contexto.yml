@@ -54,6 +54,21 @@ nlu:
     - quiero cambiar a [computadores](nombre_titulacion)
     - ahora quiero ver [TI](nombre_titulacion)
     - pasame a [IC](nombre_titulacion)
+    - [ingeniería del software](nombre_titulacion)
+    - [tecnologías informáticas](nombre_titulacion)
+    - [ingeniería de computadores](nombre_titulacion)
+    - [ingenieria del software](nombre_titulacion)
+    - [tecnologias informaticas](nombre_titulacion)
+    - [ingenieria de computadores](nombre_titulacion)
+    - la de [IS](nombre_titulacion) por favor
+    - la de [TI](nombre_titulacion) por favor
+    - la de [IC](nombre_titulacion) por favor
+    - [GII-IS](nombre_titulacion) por favor
+    - [GII-TI](nombre_titulacion) por favor
+    - [GII-IC](nombre_titulacion) por favor
+    - la primera, [IS](nombre_titulacion)
+    - la segunda, [TI](nombre_titulacion)
+    - la tercera, [IC](nombre_titulacion)
 
 - intent: consulta_titulaciones
   examples: |
