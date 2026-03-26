@@ -14,7 +14,6 @@ from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import SlotSet
 
 from .text_to_sql import (
-    generar_sql_especifica,
     generar_sql_listado,
     generar_sql_conteo,
     ejecutar_query,
@@ -359,35 +358,125 @@ def _resolver_nombre_desde_texto(pregunta: str, titulacion: str) -> Optional[str
     return None
 
 
-def _buscar_codigo_por_nombre(nombre: str, titulacion: str) -> Optional[str]:
-    """Resuelve nombre de asignatura a código vía SQL rápido."""
-    if not nombre:
-        return None
-    nombre_expandido = _expandir_alias(nombre, titulacion)
-    nombre_norm = f"%{normalizar_texto(nombre_expandido)}%"
+def resolver_asignatura(
+    pregunta: str,
+    tracker,
+    contexto_titulacion: str,
+    usar_seguimiento: bool = True,
+) -> Tuple[Optional[Dict], Optional[str]]:
+    """
+    Resuelve una asignatura a partir de la pregunta del usuario.
+    Pipeline completo compartido por todos los actions de asignaturas:
+      NLU entity → seguimiento → alias → fuzzy BD → SQL flexible → fallbacks.
 
-    conn = db_client.get_connection()
-    if not conn:
-        return None
-    try:
-        cursor = conn.cursor()
-        sql = ("SELECT codigo FROM asignaturas "
-               "WHERE activa = true AND (nombre_normalizado ILIKE %s OR codigo ILIKE %s)")
-        params = [nombre_norm, f"%{nombre}%"]
-        if titulacion:
-            sql += (" AND titulacion_id = "
-                    "(SELECT id FROM titulaciones WHERE codigo = %s LIMIT 1)")
-            params.append(titulacion)
-        sql += " LIMIT 1"
-        cursor.execute(sql, params)
-        row = cursor.fetchone()
-        cursor.close()
-        return row[0] if row else None
-    except Exception as e:
-        print(f"  ❌ Error buscando código: {e}")
-        return None
-    finally:
-        conn.close()
+    Args:
+        pregunta: Texto de la pregunta del usuario.
+        tracker: Tracker de Rasa (para NLU entities y slots).
+        contexto_titulacion: Código de la titulación activa.
+        usar_seguimiento: Si True, intenta usar contexto previo para seguimiento.
+
+    Returns:
+        (asignatura_dict, nombre_usado):
+          - asignatura_dict: dict con codigo, nombre, curso, creditos, etc. o None.
+          - nombre_usado: nombre candidato que se intentó resolver (para mensajes de error).
+    """
+    from .text_to_sql import (
+        ALIAS_ASIGNATURAS, _inyectar_filtro_titulacion, ejecutar_query,
+    )
+
+    # 1. Extraer nombre de NLU entities
+    titulacion_inline = bool(tracker.get_slot("contexto_titulacion") != contexto_titulacion
+                             if tracker.get_slot("contexto_titulacion") else False)
+    nombre_asignatura = extraer_nombre_asignatura(tracker, titulacion_inline)
+
+    # 2. Seguimiento: si no hay nombre, usar contexto previo
+    if usar_seguimiento and not nombre_asignatura:
+        ultimo_nombre = tracker.get_slot("ultimo_nombre_asignatura")
+        if ultimo_nombre:
+            pregunta_lower = pregunta.lower()
+            patrones_seguimiento = [
+                r'^y\s+(cuantos|que|cual|como|quien|cuales|es|tiene|de que)',
+                r'^(esa|esta|la|esa asignatura|esta asignatura)\s+',
+                r'^(creditos|curso|duracion|tipo)',
+                r'^como se (evalua|califica|aprueba)',
+                r'^(quien|quienes) (la )?(da|imparte|ense[ñn]a)',
+                r'^(que|cual es) (el|la|su) (temario|programa|contenido|bibliografia|metodologia|evaluacion|profesorado)',
+                r'cuantos creditos tiene\??$',
+                r'es (obligatoria|optativa)\??$',
+                r'de que (curso|cuatrimestre) es\??$',
+            ]
+            for patron in patrones_seguimiento:
+                if re.search(patron, pregunta_lower):
+                    nombre_asignatura = ultimo_nombre
+                    print(f"   → Usando contexto previo: {nombre_asignatura}")
+                    break
+
+    # 3. Expandir alias/acrónimos
+    if nombre_asignatura:
+        nombre_expandido = _expandir_alias(nombre_asignatura, contexto_titulacion)
+        if nombre_expandido != nombre_asignatura:
+            print(f"   → Alias expandido: '{nombre_asignatura}' → '{nombre_expandido}'")
+            nombre_asignatura = nombre_expandido
+
+    # 4. Sin entidad NLU: buscar alias en el texto de la pregunta
+    if not nombre_asignatura:
+        pregunta_lower = pregunta.lower()
+        for alias in sorted(ALIAS_ASIGNATURAS, key=len, reverse=True):
+            if re.search(r'\b' + re.escape(alias) + r'\b', pregunta_lower):
+                nombre_asignatura = _expandir_alias(alias, contexto_titulacion)
+                print(f"   → Alias detectado en pregunta: '{alias}' → '{nombre_asignatura}'")
+                break
+
+    # 5. Fuzzy matching contra nombres reales en BD
+    if not nombre_asignatura:
+        nombre_asignatura = _resolver_nombre_desde_texto(pregunta, contexto_titulacion)
+        if nombre_asignatura:
+            print(f"   → Nombre resuelto por fuzzy BD: {nombre_asignatura}")
+
+    if not nombre_asignatura:
+        print(f"   → Sin nombre candidato para resolver")
+        return None, None
+
+    # 6. Buscar en BD con ILIKE flexible
+    nombre_norm = f"%{normalizar_texto(nombre_asignatura)}%"
+    sql = """SELECT codigo, nombre, curso, creditos, duracion, tipologia,
+                    es_formacion_basica, es_optativa
+             FROM asignaturas
+             WHERE activa = true AND (nombre_normalizado ILIKE %s OR codigo ILIKE %s)"""
+    sql = _inyectar_filtro_titulacion(sql, contexto_titulacion)
+    exito, resultados = ejecutar_query(sql, [nombre_norm, nombre_norm])
+
+    # 7. Fallback: fuzzy matching si ILIKE no dio resultados
+    if not exito or not resultados:
+        nombre_fuzzy = _resolver_nombre_desde_texto(nombre_asignatura, contexto_titulacion)
+        if nombre_fuzzy:
+            print(f"   → Fallback fuzzy: '{nombre_asignatura}' → '{nombre_fuzzy}'")
+            nombre_fuzzy_norm = f"%{normalizar_texto(nombre_fuzzy)}%"
+            sql_fuzzy = """SELECT codigo, nombre, curso, creditos, duracion, tipologia,
+                                  es_formacion_basica, es_optativa
+                           FROM asignaturas
+                           WHERE activa = true AND nombre_normalizado ILIKE %s"""
+            sql_fuzzy = _inyectar_filtro_titulacion(sql_fuzzy, contexto_titulacion)
+            exito, resultados = ejecutar_query(sql_fuzzy, [nombre_fuzzy_norm])
+            if exito and resultados:
+                nombre_asignatura = nombre_fuzzy
+
+    if not exito or not resultados:
+        return None, nombre_asignatura
+
+    # 8. Si hay múltiples resultados, reordenar por fuzzy match
+    if len(resultados) > 1:
+        from rapidfuzz import fuzz
+        pregunta_norm = normalizar_texto(pregunta)
+        resultados.sort(
+            key=lambda r: fuzz.token_set_ratio(
+                normalizar_texto(r.get('nombre', '')), pregunta_norm
+            ),
+            reverse=True
+        )
+        print(f"   → Reordenado por fuzzy: mejor match = '{resultados[0].get('nombre')}'")
+
+    return resultados[0], nombre_asignatura
 
 
 def _generar_respuesta_rag(
@@ -457,120 +546,28 @@ class ActionConsultaEspecifica(Action):
         contexto_titulacion, eventos_contexto = comprobar_titulacion(tracker, dispatcher, pregunta)
         if not contexto_titulacion:
             return []
-        ultimo_codigo = tracker.get_slot("ultimo_codigo_consultado")
-        ultimo_nombre = tracker.get_slot("ultimo_nombre_asignatura")
 
         print(f"\n{'='*60}")
         print(f"🔍 CONSULTA ESPECÍFICA: {pregunta}")
         print(f"   Contexto: {contexto_titulacion}")
-        print(f"   Última asignatura: {ultimo_nombre} ({ultimo_codigo})")
+        print(f"   Última asignatura: {tracker.get_slot('ultimo_nombre_asignatura')} ({tracker.get_slot('ultimo_codigo_consultado')})")
         print(f"{'='*60}")
 
-        # Extraer nombre de asignatura
-        titulacion_inline = len(eventos_contexto) > 0  # Si hay eventos, se detectó del mensaje
-        nombre_asignatura = extraer_nombre_asignatura(tracker, titulacion_inline)
-        
-        # Detectar si es pregunta de seguimiento (sin nombre explícito)
-        es_seguimiento = self._es_seguimiento(pregunta, nombre_asignatura)
-        
-        if es_seguimiento and ultimo_nombre:
-            nombre_asignatura = ultimo_nombre
-            print(f"   → Usando contexto previo: {nombre_asignatura}")
-        
-        # Expandir alias/acrónimos ANTES de pasarlo al LLM
-        if nombre_asignatura:
-            nombre_expandido = _expandir_alias(nombre_asignatura, contexto_titulacion)
-            if nombre_expandido != nombre_asignatura:
-                nombre_asignatura = nombre_expandido
+        # Resolver asignatura con pipeline compartido
+        asignatura, nombre_asignatura = resolver_asignatura(
+            pregunta, tracker, contexto_titulacion
+        )
 
-        # Si no hay entidad NLU, intentar resolver:
-        # 1) Buscar alias/acrónimos en las palabras de la pregunta
-        # 2) Fuzzy match contra nombres reales en BD
-        if not nombre_asignatura:
-            from .text_to_sql import ALIAS_ASIGNATURAS
-            pregunta_lower = pregunta.lower()
-            for alias in sorted(ALIAS_ASIGNATURAS, key=len, reverse=True):
-                if re.search(r'\b' + re.escape(alias) + r'\b', pregunta_lower):
-                    nombre_asignatura = _expandir_alias(alias, contexto_titulacion)
-                    print(f"   → Alias detectado en pregunta: '{alias}' → '{nombre_asignatura}'")
-                    break
-
-        if not nombre_asignatura:
-            nombre_asignatura = _resolver_nombre_desde_texto(pregunta, contexto_titulacion)
+        if not asignatura:
             if nombre_asignatura:
-                print(f"   → Nombre resuelto por fuzzy BD: {nombre_asignatura}")
-            else:
-                print(f"   → Sin entidad NLU ni match en BD, el LLM extraerá de la pregunta")
-
-        # Generar SQL con LLM
-        resultado_sql = generar_sql_especifica(
-            pregunta=pregunta,
-            nombre_asignatura=nombre_asignatura,
-            contexto_titulacion=contexto_titulacion,
-            historial=historial
-        )
-
-        necesita_rag = resultado_sql.get('necesita_rag', False)
-
-        # Inyectar filtro de titulación en la SQL del LLM (puede que no lo incluya)
-        from .text_to_sql import _inyectar_filtro_titulacion
-        sql_con_titulacion = _inyectar_filtro_titulacion(
-            resultado_sql['sql'], contexto_titulacion
-        )
-        print(f"   SQL generada: {sql_con_titulacion[:100]}...")
-        print(f"   Parámetros: {resultado_sql.get('parametros', [])}")
-        print(f"   Necesita RAG: {necesita_rag}")
-
-        # Ejecutar query (siempre, para resolver la asignatura)
-        exito, resultados = ejecutar_query(
-            sql_con_titulacion,
-            resultado_sql.get('parametros', [])
-        )
-
-        if not exito or not resultados:
-            # Intentar búsqueda más flexible (nombre O código, con filtro de titulación)
-            if nombre_asignatura:
-                from .text_to_sql import _inyectar_filtro_titulacion
-                nombre_expandido = _expandir_alias(nombre_asignatura, contexto_titulacion)
-                sql_flexible = """
-                    SELECT codigo, nombre, curso, creditos, duracion, tipologia,
-                           es_formacion_basica, es_optativa
-                    FROM asignaturas
-                    WHERE activa = true AND (nombre_normalizado ILIKE %s OR codigo ILIKE %s)
-                """
-                sql_flexible = _inyectar_filtro_titulacion(sql_flexible, contexto_titulacion)
-                nombre_norm = f"%{normalizar_texto(nombre_expandido)}%"
-                exito, resultados = ejecutar_query(sql_flexible, [nombre_norm, nombre_norm])
-
-            # Si teníamos un nombre concreto y no se encontró → intentar fuzzy matching
-            if nombre_asignatura and (not exito or not resultados):
-                nombre_fuzzy = _resolver_nombre_desde_texto(nombre_asignatura, contexto_titulacion)
-                if nombre_fuzzy:
-                    print(f"   → Fallback fuzzy: '{nombre_asignatura}' → '{nombre_fuzzy}'")
-                    from .text_to_sql import _inyectar_filtro_titulacion as _ift
-                    nombre_fuzzy_norm = f"%{normalizar_texto(nombre_fuzzy)}%"
-                    sql_fuzzy = """
-                        SELECT codigo, nombre, curso, creditos, duracion, tipologia,
-                               es_formacion_basica, es_optativa
-                        FROM asignaturas
-                        WHERE activa = true AND nombre_normalizado ILIKE %s
-                    """
-                    sql_fuzzy = _ift(sql_fuzzy, contexto_titulacion)
-                    exito, resultados = ejecutar_query(sql_fuzzy, [nombre_fuzzy_norm])
-                    if exito and resultados:
-                        nombre_asignatura = nombre_fuzzy
-
-            if nombre_asignatura and (not exito or not resultados):
                 nombre_titulacion = BotConfig.get_nombre_titulacion(contexto_titulacion)
                 msg = f"No encontré ninguna asignatura llamada '{nombre_asignatura}' en {nombre_titulacion}."
                 print(f"   ❌ Asignatura no encontrada: {nombre_asignatura}")
                 dispatcher.utter_message(text=msg)
                 return eventos_contexto
-
-            # Fallback: SELECT ALL de la titulación y dejar que el LLM resuelva
-            # (solo para consultas sin nombre concreto donde el LLM puede interpretar)
-            if (not exito or not resultados) and contexto_titulacion:
-                from .text_to_sql import _inyectar_filtro_titulacion
+            else:
+                # Sin nombre candidato: intentar fallback SELECT ALL + LLM
+                from .text_to_sql import _inyectar_filtro_titulacion, ejecutar_query
                 sql_all = """
                     SELECT codigo, nombre, curso, creditos, duracion, tipologia,
                            es_formacion_basica, es_optativa
@@ -594,29 +591,14 @@ class ActionConsultaEspecifica(Action):
                     return eventos_contexto + [
                         SlotSet("ultimo_nombre_asignatura", resultados_all[0].get('nombre') if len(resultados_all) == 1 else None)
                     ]
-
-            if not exito or not resultados:
                 dispatcher.utter_message(text="No pude identificar la asignatura en tu pregunta. ¿Puedes decirme el nombre?")
                 return []
 
-        # Si hay múltiples resultados, reordenar por fuzzy match contra la pregunta completa.
-        # Usa token_set_ratio: comprueba qué tokens del nombre aparecen en la pregunta.
-        # Ej: "modelado y simulacion numerica" tiene todos sus tokens en la pregunta
-        #     "algebra lineal y numerica" solo tiene "y" y "numerica" → pierde.
-        if len(resultados) > 1:
-            from rapidfuzz import fuzz
-            pregunta_norm = normalizar_texto(pregunta)
-            resultados.sort(
-                key=lambda r: fuzz.token_set_ratio(
-                    normalizar_texto(r.get('nombre', '')), pregunta_norm
-                ),
-                reverse=True
-            )
-            print(f"   → Reordenado por fuzzy: mejor match = '{resultados[0].get('nombre')}'")
+        # Clasificar si necesita RAG
+        from .text_to_sql import _clasificar_necesita_rag
+        necesita_rag = _clasificar_necesita_rag(pregunta, historial)
 
-        asignatura = resultados[0]
-
-        # --- RAG: si el LLM detectó que la pregunta necesita plan docente ---
+        # --- RAG: si la pregunta necesita plan docente ---
         if necesita_rag:
             codigo_rag = asignatura.get('codigo')
             grupo_detectado = _detectar_grupo(pregunta)
@@ -679,29 +661,6 @@ class ActionConsultaEspecifica(Action):
             SlotSet("ultimo_nombre_asignatura", asignatura.get('nombre'))
         ]
 
-    def _es_seguimiento(self, pregunta: str, nombre_extraido: str) -> bool:
-        """Detecta si es una pregunta de seguimiento (usa contexto previo)."""
-        if nombre_extraido:
-            return False
-        
-        pregunta_lower = pregunta.lower()
-        
-        # Patrones de seguimiento
-        # TODO: pensar esto mejor, es un poco cutre. La idea es detectar preguntas que no mencionan explícitamente la asignatura pero parecen referirse a la última mencionada.
-        patrones_seguimiento = [
-            r'^y\s+(cuantos|que|cual|es|tiene)',
-            r'^(esa|esta|la)\s+',
-            r'^(creditos|curso|duracion|tipo)',
-            r'cuantos creditos tiene\??$',
-            r'es (obligatoria|optativa)\??$',
-            r'de que (curso|cuatrimestre) es\??$',
-        ]
-        
-        for patron in patrones_seguimiento:
-            if re.search(patron, pregunta_lower):
-                return True
-        
-        return False
 
 
 # ============================================================================
@@ -830,18 +789,18 @@ class ActionConsultaConteo(Action):
         # Si la pregunta menciona una asignatura concreta y necesita RAG,
         # no es un COUNT de asignaturas sino una consulta de plan docente
         from .text_to_sql import _necesita_rag_heuristica
-        titulacion_inline = len(eventos_contexto) > 0
-        nombre_asignatura_check = extraer_nombre_asignatura(tracker, titulacion_inline)
-        if not nombre_asignatura_check:
-            nombre_asignatura_check = _resolver_nombre_desde_texto(pregunta, contexto_titulacion)
-
-        if nombre_asignatura_check and _necesita_rag_heuristica(pregunta):
-            print(f"   → Redirigiendo a flujo RAG: pregunta sobre '{nombre_asignatura_check}'")
-            codigo_rag = _buscar_codigo_por_nombre(nombre_asignatura_check, contexto_titulacion)
-            grupo_detectado = _detectar_grupo(pregunta)
-            if grupo_detectado:
-                print(f"   📎 Filtro por grupo: {grupo_detectado}")
-            if codigo_rag:
+        if _necesita_rag_heuristica(pregunta):
+            asignatura, nombre_usado = resolver_asignatura(
+                pregunta, tracker, contexto_titulacion,
+                usar_seguimiento=False,
+            )
+            if asignatura:
+                codigo_rag = asignatura.get('codigo')
+                nombre_rag = asignatura.get('nombre', nombre_usado)
+                print(f"   → Redirigiendo a flujo RAG: pregunta sobre '{nombre_rag}'")
+                grupo_detectado = _detectar_grupo(pregunta)
+                if grupo_detectado:
+                    print(f"   📎 Filtro por grupo: {grupo_detectado}")
                 try:
                     from rag.buscar import buscar_en_plan_docente
                     chunks = buscar_en_plan_docente(
@@ -849,19 +808,19 @@ class ActionConsultaConteo(Action):
                     )
                     print(f"   📊 Chunks encontrados: {len(chunks) if chunks else 0}")
                     if chunks:
-                        respuesta_rag = _generar_respuesta_rag(pregunta, chunks, nombre_asignatura_check)
+                        respuesta_rag = _generar_respuesta_rag(pregunta, chunks, nombre_rag)
                         if respuesta_rag:
                             dispatcher.utter_message(text=respuesta_rag)
                             eventos_rag = [
                                 SlotSet("ultimo_codigo_consultado", codigo_rag),
-                                SlotSet("ultimo_nombre_asignatura", nombre_asignatura_check),
+                                SlotSet("ultimo_nombre_asignatura", nombre_rag),
                             ]
                             if grupo_detectado:
                                 eventos_rag.append(SlotSet("contexto_grupo", grupo_detectado))
                             return eventos_contexto + eventos_rag
                     dispatcher.utter_message(
                         text=f"No encontré información detallada del plan docente de "
-                             f"**{nombre_asignatura_check}**. ¿Puedes reformular la pregunta?"
+                             f"**{nombre_rag}**. ¿Puedes reformular la pregunta?"
                     )
                     return eventos_contexto
                 except Exception as e:

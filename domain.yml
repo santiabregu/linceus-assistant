@@ -72,13 +72,11 @@ responses:
   - text: |
       ¡Hola! Soy **Linceus**, tu asistente de la ETSII (Universidad de Sevilla).
 
-      Para consultar asignaturas y horarios necesito saber tu titulación. ¿Cuál cursas?
+      Por favor, elige tu titulación antes de empezar:
 
-      • **Ingeniería del Software** (IS)
-      • **Tecnologías Informáticas** (TI)
-      • **Ingeniería de Computadores** (IC)
-
-      Dime, por ejemplo: _"Quiero ver Ingeniería del Software"_
+      • **Ingeniería del Software** (GII-IS)
+      • **Tecnologías Informáticas** (GII-TI)
+      • **Ingeniería de Computadores** (GII-IC)
 
   utter_goodbye:
   - text: "Hasta luego! Que tengas un buen dia."
