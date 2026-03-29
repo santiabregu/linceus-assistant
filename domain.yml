@@ -20,6 +20,13 @@ intents:
   - pedir_mas_resultados
   # Horarios
   - consulta_horario                 # "¿Qué horario tiene 2º grupo 1?"
+  # Multi-intent (combinaciones)
+  - cambiar_contexto_academico+consulta_horario
+  - cambiar_contexto_academico+consulta_asignatura_especifica
+  - cambiar_contexto_academico+consulta_asignaturas_listado
+  - cambiar_contexto_academico+consulta_asignaturas_conteo
+  - consulta_horario+consulta_asignatura_especifica
+  - consulta_asignatura_especifica+consulta_asignaturas_listado
   - out_of_scope
 
 entities:
@@ -69,12 +76,18 @@ slots:
     mappings:
     - type: custom
 
+  ultima_action_ejecutada:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+
 responses:
   utter_greet:
   - text: |
-      ¡Hola! Soy **Linceus**, tu asistente de la ETSII (Universidad de Sevilla).
+      ¡Hola! Soy **Linceus**, el asistente virtual de la ETSII (Universidad de Sevilla). ¿En qué puedo ayudarte hoy?
 
-      Por favor, elige tu titulación antes de empezar:
+      Antes de empezar, por favor indícame tu titulación:
 
       • **Ingeniería del Software** (GII-IS)
       • **Tecnologías Informáticas** (GII-TI)
@@ -156,6 +169,8 @@ actions:
   - action_mostrar_todas_asignaturas
   # Horarios
   - action_consulta_horario
+  # Multi-intent
+  - action_multi_intent
 
 session_config:
   session_expiration_time: 60

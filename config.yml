@@ -13,6 +13,8 @@ language: es
 pipeline:
   # Step 1: Tokenization - Breaking text into words/tokens
   - name: WhitespaceTokenizer
+    intent_tokenization_flag: true
+    intent_split_symbol: "+"
       
   # Step 2: Pattern Recognition - For course codes, emails, etc.
   - name: RegexFeaturizer

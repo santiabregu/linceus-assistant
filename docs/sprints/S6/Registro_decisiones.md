@@ -89,10 +89,11 @@ Sprint centrado en la épica de **Horarios y Aulas**: extraer los horarios ofici
 
 ## Iteración 3 (2026-03-28): Integración en Rasa
 
-### D-010: Action `ActionConsultaHorario` basada en archivos Markdown
+### D-010: Action `ActionConsultaHorario` basada en BD + LLM
 
-**Problema:** Decidir si la action de Rasa consulta los horarios desde la BD o desde los archivos Markdown.
-**Decisión:** La action lee directamente los archivos Markdown. La BD se usa como fuente de verdad para consultas SQL avanzadas (futuro), pero para la action conversacional los Markdown son más rápidos y no requieren queries complejas con 3 JOINs.
+**Problema:** Decidir si la action de Rasa consulta los horarios desde la BD o desde los archivos Markdown, y si la respuesta se genera con LLM o con templates.
+**Decisión:** La action consulta directamente la BD (`aulas`, `grupos_clase`, `horarios`) mediante queries parametrizadas y genera la respuesta con Gemini (igual que `ActionConsultaEspecifica` en asignaturas).
+**Justificación:** La BD permite filtros flexibles (por día, asignatura, cuatrimestre) sin parsear texto. El LLM genera respuestas naturales coherentes con el resto del chatbot. Los archivos Markdown se usan solo como fallback humano, no en runtime.
 **Capacidades implementadas:**
 - Consulta por curso + grupo: "¿Qué horario tiene 2º grupo 1?"
 - Filtro por día de la semana: "¿Qué clases hay los lunes en primero?"
@@ -104,8 +105,70 @@ Sprint centrado en la épica de **Horarios y Aulas**: extraer los horarios ofici
 ### D-011: Datos NLU para intent `consulta_horario`
 
 **Problema:** Se necesitan ejemplos de entrenamiento para que DIET clasifique correctamente las preguntas sobre horarios.
-**Decisión:** Crear `data/nlu/horarios.yml` con ~90 ejemplos que cubren: consulta de horario por curso/grupo, filtro por día, consulta de aula de asignatura, consulta de hora, y variaciones coloquiales.
+**Decisión:** Crear `data/nlu/horarios.yml` con ~115 ejemplos que cubren: consulta de horario por curso/grupo, filtro por día, consulta de aula de asignatura, consulta de hora, variaciones coloquiales, y ~25 ejemplos de preguntas de seguimiento (follow-up) dentro del contexto de horarios.
 **Archivos:** `data/nlu/horarios.yml`, `domain.yml` (intent + action), `data/rules.yml` (regla), `actions/actions.py` (import)
+
+---
+
+## Iteración 4 (2026-03-28): Multi-intent y mejoras conversacionales
+
+### D-012: Multi-intent nativo de DIET con `ActionMultiIntent`
+
+**Problema:** El usuario puede formular preguntas que combinan varias intenciones en una sola frase, ej: "Cambiar a IS y dime el horario de segundo grupo 1" o "¿Cuántos créditos tiene Redes y qué horario tiene segundo?". Implementar esto sin soporte nativo requeriría heurísticas frágiles en el pipeline.
+**Decisión:** Usar el soporte nativo de multi-intent de DIET añadiendo en `config.yml`:
+```yaml
+- name: WhitespaceTokenizer
+  intent_tokenization_flag: true
+  intent_split_symbol: "+"
+```
+Los intents compuestos se definen en `domain.yml` como `cambiar_contexto_academico+consulta_horario`, etc. Se crea `ActionMultiIntent` que:
+1. Descompone el intent compuesto por `+`
+2. Ejecuta la lógica de cada sub-intent (funciones internas, no actions Rasa)
+3. Recoge los datos crudos (JSON) de cada sub-ejecutor
+4. Genera UNA sola respuesta unificada con el LLM
+**Alternativas descartadas:**
+- Dispatcher personalizado (inspeccionar trackers entre acciones): inviable en Rasa sin hackear el core.
+- Respuestas múltiples concatenadas: el usuario recibe 2 mensajes separados, experiencia peor.
+- Pipeline de reglas con stories multi-step: combinatoria explosiva (N intents × M intents = N² stories).
+**Intents implementados:** 6 combinaciones (cambiar_contexto×{horario,especifica,listado,conteo}, horario×especifica, especifica×listado).
+**Archivos:** `actions/multi_intent/actions.py`, `actions/multi_intent/__init__.py`, `data/nlu/multi_intent.yml`, `config.yml`, `domain.yml`, `data/rules.yml`, `actions/actions.py`
+
+### D-013: Respuesta unificada del multi-intent via LLM (no concatenación)
+
+**Problema:** Al ejecutar 2 sub-intents (ej: cambio de contexto + consulta de horario), se generaban 2 respuestas separadas (cada sub-action llamaba a su propio LLM). Esto produce una experiencia de chatbot fragmentada e inconsistente.
+**Decisión:** Los sub-ejecutores de `ActionMultiIntent` devuelven **datos crudos en JSON** (sin llamar al LLM), y solo al final se hace **una única llamada al LLM** con todos los datos combinados para generar una respuesta fluida e integrada.
+**Justificación:** Una sola respuesta natural es mejor UX. El LLM recibe el contexto completo (cambio de titulación + datos de horario) y puede integrarlos de forma coherente.
+**Archivos:** `actions/multi_intent/actions.py` (`_generar_respuesta_unificada`)
+
+### D-014: Regla "no saludes" en todos los prompts LLM
+
+**Problema:** Gemini prepend "¡Hola!" o "Buenos días," a todas las respuestas aunque se le pidiera ser directo, lo que resultaba en un saludo artificial en cada mensaje del bot.
+**Decisión:** Añadir explícitamente en todos los prompts de sistema enviados al LLM (4 prompts: horarios, asignatura específica, listado, multi-intent): `"No saludes (nada de "Hola!", "Buenos dias", etc.) — ve directo a la respuesta"`.
+**Archivos:** `actions/horarios/actions.py`, `actions/asignaturas/actions.py`, `actions/multi_intent/actions.py`
+
+### D-015: Corrección tipología `TRONCAL` → `OBLIGATORIA` en prompts LLM
+
+**Problema:** Los prompts de `text_to_sql.py` especificaban las tipologías válidas incluyendo `TRONCAL`, que no existe en la BD (tabla `asignaturas`, campo `tipologia`). El LLM generaba queries con `tipologia='TRONCAL'` que devolvían 0 resultados.
+**Decisión:** Actualizar los 3 prompts de `text_to_sql.py` para listar solo los valores reales del enum: `OBLIGATORIA`, `OPTATIVA`, `FORMACION_BASICA`, `TFG`. Añadir además el mapeo explícito `troncal → OBLIGATORIA` en el prompt para que el LLM traduzca correctamente el lenguaje coloquial del usuario.
+**Archivos:** `actions/asignaturas/text_to_sql.py`
+
+### D-016: Detección heurística de seguimiento (follow-up) basada en recencia de slots
+
+**Problema:** Las preguntas de seguimiento ("¿y el profesor?", "¿cuántas horas de lab tiene?", "¿qué días es?") no mencionan la asignatura explícitamente. El bot caía en fallback o usaba fuzzy matching que a veces elegía la asignatura incorrecta.
+**Decisión:** Implementar detección heurística basada en **recencia de slots**: si no hay entidad `nombre_asignatura` en el mensaje actual pero el slot `ultimo_codigo_consultado` fue establecido en los últimos ≤3 turnos, se asume seguimiento y se usa esa asignatura como contexto. Se añade la función auxiliar `_contar_turnos_desde_slot(tracker, slot_name)` en ambas actions (asignaturas y horarios).
+**Alternativas descartadas:**
+- Lista de regex de palabras de seguimiento ("y", "también", "su", "qué días"...): frágil, idioma-dependiente, requiere mantenimiento constante.
+- LLM para clasificar si es follow-up: demasiado lento, añade latencia a cada turno aunque no sea seguimiento.
+**Pipeline final en `resolver_asignatura`:** NLU entity → alias dict → heuristic follow-up (slot ≤3 turnos) → fuzzy matching.
+**Justificación del orden:** La heurística antes que fuzzy evita que fuzzy "robe" el contexto activo cuando el usuario hace una pregunta ambigua sin nombrar la asignatura.
+**Archivos:** `actions/asignaturas/actions.py`, `actions/horarios/actions.py`
+
+### D-017: Slot `ultima_action_ejecutada` para refinamiento de grupo
+
+**Problema:** Después de una consulta de asignatura específica (ej: "¿Quién da clase de ADDA?"), si el usuario dice "en el grupo 2", Rasa clasificaba como `consulta_horario` (detectaba "grupo") y devolvía el horario del grupo 2 en vez de la info de ADDA en el grupo 2.
+**Decisión:** Añadir el slot `ultima_action_ejecutada` (tipo text) que se setea a `"action_consulta_especifica"` o `"action_consulta_horario"` en cada llamada. En `ActionConsultaHorario`, si el mensaje contiene **solo** información de grupo (sin curso ni asignatura) y `ultima_action_ejecutada == "action_consulta_especifica"` y hay slot reciente (≤3 turnos), redirigir a `ActionConsultaEspecifica` con el contexto actual + nuevo grupo.
+**Justificación:** El slot es ligero (solo almacena un string) y no requiere training adicional. La condición triple (solo grupo + action previa + slot reciente) minimiza falsos positivos.
+**Archivos:** `actions/horarios/actions.py`, `actions/asignaturas/actions.py`, `domain.yml` (slot)
 
 ---
 
@@ -126,9 +189,12 @@ Sprint centrado en la épica de **Horarios y Aulas**: extraer los horarios ofici
 
 ---
 
+**Intents multi-intent implementados:** 6 combinaciones (cambiar_contexto+{horario,especifica,listado,conteo}, horario+especifica, especifica+listado)
+
+---
+
 ## Pendiente
 
-- Re-entrenar modelo NLU (`rasa train`) para activar el intent `consulta_horario`
-- Testing e2e de la action de horarios contra el bot
-- Valorar si migrar la action para consultar la BD directamente en vez de los Markdown
-- Completar el mapeo de las 6 abreviaturas compartidas de 4º curso
+- Re-entrenar modelo NLU (`rasa train`) para activar los intents de horarios y multi-intent
+- Testing e2e completo: horarios, seguimiento, multi-intent
+- Completar el mapeo de las 6 abreviaturas compartidas de 4º curso (EC, GP, MCG, PID, T, TIS)

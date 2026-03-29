@@ -47,6 +47,17 @@ def _normalizar(texto: str) -> str:
     return texto.lower().strip()
 
 
+def _contar_turnos_desde_slot(tracker, slot_name: str) -> int:
+    """Cuenta turnos de usuario desde la última vez que se seteó el slot."""
+    turnos = 0
+    for event in reversed(tracker.events):
+        if event.get("event") == "user":
+            turnos += 1
+        if event.get("event") == "slot" and event.get("name") == slot_name:
+            return turnos
+    return 999
+
+
 def _detectar_curso(texto: str) -> Optional[int]:
     texto_lower = texto.lower()
     patrones = [
@@ -356,6 +367,7 @@ REGLAS:
 - Si no hay resultados, dilo amablemente
 - No repitas la pregunta del usuario
 - No digas "según los datos" ni menciones la base de datos
+- No saludes (nada de "¡Hola!", "Hola!", "Buenos días", etc.) — ve directo a la respuesta
 - Si hay muchas entradas, organízalas bien para que sea fácil de leer
 
 Respuesta:"""
@@ -400,6 +412,39 @@ class ActionConsultaHorario(Action):
         dia = _detectar_dia(mensaje)
         cuatrimestre = _detectar_cuatrimestre(mensaje)
         asignatura = _detectar_asignatura(mensaje)
+
+        # ── Refinamiento de grupo: si solo hay grupo y la última action fue consulta_especifica,
+        #    el usuario quiere refinar la consulta anterior (ej: "en el grupo 2" tras preguntar profesores)
+        #    → re-ejecutar la consulta de asignaturas con el grupo añadido ──
+        if grupo and not curso and not dia and not asignatura:
+            ultima_action = tracker.get_slot("ultima_action_ejecutada")
+            ultimo_nombre = tracker.get_slot("ultimo_nombre_asignatura")
+            if ultima_action == "consulta_especifica" and ultimo_nombre:
+                turnos = _contar_turnos_desde_slot(tracker, "ultimo_nombre_asignatura")
+                if turnos <= 3:
+                    # Reconstruir la pregunta incluyendo la asignatura para que
+                    # ActionConsultaEspecifica la resuelva correctamente
+                    from ..asignaturas.actions import ActionConsultaEspecifica
+                    print(f"   Refinamiento de grupo: redirigiendo a consulta_especifica "
+                          f"'{ultimo_nombre}' grupo {grupo}")
+                    action_especifica = ActionConsultaEspecifica()
+                    return action_especifica.run(dispatcher, tracker, domain)
+
+        # ── Seguimiento heurístico: si no hay asignatura ni curso, y hay slot reciente ──
+        if not asignatura and not curso:
+            ultimo_nombre = tracker.get_slot("ultimo_nombre_asignatura")
+            if ultimo_nombre:
+                turnos = _contar_turnos_desde_slot(tracker, "ultimo_nombre_asignatura")
+                if turnos <= 3:
+                    # Buscar el alias correspondiente al nombre completo
+                    nombre_norm = _normalizar(ultimo_nombre)
+                    for alias, nombre_map in ALIAS_ASIGNATURAS.items():
+                        if nombre_map in nombre_norm or nombre_norm in nombre_map:
+                            asignatura = alias
+                            break
+                    if not asignatura:
+                        asignatura = ultimo_nombre
+                    print(f"   Seguimiento horario heurístico: '{asignatura}' ({turnos} turnos atrás)")
 
         # ── Búsqueda por asignatura ──
         if asignatura:

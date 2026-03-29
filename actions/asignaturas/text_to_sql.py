@@ -24,7 +24,7 @@ CREATE TABLE asignaturas (
     curso INTEGER,                         -- 1, 2, 3 o 4
     creditos DECIMAL(4,1),                 -- 6.0 o 12.0
     duracion VARCHAR(10),                  -- 'A' (anual), 'C1' (1er cuatri), 'C2' (2º cuatri)
-    tipologia VARCHAR(50),                 -- 'TRONCAL', 'OBLIGATORIA', 'OPTATIVA', 'FORMACION_BASICA'
+    tipologia VARCHAR(50),                 -- 'OBLIGATORIA', 'OPTATIVA', 'FORMACION_BASICA', 'TFG'
     es_formacion_basica BOOLEAN,
     es_optativa BOOLEAN,
     nombre_normalizado VARCHAR(200),       -- nombre en minúsculas sin tildes
@@ -35,7 +35,7 @@ CREATE TABLE asignaturas (
 -- curso: 1, 2, 3, 4
 -- creditos: 6, 12
 -- duracion: 'A', 'C1', 'C2'
--- tipologia: 'TRONCAL', 'OBLIGATORIA', 'OPTATIVA', 'FORMACION_BASICA'
+-- tipologia: 'OBLIGATORIA', 'OPTATIVA', 'FORMACION_BASICA', 'TFG'
 """
 
 # Columnas permitidas para SELECT (seguridad)
@@ -91,8 +91,8 @@ SINONIMOS_VALORES = {
     'obligatorias': 'OBLIGATORIA',
     'optativa': 'OPTATIVA',
     'optativas': 'OPTATIVA',
-    'troncal': 'TRONCAL',
-    'troncales': 'TRONCAL',
+    'troncal': 'OBLIGATORIA',
+    'troncales': 'OBLIGATORIA',
     'formacion basica': 'FORMACION_BASICA',
     'formación básica': 'FORMACION_BASICA',
     'basica': 'FORMACION_BASICA',
@@ -875,6 +875,7 @@ REGLAS:
 - Puedes usar markdown para formatear (negritas, listas)
 - No repitas la pregunta del usuario
 - No digas "según los datos" ni menciones la base de datos
+- No saludes (nada de "¡Hola!", "Hola!", "Buenos días", etc.) — ve directo a la respuesta
 
 Respuesta:"""
 
