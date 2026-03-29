@@ -30,6 +30,8 @@ Este documento registra los cambios realizados en cada versión del chatbot sigu
 | v2.2.2 | 2026-03 | RAG | Mejorar ejemplos NLU tras ejecución de pruebas v2 |
 | v2.2.3 | 2026-03 | RAG | Mejorar ejemplos NLU tras ejecución de pruebas v2 |
 | v2.2.4 | 2026-03 | RAG | Mejorar ejemplos NLU tras ejecución de pruebas v2 (horas) |
+| v2.3.0 | 2026-03 | Horarios | Empezar implementación de horarios y aulas |
+
 ---
 
 ## Detalle por Versión

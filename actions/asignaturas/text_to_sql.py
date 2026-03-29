@@ -123,29 +123,8 @@ SINONIMOS_VALORES = {
     '4º': '4',
 }
 
-# Mapeos de abreviaturas/alias comunes de asignaturas → nombre real en BD
-ALIAS_ASIGNATURAS = {
-    'tfg': 'trabajo fin de grado',
-    'fp': 'fundamentos de programacion',
-    'adda': 'analisis y diseno de datos y algoritmos',
-    'ia': 'inteligencia artificial',
-    'is1': 'introduccion a la ingenieria del software',
-    'is2': 'diseno y pruebas',
-    'dp1': 'diseno y pruebas',
-    'dp2': 'diseno y pruebas',
-    'iso': 'introduccion a la ingenieria del software y los sistemas de informacion',
-    'so': 'sistemas operativos',
-    'pgpi': 'planificacion y gestion de proyectos informaticos',
-    'egc': 'evolucion y gestion de la configuracion',
-    'iissi': 'introduccion a la ingenieria del software y los si',
-    'psg': 'proceso software y gestion i',
-    'psg1': 'proceso software y gestion i',
-    'psg2': 'proceso software y gestion ii',
-    'ssi': 'seguridad de sistemas de informacion',
-    'aii': 'acceso inteligente a la informacion',
-    'cripto': 'criptografia',
-    'cbd': 'complementos de base de datos',
-}
+# Importar diccionario unificado de alias desde config central
+from ..shared.config import ALIAS_ASIGNATURAS
 
 
 def _parece_acronimo(texto: str) -> bool:

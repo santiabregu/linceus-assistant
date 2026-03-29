@@ -71,6 +71,11 @@ rules:
   - intent: pedir_mas_resultados
   - action: action_mostrar_todas_asignaturas
 
+- rule: Consulta de horario
+  steps:
+  - intent: consulta_horario
+  - action: action_consulta_horario
+
 - rule: Mostrar todas con afirmacion
   steps:
   - intent: affirm

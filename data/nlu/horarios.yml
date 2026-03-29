@@ -1,0 +1,101 @@
+version: "3.1"
+
+nlu:
+- intent: consulta_horario
+  examples: |
+    - ¿Qué horario tiene primero?
+    - ¿Qué horario tiene 1º?
+    - horario de primero
+    - horario de segundo
+    - horario de tercero
+    - horario de cuarto
+    - horario de 1º grupo 1
+    - horario de 2º grupo 2
+    - horario de 3º grupo 1
+    - horario 4º grupo 1
+    - ¿Qué horario tiene 2º de Computadores grupo 1?
+    - quiero ver el horario de primero grupo 2
+    - dame el horario de segundo grupo 3
+    - ver horario de tercero grupo 1
+    - muéstrame el horario de cuarto
+    - enséñame el horario de 1º g1
+    - horario de primer curso
+    - horario del primer cuatrimestre de segundo
+    - horario de 2º cuatrimestre 1
+    - horario c1 de primero
+    - horario c2 de tercero
+    - ¿Cuál es el horario de primero grupo 1?
+    - ¿Cuál es mi horario de segundo?
+    - ¿Qué clases tengo?
+    - ¿Qué clases hay en primero?
+    - ¿Qué clases hay los lunes?
+    - ¿Qué clases hay los martes en 2º?
+    - ¿Qué hay los miércoles en primero grupo 1?
+    - ¿Qué tengo los jueves?
+    - ¿Qué clases tengo los viernes?
+    - clases del lunes
+    - clases del martes de segundo
+    - clases de los miércoles
+    - mi horario del lunes
+    - mi horario del viernes de primero
+    - ¿En qué aula tengo FP?
+    - ¿En qué aula es FP?
+    - ¿Dónde se da FP?
+    - ¿Dónde tengo clase de FP?
+    - ¿Dónde es la clase de ALN?
+    - ¿Cuándo tengo FP?
+    - ¿Cuándo es FP?
+    - ¿Cuándo tengo CED?
+    - ¿A qué hora es FP?
+    - ¿A qué hora tengo ALN?
+    - ¿A qué hora es la clase de IMD?
+    - ¿En qué aula tengo Redes?
+    - ¿Dónde se imparte Fundamentos de Programación?
+    - aula de FP
+    - aula de CED
+    - aula de IMD
+    - horario de FP
+    - horario de ALN
+    - ¿Cuándo tengo clase de Estructuras de Datos?
+    - ¿A qué hora es EdC?
+    - ¿Dónde tengo FFI?
+    - ¿En qué aula es CIN?
+    - ¿Cuándo tengo AE?
+    - horario del grupo 1 de primero
+    - horario del grupo 2 de segundo
+    - horario del grupo 3 de primero
+    - horario del grupo 4 de primero
+    - ¿Qué horario tiene el grupo 1?
+    - ¿Qué horario tiene el grupo 2 de tercero?
+    - ¿Qué hay mañana en primero?
+    - ¿Qué clases tengo en 1º grupo 2?
+    - ¿Qué asignaturas tiene primero grupo 1 el lunes?
+    - dime el horario de 2º grupo 1
+    - consultar horario
+    - ver horario
+    - mi horario
+    - quiero ver mi horario
+    - necesito saber mi horario
+    - ¿Cuál es el horario de mi curso?
+    - ¿Qué clases tengo esta semana?
+    - horario semanal de segundo grupo 2
+    - horario semanal
+    - ¿Qué aula tiene ADDA?
+    - ¿Dónde es SO?
+    - ¿Cuándo tengo RC?
+    - ¿A qué hora es IISSI1?
+    - ¿En qué aula está MD?
+    - ¿Dónde es la clase de AC?
+    - ¿Cuándo tengo clase de TC?
+    - ¿A qué hora es DSD?
+    - horario de Software grupo 1
+    - horario de Computadores grupo 2
+    - horario de Tecnologías Informáticas grupo 1
+    - horario de IS grupo 1
+    - horario de IC grupo 2
+    - horario de TI grupo 3
+    - donde esta TIS
+    - en que clase esta ADDA
+    - en que planta esta la aula A1.10
+    - La aula A1.10 donde esta
+    

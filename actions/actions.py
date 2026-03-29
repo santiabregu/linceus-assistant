@@ -11,6 +11,10 @@ from .contexto import (
     ActionConsultaTitulaciones,
 )
 
+from .horarios import (
+    ActionConsultaHorario,
+)
+
 __all__ = [
     'ActionConsultaEspecifica',
     'ActionConsultaListado',
@@ -19,4 +23,5 @@ __all__ = [
     'ActionCambiarContexto',
     'ActionConsultarContexto',
     'ActionConsultaTitulaciones',
+    'ActionConsultaHorario',
 ]

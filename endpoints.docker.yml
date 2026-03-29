@@ -1,0 +1,6 @@
+# endpoints.yml para uso con Docker Compose
+# El action server se referencia por nombre de servicio, no por localhost
+
+action_endpoint:
+  url: "http://actions:5055/webhook"
+  timeout: 300

@@ -18,6 +18,8 @@ intents:
   - consulta_asignaturas_listado     # "Dame las optativas de cuarto"
   - consulta_asignaturas_conteo      # "¿Cuántas asignaturas hay en primero?"
   - pedir_mas_resultados
+  # Horarios
+  - consulta_horario                 # "¿Qué horario tiene 2º grupo 1?"
   - out_of_scope
 
 entities:
@@ -104,6 +106,11 @@ responses:
       - "Qué asignaturas obligatorias hay en primero?"
       - "Dame las optativas de cuarto"
 
+      **Horarios:**
+      - "¿Qué horario tiene 2º grupo 1?"
+      - "¿En qué aula tengo FP?"
+      - "¿Qué clases hay los lunes en primero?"
+
       **Contexto académico:**
       - "Qué carrera estoy consultando?"
       - "Cambiar a Tecnologías Informáticas"
@@ -147,6 +154,8 @@ actions:
   - action_consulta_listado         # Listar asignaturas con filtros
   - action_consulta_conteo          # Contar asignaturas
   - action_mostrar_todas_asignaturas
+  # Horarios
+  - action_consulta_horario
 
 session_config:
   session_expiration_time: 60
