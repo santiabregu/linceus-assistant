@@ -11,6 +11,14 @@ from .contexto import (
     ActionConsultaTitulaciones,
 )
 
+from .horarios import (
+    ActionConsultaHorario,
+)
+
+from .multi_intent import (
+    ActionMultiIntent,
+)
+
 __all__ = [
     'ActionConsultaEspecifica',
     'ActionConsultaListado',
@@ -19,4 +27,6 @@ __all__ = [
     'ActionCambiarContexto',
     'ActionConsultarContexto',
     'ActionConsultaTitulaciones',
+    'ActionConsultaHorario',
+    'ActionMultiIntent',
 ]

@@ -1,0 +1,50 @@
+services:
+
+  # ─── Action Server (custom actions + RAG) ───────────────────────────────────
+  actions:
+    build:
+      context: .
+      dockerfile: Dockerfile.actions
+    ports:
+      - "5055:5055"
+    env_file:
+      - .env
+    volumes:
+      # Monta el código en tiempo de ejecución para facilitar desarrollo
+      - ./actions:/app/actions
+      - ./rag:/app/rag
+    restart: unless-stopped
+
+  # ─── Rasa Server (NLU + diálogo) ────────────────────────────────────────────
+  rasa:
+    image: rasa/rasa:3.6.21
+    ports:
+      - "5005:5005"
+    volumes:
+      - ./models:/app/models
+      - ./config.yml:/app/config.yml
+      - ./domain.yml:/app/domain.yml
+      - ./credentials.yml:/app/credentials.yml
+      - ./data:/app/data
+      # Usa endpoints.docker.yml para que apunte al servicio "actions" en vez de localhost
+      - ./endpoints.docker.yml:/app/endpoints.yml
+    env_file:
+      - .env
+    command: >
+      run
+      --enable-api
+      --cors "*"
+      --port 5005
+      --endpoints endpoints.yml
+    depends_on:
+      - actions
+    restart: unless-stopped
+
+  # ─── Frontend (chatbot widget) ───────────────────────────────────────────────
+  frontend:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    restart: unless-stopped

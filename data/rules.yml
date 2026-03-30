@@ -71,6 +71,47 @@ rules:
   - intent: pedir_mas_resultados
   - action: action_mostrar_todas_asignaturas
 
+- rule: Consulta de horario
+  steps:
+  - intent: consulta_horario
+  - action: action_consulta_horario
+
+# =============================================================================
+# REGLAS PARA MULTI-INTENT (combinaciones de acciones)
+# =============================================================================
+
+- rule: Multi-intent cambiar contexto + horario
+  steps:
+  - intent: cambiar_contexto_academico+consulta_horario
+  - action: action_multi_intent
+
+- rule: Multi-intent cambiar contexto + consulta especifica
+  steps:
+  - intent: cambiar_contexto_academico+consulta_asignatura_especifica
+  - action: action_multi_intent
+
+- rule: Multi-intent cambiar contexto + listado
+  steps:
+  - intent: cambiar_contexto_academico+consulta_asignaturas_listado
+  - action: action_multi_intent
+
+- rule: Multi-intent cambiar contexto + conteo
+  steps:
+  - intent: cambiar_contexto_academico+consulta_asignaturas_conteo
+  - action: action_multi_intent
+
+- rule: Multi-intent horario + consulta especifica
+  steps:
+  - intent: consulta_horario+consulta_asignatura_especifica
+  - action: action_multi_intent
+
+- rule: Multi-intent consulta especifica + listado
+  steps:
+  - intent: consulta_asignatura_especifica+consulta_asignaturas_listado
+  - action: action_multi_intent
+
+# =============================================================================
+
 - rule: Mostrar todas con afirmacion
   steps:
   - intent: affirm

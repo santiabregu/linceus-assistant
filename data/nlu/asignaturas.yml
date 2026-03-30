@@ -161,6 +161,30 @@ nlu:
     - cuantos creditos tiene [Biologia](nombre_asignatura)
     - [Quimica Organica](nombre_asignatura) es obligatoria?
     - hablame de [Historia del Arte](nombre_asignatura)
+    - y quién da clase
+    - y quién la imparte
+    - quién da esa asignatura
+    - quién es el profesor
+    - quiénes son los profesores
+    - y los profesores
+    - y el profesorado
+    - cómo se evalúa
+    - y cómo se evalúa
+    - cómo se aprueba
+    - y la evaluación
+    - cuál es el temario
+    - y el temario
+    - y los contenidos
+    - y de cuántos créditos es
+    - de cuántos créditos es
+    - es obligatoria u optativa
+    - y es obligatoria
+    - de qué curso es
+    - y de qué curso es
+    - y la bibliografía
+    - cuéntame más
+    - dame más detalles
+    - y la metodología
     - info de [Contabilidad](nombre_asignatura)
     - que es [Psicologia Social](nombre_asignatura)
     - cuantas horas tiene [Calculo](nombre_asignatura)

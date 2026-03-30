@@ -1,0 +1,39 @@
+# Control de versiones
+.git
+.github
+.gitignore
+
+# Python cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.egg-info
+.Python
+
+# Entornos virtuales
+.venv
+venv/
+env/
+
+# Logs y temporales
+*.log
+*.tmp
+
+# IDE
+.vscode
+
+# Documentación y tests (no necesarios en imagen)
+docs/
+tests/
+memory_tfg/
+proyectos_docentes/
+
+# Rasa internals
+.rasa/
+
+# Los modelos son grandes y se montan como volumen
+models/
+
+# El .env se pasa con env_file en docker-compose, no se copia en la imagen
+.env

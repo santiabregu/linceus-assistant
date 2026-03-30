@@ -323,8 +323,11 @@
             </div>
             <div class="chat-messages">
                 <div class="chat-message bot">
-                    ¡Hola! Soy <strong>Linceus</strong>, el asistente virtual de la Universidad de Sevilla. 
-                    ¿En qué puedo ayudarte hoy?
+                    ¡Hola! Soy <strong>Linceus</strong>, el asistente virtual de la ETSII (Universidad de Sevilla). ¿En qué puedo ayudarte hoy?<br><br>
+                    Antes de empezar, por favor indícame tu titulación:<br>
+                    • <strong>Ingeniería del Software</strong> (GII-IS)<br>
+                    • <strong>Tecnologías Informáticas</strong> (GII-TI)<br>
+                    • <strong>Ingeniería de Computadores</strong> (GII-IC)
                 </div>
                 <div class="typing-indicator">
                     <span></span><span></span><span></span>

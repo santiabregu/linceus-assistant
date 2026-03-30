@@ -1,0 +1,23 @@
+FROM python:3.10.14-slim-bookworm
+
+WORKDIR /app
+
+# Build dependencies (capa cacheada mientras no cambien)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copiar solo requirements para aprovechar la caché de Docker
+COPY requirements-actions.txt .
+RUN pip install --no-cache-dir -r requirements-actions.txt
+
+# Copiar código de acciones y RAG
+# (en desarrollo se sobreescriben con volúmenes en docker-compose)
+COPY actions/ actions/
+COPY rag/ rag/
+
+EXPOSE 5055
+
+# --auto-reload recarga automáticamente cuando cambian los archivos montados
+CMD ["python", "-m", "rasa_sdk", "--actions", "actions", "--port", "5055", "--auto-reload"]

@@ -99,6 +99,20 @@ def obtener_historial_reciente(tracker, max_turnos: int = 2) -> str:
     return "\n".join(lineas)
 
 
+def _contar_turnos_desde_slot(tracker, slot_name: str) -> int:
+    """
+    Cuenta turnos de usuario desde la última vez que se seteó el slot.
+    Usado para determinar si el slot es reciente (seguimiento) o stale.
+    """
+    turnos = 0
+    for event in reversed(tracker.events):
+        if event.get("event") == "user":
+            turnos += 1
+        if event.get("event") == "slot" and event.get("name") == slot_name:
+            return turnos
+    return 999
+
+
 def _cargar_titulaciones_desde_bd() -> List[Dict]:
     """
     Obtiene todas las titulaciones activas de la BD.
@@ -389,36 +403,14 @@ def resolver_asignatura(
                              if tracker.get_slot("contexto_titulacion") else False)
     nombre_asignatura = extraer_nombre_asignatura(tracker, titulacion_inline)
 
-    # 2. Seguimiento: si no hay nombre, usar contexto previo
-    if usar_seguimiento and not nombre_asignatura:
-        ultimo_nombre = tracker.get_slot("ultimo_nombre_asignatura")
-        if ultimo_nombre:
-            pregunta_lower = pregunta.lower()
-            patrones_seguimiento = [
-                r'^y\s+(cuantos|que|cual|como|quien|cuales|es|tiene|de que)',
-                r'^(esa|esta|la|esa asignatura|esta asignatura)\s+',
-                r'^(creditos|curso|duracion|tipo)',
-                r'^como se (evalua|califica|aprueba)',
-                r'^(quien|quienes) (la )?(da|imparte|ense[ñn]a)',
-                r'^(que|cual es) (el|la|su) (temario|programa|contenido|bibliografia|metodologia|evaluacion|profesorado)',
-                r'cuantos creditos tiene\??$',
-                r'es (obligatoria|optativa)\??$',
-                r'de que (curso|cuatrimestre) es\??$',
-            ]
-            for patron in patrones_seguimiento:
-                if re.search(patron, pregunta_lower):
-                    nombre_asignatura = ultimo_nombre
-                    print(f"   → Usando contexto previo: {nombre_asignatura}")
-                    break
-
-    # 3. Expandir alias/acrónimos
+    # 2. Expandir alias/acrónimos
     if nombre_asignatura:
         nombre_expandido = _expandir_alias(nombre_asignatura, contexto_titulacion)
         if nombre_expandido != nombre_asignatura:
             print(f"   → Alias expandido: '{nombre_asignatura}' → '{nombre_expandido}'")
             nombre_asignatura = nombre_expandido
 
-    # 4. Sin entidad NLU: buscar alias en el texto de la pregunta
+    # 3. Sin entidad NLU: buscar alias en el texto de la pregunta
     if not nombre_asignatura:
         pregunta_lower = pregunta.lower()
         for alias in sorted(ALIAS_ASIGNATURAS, key=len, reverse=True):
@@ -426,6 +418,16 @@ def resolver_asignatura(
                 nombre_asignatura = _expandir_alias(alias, contexto_titulacion)
                 print(f"   → Alias detectado en pregunta: '{alias}' → '{nombre_asignatura}'")
                 break
+
+    # 4. Heurística de seguimiento: si no se encontró nada Y hay asignatura reciente → follow-up
+    #    Esto va ANTES del fuzzy matching para evitar que el fuzzy coja una asignatura incorrecta
+    if usar_seguimiento and not nombre_asignatura:
+        ultimo_nombre = tracker.get_slot("ultimo_nombre_asignatura")
+        if ultimo_nombre:
+            turnos = _contar_turnos_desde_slot(tracker, "ultimo_nombre_asignatura")
+            if turnos <= 3:
+                nombre_asignatura = ultimo_nombre
+                print(f"   → Seguimiento heurístico: '{ultimo_nombre}' ({turnos} turnos atrás)")
 
     # 5. Fuzzy matching contra nombres reales en BD
     if not nombre_asignatura:
@@ -505,6 +507,7 @@ REGLAS:
 - Usa solo la información proporcionada, no inventes datos
 - Puedes usar markdown para formatear (negritas, listas)
 - No menciones que consultaste un "plan docente" ni "chunks"
+- No saludes (nada de "¡Hola!", "Hola!", "Buenos días", etc.) — ve directo a la respuesta
 - Si la información no es suficiente para responder, dilo amablemente
 
 Respuesta:"""
@@ -627,6 +630,7 @@ class ActionConsultaEspecifica(Action):
                         return eventos_contexto + [
                             SlotSet("ultimo_codigo_consultado", codigo_rag),
                             SlotSet("ultimo_nombre_asignatura", asignatura.get('nombre')),
+                            SlotSet("ultima_action_ejecutada", "consulta_especifica"),
                         ]
                 # RAG necesario pero sin resultados → informar al usuario
                 nombre = asignatura.get('nombre', 'esta asignatura')
@@ -637,7 +641,8 @@ class ActionConsultaEspecifica(Action):
                 )
                 return eventos_contexto + [
                     SlotSet("ultimo_codigo_consultado", codigo_rag),
-                    SlotSet("ultimo_nombre_asignatura", nombre)
+                    SlotSet("ultimo_nombre_asignatura", nombre),
+                    SlotSet("ultima_action_ejecutada", "consulta_especifica"),
                 ]
             except Exception as e:
                 import traceback
@@ -658,7 +663,8 @@ class ActionConsultaEspecifica(Action):
 
         return eventos_contexto + [
             SlotSet("ultimo_codigo_consultado", asignatura.get('codigo')),
-            SlotSet("ultimo_nombre_asignatura", asignatura.get('nombre'))
+            SlotSet("ultimo_nombre_asignatura", asignatura.get('nombre')),
+            SlotSet("ultima_action_ejecutada", "consulta_especifica"),
         ]
 
 
