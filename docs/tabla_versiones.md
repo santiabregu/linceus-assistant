@@ -30,7 +30,9 @@ Este documento registra los cambios realizados en cada versión del chatbot sigu
 | v2.2.2 | 2026-03 | RAG | Mejorar ejemplos NLU tras ejecución de pruebas v2 |
 | v2.2.3 | 2026-03 | RAG | Mejorar ejemplos NLU tras ejecución de pruebas v2 |
 | v2.2.4 | 2026-03 | RAG | Mejorar ejemplos NLU tras ejecución de pruebas v2 (horas) |
-| v2.3.0 | 2026-03 | Horarios | Empezar implementación de horarios y aulas |
+| v3.1.0 | 2026-03 | Horarios | Implementación de horarios y aulas |
+| v3.2.0 | 2026-03 | Horarios | Implementación de horarios y aulas |
+| v4.0.0 | 2026-03 | Profesores | Scraping 4 departamentos + BD + NLU + Text-to-SQL + RAG |
 
 ---
 
@@ -802,10 +804,116 @@ LLM genera respuesta con contexto del plan docente
 
 ---
 
+### v4.0.0 - Épica Profesores: Scraping, BD y Consultas
+**Fecha:** Marzo 2026
+**Tipo:** MAJOR - Nueva épica completa
+
+**Cambios:**
+- **Scraping de 4 departamentos** con scripts independientes:
+  - `scraper_lsi.py`: WordPress/Elementor, 92 profesores. Todos con email, despacho y categoría
+  - `scraper_dte.py`: Plone CMS, 77 profesores. Email reconstruido desde HTML ofuscado (`<span>user</span><img arroba/><span>domain</span>`)
+  - `scraper_ccia.py`: HTML estático, 34 profesores. Incluye tutorías desde página dedicada
+  - `scraper_ma1.py`: SISIUS + Directorio US (doble enriquecimiento), 65 profesores. ORCID y web personal desde SISIUS, email desde directorio US
+  - JSON intermedio en `profesores/datos/{depto}.json` para depuración
+  - `insertar_profesores_db.py`: lee los 4 JSON e inserta en BD (268 profesores totales)
+- **Nuevas columnas en tabla `profesores`**:
+  - `categoria_academica VARCHAR(100)`: Catedrático, Titular, Contratado Doctor, etc.
+  - `enlace_perfil VARCHAR(500)`: URL del perfil en web del departamento o SISIUS
+- **Departamentos insertados en BD**: LSI, CCIA, DTE, MA1 (antes la tabla estaba vacía)
+- **Nuevo intent `consulta_profesor`** con ~65 ejemplos NLU:
+  - Consulta por nombre: "correo de Parejo", "despacho de Ruiz Cortés"
+  - Consulta con asignatura como contexto: "correo de Belén que da FP"
+  - Consulta por departamento: "profesores de LSI"
+  - Follow-ups: "¿y su correo?", "¿y las tutorías?"
+- **Nuevas entities**: `nombre_profesor`, `nombre_departamento`
+- **Nuevo slot**: `ultimo_profesor_consultado` (para follow-ups)
+- **Text-to-SQL para profesores** (`profesores/text_to_sql.py`):
+  - Schema completo: profesores + departamentos + tutorias + profesor_asignatura + asignaturas
+  - LLM genera JOINs según la pregunta (profesor+departamento, profesor+tutorías, etc.)
+  - Validación SQL con tablas permitidas (misma seguridad que asignaturas)
+  - Fallback seguro por tipo de entidad (nombre, asignatura, departamento)
+- **Clasificador RAG con IA** para desambiguación profesor+asignatura:
+  - LLM decide si necesita RAG (nombre parcial + asignatura mencionada)
+  - Heurística fallback: nombre ≤8 chars y 1 sola palabra → probablemente nombre de pila → RAG
+  - Ejemplo: "correo de Belén que da FP" → IA detecta que "Belén" es ambiguo → RAG
+  - Ejemplo: "tutorías de Parejo" → IA detecta que "Parejo" es apellido suficiente → SQL directo
+- **Flujo RAG de 2 pasos** para resolver profesor por asignatura:
+  1. Buscar en plan docente de la asignatura → extraer nombres de profesores con LLM
+  2. Fuzzy match del nombre parcial contra nombres extraídos → buscar en BD profesores → datos de contacto
+- **Enriquecimiento automático con tutorías**: si la query SQL no incluye JOIN con tutorías, las busca aparte y las añade al resultado
+
+**Archivos nuevos:**
+- `profesores/scraper_lsi.py` - Scraper LSI
+- `profesores/scraper_dte.py` - Scraper DTE
+- `profesores/scraper_ccia.py` - Scraper CCIA
+- `profesores/scraper_ma1.py` - Scraper MA1
+- `profesores/insertar_profesores_db.py` - Inserción en BD
+- `sql/add_profesores_fields.sql` - ALTER TABLE para nuevos campos
+- `actions/profesores/__init__.py` - Módulo de actions
+- `actions/profesores/actions.py` - ActionConsultaProfesor
+- `actions/profesores/text_to_sql.py` - Text-to-SQL para profesores
+- `data/nlu/profesores.yml` - Ejemplos NLU
+
+**Archivos modificados:**
+- `domain.yml` - +1 intent, +2 entities, +1 slot, +1 action, actualizado utter_ayuda
+- `data/rules.yml` - +1 rule consulta_profesor → action_consulta_profesor
+- `actions/actions.py` - Import y registro de ActionConsultaProfesor
+- `docs/other/db_tables.md` - Campos nuevos en diagrama ER
+- `docs/sprints/S6/Registro_decisiones.md` - D-018 a D-023
+
+**Datos en base de datos:**
+
+| Departamento | Profesores | Con email | Con despacho | Con categoría |
+|-------------|-----------|-----------|-------------|--------------|
+| LSI | 92 | 92 | 92 | 92 |
+| DTE | 77 | 77 | 53 | 73 |
+| CCIA | 34 | 34 | 31 | 31 |
+| MA1 | 65 | 50 | 0 | 50 |
+| **Total** | **268** | **253** | **176** | **246** |
+
+**Flujo consulta directa:**
+```
+Usuario: "tutorías del profesor Parejo"
+    ↓
+Clasificador IA: no hay asignatura → SQL directo
+    ↓
+LLM genera: SELECT p.*, d.siglas FROM profesores p LEFT JOIN departamentos d ...
+            WHERE p.nombre_normalizado ILIKE '%parejo%'
+    ↓
+Enriquecer con tutorías (si tabla tutorias tiene datos)
+    ↓
+LLM genera respuesta natural
+```
+
+**Flujo con RAG (nombre ambiguo + asignatura):**
+```
+Usuario: "correo de Belén que da FP"
+    ↓
+Clasificador IA: "Belén" es nombre corto + hay asignatura → necesita RAG
+    ↓
+RAG paso 1: plan docente de FP → chunks con profesorado
+    ↓
+RAG paso 2: LLM extrae nombres → ["Belén Pontes Balanza", ...]
+    ↓
+RAG paso 3: fuzzy match "Belén" → "Belén Pontes Balanza" (score 90)
+    ↓
+RAG paso 4: SELECT * FROM profesores WHERE nombre_normalizado ILIKE '%belen pontes%'
+    ↓
+LLM genera respuesta: "El correo de Belén Pontes Balanza es bepontes@us.es"
+```
+
+**Funcionalidades nuevas:**
+- ✅ Consulta de email, teléfono, despacho, web, ORCID de cualquier profesor
+- ✅ Consulta de tutorías por profesor
+- ✅ Listado de profesores por departamento
+- ✅ Desambiguación inteligente profesor+asignatura vía RAG
+- ✅ Follow-up conversacional con slot de profesor reciente
+
+---
+
 ## Próximas Versiones Planificadas
 
 | Versión | Épica | Descripción |
 |---------|-------|-------------|
-| v2.3.0 | Horarios | Consulta de horarios por asignatura/grupo |
-| v3.0.0 | Profesores | Información sobre profesorado |
+| v3.1.0 | Profesores | Poblar tabla profesor_asignatura + tutorias desde scraping |
 | v4.0.0 | Trámites | Documentación administrativa |

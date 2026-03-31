@@ -135,6 +135,8 @@ erDiagram
         varchar planta
         varchar web_personal
         varchar orcid
+        varchar categoria_academica "Catedratico Titular etc"
+        varchar enlace_perfil "URL perfil dpto"
         boolean activo
     }
     

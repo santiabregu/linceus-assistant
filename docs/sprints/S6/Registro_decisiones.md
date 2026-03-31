@@ -193,8 +193,72 @@ Los intents compuestos se definen en `domain.yml` como `cambiar_contexto_academi
 
 ---
 
+## Iteración 5 (2026-03-31): Épica Profesores — scraping y campos BD
+
+### D-018: Campos adicionales en tabla `profesores`
+
+**Problema:** El schema original de `profesores` no incluía categoría académica ni enlace al perfil del departamento, campos disponibles en las webs de los 4 departamentos y útiles para el usuario.
+**Decisión:** Añadir 2 columnas: `categoria_academica VARCHAR(100)` (Catedrático, Titular, Contratado Doctor, etc.) y `enlace_perfil VARCHAR(500)` (URL del perfil en la web del departamento o en SISIUS).
+**Justificación:** `categoria_academica` está disponible en los 4 departamentos (DTE, LSI, MA1, CCIA) y es información que los alumnos consultan. `enlace_perfil` permite al chatbot enlazar directamente al perfil del profesor.
+**Archivos:** `sql/add_profesores_fields.sql`, `docs/other/db_tables.md`
+
+### D-019: Scrapers independientes por departamento
+
+**Problema:** Cada departamento tiene una web con tecnología y estructura HTML completamente distinta (WordPress/Elementor en LSI, Plone CMS en DTE, HTML estático en CCIA, SISIUS+Directorio US en MA1).
+**Decisión:** Un scraper independiente por departamento (`scraper_lsi.py`, `scraper_dte.py`, `scraper_ccia.py`, `scraper_ma1.py`) que genera un JSON intermedio en `profesores/datos/{depto}.json`. Un script separado `insertar_profesores_db.py` lee los 4 JSON e inserta en BD.
+**Justificación:** Misma separación de responsabilidades que en horarios (D-005). Permite re-ejecutar un solo scraper sin afectar a los demás. Los JSON intermedios facilitan la depuración y revisión manual antes de insertar.
+**Archivos:** `profesores/scraper_lsi.py`, `profesores/scraper_dte.py`, `profesores/scraper_ccia.py`, `profesores/scraper_ma1.py`, `profesores/insertar_profesores_db.py`
+
+### D-020: Email ofuscado en DTE reconstruido desde spans
+
+**Problema:** La web del DTE ofusca los emails usando HTML: `<span>usuario</span><img alt="Arroba"/><span>dominio</span>` en vez de texto plano o `mailto:`.
+**Decisión:** Reconstruir el email concatenando los `<span>` hijos del `div.dtepersonalcab`, ignorando el span con clase `dtepersonalcab` (que es el label "Correo electrónico:"), y uniendo con `@`.
+**Resultado:** 77/77 emails extraídos correctamente.
+**Archivos:** `profesores/scraper_dte.py` (`extraer_email`)
+
+### D-021: Nombre/apellidos no separables en CCIA y MA1
+
+**Problema:** LSI y DTE usan formato "Apellidos, Nombre" (con coma), lo que permite separar campos. CCIA y MA1 usan "Nombre Apellido1 Apellido2" sin separador, y con nombres compuestos (José Luis, María del Carmen) es imposible separar automáticamente de forma fiable.
+**Decisión:** Para CCIA y MA1, guardar el nombre completo en el campo `nombre` y dejar `apellidos` vacío. El trigger `trigger_normalizar_profesor` de la BD genera igualmente `nombre_normalizado` correcto para búsquedas. Para LSI y DTE, la coma permite separar correctamente.
+**Alternativas descartadas:**
+- Asumir primera palabra = nombre: falla con "José Luis Ruiz Reina" → nombre="José", apellidos="Luis Ruiz Reina".
+- NLP para detección de nombres propios: overengineering para ~100 registros.
+- Cruce con directorio US (tiene nombre en mayúsculas sin estructura): no aporta la separación.
+**Impacto:** El campo `nombre_completo` (GENERATED = `apellidos || ', ' || nombre`) queda como `, Nombre Completo` para CCIA/MA1. Es aceptable porque las búsquedas usan `nombre_normalizado`, no `nombre_completo`. Se puede corregir manualmente si se necesita.
+**Archivos:** `profesores/scraper_ccia.py`, `profesores/scraper_ma1.py`, `profesores/insertar_profesores_db.py`
+
+### D-022: MA1 con doble enriquecimiento (SISIUS + Directorio US)
+
+**Problema:** MA1 no tiene web propia funcional. SISIUS tiene el listado completo con ORCID y web personal, pero no tiene email directo (solo formulario). El Directorio US tiene email y teléfono pero hay que generar el slug del nombre.
+**Decisión:** Pipeline de 3 pasos: (1) listado SISIUS → nombres + categoría + ID, (2) perfil SISIUS → ORCID, web personal, teléfono, (3) Directorio US → email, teléfono (solo si falta).
+**Resultado:** 65 profesores, 50/65 con email (los 15 restantes no aparecen en el directorio US, probablemente por slug diferente o no estar dados de alta).
+**Archivos:** `profesores/scraper_ma1.py`
+
+### D-023: Trigger de BD genera `nombre_normalizado`, no el scraper
+
+**Problema:** El script de inserción inicialmente enviaba `nombre_normalizado` calculado en Python. Pero la BD ya tiene un trigger `trigger_normalizar_profesor` que lo genera automáticamente al INSERT/UPDATE.
+**Decisión:** No enviar `nombre_normalizado` en el INSERT. Dejar que el trigger de BD lo genere usando su función `normalizar_texto()`, garantizando consistencia con el resto de datos ya existentes.
+**Archivos:** `profesores/insertar_profesores_db.py`
+
+---
+
+## Resultado scraping profesores
+
+| Departamento | Profesores | Con email | Con despacho | Con categoría | Nombre separado |
+|-------------|-----------|-----------|-------------|--------------|----------------|
+| LSI | 92 | 92 | 92 | 92 | Sí (coma) |
+| DTE | 77 | 77 | 53 | 73 | Sí (coma) |
+| CCIA | 34 | 34 | 31 | 31 | No |
+| MA1 | 65 | 50 | 0 | 50 | No |
+| **Total** | **268** | **253** | **176** | **246** | |
+
+---
+
 ## Pendiente
 
 - Re-entrenar modelo NLU (`rasa train`) para activar los intents de horarios y multi-intent
 - Testing e2e completo: horarios, seguimiento, multi-intent
 - Completar el mapeo de las 6 abreviaturas compartidas de 4º curso (EC, GP, MCG, PID, T, TIS)
+- Insertar los 268 profesores en Supabase (`python profesores/insertar_profesores_db.py`)
+- NLU + actions para consultas sobre profesores
+- Insertar tutorías de CCIA y DTE en tabla `tutorias`

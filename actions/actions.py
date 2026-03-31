@@ -19,6 +19,10 @@ from .multi_intent import (
     ActionMultiIntent,
 )
 
+from .profesores import (
+    ActionConsultaProfesor,
+)
+
 __all__ = [
     'ActionConsultaEspecifica',
     'ActionConsultaListado',
@@ -29,4 +33,5 @@ __all__ = [
     'ActionConsultaTitulaciones',
     'ActionConsultaHorario',
     'ActionMultiIntent',
+    'ActionConsultaProfesor',
 ]

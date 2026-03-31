@@ -1,0 +1,73 @@
+version: "3.1"
+
+nlu:
+
+# =============================================================================
+# INTENT: CONSULTA_PROFESOR - Info de contacto, tutorías y despacho de profesores
+# La asignatura se usa SOLO como contexto para identificar al profesor
+# ("correo de Belén que da FP" → buscar Belén entre los profes de FP)
+# =============================================================================
+- intent: consulta_profesor
+  examples: |
+    - ¿qué tutorías tiene [Parejo](nombre_profesor)?
+    - ¿cuándo son las tutorías de [Parejo](nombre_profesor)?
+    - tutorías de [José Antonio Parejo](nombre_profesor)
+    - tutorías del profesor [Parejo](nombre_profesor)
+    - ¿cuándo tiene tutorías [Diana](nombre_profesor)?
+    - ¿en qué horario son las tutorías de [Belén](nombre_profesor)?
+    - horario de tutorías de [Ruiz Cortés](nombre_profesor)
+    - horario de tutorías de [Antonio Ruiz](nombre_profesor)
+    - ¿cuándo puedo ir a tutoría de [Troyano](nombre_profesor)?
+    - ¿a qué hora tiene tutoría [Fernando Sancho](nombre_profesor)?
+    - ¿dónde son las tutorías de [Parejo](nombre_profesor)?
+    - ¿en qué despacho está [Diana](nombre_profesor)?
+    - ¿en qué despacho está la profesora [Belén](nombre_profesor)?
+    - despacho de [Parejo](nombre_profesor)
+    - despacho del profesor [Ruiz Cortés](nombre_profesor)
+    - ¿dónde está el despacho de [Galindo](nombre_profesor)?
+    - ¿cuál es el correo de [Parejo](nombre_profesor)?
+    - correo de [José Antonio Parejo](nombre_profesor)
+    - correo del profesor [Parejo](nombre_profesor)
+    - email de [Diana](nombre_profesor)
+    - email de la profesora [Diana](nombre_profesor)
+    - ¿cuál es el email de [Ruiz Cortés](nombre_profesor)?
+    - dame el correo de [Belén](nombre_profesor)
+    - ¿cómo contacto con [Parejo](nombre_profesor)?
+    - contacto del profesor [Fernando Sancho](nombre_profesor)
+    - teléfono de [Parejo](nombre_profesor)
+    - ¿cuál es el teléfono del profesor [Troyano](nombre_profesor)?
+    - información del profesor [Parejo](nombre_profesor)
+    - info de [José Antonio Parejo](nombre_profesor)
+    - info del profesor [Ruiz Cortés](nombre_profesor)
+    - háblame del profesor [Parejo](nombre_profesor)
+    - dime sobre la profesora [Diana](nombre_profesor)
+    - ¿quién es [José Antonio Parejo](nombre_profesor)?
+    - ¿quién es el profesor [Troyano](nombre_profesor)?
+    - datos de [Fernando Sancho](nombre_profesor)
+    - datos del profesor [Galindo](nombre_profesor)
+    - ¿tiene web personal el profesor [Parejo](nombre_profesor)?
+    - web del profesor [Ruiz Cortés](nombre_profesor)
+    - ¿cuál es la web de [Fernando Sancho](nombre_profesor)?
+    - ¿qué correo tiene la profesora [Belén](nombre_profesor) que da [FP](nombre_asignatura)?
+    - correo de la profesora [Belén](nombre_profesor) que da clase de [FP](nombre_asignatura)
+    - ¿cuál es el email de [Diana](nombre_profesor) que da [FP](nombre_asignatura)?
+    - tutorías de [Diana](nombre_profesor) que da [FP](nombre_asignatura)
+    - ¿dónde son las tutorías de [Diana](nombre_profesor) la de [Fundamentos de Programación](nombre_asignatura)?
+    - despacho de [Belén](nombre_profesor) de [FP](nombre_asignatura)
+    - el profesor [Parejo](nombre_profesor) qué tutorías tiene
+    - ¿la profesora [Belén](nombre_profesor) que da clase de [FP](nombre_asignatura) cuál es su correo?
+    - ¿cuál es el correo de la profesora [Belén](nombre_profesor) que da clase de [FP](nombre_asignatura)?
+    - ¿qué profesores hay en el departamento de [LSI](nombre_departamento)?
+    - profesores del departamento [CCIA](nombre_departamento)
+    - profesores de [DTE](nombre_departamento)
+    - listado de profesores de [MA1](nombre_departamento)
+    - ¿y su correo?
+    - ¿y su despacho?
+    - ¿y las tutorías?
+    - ¿y el teléfono?
+    - ¿dónde tiene el despacho?
+    - ¿cuándo tiene tutoría?
+    - ¿tiene correo?
+    - ¿cómo le contacto?
+    - ¿y su email?
+    - ¿y su web?
