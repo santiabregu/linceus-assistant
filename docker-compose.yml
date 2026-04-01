@@ -45,6 +45,12 @@ services:
     image: nginx:alpine
     ports:
       - "80:80"
+    env_file:
+      - .env
+    environment:
+      - RASA_SERVER=http://rasa:5005
     volumes:
-      - ./frontend:/usr/share/nginx/html:ro
+      - ./frontend:/usr/share/nginx/html
+      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./frontend/docker-entrypoint.sh:/docker-entrypoint.d/40-inject-env.sh:ro
     restart: unless-stopped

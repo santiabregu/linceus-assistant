@@ -20,6 +20,8 @@ intents:
   - pedir_mas_resultados
   # Horarios
   - consulta_horario                 # "¿Qué horario tiene 2º grupo 1?"
+  # Profesores
+  - consulta_profesor                # "¿Quién da FP?" / "tutorías de Parejo"
   # Multi-intent (combinaciones)
   - cambiar_contexto_academico+consulta_horario
   - cambiar_contexto_academico+consulta_asignatura_especifica
@@ -33,6 +35,8 @@ entities:
   - nombre_centro
   - nombre_titulacion
   - nombre_asignatura
+  - nombre_profesor
+  - nombre_departamento
   - atributo_asignatura
   - filtro_curso
   - filtro_tipologia
@@ -82,6 +86,24 @@ slots:
     mappings:
     - type: custom
 
+  ultimo_profesor_consultado:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+
+  feedback_rating:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+
+  feedback_comment:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+
 responses:
   utter_greet:
   - text: |
@@ -123,6 +145,12 @@ responses:
       - "¿Qué horario tiene 2º grupo 1?"
       - "¿En qué aula tengo FP?"
       - "¿Qué clases hay los lunes en primero?"
+
+      **Profesores:**
+      - "¿Quién da clase de FP?"
+      - "Tutorías del profesor Parejo"
+      - "Correo de la profesora Diana"
+      - "¿En qué despacho está Ruiz Cortés?"
 
       **Contexto académico:**
       - "Qué carrera estoy consultando?"
@@ -169,6 +197,8 @@ actions:
   - action_mostrar_todas_asignaturas
   # Horarios
   - action_consulta_horario
+  # Profesores
+  - action_consulta_profesor
   # Multi-intent
   - action_multi_intent
 

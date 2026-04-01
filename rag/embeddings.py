@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-EMBEDDING_MODEL = "gemini-embedding-001"
+EMBEDDING_MODEL = "models/gemini-embedding-001"
 EMBEDDING_DIMS = 2000  # nativo=3072, reducido a 2000 (máximo para índice HNSW en pgvector)
 
 # Gemini permite hasta 100 textos por request de embedding batch
@@ -67,12 +67,12 @@ def generar_embeddings_batch(
         Lista de embeddings (mismo orden que los textos de entrada).
         Cada elemento es una lista de floats o None si hubo error.
     """
-    from google import genai
+    import google.generativeai as genai
 
     if not GEMINI_API_KEY:
         raise ValueError("GEMINI_API_KEY no configurada en .env")
 
-    client = genai.Client(api_key=GEMINI_API_KEY)
+    genai.configure(api_key=GEMINI_API_KEY)
     todos_embeddings: List[Optional[List[float]]] = []
 
     # Dividir en sub-batches
@@ -85,18 +85,16 @@ def generar_embeddings_batch(
             print(f"  📐 Embedding batch {batch_num}/{total_batches} "
                   f"({len(batch)} textos)...")
 
-            response = client.models.embed_content(
+            response = genai.embed_content(
                 model=EMBEDDING_MODEL,
-                contents=batch,
-                config={
-                    "output_dimensionality": EMBEDDING_DIMS,
-                    "task_type": task_type,
-                },
+                content=batch,
+                task_type=task_type,
+                output_dimensionality=EMBEDDING_DIMS,
             )
 
             # Extraer embeddings de la respuesta
-            for embedding_obj in response.embeddings:
-                todos_embeddings.append(list(embedding_obj.values))
+            for embedding in response["embedding"]:
+                todos_embeddings.append(list(embedding))
 
             print(f"  ✅ Batch {batch_num} completado")
 

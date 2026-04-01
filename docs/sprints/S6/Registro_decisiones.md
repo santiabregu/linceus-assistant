@@ -193,8 +193,128 @@ Los intents compuestos se definen en `domain.yml` como `cambiar_contexto_academi
 
 ---
 
+## Iteración 5 (2026-03-31): Épica Profesores — scraping y campos BD
+
+### D-018: Campos adicionales en tabla `profesores`
+
+**Problema:** El schema original de `profesores` no incluía categoría académica ni enlace al perfil del departamento, campos disponibles en las webs de los 4 departamentos y útiles para el usuario.
+**Decisión:** Añadir 2 columnas: `categoria_academica VARCHAR(100)` (Catedrático, Titular, Contratado Doctor, etc.) y `enlace_perfil VARCHAR(500)` (URL del perfil en la web del departamento o en SISIUS).
+**Justificación:** `categoria_academica` está disponible en los 4 departamentos (DTE, LSI, MA1, CCIA) y es información que los alumnos consultan. `enlace_perfil` permite al chatbot enlazar directamente al perfil del profesor.
+**Archivos:** `sql/add_profesores_fields.sql`, `docs/other/db_tables.md`
+
+### D-019: Scrapers independientes por departamento
+
+**Problema:** Cada departamento tiene una web con tecnología y estructura HTML completamente distinta (WordPress/Elementor en LSI, Plone CMS en DTE, HTML estático en CCIA, SISIUS+Directorio US en MA1).
+**Decisión:** Un scraper independiente por departamento (`scraper_lsi.py`, `scraper_dte.py`, `scraper_ccia.py`, `scraper_ma1.py`) que genera un JSON intermedio en `profesores/datos/{depto}.json`. Un script separado `insertar_profesores_db.py` lee los 4 JSON e inserta en BD.
+**Justificación:** Misma separación de responsabilidades que en horarios (D-005). Permite re-ejecutar un solo scraper sin afectar a los demás. Los JSON intermedios facilitan la depuración y revisión manual antes de insertar.
+**Archivos:** `profesores/scraper_lsi.py`, `profesores/scraper_dte.py`, `profesores/scraper_ccia.py`, `profesores/scraper_ma1.py`, `profesores/insertar_profesores_db.py`
+
+### D-020: Email ofuscado en DTE reconstruido desde spans
+
+**Problema:** La web del DTE ofusca los emails usando HTML: `<span>usuario</span><img alt="Arroba"/><span>dominio</span>` en vez de texto plano o `mailto:`.
+**Decisión:** Reconstruir el email concatenando los `<span>` hijos del `div.dtepersonalcab`, ignorando el span con clase `dtepersonalcab` (que es el label "Correo electrónico:"), y uniendo con `@`.
+**Resultado:** 77/77 emails extraídos correctamente.
+**Archivos:** `profesores/scraper_dte.py` (`extraer_email`)
+
+### D-021: Nombre/apellidos no separables en CCIA y MA1
+
+**Problema:** LSI y DTE usan formato "Apellidos, Nombre" (con coma), lo que permite separar campos. CCIA y MA1 usan "Nombre Apellido1 Apellido2" sin separador, y con nombres compuestos (José Luis, María del Carmen) es imposible separar automáticamente de forma fiable.
+**Decisión:** Para CCIA y MA1, guardar el nombre completo en el campo `nombre` y dejar `apellidos` vacío. El trigger `trigger_normalizar_profesor` de la BD genera igualmente `nombre_normalizado` correcto para búsquedas. Para LSI y DTE, la coma permite separar correctamente.
+**Alternativas descartadas:**
+- Asumir primera palabra = nombre: falla con "José Luis Ruiz Reina" → nombre="José", apellidos="Luis Ruiz Reina".
+- NLP para detección de nombres propios: overengineering para ~100 registros.
+- Cruce con directorio US (tiene nombre en mayúsculas sin estructura): no aporta la separación.
+**Impacto:** El campo `nombre_completo` (GENERATED = `apellidos || ', ' || nombre`) queda como `, Nombre Completo` para CCIA/MA1. Es aceptable porque las búsquedas usan `nombre_normalizado`, no `nombre_completo`. Se puede corregir manualmente si se necesita.
+**Archivos:** `profesores/scraper_ccia.py`, `profesores/scraper_ma1.py`, `profesores/insertar_profesores_db.py`
+
+### D-022: MA1 con doble enriquecimiento (SISIUS + Directorio US)
+
+**Problema:** MA1 no tiene web propia funcional. SISIUS tiene el listado completo con ORCID y web personal, pero no tiene email directo (solo formulario). El Directorio US tiene email y teléfono pero hay que generar el slug del nombre.
+**Decisión:** Pipeline de 3 pasos: (1) listado SISIUS → nombres + categoría + ID, (2) perfil SISIUS → ORCID, web personal, teléfono, (3) Directorio US → email, teléfono (solo si falta).
+**Resultado:** 65 profesores, 50/65 con email (los 15 restantes no aparecen en el directorio US, probablemente por slug diferente o no estar dados de alta).
+**Archivos:** `profesores/scraper_ma1.py`
+
+### D-023: Trigger de BD genera `nombre_normalizado`, no el scraper
+
+**Problema:** El script de inserción inicialmente enviaba `nombre_normalizado` calculado en Python. Pero la BD ya tiene un trigger `trigger_normalizar_profesor` que lo genera automáticamente al INSERT/UPDATE.
+**Decisión:** No enviar `nombre_normalizado` en el INSERT. Dejar que el trigger de BD lo genere usando su función `normalizar_texto()`, garantizando consistencia con el resto de datos ya existentes.
+**Archivos:** `profesores/insertar_profesores_db.py`
+
+---
+
+## Resultado scraping profesores
+
+| Departamento | Profesores | Con email | Con despacho | Con categoría | Nombre separado |
+|-------------|-----------|-----------|-------------|--------------|----------------|
+| LSI | 92 | 92 | 92 | 92 | Sí (coma) |
+| DTE | 77 | 77 | 53 | 73 | Sí (coma) |
+| CCIA | 34 | 34 | 31 | 31 | No |
+| MA1 | 65 | 50 | 0 | 50 | No |
+| **Total** | **268** | **253** | **176** | **246** | |
+
+---
+
+## Iteración 6 (2026-04-01): Dockerización, frontend y piloto
+
+### D-024: Dockerización con 3 contenedores (Rasa + Actions + Nginx)
+
+**Problema:** El proyecto requería ejecutar manualmente 3 procesos separados (Rasa server, action server, frontend). Esto dificultaba la reproducibilidad y el despliegue.
+**Decisión:** Orquestar con `docker-compose.yml` los 3 servicios:
+- `rasa`: imagen oficial `rasa/rasa:3.6.21`, monta modelo/config/domain como volúmenes
+- `actions`: build custom desde `Dockerfile.actions` (Python 3.10 + dependencias)
+- `frontend`: `nginx:alpine` sirviendo los ficheros estáticos con config personalizada
+**Archivos:** `docker-compose.yml`, `Dockerfile.actions`, `frontend/nginx.conf`
+
+### D-025: Migración de `google-genai` a `google-generativeai`
+
+**Problema:** Conflicto irreconciliable de dependencias: `supabase==2.3.0` requiere `websockets<12` (via `realtime`) y `google-genai` requiere `websockets>=13`. Ambos paquetes no pueden coexistir.
+**Decisión:** Migrar de `google-genai` (SDK nuevo, basado en websockets) a `google-generativeai` (SDK REST, sin dependencia de websockets). La API cambia mínimamente: `genai.Client(api_key=...)` → `genai.configure(api_key=...)` + `genai.GenerativeModel(modelo)`.
+**Alternativas descartadas:**
+- Bajar versión de `google-genai`: todas las versiones requieren `websockets>=13`.
+- Bajar versión de `supabase`: perdería funcionalidad y crearía otros conflictos.
+**Archivos:** `requirements-actions.txt`, `actions/shared/gemini_client.py`, `rag/embeddings.py`
+
+### D-026: Dependencias faltantes en Dockerfile.actions
+
+**Problema:** El build del action server fallaba en runtime por módulos no encontrados: `psycopg2` (usado por `actions/shared/db.py`), `requests` (usado por scrapers en `profesores_data/`), y faltaba copiar el directorio `profesores_data/` (importado por `actions/profesores/actions.py`).
+**Decisión:** Añadir `psycopg2-binary==2.9.9` y `requests>=2.31.0` al `requirements-actions.txt`. Añadir `COPY profesores_data/ profesores_data/` y `RUN python -m spacy download es_core_news_md` al `Dockerfile.actions`.
+**Archivos:** `requirements-actions.txt`, `Dockerfile.actions`
+
+### D-027: Frontend rediseñado siguiendo la identidad visual de www.us.es
+
+**Problema:** El frontend original era una maqueta mínima sin parecido real con la web de la Universidad de Sevilla.
+**Decisión:** Rediseñar `pagina-principal.html` y `pagina-principal.css` replicando la estructura de www.us.es:
+- Barra superior roja con enlaces de utilidad (Universidad Digital, Secretaría virtual, etc.)
+- Header con logo US + dropdown "Información para mí" + barra de búsqueda
+- Navegación principal con 7 items y dropdowns que enlazan directamente a las secciones de www.us.es
+- Footer con 4 columnas (contacto, redes sociales, acceso rápido)
+- Tipografía Open Sans + Raleway, colores `#be0f2e` (rojo US), `#059f94` (teal)
+**Archivos:** `frontend/pagina-principal.html`, `frontend/pagina-principal.css`
+
+### D-028: Logging de conversaciones y feedback via Supabase REST API
+
+**Problema:** Para el piloto con 2-3 usuarios, se necesita saber qué preguntan y recoger feedback, sin modificar la lógica de Rasa (domain, rules, actions).
+**Decisión:** Implementar todo desde el frontend (JavaScript), llamando directamente a la REST API de Supabase con la anon key:
+- Cada par mensaje-usuario/respuesta-bot se guarda automáticamente en tabla `conversation_log`
+- Botón "Feedback" en el footer del chat widget que abre un panel con cuadro de texto, se guarda en tabla `feedback`
+- Session ID único generado por sesión de chat para agrupar conversaciones
+**Alternativas descartadas:**
+- Custom Rasa action para logging: requería modificar domain.yml, rules y reentrenar. Invasivo e innecesario.
+- TrackerStore de Rasa con PostgreSQL: configuración compleja, formato poco legible en la BD.
+- Envío por email: dependencia de servicio SMTP externo, más complejo.
+**Justificación:** La anon key de Supabase es pública por diseño (la seguridad la proporcionan las RLS policies). No se expone ningún secreto en el frontend.
+**Tablas nuevas:** `conversation_log` (session_id, user_message, bot_response, created_at), `feedback` (session_id, rating, comment, last_user_message, last_bot_response, created_at)
+**Archivos:** `frontend/chatbot-widget.js`, `frontend/pagina-principal.html`, `scripts/create_pilot_tables.sql`
+
+---
+
 ## Pendiente
 
 - Re-entrenar modelo NLU (`rasa train`) para activar los intents de horarios y multi-intent
 - Testing e2e completo: horarios, seguimiento, multi-intent
 - Completar el mapeo de las 6 abreviaturas compartidas de 4º curso (EC, GP, MCG, PID, T, TIS)
+- Insertar los 268 profesores en Supabase (`python profesores/insertar_profesores_db.py`)
+- NLU + actions para consultas sobre profesores
+- Insertar tutorías de CCIA y DTE en tabla `tutorias`
+- Crear tablas `conversation_log` y `feedback` en Supabase (ejecutar `scripts/create_pilot_tables.sql`)
+- Despliegue en Render (o alternativa) para el piloto

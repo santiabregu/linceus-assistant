@@ -1,0 +1,77 @@
+@startuml Diagrama de Componentes
+!pragma layout smetana
+skinparam componentStyle uml2
+skinparam defaultFontSize 13
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype ortho
+
+title Component Diagram - Linceus Assistant
+
+package "Presentation Layer" {
+  [Chatbot Widget] as widget
+  note right of widget
+    Web interface (HTML/JS)
+    for user interaction
+  end note
+}
+
+package "NLU Layer" {
+  [NLU Pipeline] as nlu
+  [Dialog Manager] as dialog
+
+  nlu -[hidden]right- dialog
+
+  note bottom of nlu
+    Tokenization, intent
+    classification & entity
+    extraction (spaCy + DIET)
+  end note
+
+  note bottom of dialog
+    Dialog policies:
+    MemoizationPolicy,
+    RulePolicy, TEDPolicy
+  end note
+}
+
+package "Business Logic Layer" {
+  [Action Server] as actions
+
+  component "Action Modules" as modules {
+    [Subjects] as mod_asig
+    [Schedules] as mod_hor
+    [Professors] as mod_prof
+    [Context] as mod_ctx
+    [Multi-Intent] as mod_multi
+  }
+
+  actions ..> modules : delegates
+}
+
+package "Data Layer" {
+  [Database Client] as dbclient
+  note right of dbclient
+    ORM for PostgreSQL
+    queries
+  end note
+}
+
+package "AI Layer" {
+  [LLM Client] as llm
+  note right of llm
+    Response generation
+    with RAG (Retrieval
+    Augmented Generation)
+  end note
+}
+
+' Relations between components
+widget ..> nlu : "user\nmessages"
+nlu ..> dialog : "intents &\nentities"
+dialog ..> actions : "custom\nactions"
+actions ..> dbclient : "data\nqueries"
+actions ..> llm : "response\ngeneration"
+
+
+@enduml

@@ -76,6 +76,11 @@ rules:
   - intent: consulta_horario
   - action: action_consulta_horario
 
+- rule: Consulta de profesor
+  steps:
+  - intent: consulta_profesor
+  - action: action_consulta_profesor
+
 # =============================================================================
 # REGLAS PARA MULTI-INTENT (combinaciones de acciones)
 # =============================================================================

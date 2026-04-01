@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "WebSearch",
-      "WebFetch(domain:legacy-docs-oss.rasa.com)"
+      "WebFetch(domain:legacy-docs-oss.rasa.com)",
+      "WebFetch(domain:www.ma1.us.es)",
+      "WebFetch(domain:www.dte.us.es)",
+      "WebFetch(domain:departamento.us.es)",
+      "Bash(python profesores/scraper_ccia.py)"
     ]
   }
 }
