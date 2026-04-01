@@ -242,7 +242,7 @@
             height: 20px;
         }
 
-        /* Botón flotante */
+        /* Boton flotante */
         .linceus-chat-widget .chat-toggle {
             position: fixed;
             bottom: 16px;
@@ -280,6 +280,111 @@
             border-top: 1px solid #eee;
             font-size: 11px;
             color: #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .linceus-chat-widget .feedback-btn {
+            background: none;
+            border: 1px solid #ddd;
+            border-radius: 16px;
+            padding: 4px 10px;
+            font-size: 11px;
+            color: #777;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .linceus-chat-widget .feedback-btn:hover {
+            border-color: var(--chat--color-primary);
+            color: var(--chat--color-primary);
+        }
+
+        /* Feedback panel */
+        .linceus-chat-widget .feedback-panel {
+            display: none;
+            padding: 14px 16px;
+            background: #fff;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .linceus-chat-widget .feedback-panel.open {
+            display: block;
+        }
+
+        .linceus-chat-widget .feedback-panel p {
+            font-size: 13px;
+            color: #555;
+            margin: 0 0 10px 0;
+        }
+
+        .linceus-chat-widget .feedback-rating {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .linceus-chat-widget .feedback-rating button {
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 6px 16px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .linceus-chat-widget .feedback-rating button:hover {
+            transform: scale(1.15);
+        }
+
+        .linceus-chat-widget .feedback-rating button.selected {
+            border-color: var(--chat--color-primary);
+            background: #fce4ec;
+        }
+
+        .linceus-chat-widget .feedback-comment {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 12px;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            margin-bottom: 8px;
+        }
+
+        .linceus-chat-widget .feedback-comment:focus {
+            border-color: var(--chat--color-primary);
+        }
+
+        .linceus-chat-widget .feedback-send {
+            background: var(--chat--color-primary);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 6px 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .linceus-chat-widget .feedback-send:hover {
+            background: var(--chat--color-secondary);
+        }
+
+        .linceus-chat-widget .feedback-thanks {
+            display: none;
+            font-size: 12px;
+            color: #4caf50;
+            text-align: center;
+            padding: 4px;
         }
     `;
 
@@ -288,23 +393,64 @@
     styleSheet.textContent = styles;
     document.head.appendChild(styleSheet);
 
-    // Configuración por defecto
+    // Configuracion por defecto
     const defaultConfig = {
         rasaServer: 'http://localhost:5005',
         branding: {
             logo: 'logo-us.png',
             name: 'Linceus',
             subtitle: 'Asistente Universidad de Sevilla'
-        }
+        },
+        supabase: null
     };
 
-    // Combinar con configuración del usuario si existe
-    const config = window.LinceusChatConfig ? 
+    // Combinar con configuracion del usuario si existe
+    const config = window.LinceusChatConfig ?
         { ...defaultConfig, ...window.LinceusChatConfig } : defaultConfig;
 
-    // Prevenir múltiples inicializaciones
+    // Prevenir multiples inicializaciones
     if (window.LinceusChatInitialized) return;
     window.LinceusChatInitialized = true;
+
+    // Session ID unico para esta sesion de chat
+    const sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+
+    // Ultimo par mensaje-respuesta (para feedback)
+    let lastUserMessage = '';
+    let lastBotResponse = '';
+
+    // ── Supabase helpers ──
+    function supabaseInsert(table, data) {
+        if (!config.supabase || !config.supabase.url || !config.supabase.anonKey) return;
+        fetch(`${config.supabase.url}/rest/v1/${table}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'apikey': config.supabase.anonKey,
+                'Authorization': 'Bearer ' + config.supabase.anonKey,
+                'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify(data)
+        }).catch(err => console.warn('Log error:', err));
+    }
+
+    function logConversation(userMsg, botMsg) {
+        supabaseInsert('conversation_log', {
+            session_id: sessionId,
+            user_message: userMsg,
+            bot_response: botMsg
+        });
+    }
+
+    function logFeedback(rating, comment) {
+        supabaseInsert('feedback', {
+            session_id: sessionId,
+            rating: rating,
+            comment: comment || null,
+            last_user_message: lastUserMessage,
+            last_bot_response: lastBotResponse
+        });
+    }
 
     // Crear el widget
     const widgetContainer = document.createElement('div');
@@ -319,19 +465,24 @@
                     <p class="chat-header-title">${config.branding.name}</p>
                     <p class="chat-header-subtitle">${config.branding.subtitle}</p>
                 </div>
-                <button class="close-button">×</button>
+                <button class="close-button">\u00d7</button>
             </div>
             <div class="chat-messages">
                 <div class="chat-message bot">
-                    ¡Hola! Soy <strong>Linceus</strong>, el asistente virtual de la ETSII (Universidad de Sevilla). ¿En qué puedo ayudarte hoy?<br><br>
-                    Antes de empezar, por favor indícame tu titulación:<br>
-                    • <strong>Ingeniería del Software</strong> (GII-IS)<br>
-                    • <strong>Tecnologías Informáticas</strong> (GII-TI)<br>
-                    • <strong>Ingeniería de Computadores</strong> (GII-IC)
+                    \u00a1Hola! Soy <strong>Linceus</strong>, el asistente virtual de la ETSII (Universidad de Sevilla). \u00bfEn qu\u00e9 puedo ayudarte hoy?<br><br>
+                    Antes de empezar, por favor ind\u00edcame tu titulaci\u00f3n:<br>
+                    \u2022 <strong>Ingenier\u00eda del Software</strong> (GII-IS)<br>
+                    \u2022 <strong>Tecnolog\u00edas Inform\u00e1ticas</strong> (GII-TI)<br>
+                    \u2022 <strong>Ingenier\u00eda de Computadores</strong> (GII-IC)
                 </div>
                 <div class="typing-indicator">
                     <span></span><span></span><span></span>
                 </div>
+            </div>
+            <div class="feedback-panel">
+                <textarea class="feedback-comment" rows="2" placeholder="Escribe tu feedback..."></textarea>
+                <button class="feedback-send">Enviar</button>
+                <div class="feedback-thanks">Gracias por tu feedback!</div>
             </div>
             <div class="chat-input">
                 <textarea placeholder="Escribe tu mensaje..." rows="1"></textarea>
@@ -342,7 +493,8 @@
                 </button>
             </div>
             <div class="chat-footer">
-                Universidad de Sevilla · TFG 2025-26
+                <span>Universidad de Sevilla \u00b7 TFG 2025-26</span>
+                <button class="feedback-btn">\u270d\ufe0f Feedback</button>
             </div>
         </div>
         <button class="chat-toggle">
@@ -359,14 +511,26 @@
     const chatContainer = widgetContainer.querySelector('.chat-container');
     const messagesContainer = widgetContainer.querySelector('.chat-messages');
     const typingIndicator = widgetContainer.querySelector('.typing-indicator');
-    const textarea = widgetContainer.querySelector('textarea');
+    const textarea = widgetContainer.querySelector('.chat-input textarea');
     const sendButton = widgetContainer.querySelector('button[type="submit"]');
     const toggleButton = widgetContainer.querySelector('.chat-toggle');
     const closeButton = widgetContainer.querySelector('.close-button');
 
+    // Feedback elements
+    const feedbackBtn = widgetContainer.querySelector('.feedback-btn');
+    const feedbackPanel = widgetContainer.querySelector('.feedback-panel');
+    const feedbackRatingBtns = widgetContainer.querySelectorAll('.feedback-rating button');
+    const feedbackComment = widgetContainer.querySelector('.feedback-comment');
+    const feedbackSend = widgetContainer.querySelector('.feedback-send');
+    const feedbackThanks = widgetContainer.querySelector('.feedback-thanks');
+
+    let selectedRating = null;
+
     // Enviar mensaje a Rasa
     async function sendMessage(message) {
         if (!message.trim()) return;
+
+        lastUserMessage = message;
 
         // Mostrar mensaje del usuario
         const userMessageDiv = document.createElement('div');
@@ -388,7 +552,7 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    sender: 'user',
+                    sender: sessionId,
                     message: message
                 })
             });
@@ -405,18 +569,23 @@
                     .map(msg => msg.text)
                     .join('\n\n');
                 if (combinedText) {
+                    lastBotResponse = combinedText;
                     const botMessageDiv = document.createElement('div');
                     botMessageDiv.className = 'chat-message bot';
                     messagesContainer.insertBefore(botMessageDiv, typingIndicator);
                     await typewriterEffect(botMessageDiv, combinedText);
                 }
             } else {
-                // Respuesta vacía
+                const fallback = 'Lo siento, no he podido procesar tu mensaje. \u00bfPuedes reformularlo?';
+                lastBotResponse = fallback;
                 const botMessageDiv = document.createElement('div');
                 botMessageDiv.className = 'chat-message bot';
-                botMessageDiv.textContent = 'Lo siento, no he podido procesar tu mensaje. ¿Puedes reformularlo?';
+                botMessageDiv.textContent = fallback;
                 messagesContainer.insertBefore(botMessageDiv, typingIndicator);
             }
+
+            // Log a Supabase
+            logConversation(message, lastBotResponse);
 
         } catch (error) {
             console.error('Error al comunicarse con Rasa:', error);
@@ -424,7 +593,7 @@
 
             const errorDiv = document.createElement('div');
             errorDiv.className = 'chat-message bot';
-            errorDiv.textContent = '⚠️ Error de conexión. Asegúrate de que el servidor Rasa esté ejecutándose.';
+            errorDiv.textContent = '\u26a0\ufe0f Error de conexi\u00f3n. Aseg\u00farate de que el servidor Rasa est\u00e9 ejecut\u00e1ndose.';
             messagesContainer.insertBefore(errorDiv, typingIndicator);
         }
 
@@ -460,7 +629,7 @@
         });
     }
 
-    // Formatear mensaje (convertir saltos de línea, listas y enlaces)
+    // Formatear mensaje (convertir saltos de linea, listas y enlaces)
     function formatMessage(text) {
         // Escapar HTML
         let formatted = text
@@ -472,7 +641,7 @@
         formatted = formatted.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
             '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
 
-        // Convertir URLs sueltas que no estén ya dentro de un <a>
+        // Convertir URLs sueltas que no esten ya dentro de un <a>
         formatted = formatted.replace(/(?<!href="|">)(https?:\/\/[^\s<]+)/g,
             '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
 
@@ -481,19 +650,19 @@
 
         // Convertir _texto_ a <em> (cursiva)
         formatted = formatted.replace(/(?<!\w)_(.*?)_(?!\w)/g, '<em>$1</em>');
-        
-        // Convertir listas con viñetas (• o -)
+
+        // Convertir listas con vinetas
         const lines = formatted.split('\n');
         let inList = false;
         let result = [];
-        
+
         lines.forEach(line => {
-            if (line.match(/^[\-•]\s/)) {
+            if (line.match(/^[\-\u2022]\s/)) {
                 if (!inList) {
                     result.push('<ul>');
                     inList = true;
                 }
-                result.push(`<li>${line.replace(/^[\-•]\s/, '')}</li>`);
+                result.push(`<li>${line.replace(/^[\-\u2022]\s/, '')}</li>`);
             } else {
                 if (inList) {
                     result.push('</ul>');
@@ -504,9 +673,9 @@
                 }
             }
         });
-        
+
         if (inList) result.push('</ul>');
-        
+
         return result.join('<br>').replace(/<br><ul>/g, '<ul>').replace(/<\/ul><br>/g, '</ul>');
     }
 
@@ -515,7 +684,8 @@
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 
-    // Event listeners
+    // ── Event listeners ──
+
     sendButton.addEventListener('click', () => {
         sendMessage(textarea.value);
     });
@@ -536,6 +706,27 @@
 
     closeButton.addEventListener('click', () => {
         chatContainer.classList.remove('open');
+    });
+
+    // ── Feedback ──
+
+    feedbackBtn.addEventListener('click', () => {
+        feedbackPanel.classList.toggle('open');
+        feedbackComment.value = '';
+        feedbackThanks.style.display = 'none';
+        feedbackSend.style.display = '';
+        feedbackComment.style.display = '';
+    });
+
+    feedbackSend.addEventListener('click', () => {
+        if (!feedbackComment.value.trim()) return;
+        logFeedback(0, feedbackComment.value);
+        feedbackSend.style.display = 'none';
+        feedbackComment.style.display = 'none';
+        feedbackThanks.style.display = 'block';
+        setTimeout(() => {
+            feedbackPanel.classList.remove('open');
+        }, 1500);
     });
 
 })();

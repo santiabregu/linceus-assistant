@@ -92,6 +92,18 @@ slots:
     mappings:
     - type: custom
 
+  feedback_rating:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+
+  feedback_comment:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+
 responses:
   utter_greet:
   - text: |
