@@ -254,6 +254,60 @@ Los intents compuestos se definen en `domain.yml` como `cambiar_contexto_academi
 
 ---
 
+## Iteración 6 (2026-04-01): Dockerización, frontend y piloto
+
+### D-024: Dockerización con 3 contenedores (Rasa + Actions + Nginx)
+
+**Problema:** El proyecto requería ejecutar manualmente 3 procesos separados (Rasa server, action server, frontend). Esto dificultaba la reproducibilidad y el despliegue.
+**Decisión:** Orquestar con `docker-compose.yml` los 3 servicios:
+- `rasa`: imagen oficial `rasa/rasa:3.6.21`, monta modelo/config/domain como volúmenes
+- `actions`: build custom desde `Dockerfile.actions` (Python 3.10 + dependencias)
+- `frontend`: `nginx:alpine` sirviendo los ficheros estáticos con config personalizada
+**Archivos:** `docker-compose.yml`, `Dockerfile.actions`, `frontend/nginx.conf`
+
+### D-025: Migración de `google-genai` a `google-generativeai`
+
+**Problema:** Conflicto irreconciliable de dependencias: `supabase==2.3.0` requiere `websockets<12` (via `realtime`) y `google-genai` requiere `websockets>=13`. Ambos paquetes no pueden coexistir.
+**Decisión:** Migrar de `google-genai` (SDK nuevo, basado en websockets) a `google-generativeai` (SDK REST, sin dependencia de websockets). La API cambia mínimamente: `genai.Client(api_key=...)` → `genai.configure(api_key=...)` + `genai.GenerativeModel(modelo)`.
+**Alternativas descartadas:**
+- Bajar versión de `google-genai`: todas las versiones requieren `websockets>=13`.
+- Bajar versión de `supabase`: perdería funcionalidad y crearía otros conflictos.
+**Archivos:** `requirements-actions.txt`, `actions/shared/gemini_client.py`, `rag/embeddings.py`
+
+### D-026: Dependencias faltantes en Dockerfile.actions
+
+**Problema:** El build del action server fallaba en runtime por módulos no encontrados: `psycopg2` (usado por `actions/shared/db.py`), `requests` (usado por scrapers en `profesores_data/`), y faltaba copiar el directorio `profesores_data/` (importado por `actions/profesores/actions.py`).
+**Decisión:** Añadir `psycopg2-binary==2.9.9` y `requests>=2.31.0` al `requirements-actions.txt`. Añadir `COPY profesores_data/ profesores_data/` y `RUN python -m spacy download es_core_news_md` al `Dockerfile.actions`.
+**Archivos:** `requirements-actions.txt`, `Dockerfile.actions`
+
+### D-027: Frontend rediseñado siguiendo la identidad visual de www.us.es
+
+**Problema:** El frontend original era una maqueta mínima sin parecido real con la web de la Universidad de Sevilla.
+**Decisión:** Rediseñar `pagina-principal.html` y `pagina-principal.css` replicando la estructura de www.us.es:
+- Barra superior roja con enlaces de utilidad (Universidad Digital, Secretaría virtual, etc.)
+- Header con logo US + dropdown "Información para mí" + barra de búsqueda
+- Navegación principal con 7 items y dropdowns que enlazan directamente a las secciones de www.us.es
+- Footer con 4 columnas (contacto, redes sociales, acceso rápido)
+- Tipografía Open Sans + Raleway, colores `#be0f2e` (rojo US), `#059f94` (teal)
+**Archivos:** `frontend/pagina-principal.html`, `frontend/pagina-principal.css`
+
+### D-028: Logging de conversaciones y feedback via Supabase REST API
+
+**Problema:** Para el piloto con 2-3 usuarios, se necesita saber qué preguntan y recoger feedback, sin modificar la lógica de Rasa (domain, rules, actions).
+**Decisión:** Implementar todo desde el frontend (JavaScript), llamando directamente a la REST API de Supabase con la anon key:
+- Cada par mensaje-usuario/respuesta-bot se guarda automáticamente en tabla `conversation_log`
+- Botón "Feedback" en el footer del chat widget que abre un panel con cuadro de texto, se guarda en tabla `feedback`
+- Session ID único generado por sesión de chat para agrupar conversaciones
+**Alternativas descartadas:**
+- Custom Rasa action para logging: requería modificar domain.yml, rules y reentrenar. Invasivo e innecesario.
+- TrackerStore de Rasa con PostgreSQL: configuración compleja, formato poco legible en la BD.
+- Envío por email: dependencia de servicio SMTP externo, más complejo.
+**Justificación:** La anon key de Supabase es pública por diseño (la seguridad la proporcionan las RLS policies). No se expone ningún secreto en el frontend.
+**Tablas nuevas:** `conversation_log` (session_id, user_message, bot_response, created_at), `feedback` (session_id, rating, comment, last_user_message, last_bot_response, created_at)
+**Archivos:** `frontend/chatbot-widget.js`, `frontend/pagina-principal.html`, `scripts/create_pilot_tables.sql`
+
+---
+
 ## Pendiente
 
 - Re-entrenar modelo NLU (`rasa train`) para activar los intents de horarios y multi-intent
@@ -262,3 +316,5 @@ Los intents compuestos se definen en `domain.yml` como `cambiar_contexto_academi
 - Insertar los 268 profesores en Supabase (`python profesores/insertar_profesores_db.py`)
 - NLU + actions para consultas sobre profesores
 - Insertar tutorías de CCIA y DTE en tabla `tutorias`
+- Crear tablas `conversation_log` y `feedback` en Supabase (ejecutar `scripts/create_pilot_tables.sql`)
+- Despliegue en Render (o alternativa) para el piloto
