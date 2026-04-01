@@ -26,14 +26,15 @@ env/
 # Documentación y tests (no necesarios en imagen)
 docs/
 tests/
-memory_tfg/
+memoria_tfg/
 proyectos_docentes/
 
 # Rasa internals
 .rasa/
 
-# Los modelos son grandes y se montan como volumen
-models/
+# Los modelos se montan como volumen en docker-compose local,
+# pero se copian en la imagen para Render
+# models/
 
 # El .env se pasa con env_file en docker-compose, no se copia en la imagen
 .env
