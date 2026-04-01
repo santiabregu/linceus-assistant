@@ -1,0 +1,33 @@
+FROM rasa/rasa:3.6.21
+
+USER root
+
+# Dependencias de build
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc g++ && rm -rf /var/lib/apt/lists/*
+
+# Instalar dependencias del action server
+COPY requirements-actions.txt /tmp/requirements-actions.txt
+RUN pip install --no-cache-dir -r /tmp/requirements-actions.txt
+
+# Modelo de spaCy
+RUN python -m spacy download es_core_news_md
+
+WORKDIR /app
+
+# Copiar todo el proyecto
+COPY models/ models/
+COPY config.yml .
+COPY domain.yml .
+COPY credentials.yml .
+COPY data/ data/
+COPY endpoints.render.yml endpoints.yml
+COPY actions/ actions/
+COPY rag/ rag/
+COPY profesores_data/ profesores_data/
+COPY start-render.sh .
+RUN chmod +x start-render.sh
+
+EXPOSE 5005
+
+CMD ["./start-render.sh"]
