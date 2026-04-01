@@ -30,4 +30,5 @@ RUN chmod +x start-render.sh
 
 EXPOSE 5005
 
-CMD ["./start-render.sh"]
+ENTRYPOINT []
+CMD ["bash", "./start-render.sh"]
