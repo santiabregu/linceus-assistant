@@ -4,8 +4,7 @@ Alternativa rápida a Ollama cuando se necesita velocidad (demo, producción).
 """
 
 import os
-from google import genai
-from google.genai import types
+import google.generativeai as genai
 from typing import Dict, Any, Optional
 from dotenv import load_dotenv
 
@@ -15,6 +14,10 @@ load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GEMINI_MODEL = "gemma-3-27b-it"  # 15K req/día gratis, muy capaz para SQL/JSON
 DEFAULT_TIMEOUT = 30  # segundos
+
+# Configurar API key globalmente
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
 
 
 def llamar_gemini(
@@ -61,19 +64,19 @@ def llamar_gemini(
     try:
         print(f"🤖 Llamando a Gemini API (modelo: {modelo})...")
 
-        # Crear cliente con API key
-        client = genai.Client(api_key=GEMINI_API_KEY)
-        
-        # Generar contenido
-        response = client.models.generate_content(
-            model=modelo,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                temperature=temperature,
-                max_output_tokens=max_tokens,
-                top_p=top_p,
-                top_k=top_k
-            )
+        model = genai.GenerativeModel(modelo)
+
+        generation_config = genai.types.GenerationConfig(
+            temperature=temperature,
+            max_output_tokens=max_tokens,
+            top_p=top_p,
+            top_k=top_k,
+        )
+
+        response = model.generate_content(
+            prompt,
+            generation_config=generation_config,
+            request_options={"timeout": timeout},
         )
 
         respuesta = response.text.strip()
@@ -98,21 +101,19 @@ def verificar_gemini_activo() -> bool:
             print("❌ GEMINI_API_KEY no encontrada en .env")
             return False
 
-        # Test simple
-        client = genai.Client(api_key=GEMINI_API_KEY)
-        response = client.models.generate_content(
-            model=GEMINI_MODEL,
-            contents="Di 'OK'",
-            config=types.GenerateContentConfig(
+        model = genai.GenerativeModel(GEMINI_MODEL)
+        response = model.generate_content(
+            "Di 'OK'",
+            generation_config=genai.types.GenerationConfig(
                 max_output_tokens=10,
-                temperature=0.0
-            )
+                temperature=0.0,
+            ),
         )
-        
+
         if response.text:
             print(f"✅ Gemini activo y respondiendo (modelo: {GEMINI_MODEL})")
             return True
-        
+
         return False
 
     except Exception as e:

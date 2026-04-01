@@ -47,4 +47,5 @@ services:
       - "80:80"
     volumes:
       - ./frontend:/usr/share/nginx/html:ro
+      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     restart: unless-stopped

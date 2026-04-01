@@ -61,5 +61,4 @@ pip-delete-this-directory.txt
 
 # Modelos archivados (solo mantener el activo en models/)
 models_archive/
-models/
 old/

@@ -4,31 +4,138 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Universidad de Sevilla - Linceus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Raleway:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="pagina-principal.css">
 </head>
 <body>
 
-<header class="us-header">
-  <div class="us-header-left">
-    <!-- LOGO US -->
-    <img src="logo-us.png" alt="Universidad de Sevilla" class="us-logo">
+<!-- BARRA SUPERIOR ROJA -->
+<div class="top-bar">
+  <div class="top-bar-container">
+    <ul class="top-menu">
+      <li><a href="https://www.us.es/user/login">Iniciar sesion</a></li>
+      <li class="has-submenu">
+        <a href="#">Universidad Digital <i class="fa-solid fa-chevron-down"></i></a>
+        <ul class="submenu">
+          <li><a href="https://sevius.us.es/" target="_blank">Secretaria virtual</a></li>
+          <li><a href="https://ev.us.es/" target="_blank">Ensenanza virtual</a></li>
+          <li><a href="https://sede.us.es" target="_blank">Sede electronica</a></li>
+          <li><a href="https://correoweb.us.es/" target="_blank">Correo</a></li>
+          <li><a href="https://www.us.es/tablon-virtual" target="_blank">Tablon elect. oficial</a></li>
+          <li><a href="https://institucional.us.es/cprevias/">Cita previa</a></li>
+        </ul>
+      </li>
+    </ul>
   </div>
+</div>
 
-  <nav class="us-nav">
-    <a href="#">LA US</a>
-    <a href="#">ESTUDIAR</a>
-    <a href="#">INVESTIGAR</a>
-    <a href="#">VIVIR LA US</a>
-    <a href="#">EMPRESAS</a>
-    <a href="#">INTERNACIONAL</a>
-    <a href="#">TRABAJA EN LA US</a>
-  </nav>
-
-  <div class="us-header-right">
-    <button class="info-btn">INFORMACIÓN PARA MÍ</button>
+<!-- HEADER PRINCIPAL -->
+<header class="main-header">
+  <div class="header-container">
+    <div class="header-left">
+      <a href="https://www.us.es/" class="logo-link">
+        <img src="logo-us.png" alt="Universidad de Sevilla" class="us-logo">
+      </a>
+      <div class="info-dropdown has-submenu">
+        <a href="#">Informacion para mi <i class="fa-solid fa-chevron-down"></i></a>
+        <ul class="submenu">
+          <li><a href="https://www.us.es/estudiantes">Estudiantes</a></li>
+          <li><a href="https://www.us.es/futuros_estudiantes">Futuros estudiantes</a></li>
+          <li><a href="https://www.us.es/profesorado">Profesorado</a></li>
+          <li><a href="https://www.us.es/personal">PTGAS</a></li>
+          <li><a href="https://alumni.us.es/" target="_blank">Alumni</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <form class="search-form" action="https://www.us.es/search" method="get">
+        <input type="text" name="keys" placeholder="Buscar...">
+        <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+      </form>
+    </div>
   </div>
 </header>
 
+<!-- NAVEGACION PRINCIPAL -->
+<nav class="main-nav">
+  <div class="nav-container">
+    <ul class="nav-menu">
+      <li class="has-submenu">
+        <a href="https://www.us.es/laUS">La US</a>
+        <ul class="submenu">
+          <li><a href="https://www.us.es/laUS/gobierno">Gobierno</a></li>
+          <li><a href="https://www.us.es/laUS/organizacion">Organizacion</a></li>
+          <li><a href="https://www.us.es/laUS/historia-de-la-universidad">Historia</a></li>
+          <li><a href="https://www.us.es/laUS/us-en-cifras">La US en cifras</a></li>
+          <li><a href="https://www.us.es/laUS/calidad-y-planificacion">Calidad y planificacion</a></li>
+          <li><a href="https://www.us.es/laUS/servicios-centrales">Servicios centrales</a></li>
+          <li><a href="https://www.us.es/laUS/sedes-y-centros">Sedes y centros</a></li>
+        </ul>
+      </li>
+      <li class="has-submenu">
+        <a href="https://www.us.es/estudiar">Estudiar</a>
+        <ul class="submenu">
+          <li><a href="https://www.us.es/estudiar/que-estudiar">Que estudiar</a></li>
+          <li><a href="https://www.us.es/estudiar/admision-y-matricula">Admision y matricula</a></li>
+          <li><a href="https://www.us.es/estudiar/becas-y-ayudas">Becas y ayudas</a></li>
+          <li><a href="https://www.us.es/estudiar/formacion-permanente">Formacion permanente</a></li>
+          <li><a href="https://www.us.es/estudiar/idiomas">Idiomas</a></li>
+          <li><a href="https://www.us.es/estudiar/doctorado">Doctorado</a></li>
+        </ul>
+      </li>
+      <li class="has-submenu">
+        <a href="https://www.us.es/investigar">Investigar</a>
+        <ul class="submenu">
+          <li><a href="https://www.us.es/investigar/grupos-de-investigacion">Grupos de investigacion</a></li>
+          <li><a href="https://www.us.es/investigar/contratos-y-proyectos">Contratos y proyectos</a></li>
+          <li><a href="https://www.us.es/investigar/servicios-al-investigador">Servicios al investigador</a></li>
+          <li><a href="https://www.us.es/investigar/transferencia">Transferencia</a></li>
+        </ul>
+      </li>
+      <li class="has-submenu">
+        <a href="https://www.us.es/vivir-la-US">Vivir la US</a>
+        <ul class="submenu">
+          <li><a href="https://www.us.es/vivir-la-US/cultura">Cultura</a></li>
+          <li><a href="https://www.us.es/vivir-la-US/deportes">Deportes</a></li>
+          <li><a href="https://www.us.es/vivir-la-US/alojamiento">Alojamiento</a></li>
+          <li><a href="https://www.us.es/vivir-la-US/comedores">Comedores</a></li>
+          <li><a href="https://www.us.es/vivir-la-US/voluntariado-y-cooperacion">Voluntariado y cooperacion</a></li>
+        </ul>
+      </li>
+      <li class="has-submenu">
+        <a href="https://www.us.es/empresas">Empresas</a>
+        <ul class="submenu">
+          <li><a href="https://www.us.es/empresas/practicas-en-empresas">Practicas en empresas</a></li>
+          <li><a href="https://www.us.es/empresas/empleo">Empleo</a></li>
+          <li><a href="https://www.us.es/empresas/emprendimiento">Emprendimiento</a></li>
+          <li><a href="https://www.us.es/empresas/catedras-de-empresa">Catedras de empresa</a></li>
+        </ul>
+      </li>
+      <li class="has-submenu">
+        <a href="https://www.us.es/internacional">Internacional</a>
+        <ul class="submenu">
+          <li><a href="https://www.us.es/internacional/movilidad-de-estudiantes">Movilidad de estudiantes</a></li>
+          <li><a href="https://www.us.es/internacional/movilidad-de-profesorado">Movilidad de profesorado</a></li>
+          <li><a href="https://www.us.es/internacional/programas-internacionales">Programas internacionales</a></li>
+          <li><a href="https://www.us.es/internacional/estudiantes-internacionales">Estudiantes internacionales</a></li>
+        </ul>
+      </li>
+      <li class="has-submenu">
+        <a href="https://www.us.es/trabaja-en-la-US">Trabaja en la US</a>
+        <ul class="submenu">
+          <li><a href="https://www.us.es/trabaja-en-la-US/PDI">PDI</a></li>
+          <li><a href="https://www.us.es/trabaja-en-la-US/PTGAS">PTGAS</a></li>
+          <li><a href="https://www.us.es/trabaja-en-la-US/formacion">Formacion</a></li>
+          <li><a href="https://www.us.es/trabaja-en-la-US/prevencion-de-riesgos">Prevencion de riesgos</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<!-- CONTENIDO PRINCIPAL -->
 <main class="us-main">
   <section class="comunicaciones">
     <h1>Comunicaciones oficiales</h1>
@@ -36,26 +143,60 @@
     <div class="cards">
       <article class="card">
         <span class="tag">MOVILIDAD</span>
-        <h2>Resolución provisional de la convocatoria general de movilidad...</h2>
+        <h2>Resolucion provisional de la convocatoria general de movilidad...</h2>
         <p>
-          La Universidad de Sevilla hace pública la resolución provisional de destinos
+          La Universidad de Sevilla hace publica la resolucion provisional de destinos
           de la convocatoria general de movilidad internacional para el curso...
         </p>
-        <a href="#" class="link">SABER MÁS →</a>
+        <a href="#" class="link">SABER MAS <i class="fa-solid fa-arrow-right"></i></a>
       </article>
 
       <article class="card">
         <span class="tag">BECAS Y AYUDAS</span>
         <h2>Becas Santander Estudios Erasmus y no Erasmus</h2>
         <p>
-          Se hacen públicas las convocatorias de Becas Santander Estudios ligadas a los
+          Se hacen publicas las convocatorias de Becas Santander Estudios ligadas a los
           destinos Erasmus y no Erasmus, correspondientes a la Convocatoria...
         </p>
-        <a href="#" class="link">SABER MÁS →</a>
+        <a href="#" class="link">SABER MAS <i class="fa-solid fa-arrow-right"></i></a>
       </article>
     </div>
   </section>
 </main>
+
+<!-- FOOTER -->
+<footer class="us-footer">
+  <div class="footer-container">
+    <div class="footer-col">
+      <img src="logo-us.png" alt="Universidad de Sevilla" class="footer-logo">
+    </div>
+    <div class="footer-col">
+      <h4>Contacto</h4>
+      <p>San Fernando, 4<br>41004 Sevilla</p>
+      <p>Tel: 954 55 10 00</p>
+    </div>
+    <div class="footer-col">
+      <h4>Redes sociales</h4>
+      <div class="social-icons">
+        <a href="https://www.facebook.com/UniversidaddeSevilla" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="https://www.instagram.com/unaborable/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://www.linkedin.com/school/universidad-de-sevilla/" target="_blank"><i class="fa-brands fa-linkedin-in"></i></a>
+        <a href="https://www.youtube.com/user/UniversidadDSevilla" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Acceso rapido</h4>
+      <ul>
+        <li><a href="https://www.us.es/accesibilidad">Accesibilidad</a></li>
+        <li><a href="https://sevius.us.es/" target="_blank">Secretaria virtual</a></li>
+        <li><a href="https://ev.us.es/" target="_blank">Ensenanza virtual</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="subfooter">
+    <p>&copy; Universidad de Sevilla</p>
+  </div>
+</footer>
 
 <!-- Linceus Chatbot Widget -->
 <script>
