@@ -61,6 +61,7 @@
 <!-- NAVEGACION PRINCIPAL -->
 <nav class="main-nav">
   <div class="nav-container">
+    <button class="hamburger" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
     <ul class="nav-menu">
       <li class="has-submenu">
         <a href="https://www.us.es/laUS">La US</a>
@@ -218,6 +219,11 @@
     };
 </script>
 <script src="chatbot-widget.js"></script>
+<script>
+  document.querySelector('.hamburger').addEventListener('click', function() {
+    document.querySelector('.nav-menu').classList.toggle('open');
+  });
+</script>
 
 </body>
 </html>

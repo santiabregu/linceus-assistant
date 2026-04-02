@@ -432,6 +432,19 @@ a:hover {
 }
 
 /* ===========================
+   HAMBURGER BUTTON
+   =========================== */
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--us-text);
+  cursor: pointer;
+  padding: 8px;
+}
+
+/* ===========================
    RESPONSIVE
    =========================== */
 @media (max-width: 992px) {
@@ -454,25 +467,120 @@ a:hover {
 }
 
 @media (max-width: 768px) {
-  .top-menu {
+  /* Top bar */
+  .top-bar-container {
     justify-content: center;
   }
 
+  .top-menu > li > a {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  /* Header */
   .header-container {
     flex-direction: column;
-    gap: 14px;
+    gap: 10px;
     align-items: flex-start;
+    padding: 12px 16px;
+  }
+
+  .header-left {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .us-logo {
+    height: 38px;
+  }
+
+  .info-dropdown {
+    display: none;
+  }
+
+  .search-form {
+    width: 100%;
+  }
+
+  .search-form input {
+    width: 100%;
+  }
+
+  /* Hamburger visible */
+  .hamburger {
+    display: block;
+  }
+
+  /* Nav colapsable */
+  .main-nav {
+    position: relative;
+  }
+
+  .nav-container {
+    padding: 0;
   }
 
   .nav-menu {
-    flex-wrap: wrap;
+    display: none;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .nav-menu.open {
+    display: flex;
+  }
+
+  .nav-menu > li > a {
+    padding: 14px 20px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 0;
+    font-size: 14px;
+  }
+
+  .nav-menu > li > a:hover,
+  .nav-menu > li:hover > a {
+    border-bottom-color: #eee;
+    background: #f9f9f9;
+  }
+
+  /* Dropdowns en movil: inline */
+  .has-submenu > .submenu {
+    position: static;
+    box-shadow: none;
+    min-width: 100%;
+  }
+
+  .submenu li a {
+    padding-left: 36px;
+  }
+
+  /* Main content */
+  .us-main {
+    padding: 30px 16px;
+  }
+
+  .comunicaciones h1 {
+    font-size: 26px;
+    margin-bottom: 30px;
   }
 
   .cards {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
 
+  .card {
+    padding: 24px 20px;
+  }
+
+  .card h2 {
+    font-size: 18px;
+  }
+
+  /* Footer */
   .footer-container {
     grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 30px 16px;
   }
 }
