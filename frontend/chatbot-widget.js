@@ -390,12 +390,21 @@
         /* Mobile: chat fullscreen */
         @media (max-width: 768px) {
             .linceus-chat-widget .chat-container {
-                width: 100%;
-                height: 100%;
-                bottom: 0;
+                position: fixed;
+                top: 0;
+                left: 0;
                 right: 0;
+                bottom: 0;
+                width: 100vw;
+                height: 100vh;
+                height: 100dvh;
                 border-radius: 0;
                 border: none;
+                box-shadow: none;
+            }
+
+            .linceus-chat-widget .chat-container .chat-input textarea {
+                font-size: 16px;
             }
 
             .linceus-chat-widget .chat-toggle {
