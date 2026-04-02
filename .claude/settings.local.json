@@ -6,7 +6,8 @@
       "WebFetch(domain:www.ma1.us.es)",
       "WebFetch(domain:www.dte.us.es)",
       "WebFetch(domain:departamento.us.es)",
-      "Bash(python profesores/scraper_ccia.py)"
+      "Bash(python profesores/scraper_ccia.py)",
+      "Bash(curl -s -X POST https://linceus-assistant.onrender.com/webhooks/rest/webhook -H \"Content-Type: application/json\" -d '{\"sender\":\"test\",\"message\":\"hola\"}')"
     ]
   }
 }

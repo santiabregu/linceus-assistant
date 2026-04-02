@@ -1,6 +1,12 @@
 #!/bin/bash
 # Arranca action server en background y Rasa en foreground
 
+echo "=== Debug: credentials.yml ==="
+cat credentials.yml
+echo "=== Debug: endpoints.yml ==="
+cat endpoints.yml
+echo "==============================="
+
 echo "Starting action server on port 5055..."
 python -m rasa_sdk --actions actions --port 5055 &
 
