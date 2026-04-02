@@ -4,3 +4,13 @@
 action_endpoint:
   url: "http://actions:5055/webhook"
   timeout: 300
+
+tracker_store:
+    type: SQL
+    dialect: "postgresql"
+    url: ${DB_HOST}
+    port: ${DB_PORT}
+    db: ${DB_DATABASE}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    login_db: ${DB_DATABASE}
