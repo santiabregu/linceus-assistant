@@ -386,6 +386,25 @@
             text-align: center;
             padding: 4px;
         }
+
+        /* Mobile: chat fullscreen */
+        @media (max-width: 768px) {
+            .linceus-chat-widget .chat-container {
+                width: 100%;
+                height: 100%;
+                bottom: 0;
+                right: 0;
+                border-radius: 0;
+                border: none;
+            }
+
+            .linceus-chat-widget .chat-toggle {
+                bottom: 12px;
+                right: 12px;
+                width: 48px;
+                height: 48px;
+            }
+        }
     `;
 
     // Inyectar estilos
