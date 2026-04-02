@@ -202,9 +202,12 @@
 <!-- Linceus Chatbot Widget -->
 <script>
     window.LinceusChatConfig = {
-        rasaServer: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-            ? 'http://localhost:5005'
-            : '/api',
+        rasaServer: (function() {
+            var h = window.location.hostname;
+            if (h === 'localhost' || h === '127.0.0.1') return 'http://localhost:5005';
+            if (h.match(/^\d+\.\d+\.\d+\.\d+$/)) return 'http://' + h + ':5005';
+            return '/api';
+        })(),
         branding: {
             logo: 'linceUS-logo.png',
             name: 'Linceus',
