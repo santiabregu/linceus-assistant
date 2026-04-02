@@ -201,7 +201,9 @@
 <!-- Linceus Chatbot Widget -->
 <script>
     window.LinceusChatConfig = {
-        rasaServer: 'http://localhost:5005',
+        rasaServer: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:5005'
+            : 'https://linceus-assistant.onrender.com',
         branding: {
             logo: 'linceUS-logo.png',
             name: 'Linceus',
