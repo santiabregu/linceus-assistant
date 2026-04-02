@@ -23,6 +23,10 @@ from .profesores import (
     ActionConsultaProfesor,
 )
 
+from .fallback import (
+    ActionSmartFallback,
+)
+
 __all__ = [
     'ActionConsultaEspecifica',
     'ActionConsultaListado',
@@ -34,4 +38,5 @@ __all__ = [
     'ActionConsultaHorario',
     'ActionMultiIntent',
     'ActionConsultaProfesor',
+    'ActionSmartFallback',
 ]

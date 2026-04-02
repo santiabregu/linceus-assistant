@@ -58,9 +58,11 @@ nlu:
     - ¿la profesora [Belén](nombre_profesor) que da clase de [FP](nombre_asignatura) cuál es su correo?
     - ¿cuál es el correo de la profesora [Belén](nombre_profesor) que da clase de [FP](nombre_asignatura)?
     - ¿qué profesores hay en el departamento de [LSI](nombre_departamento)?
-    - profesores del departamento [CCIA](nombre_departamento)
-    - profesores de [DTE](nombre_departamento)
-    - listado de profesores de [MA1](nombre_departamento)
+    - profesores del departamento de [CCIA](nombre_departamento)
+    - profesores del departamento de [DTE](nombre_departamento)
+    - listado de profesores del departamento de [MA1](nombre_departamento)
+    - dame los profesores del departamento [LSI](nombre_departamento)
+    - que profesores tiene el departamento de [DTE](nombre_departamento)
     - ¿y su correo?
     - ¿y su despacho?
     - ¿y las tutorías?

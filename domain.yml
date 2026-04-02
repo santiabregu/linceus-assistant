@@ -201,6 +201,8 @@ actions:
   - action_consulta_profesor
   # Multi-intent
   - action_multi_intent
+  # Fallback inteligente
+  - action_smart_fallback
 
 session_config:
   session_expiration_time: 60
