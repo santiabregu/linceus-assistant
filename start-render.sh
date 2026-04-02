@@ -13,4 +13,5 @@ exec rasa run \
     --enable-api \
     --cors "*" \
     --port $PORT \
-    --endpoints endpoints.yml
+    --endpoints endpoints.yml \
+    --credentials credentials.yml
