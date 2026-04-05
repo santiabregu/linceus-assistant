@@ -39,6 +39,7 @@ nlu:
 - intent: affirm
   examples: |
     - si
+    - sí
     - sii
     - siii
     - claro

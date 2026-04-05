@@ -17,15 +17,15 @@ action_endpoint:
 # Tracker store which is used to store the conversations.
 # https://rasa.com/docs/rasa/tracker-stores
 
-tracker_store:
-    type: SQL
-    dialect: "postgresql"
-    url: ${DB_HOST}
-    port: ${DB_PORT}
-    db: ${DB_DATABASE}
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
-    login_db: ${DB_DATABASE}
+# tracker_store: (uncomment for production with PostgreSQL)
+#     type: SQL
+#     dialect: "postgresql"
+#     url: ${DB_HOST}
+#     port: ${DB_PORT}
+#     db: ${DB_DATABASE}
+#     username: ${DB_USER}
+#     password: ${DB_PASSWORD}
+#     login_db: ${DB_DATABASE}
 
 # Event broker which all conversation events should be streamed to.
 # https://rasa.com/docs/rasa/event-brokers

@@ -5,6 +5,8 @@ Estrategia con fallback automático:
   1. Búsqueda vectorial (semántica) con gemini-embedding-001 — mejor calidad.
   2. Si el embedding falla (ej. cuota agotada), búsqueda por palabras clave
      usando ILIKE sobre el contenido de los chunks — funcional para testing.
+
+Incluye reranking por relevancia de sección (metadata-aware).
 """
 
 import re
@@ -21,6 +23,62 @@ from actions.shared.db import db_client
 CURSO_ACADEMICO = "2025-26"
 GRUPO_DEFAULT = "Grupo 1"
 
+# ── Pesos de reranking por sección ──────────────────────────────────────────
+# Mapea (tipo_consulta, seccion_chunk) → bonus de score.
+# El bonus se SUMA a la similitud coseno (0-1) para reordenar.
+RERANK_WEIGHTS = {
+    "profesorado": {
+        "profesorado": 0.25,
+        "coordinador": 0.20,
+        "datos_basicos": 0.05,
+        "bibliografia": -0.30,   # penalizar fuertemente
+    },
+    "evaluacion": {
+        "evaluacion_general": 0.20,
+        "evaluacion_grupo": 0.20,
+        "metodologia": 0.05,
+        "bibliografia": -0.10,
+    },
+    "contenidos": {
+        "contenidos": 0.20,
+        "contenidos_detallados": 0.20,
+        "objetivos": 0.10,
+        "bibliografia": 0.05,
+    },
+    "horarios": {
+        "horarios": 0.25,
+        "calendario_examenes": 0.10,
+    },
+    "bibliografia": {
+        "bibliografia": 0.25,
+        "informacion_adicional": 0.05,
+    },
+}
+
+# Palabras clave para detectar el tipo de consulta (para reranking)
+_TIPO_CONSULTA_KEYWORDS = {
+    "profesorado": [
+        "profesor", "profesora", "profesores", "profesorado", "docente",
+        "imparte", "quien da", "quién da", "quien enseña", "da clase",
+        "coordinador", "coordinadora", "responsable",
+    ],
+    "evaluacion": [
+        "evalua", "evaluacion", "evaluación", "califica", "nota", "notas",
+        "examen", "examenes", "parcial", "aprueba", "aprobar", "convocatoria",
+        "porcentaje", "puntua", "suspender",
+    ],
+    "contenidos": [
+        "temario", "tema", "temas", "contenido", "contenidos", "programa",
+        "objetivo", "competencia",
+    ],
+    "horarios": [
+        "horario", "clase", "aula", "calendario", "examen",
+    ],
+    "bibliografia": [
+        "bibliografia", "bibliografía", "libro", "libros", "material",
+    ],
+}
+
 
 def _normalizar(texto: str) -> str:
     texto = unicodedata.normalize("NFKD", texto)
@@ -28,12 +86,47 @@ def _normalizar(texto: str) -> str:
     return texto.lower().strip()
 
 
+def _detectar_tipo_consulta(pregunta: str) -> Optional[str]:
+    """Detecta el tipo de consulta para aplicar reranking por sección."""
+    pregunta_lower = pregunta.lower()
+    for tipo, keywords in _TIPO_CONSULTA_KEYWORDS.items():
+        if any(kw in pregunta_lower for kw in keywords):
+            return tipo
+    return None
+
+
+def _rerank(chunks: List[Dict], tipo_consulta: Optional[str]) -> List[Dict]:
+    """
+    Reordena chunks aplicando bonificaciones por sección según el tipo de consulta.
+    Los chunks con secciones más relevantes suben, los irrelevantes bajan.
+    """
+    if not tipo_consulta or tipo_consulta not in RERANK_WEIGHTS:
+        return chunks
+
+    weights = RERANK_WEIGHTS[tipo_consulta]
+
+    def score(chunk):
+        similitud = chunk.get("similitud") or 0.0
+        seccion = chunk.get("seccion", "general")
+        bonus = weights.get(seccion, 0.0)
+        return similitud + bonus
+
+    reranked = sorted(chunks, key=score, reverse=True)
+
+    print(f"  🔄 Rerank ({tipo_consulta}):")
+    for i, c in enumerate(reranked[:5]):
+        sim = c.get('similitud') or 0.0
+        sec = c.get('seccion', '?')
+        bonus = weights.get(sec, 0.0)
+        print(f"     [{i+1}] sim={sim:.3f} +bonus={bonus:+.2f} = {sim+bonus:.3f} | {sec}")
+
+    return reranked
+
+
 def _resolver_grupo(codigo_asignatura: str, grupo: str) -> str:
     """
     Resuelve el nombre exacto del grupo en la BD.
-
     Maneja variantes como 'Grupo 5INGLES' cuando el detector devuelve 'Grupo 5'.
-    Si no encuentra coincidencia exacta pero sí un LIKE, devuelve la variante real.
     """
     conn = db_client.get_connection()
     if not conn:
@@ -59,12 +152,20 @@ def _resolver_grupo(codigo_asignatura: str, grupo: str) -> str:
         conn.close()
 
 
+def _seccion_preferida(tipo_consulta: Optional[str]) -> Optional[str]:
+    """Devuelve la sección a filtrar según el tipo de consulta, o None."""
+    if tipo_consulta == "profesorado":
+        return "profesorado"
+    return None
+
+
 def buscar_en_plan_docente(
     pregunta: str,
     codigo_asignatura: str = None,
     grupo: Optional[str] = None,
-    limite: int = 6,
+    limite: int = 10,
     umbral: float = 0.5,
+    seccion_filtro: Optional[str] = None,
 ) -> List[Dict]:
     """
     Busca chunks relevantes en los planes docentes.
@@ -73,33 +174,58 @@ def buscar_en_plan_docente(
     (cuota agotada, error de red), cae automáticamente a búsqueda por
     palabras clave sobre el contenido de los chunks.
 
-    Args:
-        pregunta: Texto de la consulta del usuario.
-        codigo_asignatura: Código de la asignatura (ej. "2050001").
-        grupo: Grupo a consultar (default "Grupo 1").
-        limite: Número máximo de chunks a devolver.
-        umbral: Umbral mínimo de similitud (solo para búsqueda vectorial).
+    Si se proporciona seccion_filtro, busca primero con ese filtro.
+    Si no hay resultados suficientes, repite sin filtro como fallback.
 
-    Returns:
-        Lista de dicts con contenido, seccion, similitud (o None), etc.
+    Aplica reranking según el tipo de consulta detectado.
     """
-    # Resolver nombre exacto del grupo (ej. 'Grupo 5' → 'Grupo 5INGLES')
+    # Resolver nombre exacto del grupo
     if grupo and codigo_asignatura:
         grupo = _resolver_grupo(codigo_asignatura, grupo)
+
+    # Detectar tipo de consulta para reranking
+    tipo_consulta = _detectar_tipo_consulta(pregunta)
+
+    # Si no se pasa seccion_filtro explícito, inferirlo del tipo
+    if seccion_filtro is None:
+        seccion_filtro = _seccion_preferida(tipo_consulta)
+
+    if seccion_filtro:
+        print(f"  🔎 Filtro por sección: {seccion_filtro}")
 
     # --- Intento 1: búsqueda vectorial ---
     embedding = generar_embedding(pregunta, task_type="SEMANTIC_SIMILARITY")
     if embedding:
+        # Primero con filtro de sección (si aplica)
+        if seccion_filtro:
+            resultados = _buscar_vectorial(
+                embedding, codigo_asignatura, grupo, limite, umbral,
+                seccion=seccion_filtro,
+            )
+            if resultados:
+                return _rerank(resultados, tipo_consulta)
+            print(f"  ⚠ Sin resultados con sección={seccion_filtro}, buscando sin filtro")
+
+        # Sin filtro de sección (o como fallback)
         resultados = _buscar_vectorial(
-            embedding, codigo_asignatura, grupo, limite, umbral
+            embedding, codigo_asignatura, grupo, limite, umbral,
         )
         if resultados:
-            return resultados
+            return _rerank(resultados, tipo_consulta)
         print("  ⚠ Búsqueda vectorial sin resultados, probando keyword fallback")
 
     # --- Fallback: búsqueda por palabras clave ---
     print("  🔍 Usando búsqueda por palabras clave (sin embedding)")
-    return _buscar_por_keywords(pregunta, codigo_asignatura, grupo, limite)
+    resultados = _buscar_por_keywords(
+        pregunta, codigo_asignatura, grupo, limite,
+        seccion=seccion_filtro,
+    )
+    if not resultados and seccion_filtro:
+        print(f"  ⚠ Keywords sin resultados con sección={seccion_filtro}, buscando sin filtro")
+        resultados = _buscar_por_keywords(
+            pregunta, codigo_asignatura, grupo, limite,
+        )
+    return _rerank(resultados, tipo_consulta)
 
 
 def _buscar_vectorial(
@@ -108,6 +234,7 @@ def _buscar_vectorial(
     grupo: Optional[str],
     limite: int,
     umbral: float,
+    seccion: Optional[str] = None,
 ) -> List[Dict]:
     conn = db_client.get_connection()
     if not conn:
@@ -121,10 +248,10 @@ def _buscar_vectorial(
                 """SELECT chunk_id, contenido, seccion, subseccion, similitud,
                           asignatura_nombre, asignatura_codigo, grupo, metadata
                    FROM buscar_plan_docente(
-                       %s::vector(2000), %s, NULL::uuid, %s, %s, NULL, %s, %s
+                       %s::vector(2000), %s, NULL::uuid, %s, %s, %s, %s, %s
                    )""",
                 (embedding_str, codigo_asignatura, CURSO_ACADEMICO,
-                 grupo, limite, umbral),
+                 grupo, seccion, limite, umbral),
             )
         else:
             cur.execute(
@@ -157,6 +284,7 @@ def _buscar_por_keywords(
     codigo_asignatura: Optional[str],
     grupo: Optional[str],
     limite: int,
+    seccion: Optional[str] = None,
 ) -> List[Dict]:
     """
     Fallback: busca chunks cuyo contenido coincida con palabras clave
@@ -173,7 +301,6 @@ def _buscar_por_keywords(
     keywords = [p for p in palabras if p not in stopwords][:4]
 
     if not keywords:
-        # Sin keywords útiles: devolver los primeros chunks de la asignatura
         keywords = []
 
     conn = db_client.get_connection()
@@ -209,6 +336,14 @@ def _buscar_por_keywords(
             where_grupo = ""
             grupo_params = []
 
+        # Filtro por sección
+        if seccion:
+            where_seccion = "AND c.seccion = %s"
+            seccion_params = [seccion]
+        else:
+            where_seccion = ""
+            seccion_params = []
+
         sql = f"""
             SELECT
                 c.id        AS chunk_id,
@@ -227,6 +362,7 @@ def _buscar_por_keywords(
               AND pd.curso_academico = %s
               {where_grupo}
               {where_asig}
+              {where_seccion}
               {where_keywords}
             ORDER BY c.orden_chunk
             LIMIT %s
@@ -236,6 +372,7 @@ def _buscar_por_keywords(
             [CURSO_ACADEMICO]
             + grupo_params
             + asig_params
+            + seccion_params
             + keyword_params
             + [limite]
         )

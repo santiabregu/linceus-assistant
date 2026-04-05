@@ -257,7 +257,7 @@ class ActionMultiIntent(Action):
         print(f"{'='*60}")
 
         # Titulación actual (puede cambiar si el primer sub-intent es cambiar_contexto)
-        titulacion = BotConfig.get_titulacion_activa(tracker)
+        titulacion = tracker.get_slot("contexto_titulacion")
         todos_eventos = []
         resultados = []
 
@@ -275,6 +275,10 @@ class ActionMultiIntent(Action):
                     titulacion = resultado["codigo"]
                     todos_eventos.extend(resultado.get("eventos", []))
             elif sub in NECESITA_TITULACION:
+                if not titulacion:
+                    titulacion, _ = comprobar_titulacion(tracker, dispatcher)
+                    if not titulacion:
+                        return []
                 resultado = ejecutor(tracker, titulacion)
             else:
                 resultado = ejecutor(tracker)

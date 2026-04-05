@@ -2,6 +2,7 @@
 # Define los valores por defecto para el contexto académico
 
 import os
+from typing import Optional
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -59,13 +60,12 @@ class BotConfig:
     # ─────────────────────────────────────────────────────────────────────────────
     
     @classmethod
-    def get_titulacion_activa(cls, tracker) -> str:
+    def get_titulacion_activa(cls, tracker) -> Optional[str]:
         """
         Obtiene la titulación activa para la conversación.
-        Lee del slot si el usuario la cambió, si no usa el default.
-        Usar en las actions: titulacion = BotConfig.get_titulacion_activa(tracker)
+        Devuelve None si el usuario no ha elegido titulación.
         """
-        return tracker.get_slot("contexto_titulacion") or cls.get_default_titulacion()
+        return tracker.get_slot("contexto_titulacion") or None
     
     @classmethod
     def get_centro_activo(cls, tracker) -> str:
@@ -82,7 +82,7 @@ class BotConfig:
         Si se pasan overrides (de slots), los usa; si no, usa defaults.
         """
         centro = centro_override or cls.get_default_centro()
-        titulacion = titulacion_override or cls.get_default_titulacion()
+        titulacion = titulacion_override
         
         return {
             'universidad': cls.get_default_universidad(),

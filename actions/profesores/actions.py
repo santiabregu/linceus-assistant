@@ -37,6 +37,7 @@ from profesores_data.text_to_sql import (
     ejecutar_query,
     formatear_datos_para_prompt,
     generar_respuesta_natural,
+    _fallback_sql,
 )
 
 
@@ -288,8 +289,12 @@ def _resolver_profesor_via_rag(
                    p.enlace_perfil, d.siglas AS departamento
             FROM profesores p
             LEFT JOIN departamentos d ON p.departamento_id = d.id
-            WHERE p.activo = true AND p.nombre_normalizado ILIKE %s
-        """, (f"%{nombre_prof_norm}%",))
+            WHERE p.activo = true AND (
+                p.nombre_normalizado ILIKE %s
+                OR LOWER(p.nombre || ' ' || p.apellidos) ILIKE %s
+                OR LOWER(p.apellidos || ' ' || p.nombre) ILIKE %s
+            )
+        """, (f"%{nombre_prof_norm}%",) * 3)
         columnas = [desc[0] for desc in cur.description]
         candidatos = [dict(zip(columnas, row)) for row in cur.fetchall()]
         cur.close()
@@ -505,6 +510,19 @@ class ActionConsultaProfesor(Action):
                 text="No pude consultar la base de datos. ¿Puedes intentar de otra forma?"
             )
             return slots
+
+        if not resultados and nombre_profesor:
+            # Fallback: buscar por última palabra (probable apellido)
+            partes = nombre_profesor.strip().split()
+            if len(partes) > 1:
+                ultimo_apellido = partes[-1]
+                print(f"  → Retry con último apellido: '{ultimo_apellido}'")
+                fallback_result = _fallback_sql(ultimo_apellido, None, None)
+                exito2, resultados = ejecutar_query(
+                    fallback_result['sql'], fallback_result['parametros']
+                )
+                if exito2 and resultados:
+                    print(f"  ✅ Fallback apellido encontró: {len(resultados)} resultados")
 
         if not resultados:
             msg = "No encontré resultados para tu consulta."

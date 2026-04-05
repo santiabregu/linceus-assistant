@@ -22,6 +22,8 @@ class ActionCambiarContexto(Action):
     TITULACION_MAP = {
         'ingenieria del software': 'GII-IS',
         'ingeniería del software': 'GII-IS',
+        'ing del software': 'GII-IS',
+        'ing software': 'GII-IS',
         'software': 'GII-IS',
         'is': 'GII-IS',
         'gii-is': 'GII-IS',
@@ -33,6 +35,8 @@ class ActionCambiarContexto(Action):
         'gii-ti': 'GII-TI',
         'ingenieria de computadores': 'GII-IC',
         'ingeniería de computadores': 'GII-IC',
+        'ing de computadores': 'GII-IC',
+        'ing computadores': 'GII-IC',
         'computadores': 'GII-IC',
         'ic': 'GII-IC',
         'gii-ic': 'GII-IC',

@@ -387,6 +387,41 @@
             padding: 4px;
         }
 
+        /* Quick-reply buttons */
+        .linceus-chat-widget .quick-replies {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .linceus-chat-widget .quick-reply-btn {
+            background: white;
+            color: var(--chat--color-primary);
+            border: 1.5px solid var(--chat--color-primary);
+            border-radius: 20px;
+            padding: 10px 16px;
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .linceus-chat-widget .quick-reply-btn:hover {
+            background: var(--chat--color-primary);
+            color: white;
+        }
+
+        .linceus-chat-widget .quick-reply-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f0f0f0;
+            border-color: #ccc;
+            color: #999;
+        }
+
         /* Mobile: chat fullscreen */
         @media (max-width: 768px) {
             .linceus-chat-widget .chat-container {
@@ -498,10 +533,12 @@
             <div class="chat-messages">
                 <div class="chat-message bot">
                     \u00a1Hola! Soy <strong>Linceus</strong>, el asistente virtual de la ETSII (Universidad de Sevilla). \u00bfEn qu\u00e9 puedo ayudarte hoy?<br><br>
-                    Antes de empezar, por favor ind\u00edcame tu titulaci\u00f3n:<br>
-                    \u2022 <strong>Ingenier\u00eda del Software</strong> (GII-IS)<br>
-                    \u2022 <strong>Tecnolog\u00edas Inform\u00e1ticas</strong> (GII-TI)<br>
-                    \u2022 <strong>Ingenier\u00eda de Computadores</strong> (GII-IC)
+                    Antes de empezar, por favor ind\u00edcame tu titulaci\u00f3n:
+                    <div class="quick-replies">
+                        <button class="quick-reply-btn" data-payload="GII-IS">Ingenier\u00eda del Software (GII-IS)</button>
+                        <button class="quick-reply-btn" data-payload="GII-TI">Tecnolog\u00edas Inform\u00e1ticas (GII-TI)</button>
+                        <button class="quick-reply-btn" data-payload="GII-IC">Ingenier\u00eda de Computadores (GII-IC)</button>
+                    </div>
                 </div>
                 <div class="typing-indicator">
                     <span></span><span></span><span></span>
@@ -596,12 +633,24 @@
                     .filter(msg => msg.text)
                     .map(msg => msg.text)
                     .join('\n\n');
+
+                // Collect buttons from any message in the response
+                const buttons = data
+                    .filter(msg => msg.buttons && msg.buttons.length > 0)
+                    .flatMap(msg => msg.buttons);
+
                 if (combinedText) {
                     lastBotResponse = combinedText;
                     const botMessageDiv = document.createElement('div');
                     botMessageDiv.className = 'chat-message bot';
                     messagesContainer.insertBefore(botMessageDiv, typingIndicator);
                     await typewriterEffect(botMessageDiv, combinedText);
+
+                    // Render buttons after text
+                    if (buttons.length > 0) {
+                        renderButtons(buttons, botMessageDiv);
+                        scrollToBottom();
+                    }
                 }
             } else {
                 const fallback = 'Lo siento, no he podido procesar tu mensaje. \u00bfPuedes reformularlo?';
@@ -710,6 +759,46 @@
     // Scroll al final
     function scrollToBottom() {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    // ── Quick-reply buttons (delegated) ──
+
+    function handleQuickReply(btn) {
+        const payload = btn.dataset.payload;
+        if (!payload) return;
+
+        // Disable all sibling buttons
+        const container = btn.closest('.quick-replies');
+        if (container) {
+            container.querySelectorAll('.quick-reply-btn').forEach(b => {
+                b.disabled = true;
+            });
+        }
+        btn.style.background = 'var(--chat--color-primary)';
+        btn.style.color = 'white';
+
+        sendMessage(payload);
+    }
+
+    messagesContainer.addEventListener('click', (e) => {
+        const btn = e.target.closest('.quick-reply-btn');
+        if (btn && !btn.disabled) {
+            handleQuickReply(btn);
+        }
+    });
+
+    // Render quick-reply buttons from Rasa response
+    function renderButtons(buttons, parentDiv) {
+        const container = document.createElement('div');
+        container.className = 'quick-replies';
+        buttons.forEach(btn => {
+            const button = document.createElement('button');
+            button.className = 'quick-reply-btn';
+            button.textContent = btn.title;
+            button.dataset.payload = btn.payload || btn.title;
+            container.appendChild(button);
+        });
+        parentDiv.appendChild(container);
     }
 
     // ── Event listeners ──

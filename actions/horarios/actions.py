@@ -20,6 +20,7 @@ from rasa_sdk.events import SlotSet
 from ..shared.config import BotConfig, ALIAS_ASIGNATURAS
 from ..shared.db import db_client
 from ..shared.gemini_client import llamar_gemini as llamar_llm
+from ..asignaturas.actions import comprobar_titulacion
 
 # ─── Constantes ──────────────────────────────────────────────────────────────
 
@@ -123,6 +124,18 @@ def _detectar_asignatura(texto: str) -> Optional[str]:
         if re.search(r"\b" + re.escape(abr) + r"\b", texto_norm):
             return abr
     return None
+
+
+def _detectar_multiples_asignaturas(texto: str) -> List[str]:
+    """Detecta TODAS las abreviaturas de asignatura en el texto."""
+    texto_norm = _normalizar(texto)
+    encontradas = []
+    aliases_ordenados = sorted(ALIAS_ASIGNATURAS.keys(), key=len, reverse=True)
+    for abr in aliases_ordenados:
+        if re.search(r"\b" + re.escape(abr) + r"\b", texto_norm):
+            encontradas.append(abr)
+            texto_norm = re.sub(r"\b" + re.escape(abr) + r"\b", "", texto_norm, count=1)
+    return encontradas
 
 
 # ─── Queries a la BD ─────────────────────────────────────────────────────────
@@ -405,7 +418,10 @@ class ActionConsultaHorario(Action):
     ) -> List[Dict[Text, Any]]:
 
         mensaje = tracker.latest_message.get("text", "")
-        titulacion = BotConfig.get_titulacion_activa(tracker)
+
+        titulacion, eventos_tit = comprobar_titulacion(tracker, dispatcher)
+        if not titulacion:
+            return eventos_tit
 
         curso = _detectar_curso(mensaje)
         grupo = _detectar_grupo(mensaje)
@@ -445,6 +461,30 @@ class ActionConsultaHorario(Action):
                     if not asignatura:
                         asignatura = ultimo_nombre
                     print(f"   Seguimiento horario heurístico: '{asignatura}' ({turnos} turnos atrás)")
+
+        # ── Multi-asignatura: detectar si hay varias ──
+        multi = _detectar_multiples_asignaturas(mensaje)
+        if len(multi) >= 2:
+            print(f"   Multi-horario: {multi}")
+            datos_combinados = []
+            for asig in multi:
+                resultados = _query_asignatura(titulacion, asig, grupo)
+                if resultados:
+                    datos_combinados.append(
+                        _datos_asignatura_a_texto(resultados, asig, titulacion)
+                    )
+            if datos_combinados:
+                respuesta = _generar_respuesta_horario(
+                    mensaje, "\n\n".join(datos_combinados)
+                )
+                dispatcher.utter_message(text=respuesta)
+            else:
+                nombres = " y ".join(a.upper() for a in multi)
+                dispatcher.utter_message(
+                    text=f"No encuentro horarios de {nombres} en "
+                         f"{NOMBRES_TITULACION.get(titulacion, titulacion)}."
+                )
+            return []
 
         # ── Búsqueda por asignatura ──
         if asignatura:
