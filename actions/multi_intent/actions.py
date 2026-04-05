@@ -33,8 +33,8 @@ from ..asignaturas.text_to_sql import (
 )
 from ..horarios.actions import (
     _detectar_curso, _detectar_grupo, _detectar_dia, _detectar_cuatrimestre,
-    _detectar_asignatura, _query_horario, _query_asignatura,
-    _datos_horario_a_texto, _datos_asignatura_a_texto,
+    _query_horario,
+    _datos_horario_a_texto,
     _respuesta_faltan_datos, NOMBRES_TITULACION, PDF_HORARIOS_URL,
 )
 
@@ -135,23 +135,13 @@ def _ejecutar_consulta_conteo(tracker, titulacion: str) -> dict:
 
 
 def _ejecutar_consulta_horario(tracker, titulacion: str) -> dict:
-    """Ejecuta una consulta de horario."""
+    """Ejecuta una consulta de horario personal (curso + grupo)."""
     mensaje = tracker.latest_message.get("text", "")
 
     curso = _detectar_curso(mensaje)
     grupo = _detectar_grupo(mensaje)
     dia = _detectar_dia(mensaje)
     cuatrimestre = _detectar_cuatrimestre(mensaje)
-    asignatura = _detectar_asignatura(mensaje)
-
-    if asignatura:
-        resultados = _query_asignatura(titulacion, asignatura, grupo)
-        datos_texto = _datos_asignatura_a_texto(resultados, asignatura, titulacion)
-        return {
-            "tipo": "consulta_horario",
-            "datos": datos_texto,
-            "texto": datos_texto,
-        }
 
     if not curso or not grupo:
         return {
@@ -215,6 +205,7 @@ REGLAS:
 - No menciones "base de datos" ni "datos obtenidos"
 - No saludes (nada de "Hola!", "Buenos dias", etc.) — ve directo a la respuesta
 - Si alguna sub-consulta fallo, mencionalo brevemente
+- IMPORTANTE: Tu respuesta debe tener como MAXIMO 1500 caracteres. Si hay mucha informacion, resume lo mas relevante
 
 Respuesta:"""
 
@@ -222,7 +213,7 @@ Respuesta:"""
         respuesta = llamar_llm(
             prompt,
             timeout=120,
-            options={"temperature": 0.3, "num_predict": 500, "num_ctx": 2048},
+            options={"temperature": 0.3, "num_predict": 800, "num_ctx": 4096},
         )
         if respuesta:
             return respuesta.strip()

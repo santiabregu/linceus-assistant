@@ -472,15 +472,118 @@ REGLAS:
 - IMPORTANTE: Cada fragmento tiene una etiqueta de sección entre corchetes (ej. [profesorado], [bibliografia]).
   Los nombres en secciones [bibliografia] son AUTORES DE LIBROS, NO profesores de la asignatura.
   Solo menciona como profesores a personas de secciones [profesorado] o [coordinador].
+- IMPORTANTE: Tu respuesta debe tener como MÁXIMO 1500 caracteres. Si hay mucha información, resume lo más relevante
 
 Respuesta:"""
 
     respuesta = llamar_gemini(
         prompt,
         timeout=30,
-        options={"temperature": 0.3, "num_predict": 300},
+        options={"temperature": 0.3, "num_predict": 800},
     )
     return respuesta.strip() if respuesta else None
+
+
+# ============================================================================
+# DETECCIÓN DE PREGUNTAS DE HORARIO/AULA DE ASIGNATURA
+# ============================================================================
+
+_PALABRAS_HORARIO_ASIGNATURA = [
+    'horario', 'horarios', 'aula', 'aulas',
+    'cuando tengo', 'cuándo tengo', 'cuando es', 'cuándo es',
+    'a que hora', 'a qué hora', 'que hora es',
+    'donde tengo', 'dónde tengo', 'donde es', 'dónde es',
+    'donde se da', 'dónde se da', 'donde se imparte', 'dónde se imparte',
+    'que dias', 'qué dias', 'qué días', 'que días',
+    'laboratorio', 'laboratorios', 'labs',
+    'en que clase', 'en qué clase',
+    'donde esta', 'dónde está',
+]
+
+
+def _es_pregunta_horario_asignatura(pregunta: str) -> bool:
+    """Detecta si la pregunta es sobre horario/aula de una asignatura concreta."""
+    pregunta_lower = pregunta.lower()
+    return any(p in pregunta_lower for p in _PALABRAS_HORARIO_ASIGNATURA)
+
+
+def _responder_horario_asignatura(
+    pregunta: str, asignatura: dict, titulacion: str,
+    grupo: Optional[str] = None,
+) -> Optional[str]:
+    """
+    Consulta la tabla horarios para una asignatura y genera respuesta con LLM.
+    Retorna la respuesta o None si no hay datos.
+    """
+    from ..horarios.actions import (
+        _query_asignatura as query_horario_asig,
+        _datos_asignatura_a_texto,
+        _generar_respuesta_horario,
+        ALIAS_ASIGNATURAS,
+    )
+
+    nombre = asignatura.get('nombre', '')
+    nombre_norm = normalizar_texto(nombre)
+
+    # Buscar alias que corresponda a esta asignatura
+    alias_encontrado = None
+    for alias, nombre_map in ALIAS_ASIGNATURAS.items():
+        if nombre_map in nombre_norm or nombre_norm in nombre_map:
+            alias_encontrado = alias
+            break
+
+    # Convertir grupo de "Grupo 1" a int si viene como string
+    grupo_int = None
+    if grupo:
+        import re as _re
+        m = _re.search(r'(\d+)', str(grupo))
+        if m:
+            grupo_int = int(m.group(1))
+
+    if alias_encontrado:
+        resultados = query_horario_asig(titulacion, alias_encontrado, grupo_int)
+        datos_texto = _datos_asignatura_a_texto(resultados, alias_encontrado, titulacion)
+    else:
+        # Fallback: buscar directamente por nombre en la tabla horarios
+        from ..shared.db import db_client
+        conn = db_client.get_connection()
+        if not conn:
+            return None
+        try:
+            cur = conn.cursor()
+            sql = """
+                SELECT h.dia_semana, h.hora_inicio, h.hora_fin,
+                       a.nombre, COALESCE(au.codigo, '') AS aula,
+                       gc.codigo AS grupo, a.curso
+                FROM horarios h
+                JOIN grupos_clase gc ON h.grupo_id = gc.id
+                JOIN asignaturas a ON gc.asignatura_id = a.id
+                JOIN titulaciones t ON a.titulacion_id = t.id
+                LEFT JOIN aulas au ON h.aula_id = au.id
+                WHERE t.codigo = %s
+                  AND a.nombre_normalizado ILIKE %s
+                  AND h.activo = true
+            """
+            params = [titulacion, f"%{nombre_norm}%"]
+            if grupo_int:
+                sql += " AND gc.codigo = %s"
+                params.append(str(grupo_int))
+            sql += " ORDER BY gc.codigo, h.dia_semana, h.hora_inicio"
+            cur.execute(sql, params)
+            resultados = cur.fetchall()
+            cur.close()
+            conn.close()
+        except Exception as e:
+            print(f"Error buscando horario por nombre: {e}")
+            if conn:
+                conn.close()
+            return None
+        datos_texto = _datos_asignatura_a_texto(resultados, nombre, titulacion)
+
+    if not resultados:
+        return None
+
+    return _generar_respuesta_horario(pregunta, datos_texto)
 
 
 # ============================================================================
@@ -568,6 +671,30 @@ class ActionConsultaEspecifica(Action):
                     ]
                 dispatcher.utter_message(text="No pude identificar la asignatura en tu pregunta. ¿Puedes decirme el nombre?")
                 return []
+
+        # ── Horario/aula de asignatura: consultar tabla horarios ──
+        if _es_pregunta_horario_asignatura(pregunta):
+            print(f"   📅 Detectada pregunta de horario/aula → consultando tabla horarios")
+            grupo_detectado = _detectar_grupo(pregunta)
+            respuesta_horario = _responder_horario_asignatura(
+                pregunta, asignatura, contexto_titulacion, grupo_detectado
+            )
+            if respuesta_horario:
+                dispatcher.utter_message(text=respuesta_horario)
+                return eventos_contexto + [
+                    SlotSet("ultimo_codigo_consultado", asignatura.get('codigo')),
+                    SlotSet("ultimo_nombre_asignatura", asignatura.get('nombre')),
+                    SlotSet("ultima_action_ejecutada", "consulta_especifica"),
+                ]
+            else:
+                nombre_tit = BotConfig.get_nombre_titulacion(contexto_titulacion)
+                dispatcher.utter_message(
+                    text=f"No encontré horarios de **{asignatura.get('nombre')}** en {nombre_tit}."
+                )
+                return eventos_contexto + [
+                    SlotSet("ultimo_nombre_asignatura", asignatura.get('nombre')),
+                    SlotSet("ultima_action_ejecutada", "consulta_especifica"),
+                ]
 
         # Clasificar si necesita RAG
         from .text_to_sql import _clasificar_necesita_rag
