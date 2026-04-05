@@ -22,7 +22,7 @@ from .text_to_sql import (
     _expandir_alias,
 )
 
-from ..shared.config import BotConfig
+from ..shared.config import BotConfig, ALIAS_ASIGNATURAS
 from ..shared.db import db_client
 
 
@@ -136,115 +136,70 @@ def _cargar_titulaciones_desde_bd() -> List[Dict]:
         return []
 
 
-def _detectar_titulacion_con_llm(mensaje: str) -> Optional[str]:
-    """
-    Usa el LLM para detectar si el mensaje del usuario menciona una titulación.
-    Obtiene las titulaciones reales de la BD y las pasa al LLM en el prompt.
-    Devuelve el código (ej. 'GII-IS') o None si no hay referencia.
-    """
-    if not mensaje:
-        return None
-
-    titulaciones = _cargar_titulaciones_desde_bd()
-    if not titulaciones:
-        return None
-
-    lista_txt = "\n".join(
-        f"- {t['codigo']}: {t['nombre']}" for t in titulaciones
-    )
-    codigos_validos = [t['codigo'] for t in titulaciones]
-
-    codigos_str = ", ".join(codigos_validos)
-
-    prompt = f"""Analiza el mensaje del usuario y determina si hace referencia a alguna de las siguientes titulaciones universitarias.
-
-TITULACIONES DISPONIBLES (únicamente estas, no hay más):
-{lista_txt}
-
-Mensaje del usuario: "{mensaje}"
-
-INSTRUCCIONES ESTRICTAS:
-- Si el mensaje menciona o alude a una titulación de la lista, responde SOLO con su código exacto (ejemplos: {codigos_str}).
-- Si no hay referencia a ninguna titulación de la lista, responde SOLO con: ninguna
-- Está PROHIBIDO inventar o deducir titulaciones que no aparezcan en la lista. 
-- No escribas nada más, ni puntos, ni explicaciones.
-
-Respuesta:"""
-
-    respuesta = llamar_gemini(prompt, timeout=120, options={"num_predict": 20, "temperature": 0.0})
-    if not respuesta:
-        return None
-
-    respuesta_limpia = respuesta.strip().upper().replace(".", "").replace("\n", "")
-    print(f"   → LLM titulación detection: '{respuesta_limpia}'")
-
-    # Comprobar si la respuesta es un código válido
-    if respuesta_limpia in codigos_validos:
-        return respuesta_limpia
-
-    # Tolerancia: el LLM a veces añade texto extra, buscar si hay algún código válido
-    for codigo in codigos_validos:
-        if codigo in respuesta_limpia:
-            return codigo
-
-    return None
-
-
-def _construir_lista_titulaciones() -> str:
-    """Construye el texto de titulaciones disponibles consultando la BD."""
+def _construir_botones_titulaciones() -> List[Dict[str, str]]:
+    """Construye botones de titulaciones disponibles para Rasa."""
     titulaciones = _cargar_titulaciones_desde_bd()
     if titulaciones:
-        return "\n".join(
-            f"• **{t['nombre']}** ({t['codigo']})"
+        return [
+            {"title": f"{t['nombre']} ({t['codigo']})", "payload": t['codigo']}
             for t in titulaciones
-        )
+        ]
     # Fallback si la BD no está disponible
-    return (
-        "• **Ingeniería del Software** (GII-IS)\n"
-        "• **Tecnologías Informáticas** (GII-TI)\n"
-        "• **Ingeniería de Computadores** (GII-IC)"
-    )
+    return [
+        {"title": "Ingeniería del Software (GII-IS)", "payload": "GII-IS"},
+        {"title": "Tecnologías Informáticas (GII-TI)", "payload": "GII-TI"},
+        {"title": "Ingeniería de Computadores (GII-IC)", "payload": "GII-IC"},
+    ]
 
 
 def comprobar_titulacion(
-    tracker, dispatcher, mensaje: str = None
+    tracker, dispatcher
 ) -> Tuple[Optional[str], List]:
     """
-    Comprueba si hay titulación disponible para la consulta.
-    Primero intenta detectarla en el texto del mensaje (consultando la BD);
-    si no, la lee del slot. Si no hay ninguna, pide al usuario que la indique.
+    Comprueba si el usuario ya eligió titulación.
+    Si no, pide que la elija con botones.
 
     Devuelve (codigo_titulacion, eventos_rasa).
-    - codigo_titulacion: str o None.
-    - eventos_rasa: [SlotSet] si se detectó del mensaje, [] en caso contrario.
     """
-    eventos: List = []
-
-    titulacion_slot = tracker.get_slot("contexto_titulacion")
-
-    # Solo detectar titulación del mensaje si el usuario NO tiene una ya asignada
-    if not titulacion_slot and mensaje:
-        titulacion_en_mensaje = _detectar_titulacion_con_llm(mensaje)
-    else:
-        titulacion_en_mensaje = None
-
-    titulacion = titulacion_en_mensaje or titulacion_slot
-
-    if titulacion_en_mensaje:
-        eventos = [SlotSet("contexto_titulacion", titulacion_en_mensaje)]
-        nombre = BotConfig.get_nombre_titulacion(titulacion_en_mensaje)
-        print(f"   → Titulación detectada en mensaje: {nombre} ({titulacion_en_mensaje})")
+    titulacion = tracker.get_slot("contexto_titulacion")
 
     if not titulacion:
-        lista = _construir_lista_titulaciones()
+        botones = _construir_botones_titulaciones()
         dispatcher.utter_message(
-            text=f"Antes de consultar asignaturas, necesito saber tu titulación:\n\n"
-                 f"{lista}\n\n"
-                 f"Dime cuál cursas."
+            text="Antes de consultar asignaturas, necesito saber tu titulación:",
+            buttons=botones
         )
         return None, []
 
-    return titulacion, eventos
+    return titulacion, []
+
+
+def _extraer_multiples_nombres(pregunta: str, titulacion: str) -> List[str]:
+    """
+    Detecta si la pregunta contiene múltiples asignaturas separadas por 'y', ',' o 'e'.
+    Busca aliases conocidos y devuelve lista de nombres expandidos.
+    Ej: "cómo se evalúa dp1 y psg2" → ["diseno y pruebas i", "proceso software y gestion ii"]
+    Devuelve lista vacía si no detecta múltiples.
+    """
+    pregunta_lower = pregunta.lower()
+
+    # Buscar todos los aliases que aparecen en la pregunta
+    encontrados = []
+    aliases_ordenados = sorted(ALIAS_ASIGNATURAS.keys(), key=len, reverse=True)
+    texto_restante = pregunta_lower
+
+    for alias in aliases_ordenados:
+        pattern = r'\b' + re.escape(alias) + r'\b'
+        if re.search(pattern, texto_restante):
+            expandido = _expandir_alias(alias, titulacion)
+            encontrados.append(expandido)
+            # Quitar del texto para no matchear substrings
+            texto_restante = re.sub(pattern, '', texto_restante, count=1)
+
+    if len(encontrados) >= 2:
+        print(f"   → Multi-asignatura detectada: {encontrados}")
+        return encontrados
+    return []
 
 
 def extraer_nombre_asignatura(tracker, titulacion_detectada_en_mensaje: bool = False) -> Optional[str]:
@@ -488,8 +443,13 @@ def _generar_respuesta_rag(
     if not chunks:
         return None
 
+    def _chunk_header(c):
+        label = c.get('_asignatura_label') or c.get('asignatura_nombre', '')
+        seccion = c.get('seccion', 'general')
+        return f"[{seccion}] ({label})" if label else f"[{seccion}]"
+
     contexto = "\n\n---\n\n".join(
-        f"[{c.get('seccion', 'general')}]\n{c['contenido']}\nMetadatos: {c.get('metadata', {})}"
+        f"{_chunk_header(c)}\n{c['contenido']}\nMetadatos: {c.get('metadata', {})}"
         for c in chunks
     )
 
@@ -509,6 +469,9 @@ REGLAS:
 - No menciones que consultaste un "plan docente" ni "chunks"
 - No saludes (nada de "¡Hola!", "Hola!", "Buenos días", etc.) — ve directo a la respuesta
 - Si la información no es suficiente para responder, dilo amablemente
+- IMPORTANTE: Cada fragmento tiene una etiqueta de sección entre corchetes (ej. [profesorado], [bibliografia]).
+  Los nombres en secciones [bibliografia] son AUTORES DE LIBROS, NO profesores de la asignatura.
+  Solo menciona como profesores a personas de secciones [profesorado] o [coordinador].
 
 Respuesta:"""
 
@@ -526,12 +489,12 @@ Respuesta:"""
 
 class ActionConsultaEspecifica(Action):
     """
-    Maneja consultas sobre UNA asignatura específica.
-    
+    Maneja consultas sobre una o varias asignaturas.
+
     Ejemplos:
     - "¿Cuántos créditos tiene Redes?"
     - "¿Qué es IS2?"
-    - "¿En qué curso está Cálculo?"
+    - "¿Cómo se evalúa DP1 y PSG2?"
     """
 
     def name(self) -> Text:
@@ -546,7 +509,7 @@ class ActionConsultaEspecifica(Action):
 
         pregunta = tracker.latest_message.get("text", "")
         historial = obtener_historial_reciente(tracker)
-        contexto_titulacion, eventos_contexto = comprobar_titulacion(tracker, dispatcher, pregunta)
+        contexto_titulacion, eventos_contexto = comprobar_titulacion(tracker, dispatcher)
         if not contexto_titulacion:
             return []
 
@@ -555,6 +518,15 @@ class ActionConsultaEspecifica(Action):
         print(f"   Contexto: {contexto_titulacion}")
         print(f"   Última asignatura: {tracker.get_slot('ultimo_nombre_asignatura')} ({tracker.get_slot('ultimo_codigo_consultado')})")
         print(f"{'='*60}")
+
+        # ── Multi-asignatura: detectar si hay varias en la pregunta ──
+        nombres_multi = _extraer_multiples_nombres(pregunta, contexto_titulacion)
+        if len(nombres_multi) >= 2:
+            return self._run_multi(
+                nombres_multi, pregunta, historial,
+                contexto_titulacion, eventos_contexto,
+                tracker, dispatcher,
+            )
 
         # Resolver asignatura con pipeline compartido
         asignatura, nombre_asignatura = resolver_asignatura(
@@ -632,12 +604,23 @@ class ActionConsultaEspecifica(Action):
                             SlotSet("ultimo_nombre_asignatura", asignatura.get('nombre')),
                             SlotSet("ultima_action_ejecutada", "consulta_especifica"),
                         ]
-                # RAG necesario pero sin resultados → informar al usuario
+                # RAG necesario pero sin resultados → dar info básica de BD
                 nombre = asignatura.get('nombre', 'esta asignatura')
+                creditos = asignatura.get('creditos', '')
+                curso = asignatura.get('curso', '')
+                tipologia = asignatura.get('tipologia', '')
+                info_basica = f"**{nombre}** es una asignatura"
+                if creditos:
+                    info_basica += f" de {creditos} créditos"
+                if curso:
+                    info_basica += f" de {curso}º curso"
+                if tipologia:
+                    info_basica += f" ({tipologia})"
+                info_basica += "."
                 dispatcher.utter_message(
-                    text=f"No he encontrado información detallada del plan docente de "
-                         f"**{nombre}** en la titulación **{contexto_titulacion}**. "
-                         f"¿Estás seguro de que esta asignatura pertenece a esa titulación?"
+                    text=f"{info_basica}\n\n"
+                         f"No tengo información detallada del plan docente disponible "
+                         f"para responder a tu pregunta sobre esta asignatura."
                 )
                 return eventos_contexto + [
                     SlotSet("ultimo_codigo_consultado", codigo_rag),
@@ -667,6 +650,79 @@ class ActionConsultaEspecifica(Action):
             SlotSet("ultima_action_ejecutada", "consulta_especifica"),
         ]
 
+    def _run_multi(
+        self, nombres: List[str], pregunta: str, historial: str,
+        titulacion: str, eventos_contexto: list,
+        tracker, dispatcher,
+    ) -> List[Dict[Text, Any]]:
+        """Resuelve y responde sobre múltiples asignaturas en una sola consulta."""
+        from .text_to_sql import _clasificar_necesita_rag, _inyectar_filtro_titulacion, ejecutar_query
+
+        print(f"   📚 Multi-asignatura: {nombres}")
+        necesita_rag = _clasificar_necesita_rag(pregunta, historial)
+        grupo_detectado = _detectar_grupo(pregunta)
+        all_chunks = []
+        asignaturas_resueltas = []
+
+        for nombre in nombres:
+            # Buscar en BD
+            nombre_norm = f"%{normalizar_texto(nombre)}%"
+            sql = """SELECT codigo, nombre, curso, creditos, duracion, tipologia
+                     FROM asignaturas
+                     WHERE activa = true AND nombre_normalizado ILIKE %s"""
+            sql = _inyectar_filtro_titulacion(sql, titulacion)
+            exito, resultados = ejecutar_query(sql, [nombre_norm])
+            if not exito or not resultados:
+                print(f"   ⚠ Multi: '{nombre}' no encontrada")
+                continue
+
+            asig = resultados[0]
+            asignaturas_resueltas.append(asig)
+            print(f"   ✅ Multi: '{nombre}' → {asig.get('nombre')} ({asig.get('codigo')})")
+
+            if necesita_rag:
+                try:
+                    from rag.buscar import buscar_en_plan_docente
+                    chunks = buscar_en_plan_docente(
+                        pregunta,
+                        codigo_asignatura=asig.get('codigo'),
+                        grupo=grupo_detectado,
+                        limite=5,  # menos por asignatura para no saturar
+                    )
+                    if chunks:
+                        # Etiquetar chunks con nombre de asignatura
+                        for c in chunks:
+                            c['_asignatura_label'] = asig.get('nombre')
+                        all_chunks.extend(chunks)
+                except Exception as e:
+                    print(f"   ⚠ RAG error para {asig.get('nombre')}: {e}")
+
+        if not asignaturas_resueltas:
+            dispatcher.utter_message(
+                text="No encontré ninguna de las asignaturas mencionadas."
+            )
+            return eventos_contexto
+
+        # Si RAG recopiló chunks, generar respuesta combinada
+        if all_chunks:
+            nombres_str = " y ".join(a.get('nombre') for a in asignaturas_resueltas)
+            respuesta = _generar_respuesta_rag(pregunta, all_chunks, nombres_str)
+            if respuesta:
+                dispatcher.utter_message(text=respuesta)
+                return eventos_contexto + [
+                    SlotSet("ultima_action_ejecutada", "consulta_especifica"),
+                ]
+
+        # Fallback: respuesta SQL con datos básicos
+        respuesta = generar_respuesta_natural(
+            pregunta=pregunta,
+            datos=asignaturas_resueltas,
+            tipo='especifica'
+        )
+        dispatcher.utter_message(text=respuesta)
+        return eventos_contexto + [
+            SlotSet("ultima_action_ejecutada", "consulta_especifica"),
+        ]
 
 
 # ============================================================================
@@ -695,7 +751,7 @@ class ActionConsultaListado(Action):
 
         pregunta = tracker.latest_message.get("text", "")
         historial = obtener_historial_reciente(tracker)
-        contexto_titulacion, eventos_contexto = comprobar_titulacion(tracker, dispatcher, pregunta)
+        contexto_titulacion, eventos_contexto = comprobar_titulacion(tracker, dispatcher)
         if not contexto_titulacion:
             return []
 
@@ -783,7 +839,7 @@ class ActionConsultaConteo(Action):
 
         pregunta = tracker.latest_message.get("text", "")
         historial = obtener_historial_reciente(tracker)
-        contexto_titulacion, eventos_contexto = comprobar_titulacion(tracker, dispatcher, pregunta)
+        contexto_titulacion, eventos_contexto = comprobar_titulacion(tracker, dispatcher)
         if not contexto_titulacion:
             return []
 

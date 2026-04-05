@@ -106,14 +106,14 @@ slots:
 
 responses:
   utter_greet:
-  - text: |
-      ¡Hola! Soy **Linceus**, el asistente virtual de la ETSII (Universidad de Sevilla). ¿En qué puedo ayudarte hoy?
-
-      Antes de empezar, por favor indícame tu titulación:
-
-      • **Ingeniería del Software** (GII-IS)
-      • **Tecnologías Informáticas** (GII-TI)
-      • **Ingeniería de Computadores** (GII-IC)
+  - text: "¡Hola! Soy **Linceus**, el asistente virtual de la ETSII (Universidad de Sevilla). ¿En qué puedo ayudarte hoy?\n\nAntes de empezar, por favor indícame tu titulación:"
+    buttons:
+    - title: "Ingeniería del Software (GII-IS)"
+      payload: "GII-IS"
+    - title: "Tecnologías Informáticas (GII-TI)"
+      payload: "GII-TI"
+    - title: "Ingeniería de Computadores (GII-IC)"
+      payload: "GII-IC"
 
   utter_goodbye:
   - text: "Hasta luego! Que tengas un buen dia."

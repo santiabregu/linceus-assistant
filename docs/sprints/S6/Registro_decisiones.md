@@ -308,13 +308,75 @@ Los intents compuestos se definen en `domain.yml` como `cambiar_contexto_academi
 
 ---
 
+## Iteración 7 (2026-04-04): Análisis de feedback del piloto y correcciones
+
+### D-029: Botones de selección de titulación en vez de texto libre
+
+**Problema:** En el piloto, varios usuarios no seleccionaban titulación o escribían variantes que no se reconocían ("Ingeniería de la Salud" se mapeó a GII-IS). El bot dependía de que el usuario escribiera correctamente el nombre.
+**Decisión:** Sustituir la lista de bullets por **botones clicables** (quick replies) en 3 puntos: (1) saludo inicial del widget (HTML hardcoded), (2) `utter_greet` de Rasa (campo `buttons`), (3) `comprobar_titulacion()` en las actions (campo `buttons` de `dispatcher.utter_message`). Los botones envían directamente el código (`GII-IS`, `GII-TI`, `GII-IC`) para evitar problemas de fuzzy matching.
+**Alternativas descartadas:**
+- Mantener texto libre + mejorar fuzzy matching: no resuelve el problema de titulaciones no soportadas que se mapean incorrectamente.
+**Archivos:** `frontend/chatbot-widget.js` (CSS + HTML + handler JS), `domain.yml` (`utter_greet`), `actions/asignaturas/actions.py` (`_construir_botones_titulaciones`, `comprobar_titulacion`)
+
+### D-030: Eliminar titulación por defecto (GII-IS) y detección automática
+
+**Problema:** `BotConfig.get_titulacion_activa()` devolvía `GII-IS` como fallback si el usuario no había elegido titulación. Además, `_detectar_titulacion_con_llm()` intentaba inferir la titulación del texto del mensaje con Gemini. Ambos mecanismos causaban que usuarios sin titulación seleccionada obtuvieran resultados de IS sin saberlo, y que textos ambiguos se mapearan incorrectamente.
+**Decisión:** (1) `get_titulacion_activa()` ahora devuelve `None` en vez del default. (2) Eliminada `_detectar_titulacion_con_llm()` de `comprobar_titulacion()`. (3) Todos los sitios que usaban `get_titulacion_activa()` directamente (`fallback/actions.py`, `horarios/actions.py`, `multi_intent/actions.py`) ahora comprueban si es `None` y muestran botones de selección.
+**Justificación:** El usuario **debe elegir** su titulación explícitamente. No hay inferencia ni defaults silenciosos.
+**Archivos:** `actions/shared/config.py`, `actions/asignaturas/actions.py`, `actions/fallback/actions.py`, `actions/horarios/actions.py`, `actions/multi_intent/actions.py`
+
+### D-031: Filtro de sección en RAG + reranking por metadata
+
+**Problema:** Al preguntar "profesores de EGC", la búsqueda RAG devolvía chunks de la sección `[bibliografia]` del plan docente, y el LLM respondía con nombres de autores de libros (Christian Kästner, Gunter Saake) como si fueran profesores de la asignatura.
+**Decisión:** Rediseño de `buscar_en_plan_docente()` en 3 capas:
+1. **Detección del tipo de consulta** (`_detectar_tipo_consulta`): clasifica la pregunta en `profesorado`, `evaluacion`, `contenidos`, `horarios` o `bibliografia` por keywords.
+2. **Filtro de sección con fallback**: si es consulta de profesorado, busca primero con `seccion='profesorado'` en la BD (el parámetro `p_seccion` ya existía en la función SQL pero nunca se usaba). Si no hay resultados, repite sin filtro.
+3. **Reranking por metadata**: cada tipo de consulta tiene pesos por sección (ej: para `profesorado`: `profesorado +0.25`, `coordinador +0.20`, `bibliografia -0.30`). Se suman al score de similitud coseno y se reordenan.
+**Además:** Prompt RAG mejorado con instrucción explícita: "Los nombres en secciones [bibliografia] son AUTORES DE LIBROS, NO profesores."
+**Resultado:** Límite de chunks subido de 6 a 10.
+**Archivos:** `rag/buscar.py` (reescrito), `actions/asignaturas/actions.py` (prompt)
+
+### D-032: Búsqueda de profesores por nombre completo (multi-formato)
+
+**Problema:** "José Antonio Parejo Maestre" no se encontraba porque `nombre_normalizado` almacena formato "parejo maestre, jose antonio" (apellidos primero), y la búsqueda `ILIKE '%jose antonio parejo maestre%'` no matcheaba.
+**Decisión:** Cambiar las queries SQL de profesores para buscar contra 4 formatos simultáneamente: `nombre_normalizado`, `nombre || ' ' || apellidos`, `apellidos || ' ' || nombre`, `apellidos || ', ' || nombre`. Además, si el nombre completo no da resultados, **fallback por último apellido** (ej: "Parejo Maestre" → retry con "Maestre").
+**Archivos:** `profesores_data/text_to_sql.py` (`_fallback_sql`, prompt LLM), `actions/profesores/actions.py` (`_resolver_profesor_via_rag`, fallback en `ActionConsultaProfesor.run`)
+
+### D-033: Mensaje informativo cuando no hay plan docente (TFG, Prácticas)
+
+**Problema:** Al preguntar por TFG o asignaturas sin plan docente vectorizado, el bot respondía "¿Estás seguro de que esta asignatura pertenece a esa titulación?", un mensaje confuso e incorrecto.
+**Decisión:** Cambiar el mensaje de error para mostrar la información básica disponible de BD (créditos, curso, tipología) y un aviso claro de que no hay plan docente disponible. Sin enlaces hardcodeados.
+**Archivos:** `actions/asignaturas/actions.py` (bloque RAG sin resultados en `ActionConsultaEspecifica`)
+
+### D-034: Consultas multi-asignatura
+
+**Problema:** Preguntas como "Cómo se evalúa DP1 y PSG2?" o "dónde están los labs de DP1 y PSG1 grupo 1" solo resolvían la primera asignatura, ignorando la segunda.
+**Decisión:** Implementar detección y resolución de múltiples asignaturas en dos actions:
+1. **`ActionConsultaEspecifica`**: nueva función `_extraer_multiples_nombres()` que escanea la pregunta buscando todos los aliases conocidos. Si detecta 2+, método `_run_multi()` resuelve cada una en BD, busca RAG de cada una (5 chunks por asignatura), etiqueta los chunks con su asignatura de origen, y genera una respuesta combinada con el LLM.
+2. **`ActionConsultaHorario`**: nueva función `_detectar_multiples_asignaturas()` que detecta todos los aliases. Si hay 2+, busca horarios de cada una, combina los datos, y genera respuesta unificada.
+**Contexto RAG mejorado:** Cada chunk incluye nombre de asignatura en la cabecera (`[seccion] (nombre_asignatura)`) para que el LLM distinga de dónde viene cada dato.
+**Archivos:** `actions/asignaturas/actions.py` (`_extraer_multiples_nombres`, `_run_multi`), `actions/horarios/actions.py` (`_detectar_multiples_asignaturas`, bloque multi en `ActionConsultaHorario`)
+
+### D-035: Variantes cortas de titulación y fix de "sí" como confirmación
+
+**Problema:** (1) "ing de computadores" se mapeaba a GII-IS porque el fuzzy matching no distinguía bien entre "ing de computadores" e "ingeniería del software". (2) "sí" tras "¿Quieres ver todas?" caía en fallback porque el slot `ultimos_resultados_asignaturas` tenía `influence_conversation: false`, lo que impedía que la rule condicional con `slot_was_set` funcionara.
+**Decisión:** (1) Añadir variantes cortas al `TITULACION_MAP`: `ing de computadores`, `ing computadores`, `ing del software`, `ing software`. (2) Cambiar `ultimos_resultados_asignaturas` a `influence_conversation: true` en `domain.yml`. (3) Añadir "sí" con tilde al intent `affirm` en NLU.
+**Archivos:** `actions/contexto/actions.py`, `domain.yml`, `data/nlu/general.yml`
+
+### D-036: Ejemplos NLU de laboratorios en horarios
+
+**Problema:** "dónde están los labs de DP1" se clasificaba como `consulta_asignatura_especifica` porque no había training data de laboratorios en el intent de horarios.
+**Decisión:** Añadir 10 ejemplos NLU al intent `consulta_horario` con variantes de "laboratorio", "labs", "prácticas", incluyendo consultas multi-asignatura.
+**Archivos:** `data/nlu/horarios.yml`
+
+---
+
 ## Pendiente
 
-- Re-entrenar modelo NLU (`rasa train`) para activar los intents de horarios y multi-intent
-- Testing e2e completo: horarios, seguimiento, multi-intent
-- Completar el mapeo de las 6 abreviaturas compartidas de 4º curso (EC, GP, MCG, PID, T, TIS)
-- Insertar los 268 profesores en Supabase (`python profesores/insertar_profesores_db.py`)
-- NLU + actions para consultas sobre profesores
-- Insertar tutorías de CCIA y DTE en tabla `tutorias`
-- Crear tablas `conversation_log` y `feedback` en Supabase (ejecutar `scripts/create_pilot_tables.sql`)
-- Despliegue en Render (o alternativa) para el piloto
+- Re-entrenar modelo NLU (`rasa train`) para activar: botones en utter_greet, slot influence_conversation, nuevos ejemplos NLU (labs, affirm con tilde)
+- Testing e2e completo: multi-asignatura, reranking RAG, búsqueda profesor nombre completo
+- Poblar tabla `profesor_asignatura` desde chunks RAG (script de extracción)
+- Mejorar chunking para evitar bleed entre secciones profesorado/bibliografía
+- P2: continuidad conversacional completa (más allá de affirm → mostrar todas)
+- P2: consultas cruzadas (filtrar por cuatrimestre+tipo+curso)
+- P3: nota de corte con enlace

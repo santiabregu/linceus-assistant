@@ -149,7 +149,9 @@ PREGUNTA: "{pregunta}"
 
 INSTRUCCIONES:
 1. Usa JOINs cuando necesites datos de varias tablas (profesores + departamentos, profesores + tutorias, etc.)
-2. Para buscar por nombre de profesor usa: nombre_normalizado ILIKE %s (con placeholder %s)
+2. Para buscar por nombre de profesor usa MÚLTIPLES formatos (nombre_normalizado tiene formato "apellidos, nombre" en minúsculas sin tildes):
+   WHERE (p.nombre_normalizado ILIKE %s OR LOWER(p.nombre || ' ' || p.apellidos) ILIKE %s OR LOWER(p.apellidos || ' ' || p.nombre) ILIKE %s)
+   Pasa el MISMO parámetro 3 veces en el array de parametros.
 3. Para buscar por asignatura usa JOIN con profesor_asignatura y asignaturas, buscando por nombre_normalizado ILIKE %s
 4. Si piden tutorías, haz JOIN con tutorias WHERE activa = true
 5. Siempre incluye WHERE p.activo = true para profesores
@@ -205,6 +207,7 @@ def _fallback_sql(
     """Query fallback segura cuando el LLM falla."""
 
     if nombre_profesor:
+        nombre_lower = nombre_profesor.lower()
         return {
             'sql': """SELECT p.id, p.nombre, p.apellidos, p.email, p.telefono,
                              p.despacho, p.edificio, p.planta, p.web_personal,
@@ -212,9 +215,14 @@ def _fallback_sql(
                              d.siglas AS departamento
                       FROM profesores p
                       LEFT JOIN departamentos d ON p.departamento_id = d.id
-                      WHERE p.activo = true AND p.nombre_normalizado ILIKE %s""",
-            'parametros': [f'%{nombre_profesor.lower()}%'],
-            'explicacion': 'fallback - búsqueda por nombre',
+                      WHERE p.activo = true AND (
+                          p.nombre_normalizado ILIKE %s
+                          OR LOWER(p.nombre || ' ' || p.apellidos) ILIKE %s
+                          OR LOWER(p.apellidos || ' ' || p.nombre) ILIKE %s
+                          OR LOWER(p.apellidos || ', ' || p.nombre) ILIKE %s
+                      )""",
+            'parametros': [f'%{nombre_lower}%'] * 4,
+            'explicacion': 'fallback - búsqueda por nombre (múltiples formatos)',
             'valido': True,
         }
 

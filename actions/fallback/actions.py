@@ -12,6 +12,7 @@ from rasa_sdk.events import SlotSet
 from ..shared.gemini_client import llamar_gemini
 from ..shared.db import db_client
 from ..shared.config import BotConfig, ALIAS_ASIGNATURAS
+from ..asignaturas.actions import comprobar_titulacion
 
 
 # Actions disponibles que el fallback puede invocar
@@ -55,7 +56,7 @@ Responde SOLO con un JSON valido (sin markdown, sin ```):
 def _ejecutar_consulta_asignatura(nombre_asignatura: str, pregunta: str,
                                    tracker: Tracker) -> Optional[str]:
     """Busca info de una asignatura en BD + RAG y genera respuesta."""
-    titulacion = BotConfig.get_titulacion_activa(tracker)
+    titulacion = tracker.get_slot("contexto_titulacion")
 
     # Expandir alias
     nombre_lower = nombre_asignatura.lower().strip()
@@ -121,7 +122,7 @@ def _ejecutar_consulta_horario(nombre_asignatura: str = None, curso: str = None,
                                 grupo: str = None, pregunta: str = "",
                                 tracker: Tracker = None) -> Optional[str]:
     """Busca horarios en BD y genera respuesta."""
-    titulacion = BotConfig.get_titulacion_activa(tracker)
+    titulacion = tracker.get_slot("contexto_titulacion")
 
     conn = db_client.get_connection()
     if not conn:
@@ -245,7 +246,7 @@ class ActionSmartFallback(Action):
             dispatcher.utter_message(text="No he entendido tu mensaje. Puedes reformularlo?")
             return []
 
-        titulacion = BotConfig.get_titulacion_activa(tracker)
+        titulacion = tracker.get_slot("contexto_titulacion") or "no definida"
         ultima_asignatura = tracker.get_slot("ultimo_nombre_asignatura") or "ninguna"
 
         print(f"🧠 Smart Fallback: analizando '{pregunta}'")
@@ -253,7 +254,7 @@ class ActionSmartFallback(Action):
         # Paso 1: Clasificar con Gemini
         prompt = PROMPT_CLASIFICAR.format(
             pregunta=pregunta,
-            titulacion=titulacion or "no definida",
+            titulacion=titulacion,
             ultima_asignatura=ultima_asignatura,
             actions=ACTIONS_DISPONIBLES,
         )
@@ -290,6 +291,12 @@ class ActionSmartFallback(Action):
 
         # Paso 2: Ejecutar segun la decision
         respuesta = None
+
+        # Acciones que requieren titulación
+        if action in ("BUSCAR_ASIGNATURA", "BUSCAR_HORARIO"):
+            titulacion, _ = comprobar_titulacion(tracker, dispatcher)
+            if not titulacion:
+                return []
 
         if action == "BUSCAR_ASIGNATURA" and params.get("nombre_asignatura"):
             respuesta = _ejecutar_consulta_asignatura(
