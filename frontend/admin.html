@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinceUS - Panel de Administracion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Raleway:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<!-- BARRA SUPERIOR ROJA -->
+<div class="top-bar">
+  <div class="top-bar-container">
+    <ul class="top-menu">
+      <li><a href="pagina-principal.html"><i class="fa-solid fa-arrow-left"></i> Volver al sitio</a></li>
+      <li><a href="#" id="btn-stats"><i class="fa-solid fa-chart-bar"></i> Estadisticas</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="main-header">
+  <div class="header-container">
+    <div class="header-left">
+      <a href="admin.html" class="logo-link">
+        <img src="logo-us.png" alt="Universidad de Sevilla" class="us-logo">
+      </a>
+      <div class="admin-title">
+        <h1>Panel de Administracion</h1>
+        <span class="admin-subtitle">LinceUS - Gestion de datos academicos</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="connection-status" id="connection-status">
+        <i class="fa-solid fa-circle"></i> Conectando...
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- NAVEGACION / BREADCRUMB -->
+<nav class="admin-nav">
+  <div class="nav-container">
+    <div class="breadcrumb" id="breadcrumb">
+      <a href="#" data-view="home" class="crumb active"><i class="fa-solid fa-house"></i> Inicio</a>
+    </div>
+    <div class="nav-tabs">
+      <a href="#" data-view="home" class="tab active"><i class="fa-solid fa-house"></i> Centros</a>
+      <a href="#" data-view="profesores" class="tab"><i class="fa-solid fa-user-tie"></i> Profesores</a>
+      <a href="#" data-view="horarios" class="tab"><i class="fa-solid fa-clock"></i> Horarios</a>
+      <a href="#" data-view="conversaciones" class="tab"><i class="fa-solid fa-comments"></i> Conversaciones</a>
+      <a href="#" data-view="feedback" class="tab"><i class="fa-solid fa-star"></i> Feedback</a>
+    </div>
+  </div>
+</nav>
+
+<!-- CONTENIDO PRINCIPAL -->
+<main class="admin-main" id="main-content">
+  <!-- Cargando... -->
+  <div class="loading" id="loading">
+    <i class="fa-solid fa-spinner fa-spin"></i> Cargando datos...
+  </div>
+</main>
+
+<!-- MODAL para detalles -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <h2 id="modal-title">Detalle</h2>
+      <button class="modal-close" id="modal-close"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>

@@ -40,6 +40,19 @@ services:
       - actions
     restart: unless-stopped
 
+  # ─── Admin API (panel de administracion) ──────────────────────────────────────
+  admin:
+    build:
+      context: .
+      dockerfile: Dockerfile.admin
+    ports:
+      - "5050:5050"
+    env_file:
+      - .env
+    volumes:
+      - ./admin:/app/admin
+    restart: unless-stopped
+
   # ─── Frontend (chatbot widget) ───────────────────────────────────────────────
   frontend:
     image: nginx:alpine

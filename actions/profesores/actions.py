@@ -32,7 +32,7 @@ from ..shared.gemini_client import llamar_gemini as llamar_llm
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
-from profesores_data.text_to_sql import (
+from knowledge_base.profesores_data.text_to_sql import (
     generar_sql_profesor,
     ejecutar_query,
     formatear_datos_para_prompt,
