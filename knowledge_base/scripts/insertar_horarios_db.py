@@ -27,7 +27,7 @@ load_dotenv()
 
 # ─── Configuración ──────────────────────────────────────────────────────────
 
-BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "horarios_aulas")
+BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "horarios_aulas")
 
 TITULACION_CARPETA = {
     "GII-IC": "computadores",

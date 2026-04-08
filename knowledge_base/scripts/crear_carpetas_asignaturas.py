@@ -22,7 +22,7 @@ import requests
 from bs4 import BeautifulSoup
 
 # ── Configuración ──────────────────────────────────────────────────────────────
-BASE_DIR               = os.path.join(os.path.dirname(__file__), "proyectos_docentes", "ing_software")
+BASE_DIR               = os.path.join(os.path.dirname(__file__), "..", "proyectos_docentes", "ing_software")
 CURSO_OBJETIVO         = "2025-26"
 SEVIUS_BASE            = "https://sevius4.us.es/index.php?PyP=LISTA&codcentro=3&titulacion=205&asignatura={codigo}"
 PAUSA_ENTRE_PETICIONES = 0.5   # segundos entre requests

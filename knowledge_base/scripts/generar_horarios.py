@@ -27,7 +27,7 @@ from collections import defaultdict
 PDF_URL = "https://www.informatica.us.es/docs/orgdocente/horarios-grados-2025-26.pdf"
 PDF_LOCAL = "horarios-grados-2025-26.pdf"
 
-BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "horarios_aulas")
+BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "horarios_aulas")
 
 # Mapeo código grado → carpeta
 GRADO_CARPETA = {
