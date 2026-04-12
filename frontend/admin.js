@@ -34,6 +34,17 @@
     return res.json();
   }
 
+  async function postJSON(url, body) {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (!res.ok) throw Object.assign(new Error(data.error || `HTTP ${res.status}`), { status: res.status, data });
+    return data;
+  }
+
   function esc(str) {
     if (str == null) return "";
     const d = document.createElement("div");
@@ -205,7 +216,7 @@
       }
 
       const html =
-        `<div class="section-header"><h2>Centros disponibles</h2><span class="count-badge">${centros.length}</span></div>` +
+        `<div class="section-header"><h2>Centros disponibles</h2><span class="count-badge">${centros.length}</span><button class="btn-crear" id="btn-nuevo-centro"><i class="fa-solid fa-plus"></i> Nuevo centro</button></div>` +
         `<div class="card-grid ${gridClass(centros.length)}">` +
         centros
           .map(
@@ -230,10 +241,15 @@
           loadTitulaciones(card.dataset.centroId, card.dataset.centroNombre);
         })
       );
+
+      document.getElementById("btn-nuevo-centro")?.addEventListener("click", () => abrirFormCentro());
     } catch (err) {
       showEmpty("triangle-exclamation", "Error cargando centros: " + err.message);
     }
   }
+
+  // También mostramos botón cuando no hay centros
+  // (el showEmpty no tiene botón, así que lo manejamos aquí)
 
   // ═══════════════════════════════════════════════════════════════════
   //  TITULACIONES
@@ -263,7 +279,7 @@
       }
 
       const html =
-        `<div class="section-header"><h2>Titulaciones</h2><span class="count-badge">${titulaciones.length}</span></div>` +
+        `<div class="section-header"><h2>Titulaciones</h2><span class="count-badge">${titulaciones.length}</span><button class="btn-crear" id="btn-nueva-tit"><i class="fa-solid fa-plus"></i> Nueva titulacion</button></div>` +
         `<div class="card-grid ${gridClass(titulaciones.length)}">` +
         titulaciones
           .map(
@@ -291,6 +307,8 @@
           loadAsignaturas(card.dataset.titulacionId, card.dataset.titulacionNombre);
         })
       );
+
+      document.getElementById("btn-nueva-tit")?.addEventListener("click", () => abrirFormTitulacion(centroId, centroNombre));
     } catch (err) {
       showEmpty("triangle-exclamation", "Error cargando titulaciones: " + err.message);
     }
@@ -356,7 +374,7 @@
 
       const cursoNames = { 1: "1er Curso", 2: "2o Curso", 3: "3er Curso", 4: "4o Curso", 0: "Sin curso" };
 
-      let html = `<div class="section-header"><h2>Asignaturas</h2><span class="count-badge">${asignaturas.length}</span></div>`;
+      let html = `<div class="section-header"><h2>Asignaturas</h2><span class="count-badge">${asignaturas.length}</span><button class="btn-crear" id="btn-sync-asigs"><i class="fa-solid fa-rotate"></i> Sincronizar desde Sevius</button></div>`;
 
       Object.keys(grupos)
         .sort((a, b) => a - b)
@@ -389,6 +407,10 @@
         card.addEventListener("click", () => {
           openAsignaturaDetail(card.dataset.asignaturaId);
         })
+      );
+
+      document.getElementById("btn-sync-asigs")?.addEventListener("click", () =>
+        abrirFormSyncAsignaturas(titulacionId, titulacionNombre)
       );
     } catch (err) {
       showEmpty("triangle-exclamation", "Error cargando asignaturas: " + err.message);
@@ -762,6 +784,293 @@
   function setActiveTab(view) {
     document.querySelectorAll(".nav-tabs .tab").forEach((t) => {
       t.classList.toggle("active", t.dataset.view === view);
+    });
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  //  FORMULARIOS DE CREACION
+  // ═══════════════════════════════════════════════════════════════════
+
+  // ─── Helpers de formulario ───────────────────────────────────────
+
+  function formField(id, label, placeholder, required = true, value = "") {
+    return `
+      <div class="form-field">
+        <label for="${id}">${label}${required ? ' <span class="required">*</span>' : ""}</label>
+        <input type="text" id="${id}" placeholder="${placeholder}" value="${esc(value)}" ${required ? "required" : ""}>
+      </div>`;
+  }
+
+  function formSelect(id, label, options, required = true) {
+    const opts = options.map((o) => `<option value="${esc(o.value)}">${esc(o.label)}</option>`).join("");
+    return `
+      <div class="form-field">
+        <label for="${id}">${label}${required ? ' <span class="required">*</span>' : ""}</label>
+        <select id="${id}" ${required ? "required" : ""}><option value="">Selecciona...</option>${opts}</select>
+      </div>`;
+  }
+
+  function formError(msg) {
+    return `<div class="form-error"><i class="fa-solid fa-triangle-exclamation"></i> ${esc(msg)}</div>`;
+  }
+
+  function formSuccess(msg) {
+    return `<div class="form-success"><i class="fa-solid fa-circle-check"></i> ${msg}</div>`;
+  }
+
+  // ─── Crear centro ────────────────────────────────────────────────
+
+  async function abrirFormCentro() {
+    openModal("Nuevo centro", '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Cargando centros de Sevius...</div>');
+
+    let centrosSevius;
+    try {
+      centrosSevius = await fetchJSON(API("/api/admin/sevius/centros"));
+    } catch {
+      $modalBody.innerHTML = formError("No se pudo conectar con Sevius");
+      return;
+    }
+
+    // Filtrar los que ya existen en la BD
+    let centrosEnBD = [];
+    try {
+      centrosEnBD = await fetchJSON(API("/api/admin/centros"));
+    } catch {}
+    const codigosEnBD = new Set(centrosEnBD.map((c) => c.codigo));
+
+    const opsCentros = centrosSevius.map((c) => ({
+      value: c.codigo_sevius + "||" + c.nombre,
+      label: c.nombre,
+    }));
+
+    $modalBody.innerHTML = `
+      <p style="font-size:13px;color:#555;margin-bottom:16px">
+        Selecciona el centro de la Universidad de Sevilla que quieres añadir.
+      </p>
+      <form id="form-centro">
+        ${formSelect("centro-sevius", "Centro (desde Sevius)", opsCentros)}
+        <div id="centro-preview" style="margin:4px 0 8px;font-size:12px;color:#777"></div>
+        ${formField("centro-codigo", "Codigo interno", "ETSII")}
+        ${formField("centro-nombre-corto", "Nombre corto (opcional)", "ETSII", false)}
+        <div id="form-centro-msg"></div>
+        <div class="form-actions">
+          <button type="submit" class="btn-submit"><i class="fa-solid fa-floppy-disk"></i> Crear centro</button>
+        </div>
+      </form>`;
+
+    // Al seleccionar un centro de Sevius, pre-rellenar campos
+    document.getElementById("centro-sevius").addEventListener("change", (e) => {
+      const val = e.target.value;
+      if (!val) return;
+      const [codSevius, nombre] = val.split("||");
+      // Sugerir codigo: ultima palabra en mayusculas del nombre
+      const palabras = nombre.split(" ");
+      const sugerencia = palabras[palabras.length - 1].toUpperCase().replace(/[^A-Z0-9]/g, "");
+      document.getElementById("centro-codigo").value = sugerencia;
+      document.getElementById("centro-nombre-corto").value = sugerencia;
+
+      const $preview = document.getElementById("centro-preview");
+      if (codigosEnBD.has(sugerencia)) {
+        $preview.innerHTML = `<span style="color:#be0f2e"><i class="fa-solid fa-triangle-exclamation"></i> Un centro con codigo "${sugerencia}" ya existe en la BD</span>`;
+      } else {
+        $preview.innerHTML = `<span style="color:#2a7a2a"><i class="fa-solid fa-circle-check"></i> ${nombre}</span>`;
+      }
+    });
+
+    document.getElementById("form-centro").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const $msg = document.getElementById("form-centro-msg");
+      const $btn = e.target.querySelector("[type=submit]");
+      const val = document.getElementById("centro-sevius").value;
+      if (!val) { $msg.innerHTML = formError("Selecciona un centro"); return; }
+      const [, nombre] = val.split("||");
+
+      $msg.innerHTML = "";
+      $btn.disabled = true;
+      $btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creando...';
+
+      try {
+        const row = await postJSON(API("/api/admin/centros"), {
+          codigo: document.getElementById("centro-codigo").value.trim(),
+          nombre: nombre,
+          nombre_corto: document.getElementById("centro-nombre-corto").value.trim(),
+        });
+        $msg.innerHTML = formSuccess(`Centro <strong>${esc(row.nombre)}</strong> creado correctamente.`);
+        setTimeout(() => { closeModal(); loadCentros(); }, 1500);
+      } catch (err) {
+        $msg.innerHTML = formError(err.message);
+        $btn.disabled = false;
+        $btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Crear centro';
+      }
+    });
+  }
+
+  // ─── Crear titulacion ────────────────────────────────────────────
+
+  async function abrirFormTitulacion(centroId, centroNombre) {
+    // Cargamos centros para el selector
+    openModal("Nueva titulacion", '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Cargando centros...</div>');
+    let centros;
+    try {
+      centros = await fetchJSON(API("/api/admin/centros"));
+    } catch {
+      $modalBody.innerHTML = formError("No se pudieron cargar los centros");
+      return;
+    }
+
+    const opcionesCentros = centros.map((c) => ({ value: c.id, label: c.nombre }));
+    $modalBody.innerHTML = `
+      <form id="form-tit">
+        ${formSelect("tit-centro", "Centro", opcionesCentros)}
+        ${formField("tit-codigo", "Codigo", "GII-IS")}
+        ${formField("tit-nombre", "Nombre completo", "Grado en Ingenieria Informatica-Ingenieria del Software")}
+        ${formField("tit-nombre-corto", "Nombre corto (opcional)", "Ing. Software", false)}
+        ${formField("tit-creditos", "Creditos totales", "240", false, "240")}
+        ${formField("tit-duracion", "Duracion (anos)", "4", false, "4")}
+        <div id="form-tit-msg"></div>
+        <div class="form-actions">
+          <button type="submit" class="btn-submit"><i class="fa-solid fa-floppy-disk"></i> Crear titulacion</button>
+        </div>
+      </form>`;
+
+    // Pre-seleccionar centro si venimos de uno
+    if (centroId) document.getElementById("tit-centro").value = centroId;
+
+    document.getElementById("form-tit").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const $msg = document.getElementById("form-tit-msg");
+      const $btn = e.target.querySelector("[type=submit]");
+      $msg.innerHTML = "";
+      $btn.disabled = true;
+      $btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creando...';
+
+      try {
+        const row = await postJSON(API("/api/admin/titulaciones"), {
+          centro_id: document.getElementById("tit-centro").value,
+          codigo: document.getElementById("tit-codigo").value.trim(),
+          nombre: document.getElementById("tit-nombre").value.trim(),
+          nombre_corto: document.getElementById("tit-nombre-corto").value.trim(),
+          creditos_totales: parseFloat(document.getElementById("tit-creditos").value) || 240,
+          duracion_anios: parseInt(document.getElementById("tit-duracion").value) || 4,
+        });
+        $msg.innerHTML = formSuccess(`Titulacion <strong>${esc(row.nombre)}</strong> creada correctamente.`);
+        setTimeout(() => { closeModal(); loadTitulaciones(centroId, centroNombre); }, 1500);
+      } catch (err) {
+        $msg.innerHTML = formError(err.message);
+        $btn.disabled = false;
+        $btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Crear titulacion';
+      }
+    });
+  }
+
+  // ─── Sincronizar asignaturas desde Sevius ────────────────────────
+
+  async function abrirFormSyncAsignaturas(titulacionId, titulacionNombre) {
+    openModal("Sincronizar asignaturas desde Sevius", '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Cargando centros de Sevius...</div>');
+
+    let centrosSevius;
+    try {
+      centrosSevius = await fetchJSON(API("/api/admin/sevius/centros"));
+    } catch {
+      $modalBody.innerHTML = formError("No se pudo conectar con Sevius");
+      return;
+    }
+
+    const opsCentros = centrosSevius.map((c) => ({ value: c.codigo_sevius, label: c.nombre }));
+
+    $modalBody.innerHTML = `
+      <p style="font-size:13px;color:#555;margin-bottom:16px">
+        Selecciona el centro y titulacion en Sevius. Se crearan en la BD las asignaturas que no existan.
+      </p>
+      <form id="form-sync">
+        ${formSelect("sync-centro", "Centro en Sevius", opsCentros)}
+        <div class="form-field">
+          <label>Titulacion en Sevius <span class="required">*</span></label>
+          <select id="sync-tit" required disabled><option value="">Primero selecciona un centro</option></select>
+        </div>
+        <div id="sync-preview" style="margin:12px 0;font-size:13px;color:#777"></div>
+        <div id="form-sync-msg"></div>
+        <div class="form-actions">
+          <button type="submit" class="btn-submit" disabled id="btn-sync-submit">
+            <i class="fa-solid fa-rotate"></i> Sincronizar asignaturas
+          </button>
+        </div>
+      </form>`;
+
+    // Al cambiar centro, cargar titulaciones de Sevius
+    document.getElementById("sync-centro").addEventListener("change", async (e) => {
+      const codcentro = e.target.value;
+      const $titSelect = document.getElementById("sync-tit");
+      const $preview = document.getElementById("sync-preview");
+      const $submitBtn = document.getElementById("btn-sync-submit");
+
+      if (!codcentro) {
+        $titSelect.innerHTML = "<option>Primero selecciona un centro</option>";
+        $titSelect.disabled = true;
+        $submitBtn.disabled = true;
+        return;
+      }
+
+      $titSelect.innerHTML = "<option>Cargando...</option>";
+      $titSelect.disabled = true;
+      $preview.innerHTML = "";
+
+      try {
+        const tits = await fetchJSON(API("/api/admin/sevius/titulaciones?codcentro=" + codcentro));
+        $titSelect.innerHTML = '<option value="">Selecciona titulacion...</option>' +
+          tits.map((t) => `<option value="${esc(t.codigo)}">${esc(t.nombre)} (${esc(t.codigo)})</option>`).join("");
+        $titSelect.disabled = false;
+      } catch {
+        $titSelect.innerHTML = "<option>Error cargando titulaciones</option>";
+      }
+    });
+
+    // Al cambiar titulacion, mostrar preview de asignaturas
+    document.getElementById("sync-tit").addEventListener("change", async (e) => {
+      const codcentro = document.getElementById("sync-centro").value;
+      const codtit = e.target.value;
+      const $preview = document.getElementById("sync-preview");
+      const $submitBtn = document.getElementById("btn-sync-submit");
+
+      if (!codtit) { $preview.innerHTML = ""; $submitBtn.disabled = true; return; }
+
+      $preview.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Consultando Sevius...';
+      try {
+        const asigs = await fetchJSON(API(`/api/admin/sevius/asignaturas?codcentro=${codcentro}&titulacion=${codtit}`));
+        $preview.innerHTML = `<span style="color:#2a7a2a"><i class="fa-solid fa-circle-check"></i> ${asigs.length} asignaturas encontradas en Sevius</span>`;
+        $submitBtn.disabled = false;
+      } catch {
+        $preview.innerHTML = formError("No se pudieron cargar las asignaturas");
+        $submitBtn.disabled = true;
+      }
+    });
+
+    document.getElementById("form-sync").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const $msg = document.getElementById("form-sync-msg");
+      const $btn = document.getElementById("btn-sync-submit");
+      $msg.innerHTML = "";
+      $btn.disabled = true;
+      $btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sincronizando...';
+
+      try {
+        const res = await postJSON(API("/api/admin/asignaturas/sync"), {
+          titulacion_id: titulacionId,
+          codcentro: document.getElementById("sync-centro").value,
+          codigo_titulacion_sevius: document.getElementById("sync-tit").value,
+        });
+
+        const msg = `
+          <strong>${res.creadas.length}</strong> asignaturas creadas,
+          <strong>${res.existentes.length}</strong> ya existian
+          (${res.total_sevius} en Sevius).`;
+        $msg.innerHTML = formSuccess(msg);
+        setTimeout(() => { closeModal(); loadAsignaturas(titulacionId, titulacionNombre); }, 2000);
+      } catch (err) {
+        $msg.innerHTML = formError(err.message);
+        $btn.disabled = false;
+        $btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Sincronizar asignaturas';
+      }
     });
   }
 

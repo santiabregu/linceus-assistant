@@ -380,3 +380,105 @@ a:hover { color: var(--us-teal-hover); }
   .section-header { flex-direction: column; gap: 8px; align-items: flex-start; }
   .data-table-container { overflow-x: auto; }
 }
+
+/* ─── Botones de creacion ──────────────────────────────────────────── */
+
+.btn-crear {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--us-red);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition);
+  white-space: nowrap;
+}
+
+.btn-crear:hover { background: var(--us-red-dark); }
+
+/* ─── Formularios en modal ─────────────────────────────────────────── */
+
+.form-field {
+  margin-bottom: 16px;
+}
+
+.form-field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--us-text);
+  margin-bottom: 6px;
+}
+
+.form-field .required { color: var(--us-red); }
+
+.form-field input,
+.form-field select {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--us-border);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: 'Open Sans', sans-serif;
+  color: var(--us-text);
+  background: #fff;
+  transition: border-color var(--transition);
+}
+
+.form-field input:focus,
+.form-field select:focus {
+  outline: none;
+  border-color: var(--us-red);
+}
+
+.form-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: var(--us-red);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.btn-submit:hover:not(:disabled) { background: var(--us-red-dark); }
+.btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.form-error {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #fdf0f2;
+  border: 1px solid #f5c0c8;
+  border-radius: 6px;
+  color: #be0f2e;
+  font-size: 13px;
+}
+
+.form-success {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #edf7ed;
+  border: 1px solid #b2d8b2;
+  border-radius: 6px;
+  color: #2a7a2a;
+  font-size: 13px;
+}

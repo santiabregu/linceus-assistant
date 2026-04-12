@@ -9,4 +9,4 @@ COPY admin/ admin/
 
 EXPOSE 5050
 
-CMD ["python", "admin/api_admin.py"]
+CMD ["python", "-m", "admin.app"]
