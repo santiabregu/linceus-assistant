@@ -28,6 +28,7 @@ from rasa_sdk.events import SlotSet
 from ..shared.config import ALIAS_ASIGNATURAS, ALIAS_POR_TITULACION
 from ..shared.db import db_client
 from ..shared.gemini_client import llamar_gemini as llamar_llm
+from ..shared.matching import clasificar_por_normalizado
 
 import sys
 import os
@@ -47,6 +48,36 @@ def _normalizar(texto: str) -> str:
     texto = unicodedata.normalize("NFKD", texto)
     texto = "".join(c for c in texto if not unicodedata.combining(c))
     return texto.lower().strip()
+
+
+def _clasificar_resultados_por_similitud(
+    nombre_consulta: str, resultados: list
+) -> tuple[list, list]:
+    """Wrapper que delega en el matcher compartido (nombre_normalizado)."""
+    print(f"  🎯 Scoring '{nombre_consulta}':")
+    return clasificar_por_normalizado(nombre_consulta, resultados)
+
+
+def _formatear_sugerencia(nombre_consulta: str, sugerencias: list) -> str:
+    """
+    Construye el mensaje 'no encontre X, ¿quizas Y?' cuando no hay match firme.
+    """
+    if not sugerencias:
+        return (f"No encontré ningún profesor llamado \"{nombre_consulta}\". "
+                f"Prueba con el apellido completo.")
+
+    nombres_sug = []
+    for s in sugerencias[:3]:
+        n = s.get("nombre") or ""
+        a = s.get("apellidos") or ""
+        nombres_sug.append(f"**{(a + ', ' + n).strip(', ')}**".strip())
+
+    if len(nombres_sug) == 1:
+        return (f"No encontré ningún profesor llamado \"{nombre_consulta}\". "
+                f"¿Quizás te refieres a {nombres_sug[0]}?")
+    lista = ", ".join(nombres_sug[:-1]) + f" o {nombres_sug[-1]}"
+    return (f"No encontré ningún profesor llamado \"{nombre_consulta}\". "
+            f"¿Quizás te refieres a {lista}?")
 
 
 def _contar_turnos_desde_slot(tracker, slot_name: str) -> int:
@@ -535,6 +566,30 @@ class ActionConsultaProfesor(Action):
             dispatcher.utter_message(text=msg)
             return slots
 
+        # ── Filtrado por similitud de nombre ──────────────────────────────
+        # Evita falsos positivos del tipo "Joaquín Peña" -> Joaquín Borrego.
+        # Solo aplica cuando el usuario pidio un profesor concreto por nombre.
+        if nombre_profesor:
+            firmes, sugerencias = _clasificar_resultados_por_similitud(
+                nombre_profesor, resultados,
+            )
+            if not firmes:
+                dispatcher.utter_message(text=_formatear_sugerencia(nombre_profesor, sugerencias))
+                # Guardar la mejor sugerencia para que un 'si' posterior
+                # re-ejecute la consulta con ese nombre.
+                if sugerencias:
+                    mejor = sugerencias[0]
+                    valor_sug = (mejor.get("nombre_normalizado")
+                                 or f"{mejor.get('nombre','')} {mejor.get('apellidos','')}".strip())
+                    slots.append(SlotSet("ultima_sugerencia", {
+                        "action": "action_consulta_profesor",
+                        "campo": "nombre_profesor",
+                        "valor": valor_sug,
+                        "pregunta_original": pregunta,
+                    }))
+                return slots
+            resultados = firmes
+
         print(f"  ✅ Resultados: {len(resultados)} filas")
 
         # ── Enriquecer con tutorías si no vinieron en el JOIN ──
@@ -554,5 +609,12 @@ class ActionConsultaProfesor(Action):
             else:
                 prof_display = nombre
             slots.append(SlotSet("ultimo_profesor_consultado", prof_display))
+
+        # Si la pregunta era por una asignatura (ej. "profesores de DP1"),
+        # persistir tambien la asignatura para follow-ups cruzados.
+        if nombre_asignatura:
+            slots.append(SlotSet("ultimo_nombre_asignatura", nombre_asignatura))
+            if codigo_asignatura:
+                slots.append(SlotSet("ultimo_codigo_consultado", codigo_asignatura))
 
         return slots

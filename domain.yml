@@ -18,17 +18,18 @@ intents:
   - consulta_asignaturas_listado     # "Dame las optativas de cuarto"
   - consulta_asignaturas_conteo      # "¿Cuántas asignaturas hay en primero?"
   - pedir_mas_resultados
+  - preguntar_hay_mas                # "¿hay más grupos?", "¿hay más asignaturas?"
   # Horarios
   - consulta_horario                 # "¿Qué horario tiene 2º grupo 1?"
   # Profesores
   - consulta_profesor                # "¿Quién da FP?" / "tutorías de Parejo"
-  # Multi-intent (combinaciones)
-  - cambiar_contexto_academico+consulta_horario
-  - cambiar_contexto_academico+consulta_asignatura_especifica
-  - cambiar_contexto_academico+consulta_asignaturas_listado
-  - cambiar_contexto_academico+consulta_asignaturas_conteo
-  - consulta_horario+consulta_asignatura_especifica
-  - consulta_asignatura_especifica+consulta_asignaturas_listado
+  # Multi-intent (desactivado temporalmente para testear las 4 actions basicas)
+  # - cambiar_contexto_academico+consulta_horario
+  # - cambiar_contexto_academico+consulta_asignatura_especifica
+  # - cambiar_contexto_academico+consulta_asignaturas_listado
+  # - cambiar_contexto_academico+consulta_asignaturas_conteo
+  # - consulta_horario+consulta_asignatura_especifica
+  # - consulta_asignatura_especifica+consulta_asignaturas_listado
   - out_of_scope
 
 entities:
@@ -86,8 +87,26 @@ slots:
     mappings:
     - type: custom
 
+  ultimo_curso_consultado:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+
+  ultimo_grupo_consultado:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+
   ultimo_profesor_consultado:
     type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+
+  ultima_sugerencia:
+    type: any
     influence_conversation: false
     mappings:
     - type: custom
@@ -199,10 +218,14 @@ actions:
   - action_consulta_horario
   # Profesores
   - action_consulta_profesor
-  # Multi-intent
-  - action_multi_intent
+  # Multi-intent (desactivado temporalmente)
+  # - action_multi_intent
   # Fallback inteligente
   - action_smart_fallback
+  # Resolución genérica de afirmaciones/negaciones/hay-más
+  - action_resolver_afirmacion
+  - action_resolver_negacion
+  - action_preguntar_hay_mas
 
 session_config:
   session_expiration_time: 60

@@ -1205,7 +1205,20 @@
   // ═══════════════════════════════════════════════════════════════════
 
   let convPage = 0;
-  const CONV_LIMIT = 50;
+  const CONV_LIMIT = 30;
+
+  function _fmtFecha(ts) {
+    return ts ? new Date(ts).toLocaleString("es-ES") : "-";
+  }
+
+  function _fmtDuracion(inicio, fin) {
+    if (!inicio || !fin) return "-";
+    const s = Math.max(1, Math.round((new Date(fin) - new Date(inicio)) / 1000));
+    if (s < 60) return s + "s";
+    const m = Math.round(s / 60);
+    if (m < 60) return m + " min";
+    return (m / 60).toFixed(1) + " h";
+  }
 
   async function loadConversaciones(page) {
     if (page === undefined) page = 0;
@@ -1219,52 +1232,238 @@
 
     try {
       const data = await fetchJSON(
-        API(`/api/admin/conversaciones?limit=${CONV_LIMIT}&offset=${page * CONV_LIMIT}`)
+        API(`/api/admin/conversaciones/sesiones?limit=${CONV_LIMIT}&offset=${page * CONV_LIMIT}`)
       );
       const totalPages = Math.ceil(data.total / CONV_LIMIT);
 
-      let html = `<div class="section-header"><h2>Conversaciones</h2><span class="count-badge">${data.total} total</span></div>`;
+      let html = `<div class="section-header">
+        <h2>Conversaciones</h2>
+        <span class="count-badge">${data.total} sesiones</span>
+        <button class="btn-crear" id="btn-export-all"><i class="fa-solid fa-download"></i> Exportar esta página</button>
+      </div>`;
 
       if (!data.rows.length) {
         html += '<div class="empty-state"><i class="fa-solid fa-comments"></i><p>No hay conversaciones registradas</p></div>';
       } else {
         html += `<div class="data-table-container"><table class="data-table">
           <thead><tr>
-            <th>Fecha</th><th>Sesion</th><th>Mensaje usuario</th>
-            <th>Respuesta</th><th>Intent</th><th>Conf.</th>
+            <th title="Revisada">✓</th>
+            <th>Sesión</th><th>Mensajes</th><th>Primer mensaje</th>
+            <th>Último mensaje</th><th>Inicio</th><th>Duración</th>
           </tr></thead><tbody>`;
-
         data.rows.forEach((r) => {
-          const date = r.created_at ? new Date(r.created_at).toLocaleString("es-ES") : "-";
-          html += `<tr>
-            <td style="white-space:nowrap;font-size:12px">${date}</td>
-            <td style="font-size:11px;font-family:monospace">${esc((r.session_id || "").substring(0, 8))}...</td>
-            <td class="truncate">${esc(r.user_message)}</td>
-            <td class="truncate">${esc(r.bot_response)}</td>
-            <td><span class="tag tag-obligatoria" style="font-size:9px">${esc(r.intent) || "?"}</span></td>
-            <td>${r.confidence != null ? (r.confidence * 100).toFixed(0) + "%" : "-"}</td>
+          const shortId = (r.session_id || "").substring(0, 14);
+          const checked = r.revisada ? "checked" : "";
+          html += `<tr data-session-id="${esc(r.session_id)}" class="${r.revisada ? 'row-revisada' : ''}" style="cursor:pointer">
+            <td style="text-align:center" class="col-revisada">
+              <input type="checkbox" class="chk-revisada" ${checked}
+                     data-session-id="${esc(r.session_id)}"
+                     title="Marcar como revisada" />
+            </td>
+            <td style="font-size:11px;font-family:monospace">${esc(shortId)}…</td>
+            <td><strong>${r.num_mensajes}</strong></td>
+            <td class="truncate">${esc(r.primer_mensaje)}</td>
+            <td class="truncate">${esc(r.ultimo_mensaje)}</td>
+            <td style="white-space:nowrap;font-size:12px">${_fmtFecha(r.inicio)}</td>
+            <td>${_fmtDuracion(r.inicio, r.fin)}</td>
           </tr>`;
         });
-
         html += "</tbody></table></div>";
 
-        // Pagination
         html += `<div class="pagination">
           <button id="conv-prev" ${page <= 0 ? "disabled" : ""}><i class="fa-solid fa-chevron-left"></i> Anterior</button>
-          <span class="page-info">Pagina ${page + 1} de ${totalPages || 1}</span>
+          <span class="page-info">Página ${page + 1} de ${totalPages || 1}</span>
           <button id="conv-next" ${page + 1 >= totalPages ? "disabled" : ""}>Siguiente <i class="fa-solid fa-chevron-right"></i></button>
         </div>`;
       }
 
       $main.innerHTML = html;
 
+      $main.querySelectorAll("tr[data-session-id]").forEach((tr) =>
+        tr.addEventListener("click", (e) => {
+          // Evita navegar cuando el click es sobre el checkbox.
+          if (e.target.closest(".col-revisada")) return;
+          loadSesionChat(tr.dataset.sessionId);
+        })
+      );
+
+      $main.querySelectorAll(".chk-revisada").forEach((chk) => {
+        chk.addEventListener("click", (e) => e.stopPropagation());
+        chk.addEventListener("change", async (e) => {
+          const sid = chk.dataset.sessionId;
+          const revisada = chk.checked;
+          chk.disabled = true;
+          try {
+            const res = await fetch(
+              API("/api/admin/conversaciones/sesiones/" + encodeURIComponent(sid) + "/revisada"),
+              { method: "PATCH", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ revisada }) }
+            );
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            const tr = chk.closest("tr");
+            if (tr) tr.classList.toggle("row-revisada", revisada);
+          } catch (err) {
+            chk.checked = !revisada;
+            alert("Error marcando como revisada: " + err.message);
+          } finally {
+            chk.disabled = false;
+          }
+        });
+      });
+
       const prev = document.getElementById("conv-prev");
       const next = document.getElementById("conv-next");
       if (prev) prev.addEventListener("click", () => loadConversaciones(convPage - 1));
       if (next) next.addEventListener("click", () => loadConversaciones(convPage + 1));
+      document.getElementById("btn-export-all")?.addEventListener("click", () => exportarSesionesPagina(data.rows));
     } catch (err) {
       showEmpty("triangle-exclamation", "Error: " + err.message);
     }
+  }
+
+  async function exportarSesionesPagina(sesiones) {
+    if (!sesiones?.length) return;
+    const $btn = document.getElementById("btn-export-all");
+    if ($btn) {
+      $btn.disabled = true;
+      $btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Exportando...';
+    }
+
+    try {
+      const detalles = await Promise.all(
+        sesiones.map((s) =>
+          fetchJSON(API("/api/admin/conversaciones/sesiones/" + encodeURIComponent(s.session_id)))
+            .then((d) => ({ session_id: s.session_id, mensajes: d.mensajes || [] }))
+        )
+      );
+
+      let contenido = `# Export de ${detalles.length} sesiones\n\n_Generado ${new Date().toLocaleString("es-ES")}_\n\n---\n\n`;
+      detalles.forEach((d, idx) => {
+        const msgs = d.mensajes;
+        contenido += `# Sesión ${idx + 1}: ${d.session_id}\n\n`;
+        if (msgs.length) {
+          contenido += `**Inicio:** ${_fmtFecha(msgs[0].created_at)}  \n`;
+          contenido += `**Fin:** ${_fmtFecha(msgs[msgs.length - 1].created_at)}  \n`;
+          contenido += `**Intercambios:** ${msgs.length}\n\n`;
+        }
+        msgs.forEach((m, i) => {
+          contenido += `## Intercambio ${i + 1} — ${_fmtFecha(m.created_at)}\n\n`;
+          contenido += `**Usuario:**\n\n${m.user_message || ""}\n\n`;
+          contenido += `**Bot:**\n\n${m.bot_response || ""}\n\n---\n\n`;
+        });
+        contenido += "\n";
+      });
+
+      const blob = new Blob([contenido], { type: "text/markdown;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `conversaciones_${new Date().toISOString().slice(0, 10)}.md`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } finally {
+      if ($btn) {
+        $btn.disabled = false;
+        $btn.innerHTML = '<i class="fa-solid fa-download"></i> Exportar esta página';
+      }
+    }
+  }
+
+  async function loadSesionChat(sessionId) {
+    showLoading();
+    setActiveTab("conversaciones");
+    const shortId = (sessionId || "").substring(0, 14);
+    setBreadcrumb([
+      { view: "home", label: '<i class="fa-solid fa-house"></i> Inicio' },
+      { view: "conversaciones", label: "Conversaciones" },
+      { view: "sesion", label: "Sesión " + shortId + "…" },
+    ]);
+
+    try {
+      const data = await fetchJSON(API("/api/admin/conversaciones/sesiones/" + encodeURIComponent(sessionId)));
+      const msgs = data.mensajes || [];
+
+      let html = `<div class="section-header">
+        <h2>Sesión ${esc(shortId)}…</h2>
+        <span class="count-badge">${msgs.length} intercambios</span>
+        <button class="btn-crear" id="btn-export-md"><i class="fa-solid fa-file-lines"></i> Exportar .md</button>
+        <button class="btn-crear" id="btn-export-txt"><i class="fa-solid fa-file"></i> Exportar .txt</button>
+        <button class="btn-crear" id="btn-back-conv"><i class="fa-solid fa-arrow-left"></i> Volver</button>
+      </div>
+      <div class="chat-log">`;
+
+      if (!msgs.length) {
+        html += '<div class="empty-state"><i class="fa-solid fa-comments"></i><p>Sin mensajes</p></div>';
+      } else {
+        msgs.forEach((m) => {
+          const ts = _fmtFecha(m.created_at);
+          html += `
+            <div class="chat-row chat-user">
+              <div class="chat-bubble chat-bubble-user">${esc(m.user_message)}</div>
+              <div class="chat-ts">${esc(ts)}</div>
+            </div>
+            <div class="chat-row chat-bot">
+              <div class="chat-bubble chat-bubble-bot">${esc(m.bot_response)}</div>
+            </div>`;
+        });
+      }
+
+      html += "</div>";
+      $main.innerHTML = html;
+
+      document.getElementById("btn-back-conv")?.addEventListener("click", () => loadConversaciones(convPage));
+      document.getElementById("btn-export-md")?.addEventListener("click", () => exportarSesion(sessionId, msgs, "md"));
+      document.getElementById("btn-export-txt")?.addEventListener("click", () => exportarSesion(sessionId, msgs, "txt"));
+    } catch (err) {
+      showEmpty("triangle-exclamation", "Error: " + err.message);
+    }
+  }
+
+  function exportarSesion(sessionId, msgs, formato) {
+    const shortId = (sessionId || "").substring(0, 14);
+    let contenido = "";
+
+    if (formato === "md") {
+      contenido = `# Sesión ${sessionId}\n\n`;
+      if (msgs.length) {
+        contenido += `**Inicio:** ${_fmtFecha(msgs[0].created_at)}  \n`;
+        contenido += `**Fin:** ${_fmtFecha(msgs[msgs.length - 1].created_at)}  \n`;
+        contenido += `**Intercambios:** ${msgs.length}\n\n---\n\n`;
+      }
+      msgs.forEach((m, i) => {
+        contenido += `## Intercambio ${i + 1} — ${_fmtFecha(m.created_at)}\n\n`;
+        contenido += `**Usuario:**\n\n${m.user_message || ""}\n\n`;
+        contenido += `**Bot:**\n\n${m.bot_response || ""}\n\n---\n\n`;
+      });
+    } else {
+      contenido = `Sesion: ${sessionId}\n`;
+      if (msgs.length) {
+        contenido += `Inicio: ${_fmtFecha(msgs[0].created_at)}\n`;
+        contenido += `Fin: ${_fmtFecha(msgs[msgs.length - 1].created_at)}\n`;
+        contenido += `Intercambios: ${msgs.length}\n`;
+      }
+      contenido += "\n" + "=".repeat(60) + "\n\n";
+      msgs.forEach((m, i) => {
+        contenido += `[${_fmtFecha(m.created_at)}]\n`;
+        contenido += `Usuario: ${m.user_message || ""}\n\n`;
+        contenido += `Bot: ${m.bot_response || ""}\n\n`;
+        contenido += "-".repeat(60) + "\n\n";
+      });
+    }
+
+    const mime = formato === "md" ? "text/markdown" : "text/plain";
+    const ext = formato;
+    const blob = new Blob([contenido], { type: `${mime};charset=utf-8` });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `sesion_${shortId}.${ext}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 
   // ═══════════════════════════════════════════════════════════════════

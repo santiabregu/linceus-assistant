@@ -67,4 +67,50 @@ nlu:
     - que horario semanal tengo si soy del grupo 1 de primero
     - horario del grupo 2 de segundo cuatrimestre 1
     - que clases tengo en segundo grupo 1 los lunes
-    
+    # ─── Seguimiento / follow-up sin asignatura ni curso explicitos ─────
+    # Se apoyan en los slots ultimo_curso_consultado / ultimo_grupo_consultado
+    # y ultimo_nombre_asignatura fijados por el turno anterior.
+    - y del grupo 2?
+    - y del grupo 3?
+    - y del grupo 1?
+    - y del otro grupo?
+    - y del otro grupo
+    - dame la del grupo 2
+    - dame el del grupo 3
+    - dime el del grupo 1
+    - y el del grupo 2?
+    - y el horario del grupo 3?
+    - y de los otros grupos?
+    - dime el de los otros grupos
+    - y los demas grupos?
+    - y el resto de grupos
+    - dame la de todos los grupos
+    - dime la de todos los grupos
+    - y todos los grupos?
+    - y del cuatrimestre 1?
+    - y del cuatrimestre 2?
+    - y del primer cuatrimestre?
+    - y del segundo cuatrimestre?
+    - y de primero?
+    - y de segundo?
+    - y de tercero?
+    - y de cuarto?
+    - y en primero?
+    - y en segundo?
+    - y en tercero?
+    - y en cuarto?
+    - y el de primero?
+    - y el de segundo?
+    - y el lunes?
+    - y los martes?
+    - y los miercoles?
+    - y los jueves?
+    - y los viernes?
+    - y que horario tiene?
+    - y el horario?
+    - y su horario?
+    - cual es su horario
+    - que horario tiene esa
+    - y esa asignatura que horario tiene
+    - y cuando es esa
+    - y en que aula es esa

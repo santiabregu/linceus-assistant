@@ -572,6 +572,54 @@ a:hover { color: var(--us-teal-hover); }
 }
 .entity-card.depto-sin .card-icon { color: var(--us-muted); }
 
+/* ─── Chat log (sesion de conversacion) ──────────────────────────── */
+.chat-log {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 8px 0;
+}
+
+.chat-row {
+  display: flex;
+  flex-direction: column;
+  max-width: 75%;
+}
+.chat-row.chat-user { align-self: flex-end; align-items: flex-end; }
+.chat-row.chat-bot  { align-self: flex-start; align-items: flex-start; }
+
+.chat-bubble {
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  box-shadow: var(--shadow-sm);
+}
+
+.chat-bubble-user {
+  background: var(--us-red);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-bubble-bot {
+  background: #fff;
+  color: var(--us-text);
+  border: 1px solid var(--us-border);
+  border-bottom-left-radius: 4px;
+}
+
+.chat-ts {
+  font-size: 10px;
+  color: var(--us-muted);
+  margin-top: 2px;
+  padding: 0 6px;
+}
+
 /* ─── Disclaimer banner (horarios) ────────────────────────────────── */
 .disclaimer {
   display: flex;
@@ -593,4 +641,19 @@ a:hover { color: var(--us-teal-hover); }
   padding: 1px 5px;
   border-radius: 3px;
   font-size: 12px;
+}
+
+/* Sesiones revisadas */
+.data-table tr.row-revisada td {
+  background: rgba(76, 175, 80, 0.08);
+  color: #6b7280;
+}
+.data-table tr.row-revisada td.truncate {
+  text-decoration: line-through;
+  opacity: 0.75;
+}
+.chk-revisada {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
 }

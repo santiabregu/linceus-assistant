@@ -85,42 +85,52 @@ rules:
 # REGLAS PARA MULTI-INTENT (combinaciones de acciones)
 # =============================================================================
 
-- rule: Multi-intent cambiar contexto + horario
-  steps:
-  - intent: cambiar_contexto_academico+consulta_horario
-  - action: action_multi_intent
-
-- rule: Multi-intent cambiar contexto + consulta especifica
-  steps:
-  - intent: cambiar_contexto_academico+consulta_asignatura_especifica
-  - action: action_multi_intent
-
-- rule: Multi-intent cambiar contexto + listado
-  steps:
-  - intent: cambiar_contexto_academico+consulta_asignaturas_listado
-  - action: action_multi_intent
-
-- rule: Multi-intent cambiar contexto + conteo
-  steps:
-  - intent: cambiar_contexto_academico+consulta_asignaturas_conteo
-  - action: action_multi_intent
-
-- rule: Multi-intent horario + consulta especifica
-  steps:
-  - intent: consulta_horario+consulta_asignatura_especifica
-  - action: action_multi_intent
-
-- rule: Multi-intent consulta especifica + listado
-  steps:
-  - intent: consulta_asignatura_especifica+consulta_asignaturas_listado
-  - action: action_multi_intent
+# Multi-intent desactivado temporalmente para testear las 4 actions basicas.
+# Restaurar estas reglas cuando se reactive en domain.yml + data/nlu/multi_intent.yml.
+#
+# - rule: Multi-intent cambiar contexto + horario
+#   steps:
+#   - intent: cambiar_contexto_academico+consulta_horario
+#   - action: action_multi_intent
+#
+# - rule: Multi-intent cambiar contexto + consulta especifica
+#   steps:
+#   - intent: cambiar_contexto_academico+consulta_asignatura_especifica
+#   - action: action_multi_intent
+#
+# - rule: Multi-intent cambiar contexto + listado
+#   steps:
+#   - intent: cambiar_contexto_academico+consulta_asignaturas_listado
+#   - action: action_multi_intent
+#
+# - rule: Multi-intent cambiar contexto + conteo
+#   steps:
+#   - intent: cambiar_contexto_academico+consulta_asignaturas_conteo
+#   - action: action_multi_intent
+#
+# - rule: Multi-intent horario + consulta especifica
+#   steps:
+#   - intent: consulta_horario+consulta_asignatura_especifica
+#   - action: action_multi_intent
+#
+# - rule: Multi-intent consulta especifica + listado
+#   steps:
+#   - intent: consulta_asignatura_especifica+consulta_asignaturas_listado
+#   - action: action_multi_intent
 
 # =============================================================================
 
-- rule: Mostrar todas con afirmacion
+- rule: Resolver afirmacion segun contexto
   steps:
   - intent: affirm
-  - action: action_mostrar_todas_asignaturas
-  condition:
-  - slot_was_set:
-    - ultimos_resultados_asignaturas
+  - action: action_resolver_afirmacion
+
+- rule: Resolver negacion segun contexto
+  steps:
+  - intent: deny
+  - action: action_resolver_negacion
+
+- rule: Preguntar si hay mas
+  steps:
+  - intent: preguntar_hay_mas
+  - action: action_preguntar_hay_mas

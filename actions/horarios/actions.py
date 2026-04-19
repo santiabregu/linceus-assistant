@@ -21,7 +21,7 @@ from rasa_sdk.events import SlotSet
 from ..shared.config import BotConfig, ALIAS_ASIGNATURAS
 from ..shared.db import db_client
 from ..shared.gemini_client import llamar_gemini as llamar_llm
-from ..asignaturas.actions import comprobar_titulacion
+from ..asignaturas.actions import comprobar_titulacion, _contar_turnos_desde_slot
 
 # ─── Constantes ──────────────────────────────────────────────────────────────
 
@@ -81,6 +81,20 @@ def _detectar_grupo(texto: str) -> Optional[int]:
     if m:
         return int(m.group(1))
     return None
+
+
+# Patron "letra X del DNI" / "inicial de apellido": el usuario no sabe su
+# numero de grupo y pregunta por la letra. Detectamos la presencia para no
+# interpretar la letra como alias de asignatura (ej. T = Teledeteccion).
+_RE_LETRA_DNI = re.compile(
+    r"letra\s+([a-zñ])(?:\s+(?:de|del)\s+(?:mi\s+)?dni|\s+de\s+apellido|\s+inicial)?",
+    re.IGNORECASE,
+)
+
+
+def _tiene_referencia_letra_dni(texto: str) -> bool:
+    """True si el usuario se refiere a grupos por letra del DNI/apellido."""
+    return bool(_RE_LETRA_DNI.search(texto or ""))
 
 
 def _detectar_dia(texto: str) -> Optional[int]:
@@ -216,6 +230,45 @@ def _query_asignatura(titulacion: str, alias_asig: str,
         if conn:
             conn.close()
         return []
+
+
+def _query_grupos_de_asignatura(titulacion: str, alias_asig: str) -> tuple[Optional[str], list]:
+    """
+    Dada una asignatura, devuelve (nombre_real, [grupos_codigo]) en esa titulacion.
+    Sirve para dar un mensaje claro cuando el usuario pide un grupo que no existe.
+    """
+    nombre_norm = ALIAS_ASIGNATURAS.get(alias_asig.lower())
+    if not nombre_norm:
+        return None, []
+    conn = db_client.get_connection()
+    if not conn:
+        return None, []
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT a.nombre, gc.codigo
+            FROM grupos_clase gc
+            JOIN asignaturas a ON gc.asignatura_id = a.id
+            JOIN titulaciones t ON a.titulacion_id = t.id
+            WHERE t.codigo = %s
+              AND a.nombre_normalizado LIKE %s
+              AND gc.activo = true
+            GROUP BY a.nombre, gc.codigo
+            ORDER BY gc.codigo
+        """, (titulacion, f"%{nombre_norm}%"))
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+        if not rows:
+            return None, []
+        nombre_real = rows[0][0]
+        grupos = [r[1] for r in rows]
+        return nombre_real, grupos
+    except Exception as e:
+        print(f"Error consultando grupos de asignatura: {e}")
+        if conn:
+            conn.close()
+        return None, []
 
 
 def _query_grupos_disponibles(titulacion: str, curso: int) -> list:
@@ -401,6 +454,18 @@ class ActionConsultaHorario(Action):
         dia = _detectar_dia(mensaje)
         cuatrimestre = _detectar_cuatrimestre(mensaje)
 
+        # Si el usuario se refiere a grupos por letra del DNI (ej. "letra T"),
+        # no podemos mapearlo automaticamente: los grupos por letra cambian por
+        # titulacion y curso. Mejor pedir el numero de grupo directamente.
+        if _tiene_referencia_letra_dni(mensaje) and not grupo:
+            dispatcher.utter_message(
+                text=("La asignación de grupos por letra del DNI varía cada curso "
+                      "y titulación, así que no puedo deducir tu grupo con certeza. "
+                      "¿Puedes decirme directamente el **número de grupo** (1, 2, 3…)? "
+                      "Lo encontrarás en SEVIUS o en el tablón de la ETSII.")
+            )
+            return []
+
         print(f"\n{'='*60}")
         print(f"📅 CONSULTA HORARIO PERSONAL: {mensaje}")
         print(f"   Titulación: {titulacion} | Curso: {curso} | Grupo: {grupo} | Día: {dia} | Cuatri: {cuatrimestre}")
@@ -416,10 +481,24 @@ class ActionConsultaHorario(Action):
             texto_lower = mensaje.lower()
             aliases_ordenados = sorted(ALIAS_ASIGNATURAS.keys(), key=len, reverse=True)
             # Excluir alias cortos que son palabras comunes del español
-            STOP_WORDS = {'si', 'e', 'c', 't', 'y', 'o', 'a'}
+            # SALVO cuando el contexto lo convierte claramente en asignatura
+            # (precedido por "asignatura", "de la", "horario de", etc.).
+            STOP_WORDS = {'e', 'c', 't', 'y', 'o', 'a'}
+            CONTEXTO_ASIGNATURA = (
+                r'(?:asignatura\s+(?:de\s+)?|horario\s+de\s+(?:la\s+)?|'
+                r'aula\s+de\s+|clase\s+de\s+|materia\s+(?:de\s+)?)'
+            )
             for alias in aliases_ordenados:
-                if alias in STOP_WORDS:
+                # Alias corto (≤2) y en stop list: exigir contexto explícito
+                if len(alias) <= 2 and alias in STOP_WORDS:
+                    pat_contexto = CONTEXTO_ASIGNATURA + re.escape(alias) + r'\b'
+                    if re.search(pat_contexto, texto_lower):
+                        tiene_asignatura = True
+                        print(f"   → Alias corto con contexto: '{alias}'")
+                        break
                     continue
+                # 'si' no está en STOP_WORDS: es alias real de Sistemas de
+                # Información. Lo aceptamos si aparece como palabra completa.
                 if re.search(r'\b' + re.escape(alias) + r'\b', texto_lower):
                     tiene_asignatura = True
                     print(f"   → Alias detectado en texto: '{alias}'")
@@ -430,6 +509,42 @@ class ActionConsultaHorario(Action):
             from ..asignaturas.actions import ActionConsultaEspecifica
             action_especifica = ActionConsultaEspecifica()
             return action_especifica.run(dispatcher, tracker, domain)
+
+        # ── Follow-up: sin asignatura ni curso/grupo, pero con slot reciente ──
+        # Ej: tras "hablame de DP1" -> "que horario tiene?". Heredamos la
+        # asignatura del slot y redirigimos a ActionConsultaEspecifica para
+        # que use el flujo de horario por asignatura.
+        if not curso and not grupo:
+            ultimo_asig = tracker.get_slot("ultimo_nombre_asignatura")
+            if ultimo_asig:
+                turnos = _contar_turnos_desde_slot(tracker, "ultimo_nombre_asignatura")
+                if turnos <= 3:
+                    print(f"   → Seguimiento horario: heredando asignatura "
+                          f"'{ultimo_asig}' del slot ({turnos} turnos)")
+                    from ..asignaturas.actions import ActionConsultaEspecifica
+                    action_especifica = ActionConsultaEspecifica()
+                    return action_especifica.run(dispatcher, tracker, domain)
+
+        # ── Follow-up: rellena curso/grupo parciales con slots recientes ──
+        # Ej: tras "horario de 2 grupo 1" -> "y del grupo 2?".
+        if not curso:
+            ultimo_curso = tracker.get_slot("ultimo_curso_consultado")
+            if ultimo_curso and _contar_turnos_desde_slot(
+                tracker, "ultimo_curso_consultado") <= 3:
+                try:
+                    curso = int(ultimo_curso)
+                    print(f"   → Seguimiento horario: heredando curso {curso}")
+                except (TypeError, ValueError):
+                    pass
+        if not grupo:
+            ultimo_grupo = tracker.get_slot("ultimo_grupo_consultado")
+            if ultimo_grupo and _contar_turnos_desde_slot(
+                tracker, "ultimo_grupo_consultado") <= 3:
+                try:
+                    grupo = int(ultimo_grupo)
+                    print(f"   → Seguimiento horario: heredando grupo {grupo}")
+                except (TypeError, ValueError):
+                    pass
 
         # ── Se requiere curso y grupo ──
         if not curso or not grupo:
@@ -444,4 +559,9 @@ class ActionConsultaHorario(Action):
         )
         respuesta = _generar_respuesta_horario(mensaje, datos_texto)
         dispatcher.utter_message(text=respuesta)
-        return []
+        # Persistir curso/grupo consultados para follow-ups posteriores
+        return [
+            SlotSet("ultimo_curso_consultado", curso),
+            SlotSet("ultimo_grupo_consultado", grupo),
+            SlotSet("ultima_action_ejecutada", "action_consulta_horario"),
+        ]

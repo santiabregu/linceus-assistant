@@ -500,11 +500,29 @@ _PALABRAS_HORARIO_ASIGNATURA = [
     'donde esta', 'dónde está',
 ]
 
+# Follow-ups que SOLO tienen sentido si el turno previo fue horario
+# (ej. "todos los grupos" tras "horario de TIS")
+_PALABRAS_HORARIO_FOLLOWUP_GRUPO = [
+    'todos los grupos', 'los demas grupos', 'los demás grupos',
+    'otros grupos', 'otro grupo', 'el resto de grupos',
+    'del grupo', 'del otro grupo',
+]
+
 
 def _es_pregunta_horario_asignatura(pregunta: str) -> bool:
     """Detecta si la pregunta es sobre horario/aula de una asignatura concreta."""
     pregunta_lower = pregunta.lower()
     return any(p in pregunta_lower for p in _PALABRAS_HORARIO_ASIGNATURA)
+
+
+def _es_followup_horario_grupo(pregunta: str) -> bool:
+    """
+    Detecta follow-ups sobre grupos que implican consulta de horario
+    (ej. "todos los grupos", "del otro grupo"). Solo deben activarse cuando
+    el contexto previo es ya una consulta de horario.
+    """
+    pregunta_lower = pregunta.lower()
+    return any(p in pregunta_lower for p in _PALABRAS_HORARIO_FOLLOWUP_GRUPO)
 
 
 def _responder_horario_asignatura(
@@ -517,6 +535,7 @@ def _responder_horario_asignatura(
     """
     from ..horarios.actions import (
         _query_asignatura as query_horario_asig,
+        _query_grupos_de_asignatura,
         _datos_asignatura_a_texto,
         _generar_respuesta_horario,
         ALIAS_ASIGNATURAS,
@@ -542,6 +561,15 @@ def _responder_horario_asignatura(
 
     if alias_encontrado:
         resultados = query_horario_asig(titulacion, alias_encontrado, grupo_int)
+        if not resultados and grupo_int:
+            # ¿Existe la asignatura pero no ese grupo?
+            nombre_real, grupos = _query_grupos_de_asignatura(titulacion, alias_encontrado)
+            if nombre_real and grupos and str(grupo_int) not in grupos:
+                from ..shared.config import BotConfig
+                nombre_tit = BotConfig.get_nombre_titulacion(titulacion)
+                lista_grupos = ", ".join(grupos)
+                return (f"**{nombre_real}** en {nombre_tit} no tiene grupo {grupo_int}. "
+                        f"Grupos disponibles: {lista_grupos}.")
         datos_texto = _datos_asignatura_a_texto(resultados, alias_encontrado, titulacion)
     else:
         # Fallback: buscar directamente por nombre en la tabla horarios
@@ -571,6 +599,20 @@ def _responder_horario_asignatura(
             sql += " ORDER BY gc.codigo, h.dia_semana, h.hora_inicio"
             cur.execute(sql, params)
             resultados = cur.fetchall()
+
+            # Si hay filtro de grupo y vacio, consultar grupos disponibles
+            grupos_disponibles: list = []
+            if not resultados and grupo_int:
+                cur.execute("""
+                    SELECT DISTINCT gc.codigo
+                    FROM grupos_clase gc
+                    JOIN asignaturas a ON gc.asignatura_id = a.id
+                    JOIN titulaciones t ON a.titulacion_id = t.id
+                    WHERE t.codigo = %s AND a.nombre_normalizado ILIKE %s
+                      AND gc.activo = true
+                    ORDER BY gc.codigo
+                """, (titulacion, f"%{nombre_norm}%"))
+                grupos_disponibles = [r[0] for r in cur.fetchall()]
             cur.close()
             conn.close()
         except Exception as e:
@@ -578,6 +620,12 @@ def _responder_horario_asignatura(
             if conn:
                 conn.close()
             return None
+        if not resultados and grupo_int and grupos_disponibles:
+            from ..shared.config import BotConfig
+            nombre_tit = BotConfig.get_nombre_titulacion(titulacion)
+            lista_grupos = ", ".join(grupos_disponibles)
+            return (f"**{nombre}** en {nombre_tit} no tiene grupo {grupo_int}. "
+                    f"Grupos disponibles: {lista_grupos}.")
         datos_texto = _datos_asignatura_a_texto(resultados, nombre, titulacion)
 
     if not resultados:
@@ -673,9 +721,26 @@ class ActionConsultaEspecifica(Action):
                 return []
 
         # ── Horario/aula de asignatura: consultar tabla horarios ──
-        if _es_pregunta_horario_asignatura(pregunta):
+        # Tambien entra si es un follow-up de grupos tras una consulta de
+        # horario previa (ej. "todos los grupos" tras preguntar por TIS).
+        ultima_action = tracker.get_slot("ultima_action_ejecutada")
+        es_continuacion_horario = (
+            _es_followup_horario_grupo(pregunta) and
+            ultima_action in ("action_consulta_horario", "consulta_especifica")
+        )
+        if _es_pregunta_horario_asignatura(pregunta) or es_continuacion_horario:
             print(f"   📅 Detectada pregunta de horario/aula → consultando tabla horarios")
             grupo_detectado = _detectar_grupo(pregunta)
+            # Bloquear referencias tipo "letra T del DNI" sin grupo numerico:
+            # las letras sueltas chocan con alias (T=Teledeteccion, C=Criptografia)
+            # y no hay mapeo fiable a numero de grupo.
+            from ..horarios.actions import _tiene_referencia_letra_dni
+            if _tiene_referencia_letra_dni(pregunta) and not grupo_detectado:
+                dispatcher.utter_message(
+                    text=("La asignación de grupos por letra del DNI varía cada curso y titulación. "
+                          "¿Puedes indicar el **número de grupo** (1, 2, 3…)? Lo tienes en SEVIUS.")
+                )
+                return eventos_contexto
             respuesta_horario = _responder_horario_asignatura(
                 pregunta, asignatura, contexto_titulacion, grupo_detectado
             )

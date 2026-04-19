@@ -2,23 +2,6 @@ version: "3.1"
 
 stories:
 
-- story: usuario contento
-  steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_great
-  - action: utter_happy
-
-- story: usuario triste - sigue triste
-  steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - intent: deny
-  - action: utter_goodbye
-
 # =============================================================================
 # STORIES: FLUJO SALUDO → SELECCIÓN TITULACIÓN → CONSULTA
 # =============================================================================
@@ -112,3 +95,147 @@ stories:
   - action: action_consulta_listado
   - intent: consulta_asignaturas_conteo
   - action: action_consulta_conteo
+
+# =============================================================================
+# STORIES CROSS-DOMAIN: ASIGNATURAS ↔ HORARIOS ↔ PROFESORES
+# =============================================================================
+
+- story: especifica y luego su horario
+  steps:
+  - intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+  - intent: consulta_horario
+  - action: action_consulta_horario
+
+- story: especifica y luego sus profesores
+  steps:
+  - intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+  - intent: consulta_profesor
+  - action: action_consulta_profesor
+
+- story: horario y luego profesores
+  steps:
+  - intent: consulta_horario
+  - action: action_consulta_horario
+  - intent: consulta_profesor
+  - action: action_consulta_profesor
+
+- story: horario y luego especifica
+  steps:
+  - intent: consulta_horario
+  - action: action_consulta_horario
+  - intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+
+- story: profesor y luego especifica
+  steps:
+  - intent: consulta_profesor
+  - action: action_consulta_profesor
+  - intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+
+- story: profesor y luego horario
+  steps:
+  - intent: consulta_profesor
+  - action: action_consulta_profesor
+  - intent: consulta_horario
+  - action: action_consulta_horario
+
+# =============================================================================
+# STORIES: FOLLOW-UP DE HORARIO (cambio de grupo, cambio de curso, etc.)
+# =============================================================================
+
+- story: horario y luego otro grupo
+  steps:
+  - intent: consulta_horario
+  - action: action_consulta_horario
+  - intent: consulta_horario
+  - action: action_consulta_horario
+
+- story: especifica y luego todos los grupos
+  steps:
+  - intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+  - intent: consulta_horario
+  - action: action_consulta_horario
+
+- story: horario asignatura y luego todos los grupos
+  steps:
+  - intent: consulta_horario
+  - action: action_consulta_horario
+  - intent: consulta_horario
+  - action: action_consulta_horario
+
+# =============================================================================
+# STORIES: FLUJOS COMPLETOS DE ALUMNO (simulan conversacion real)
+# =============================================================================
+
+- story: flujo alumno - seleccion, listado, asignatura, horario, profesor
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: cambiar_contexto_academico
+  - action: action_cambiar_contexto
+  - intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
+  - intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+  - intent: consulta_horario
+  - action: action_consulta_horario
+  - intent: consulta_profesor
+  - action: action_consulta_profesor
+
+- story: flujo alumno - asignatura y tutorias de su profesor
+  steps:
+  - intent: cambiar_contexto_academico
+  - action: action_cambiar_contexto
+  - intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+  - intent: consulta_profesor
+  - action: action_consulta_profesor
+  - intent: consulta_profesor
+  - action: action_consulta_profesor
+
+# =============================================================================
+# STORIES: RECUPERACION TRAS FALLBACK
+# =============================================================================
+
+- story: fallback y luego reformulacion como asignatura
+  steps:
+  - intent: nlu_fallback
+  - action: action_smart_fallback
+  - intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+
+- story: fallback y luego reformulacion como horario
+  steps:
+  - intent: nlu_fallback
+  - action: action_smart_fallback
+  - intent: consulta_horario
+  - action: action_consulta_horario
+
+- story: fallback y luego reformulacion como profesor
+  steps:
+  - intent: nlu_fallback
+  - action: action_smart_fallback
+  - intent: consulta_profesor
+  - action: action_consulta_profesor
+
+# =============================================================================
+# STORIES: LISTADO + SEGUIMIENTO DE CURSO
+# =============================================================================
+
+- story: listado y luego otro curso (seguimiento)
+  steps:
+  - intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
+  - intent: consulta_asignaturas_listado
+  - action: action_consulta_listado
+
+- story: conteo y luego listado
+  steps:
+  - intent: consulta_asignaturas_conteo
+  - action: action_consulta_conteo
+  - intent: consulta_asignaturas_listado
+  - action: action_consulta_listado

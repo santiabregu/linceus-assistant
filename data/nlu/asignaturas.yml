@@ -199,6 +199,38 @@ nlu:
     - cuéntame más
     - dame más detalles
     - y la metodología
+    # ─── Follow-up adicionales (inspirados en el piloto) ───────────────
+    - y que se hace?
+    - pero que se hace en esa?
+    - que tecnologia usa?
+    - que tecnologia se usa?
+    - que herramientas se usan?
+    - se usa spring boot?
+    - se usa java?
+    - en que lenguaje se programa?
+    - dame ejemplos
+    - me puedes dar ejemplos?
+    - cuentame mas sobre eso
+    - cuentame mas de esa
+    - dime mas
+    - explicame mejor
+    - y las practicas?
+    - tiene laboratorio?
+    - tiene practicas?
+    - y los examenes?
+    - cuantas convocatorias tiene?
+    - se puede aprobar sin examen final?
+    - y por evaluacion continua?
+    - y el examen final?
+    - que nota minima necesito?
+    - y la nota de corte?
+    - es dificil?
+    - es facil?
+    - cual es su dificultad?
+    - hay trabajos grupales?
+    - y los trabajos?
+    - se entrega algo?
+    - hay entregables?
     - info de [Contabilidad](nombre_asignatura)
     - que es [Psicologia Social](nombre_asignatura)
     - cuantas horas tiene [Calculo](nombre_asignatura)
@@ -540,3 +572,36 @@ nlu:
     - dame la lista completa
     - ensenname el resto
     - quiero ver mas
+
+# =============================================================================
+# INTENT: PREGUNTAR SI HAY MÁS (grupos / asignaturas / profesores)
+# =============================================================================
+- intent: preguntar_hay_mas
+  examples: |
+    - hay mas grupos
+    - hay mas grupos?
+    - hay otros grupos
+    - hay otros grupos?
+    - no hay mas grupos?
+    - no hay mas grupos
+    - y mas grupos?
+    - mas grupos?
+    - existe otro grupo
+    - existen mas grupos
+    - cuantos grupos hay
+    - hay mas asignaturas
+    - hay mas asignaturas?
+    - hay otras asignaturas
+    - no hay mas asignaturas?
+    - hay mas optativas
+    - hay mas obligatorias
+    - que otras asignaturas hay
+    - hay mas profesores
+    - hay mas profesores?
+    - hay otros profesores
+    - hay mas resultados
+    - tienes mas resultados
+    - y hay mas?
+    - no hay mas?
+    - hay mas?
+    - mas?
