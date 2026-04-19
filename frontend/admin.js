@@ -45,6 +45,13 @@
     return data;
   }
 
+  async function deleteJSON(url) {
+    const res = await fetch(url, { method: "DELETE" });
+    const data = await res.json();
+    if (!res.ok) throw Object.assign(new Error(data.error || `HTTP ${res.status}`), { status: res.status, data });
+    return data;
+  }
+
   function esc(str) {
     if (str == null) return "";
     const d = document.createElement("div");
@@ -228,7 +235,10 @@
             <div class="card-meta">
               <span><i class="fa-solid fa-graduation-cap"></i> ${c.num_titulaciones} titulaciones</span>
             </div>
-            <div class="card-badge" style="margin-top:12px">${c.activo ? "Activo" : "Inactivo"}</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+              <div class="card-badge">${c.activo ? "Activo" : "Inactivo"}</div>
+              <button class="btn-delete" data-delete-centro="${esc(c.id)}" title="Eliminar centro"><i class="fa-solid fa-trash"></i></button>
+            </div>
           </div>`
           )
           .join("") +
@@ -239,6 +249,19 @@
       $main.querySelectorAll(".entity-card").forEach((card) =>
         card.addEventListener("click", () => {
           loadTitulaciones(card.dataset.centroId, card.dataset.centroNombre);
+        })
+      );
+
+      $main.querySelectorAll(".btn-delete[data-delete-centro]").forEach((btn) =>
+        btn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const id = btn.dataset.deleteCentro;
+          const nombre = btn.closest(".entity-card").dataset.centroNombre;
+          if (!confirm(`¿Eliminar el centro "${nombre}" y todas sus titulaciones y asignaturas?`)) return;
+          try {
+            await deleteJSON(API("/api/admin/centros/" + id));
+            loadCentros();
+          } catch (err) { alert("Error: " + err.message); }
         })
       );
 
@@ -274,12 +297,22 @@
       const titulaciones = await fetchJSON(url);
 
       if (!titulaciones.length) {
-        showEmpty("graduation-cap", "No hay titulaciones para este centro");
+        $main.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <p>No hay titulaciones para este centro</p>
+            <button class="btn-crear" id="btn-sync-tits" style="margin-top:12px">
+              <i class="fa-solid fa-rotate"></i> Sincronizar titulaciones desde Sevius
+            </button>
+          </div>`;
+        document.getElementById("btn-sync-tits")?.addEventListener("click", () =>
+          abrirFormSyncTitulaciones(centroId, centroNombre)
+        );
         return;
       }
 
       const html =
-        `<div class="section-header"><h2>Titulaciones</h2><span class="count-badge">${titulaciones.length}</span><button class="btn-crear" id="btn-nueva-tit"><i class="fa-solid fa-plus"></i> Nueva titulacion</button></div>` +
+        `<div class="section-header"><h2>Titulaciones</h2><span class="count-badge">${titulaciones.length}</span><button class="btn-crear" id="btn-sync-tits"><i class="fa-solid fa-rotate"></i> Sincronizar desde Sevius</button><button class="btn-crear" id="btn-nueva-tit"><i class="fa-solid fa-plus"></i> Nueva titulacion</button></div>` +
         `<div class="card-grid ${gridClass(titulaciones.length)}">` +
         titulaciones
           .map(
@@ -294,7 +327,10 @@
               <span><i class="fa-solid fa-calendar"></i> ${t.duracion_anios || "?"} anos</span>
               <span><i class="fa-solid fa-file-alt"></i> Plan ${t.plan_estudios_anio || "?"}</span>
             </div>
-            <div class="card-badge" style="margin-top:12px">${t.activa ? "Activa" : "Inactiva"}</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+              <div class="card-badge">${t.activa ? "Activa" : "Inactiva"}</div>
+              <button class="btn-delete" data-delete-tit="${esc(t.id)}" title="Eliminar titulacion"><i class="fa-solid fa-trash"></i></button>
+            </div>
           </div>`
           )
           .join("") +
@@ -308,6 +344,20 @@
         })
       );
 
+      $main.querySelectorAll(".btn-delete[data-delete-tit]").forEach((btn) =>
+        btn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const id = btn.dataset.deleteTit;
+          const nombre = btn.closest(".entity-card").dataset.titulacionNombre;
+          if (!confirm(`¿Eliminar la titulacion "${nombre}" y todas sus asignaturas?`)) return;
+          try {
+            await deleteJSON(API("/api/admin/titulaciones/" + id));
+            loadTitulaciones(centroId, centroNombre);
+          } catch (err) { alert("Error: " + err.message); }
+        })
+      );
+
+      document.getElementById("btn-sync-tits")?.addEventListener("click", () => abrirFormSyncTitulaciones(centroId, centroNombre));
       document.getElementById("btn-nueva-tit")?.addEventListener("click", () => abrirFormTitulacion(centroId, centroNombre));
     } catch (err) {
       showEmpty("triangle-exclamation", "Error cargando titulaciones: " + err.message);
@@ -360,7 +410,17 @@
       const asignaturas = await fetchJSON(url);
 
       if (!asignaturas.length) {
-        showEmpty("book", "No hay asignaturas para esta titulacion");
+        $main.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-solid fa-book"></i>
+            <p>No hay asignaturas para esta titulacion</p>
+            <button class="btn-crear" id="btn-sync-asigs-empty" style="margin-top:12px">
+              <i class="fa-solid fa-rotate"></i> Sincronizar asignaturas desde Sevius
+            </button>
+          </div>`;
+        document.getElementById("btn-sync-asigs-empty")?.addEventListener("click", () =>
+          abrirFormSyncAsignaturas(titulacionId, titulacionNombre)
+        );
         return;
       }
 
@@ -374,7 +434,7 @@
 
       const cursoNames = { 1: "1er Curso", 2: "2o Curso", 3: "3er Curso", 4: "4o Curso", 0: "Sin curso" };
 
-      let html = `<div class="section-header"><h2>Asignaturas</h2><span class="count-badge">${asignaturas.length}</span><button class="btn-crear" id="btn-sync-asigs"><i class="fa-solid fa-rotate"></i> Sincronizar desde Sevius</button></div>`;
+      let html = `<div class="section-header"><h2>Asignaturas</h2><span class="count-badge">${asignaturas.length}</span><button class="btn-crear" id="btn-vectorizar"><i class="fa-solid fa-cube"></i> Vectorizar planes docentes</button><button class="btn-crear" id="btn-enrich-asigs"><i class="fa-solid fa-wand-magic-sparkles"></i> Enriquecer datos (us.es)</button><button class="btn-crear" id="btn-sync-asigs"><i class="fa-solid fa-rotate"></i> Sincronizar desde Sevius</button></div>`;
 
       Object.keys(grupos)
         .sort((a, b) => a - b)
@@ -395,6 +455,9 @@
                 <span><i class="fa-solid fa-award"></i> ${a.creditos} ECTS</span>
                 <span><i class="fa-solid fa-clock"></i> ${esc(a.duracion)}</span>
               </div>
+              <div style="display:flex;justify-content:flex-end;margin-top:8px">
+                <button class="btn-delete" data-delete-asig="${esc(a.id)}" data-asig-nombre="${esc(a.nombre)}" title="Eliminar asignatura"><i class="fa-solid fa-trash"></i></button>
+              </div>
             </div>`;
           });
           html += "</div></div>";
@@ -409,8 +472,27 @@
         })
       );
 
+      $main.querySelectorAll(".btn-delete[data-delete-asig]").forEach((btn) =>
+        btn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const id = btn.dataset.deleteAsig;
+          const nombre = btn.dataset.asigNombre;
+          if (!confirm(`¿Eliminar la asignatura "${nombre}"?`)) return;
+          try {
+            await deleteJSON(API("/api/admin/asignaturas/" + id));
+            loadAsignaturas(titulacionId, titulacionNombre);
+          } catch (err) { alert("Error: " + err.message); }
+        })
+      );
+
+      document.getElementById("btn-enrich-asigs")?.addEventListener("click", () =>
+        abrirEnrichAsignaturas(titulacionId, titulacionNombre)
+      );
       document.getElementById("btn-sync-asigs")?.addEventListener("click", () =>
         abrirFormSyncAsignaturas(titulacionId, titulacionNombre)
+      );
+      document.getElementById("btn-vectorizar")?.addEventListener("click", () =>
+        abrirFormVectorizar(titulacionId, titulacionNombre)
       );
     } catch (err) {
       showEmpty("triangle-exclamation", "Error cargando asignaturas: " + err.message);
@@ -522,10 +604,10 @@
   }
 
   // ═══════════════════════════════════════════════════════════════════
-  //  PROFESORES
+  //  PROFESORES (Centros -> Departamentos -> Profesores)
   // ═══════════════════════════════════════════════════════════════════
 
-  async function loadProfesores(departamento) {
+  async function loadProfesores() {
     showLoading();
     setActiveTab("profesores");
     setBreadcrumb([
@@ -534,56 +616,367 @@
     ]);
 
     try {
-      const [deptos, profes] = await Promise.all([
-        fetchJSON(API("/api/admin/departamentos")),
-        fetchJSON(API(departamento ? "/api/admin/profesores?departamento=" + encodeURIComponent(departamento) : "/api/admin/profesores")),
-      ]);
+      const centros = await fetchJSON(API("/api/admin/centros"));
+      if (!centros.length) {
+        showEmpty("building-columns", "No hay centros en la base de datos");
+        return;
+      }
 
-      let html = `<div class="section-header"><h2>Profesores</h2><span class="count-badge">${profes.length}</span></div>`;
+      // Numero de profesores por centro (via profesores.centro_id o depto.centro_id)
+      const conteos = await Promise.all(
+        centros.map((c) =>
+          fetchJSON(API("/api/admin/profesores?centro_id=" + c.id)).then((p) => p.length).catch(() => 0)
+        )
+      );
 
-      // Filtro departamento
-      html += `<div class="filters">
-        <label>Departamento:</label>
-        <select id="filter-depto">
-          <option value="">Todos</option>
-          ${deptos.map((d) => `<option value="${esc(d.departamento)}" ${d.departamento === departamento ? "selected" : ""}>${esc(d.departamento)} (${d.num_profesores})</option>`).join("")}
-        </select>
-      </div>`;
+      const html =
+        `<div class="section-header"><h2>Profesores por centro</h2><span class="count-badge">${centros.length}</span></div>` +
+        `<div class="card-grid ${gridClass(centros.length)}">` +
+        centros.map((c, i) => `
+          <div class="entity-card" data-centro-id="${esc(c.id)}" data-centro-nombre="${esc(c.nombre)}" data-centro-codigous="${esc(c.codigo_us || "")}">
+            <div class="card-icon"><i class="fa-solid fa-building-columns"></i></div>
+            <div class="card-title">${esc(c.nombre)}</div>
+            <div class="card-subtitle">${esc(c.codigo)}</div>
+            <div class="card-meta">
+              <span><i class="fa-solid fa-user-tie"></i> ${conteos[i]} profesores</span>
+              <span><i class="fa-solid fa-graduation-cap"></i> ${c.num_titulaciones} titulaciones</span>
+            </div>
+          </div>`).join("") +
+        "</div>";
 
-      if (!profes.length) {
-        html += '<div class="empty-state"><i class="fa-solid fa-user-tie"></i><p>No hay profesores</p></div>';
+      $main.innerHTML = html;
+
+      $main.querySelectorAll(".entity-card").forEach((card) =>
+        card.addEventListener("click", () =>
+          loadDepartamentosCentro(card.dataset.centroId, card.dataset.centroNombre, card.dataset.centroCodigous)
+        )
+      );
+    } catch (err) {
+      showEmpty("triangle-exclamation", "Error: " + err.message);
+    }
+  }
+
+  async function loadDepartamentosCentro(centroId, centroNombre, centroCodigoUs) {
+    showLoading();
+    setActiveTab("profesores");
+    setBreadcrumb([
+      { view: "home", label: '<i class="fa-solid fa-house"></i> Inicio' },
+      { view: "profesores", label: "Profesores" },
+      { view: "centro-profs", label: centroNombre || "Centro" },
+    ]);
+
+    try {
+      const data = await fetchJSON(API("/api/admin/centros/" + centroId + "/departamentos"));
+      const deptos = data.departamentos || [];
+      const sinDepto = data.sin_departamento || { num_profesores: 0 };
+
+      let html = `
+        <div class="section-header">
+          <h2>${esc(centroNombre)}</h2>
+          <span class="count-badge">${deptos.length} departamentos</span>
+          <button class="btn-crear" id="btn-enrich-centro">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Enriquecer desde us.es
+          </button>
+        </div>`;
+
+      if (!deptos.length && !sinDepto.num_profesores) {
+        html += `<div class="empty-state">
+          <i class="fa-solid fa-users"></i>
+          <p>No hay departamentos ni profesores para este centro.</p>
+          <p style="font-size:12px;margin-top:8px">Usa "Enriquecer desde us.es" para poblar.</p>
+        </div>`;
       } else {
-        html += `<div class="data-table-container"><table class="data-table">
-          <thead><tr>
-            <th>Nombre</th><th>Departamento</th><th>Categoria</th>
-            <th>Email</th><th>Despacho</th><th>Perfil</th>
-          </tr></thead><tbody>`;
-        profes.forEach((p) => {
-          html += `<tr>
-            <td><strong>${esc(p.apellidos)}, ${esc(p.nombre)}</strong></td>
-            <td>${esc(p.departamento)}</td>
-            <td>${esc(p.categoria_academica) || "-"}</td>
-            <td>${p.email ? `<a href="mailto:${esc(p.email)}">${esc(p.email)}</a>` : "-"}</td>
-            <td>${esc(p.despacho) || "-"}</td>
-            <td>${p.enlace_perfil ? `<a href="${esc(p.enlace_perfil)}" target="_blank"><i class="fa-solid fa-external-link"></i></a>` : "-"}</td>
-          </tr>`;
-        });
-        html += "</tbody></table></div>";
+        const tiles = deptos.map((d) => `
+          <div class="entity-card" data-depto-id="${esc(d.id)}" data-depto-nombre="${esc(d.nombre)}" data-centro-id="${esc(centroId)}" data-centro-nombre="${esc(centroNombre)}">
+            <div class="card-icon"><i class="fa-solid fa-sitemap"></i></div>
+            <div class="card-title">${esc(d.nombre)}</div>
+            <div class="card-subtitle">${esc(d.siglas || "")}</div>
+            <div class="card-meta">
+              <span><i class="fa-solid fa-user-tie"></i> ${d.num_profesores} profesores</span>
+            </div>
+          </div>`).join("");
+
+        const sinDeptoTile = sinDepto.num_profesores > 0 ? `
+          <div class="entity-card depto-sin" data-sin-depto="1" data-centro-id="${esc(centroId)}" data-centro-nombre="${esc(centroNombre)}">
+            <div class="card-icon"><i class="fa-solid fa-question"></i></div>
+            <div class="card-title">Sin departamento</div>
+            <div class="card-subtitle">Profesores sin departamento asignado</div>
+            <div class="card-meta">
+              <span><i class="fa-solid fa-user-tie"></i> ${sinDepto.num_profesores} profesores</span>
+            </div>
+          </div>` : "";
+
+        html += `<div class="card-grid ${gridClass(deptos.length + (sinDepto.num_profesores > 0 ? 1 : 0))}">${tiles}${sinDeptoTile}</div>`;
       }
 
       $main.innerHTML = html;
 
-      document.getElementById("filter-depto").addEventListener("change", (e) => {
-        loadProfesores(e.target.value || undefined);
+      $main.querySelectorAll(".entity-card[data-depto-id]").forEach((card) =>
+        card.addEventListener("click", () =>
+          loadProfesoresDepto(card.dataset.deptoId, card.dataset.deptoNombre, card.dataset.centroId, card.dataset.centroNombre)
+        )
+      );
+      $main.querySelectorAll(".entity-card[data-sin-depto]").forEach((card) =>
+        card.addEventListener("click", () =>
+          loadProfesoresSinDepto(card.dataset.centroId, card.dataset.centroNombre)
+        )
+      );
+      document.getElementById("btn-enrich-centro")?.addEventListener("click", () =>
+        abrirEnrichCentro(centroId, centroNombre, centroCodigoUs)
+      );
+    } catch (err) {
+      showEmpty("triangle-exclamation", "Error: " + err.message);
+    }
+  }
+
+  async function loadProfesoresDepto(deptoId, deptoNombre, centroId, centroNombre) {
+    showLoading();
+    setActiveTab("profesores");
+    setBreadcrumb([
+      { view: "home", label: '<i class="fa-solid fa-house"></i> Inicio' },
+      { view: "profesores", label: "Profesores" },
+      { view: "centro-profs", label: centroNombre || "Centro" },
+      { view: "depto-profs", label: deptoNombre || "Departamento" },
+    ]);
+
+    try {
+      const profes = await fetchJSON(API("/api/admin/profesores?departamento_id=" + deptoId));
+      renderTablaProfesores(profes, {
+        titulo: deptoNombre,
+        count: profes.length,
+        onBack: () => loadDepartamentosCentro(centroId, centroNombre, null),
+        enrichBtn: {
+          label: "Enriquecer desde us.es",
+          handler: () => abrirEnrichDepto(deptoId, deptoNombre, centroId, centroNombre),
+        },
       });
     } catch (err) {
       showEmpty("triangle-exclamation", "Error: " + err.message);
     }
   }
 
+  async function loadProfesoresSinDepto(centroId, centroNombre) {
+    showLoading();
+    setActiveTab("profesores");
+    setBreadcrumb([
+      { view: "home", label: '<i class="fa-solid fa-house"></i> Inicio' },
+      { view: "profesores", label: "Profesores" },
+      { view: "centro-profs", label: centroNombre || "Centro" },
+      { view: "sin-depto", label: "Sin departamento" },
+    ]);
+
+    try {
+      const profes = await fetchJSON(API(`/api/admin/profesores?centro_id=${centroId}&sin_departamento=1`));
+      renderTablaProfesores(profes, {
+        titulo: "Sin departamento",
+        count: profes.length,
+      });
+    } catch (err) {
+      showEmpty("triangle-exclamation", "Error: " + err.message);
+    }
+  }
+
+  function renderTablaProfesores(profes, opts) {
+    const enrichBtnHtml = opts.enrichBtn
+      ? `<button class="btn-crear" id="btn-enrich-depto"><i class="fa-solid fa-wand-magic-sparkles"></i> ${esc(opts.enrichBtn.label)}</button>`
+      : "";
+
+    let html = `<div class="section-header"><h2>${esc(opts.titulo)}</h2><span class="count-badge">${opts.count}</span>${enrichBtnHtml}</div>`;
+
+    if (!profes.length) {
+      html += '<div class="empty-state"><i class="fa-solid fa-user-tie"></i><p>No hay profesores.</p></div>';
+    } else {
+      html += `<div class="data-table-container"><table class="data-table">
+        <thead><tr>
+          <th>Nombre</th><th>Departamento</th><th>Categoria</th>
+          <th>Email</th><th>Despacho</th><th>Perfil</th>
+        </tr></thead><tbody>`;
+      profes.forEach((p) => {
+        const fullName = p.apellidos ? `${esc(p.apellidos)}, ${esc(p.nombre)}` : esc(p.nombre || p.nombre_completo);
+        html += `<tr data-profesor-id="${esc(p.id)}" style="cursor:pointer">
+          <td><strong>${fullName}</strong></td>
+          <td>${esc(p.departamento_nombre || p.departamento_siglas) || "-"}</td>
+          <td>${esc(p.categoria_academica) || "-"}</td>
+          <td>${p.email ? `<a href="mailto:${esc(p.email)}">${esc(p.email)}</a>` : "-"}</td>
+          <td>${esc(p.despacho) || "-"}</td>
+          <td>${p.enlace_perfil ? `<a href="${esc(p.enlace_perfil)}" target="_blank" rel="noreferrer"><i class="fa-solid fa-external-link"></i></a>` : "-"}</td>
+        </tr>`;
+      });
+      html += "</tbody></table></div>";
+    }
+
+    $main.innerHTML = html;
+
+    $main.querySelectorAll("tr[data-profesor-id]").forEach((tr) =>
+      tr.addEventListener("click", (e) => {
+        if (e.target.tagName === "A") return;
+        openProfesorDetail(tr.dataset.profesorId);
+      })
+    );
+
+    if (opts.enrichBtn) {
+      document.getElementById("btn-enrich-depto")?.addEventListener("click", opts.enrichBtn.handler);
+    }
+  }
+
+  async function openProfesorDetail(id) {
+    openModal("Cargando...", '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i></div>');
+    try {
+      const p = await fetchJSON(API("/api/admin/profesores/" + id));
+      const fullName = p.apellidos ? `${p.apellidos}, ${p.nombre}` : (p.nombre_completo || p.nombre);
+      $modalTitle.textContent = fullName;
+      $modalBody.innerHTML = `<div class="detail-grid">
+        <div class="detail-field"><div class="field-label">Centro</div><div class="field-value">${esc(p.centro_nombre) || "-"}</div></div>
+        <div class="detail-field"><div class="field-label">Departamento</div><div class="field-value">${esc(p.departamento_nombre) || "Sin departamento"}</div></div>
+        <div class="detail-field"><div class="field-label">Categoria</div><div class="field-value">${esc(p.categoria_academica) || "-"}</div></div>
+        <div class="detail-field"><div class="field-label">Email</div><div class="field-value">${p.email ? `<a href="mailto:${esc(p.email)}">${esc(p.email)}</a>` : "-"}</div></div>
+        <div class="detail-field"><div class="field-label">Telefono</div><div class="field-value">${esc(p.telefono) || "-"}</div></div>
+        <div class="detail-field"><div class="field-label">Despacho</div><div class="field-value">${esc(p.despacho) || "-"}</div></div>
+        <div class="detail-field"><div class="field-label">ORCID</div><div class="field-value">${esc(p.orcid) || "-"}</div></div>
+        <div class="detail-field"><div class="field-label">Web personal</div><div class="field-value">${p.web_personal ? `<a href="${esc(p.web_personal)}" target="_blank" rel="noreferrer">${esc(p.web_personal)}</a>` : "-"}</div></div>
+        <div class="detail-field"><div class="field-label">Perfil us.es</div><div class="field-value">${p.enlace_perfil ? `<a href="${esc(p.enlace_perfil)}" target="_blank" rel="noreferrer">Ver perfil</a>` : "-"}</div></div>
+      </div>`;
+    } catch (err) {
+      $modalBody.innerHTML = '<p style="color:red">Error: ' + esc(err.message) + "</p>";
+    }
+  }
+
+  // ─── Enrich desde us.es ─────────────────────────────────────────
+
+  async function abrirEnrichCentro(centroId, centroNombre, codigoUs) {
+    const sugerido = codigoUs || normalizarSlug(centroNombre);
+    openModal("Enriquecer centro desde us.es", `
+      <p style="font-size:13px;color:#555;margin-bottom:14px">
+        Se scrapeara la pagina del centro en us.es para descubrir departamentos
+        y profesores, y se enriquecera la base de datos (email, categoria,
+        enlace de perfil).
+      </p>
+      <div class="form-field">
+        <label>Slug del centro en us.es <span class="required">*</span></label>
+        <input type="text" id="enrich-slug" value="${esc(sugerido)}" placeholder="escuela-tecnica-superior-de-ingenieria-informatica">
+        <p style="font-size:11px;color:#777;margin-top:4px">URL: https://www.us.es/centros/<strong id="enrich-slug-preview">${esc(sugerido)}</strong></p>
+      </div>
+      <div class="form-field">
+        <label>Nombre del centro para busqueda PDI</label>
+        <input type="text" id="enrich-nombre" value="${esc(centroNombre)}" placeholder="nombre para filtrar en el directorio">
+        <p style="font-size:11px;color:#777;margin-top:4px">
+          Puede ser una coincidencia parcial (ej: "escuela tecnica superior de ingenieria informatica").
+        </p>
+      </div>
+      <div id="enrich-msg"></div>
+      <div class="form-actions">
+        <button class="btn-submit" id="btn-enrich-submit"><i class="fa-solid fa-wand-magic-sparkles"></i> Enriquecer</button>
+      </div>`);
+
+    document.getElementById("enrich-slug").addEventListener("input", (e) => {
+      const p = document.getElementById("enrich-slug-preview");
+      if (p) p.textContent = e.target.value;
+    });
+
+    document.getElementById("btn-enrich-submit").addEventListener("click", async () => {
+      const slug = document.getElementById("enrich-slug").value.trim();
+      const nombre = document.getElementById("enrich-nombre").value.trim();
+      const $msg = document.getElementById("enrich-msg");
+      const $btn = document.getElementById("btn-enrich-submit");
+      if (!slug) { $msg.innerHTML = formError("Slug obligatorio"); return; }
+      $msg.innerHTML = '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Scrapeando us.es... (puede tardar varios minutos)</div>';
+      $btn.disabled = true;
+
+      try {
+        const res = await postJSON(API("/api/admin/centros/" + centroId + "/enrich_profesores"), {
+          codigo_us: slug,
+          nombre_us: nombre,
+        });
+        const p = res.profesores || {};
+        let html = `<div class="form-success">
+          <strong>${(res.departamentos_encontrados || []).length}</strong> departamentos sincronizados.<br>
+          <strong>${p.creados || 0}</strong> profesores creados,
+          <strong>${p.actualizados || 0}</strong> actualizados
+          (${p.total_encontrados || 0} encontrados en us.es).
+        </div>`;
+        if ((p.errores || []).length) {
+          html += `<div class="form-error">${p.errores.length} errores. Ver consola.</div>`;
+          console.warn("Errores enriquecimiento:", p.errores);
+        }
+        $msg.innerHTML = html;
+        $btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Cerrar';
+        $btn.disabled = false;
+        $btn.onclick = () => { closeModal(); loadDepartamentosCentro(centroId, centroNombre, slug); };
+      } catch (err) {
+        $msg.innerHTML = formError(err.message);
+        $btn.disabled = false;
+      }
+    });
+  }
+
+  async function abrirEnrichDepto(deptoId, deptoNombre, centroId, centroNombre) {
+    openModal("Enriquecer departamento desde us.es", `
+      <p style="font-size:13px;color:#555;margin-bottom:14px">
+        Se buscaran en el directorio PDI de us.es los profesores cuyo
+        departamento coincida con <strong>${esc(deptoNombre)}</strong> y cuyo
+        centro sea <strong>${esc(centroNombre)}</strong>.
+      </p>
+      <div id="enrich-msg"></div>
+      <div class="form-actions">
+        <button class="btn-submit" id="btn-enrich-depto-submit">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Enriquecer
+        </button>
+      </div>`);
+
+    document.getElementById("btn-enrich-depto-submit").addEventListener("click", async () => {
+      const $msg = document.getElementById("enrich-msg");
+      const $btn = document.getElementById("btn-enrich-depto-submit");
+      $msg.innerHTML = '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Scrapeando us.es...</div>';
+      $btn.disabled = true;
+
+      try {
+        const res = await postJSON(API("/api/admin/departamentos/" + deptoId + "/enrich_profesores"), {});
+        const p = res.profesores || {};
+        let html = `<div class="form-success">
+          <strong>${p.creados || 0}</strong> creados,
+          <strong>${p.actualizados || 0}</strong> actualizados
+          (${p.total_encontrados || 0} encontrados en us.es).
+        </div>`;
+        if ((p.errores || []).length) {
+          html += `<div class="form-error">${p.errores.length} errores. Ver consola.</div>`;
+          console.warn("Errores enriquecimiento:", p.errores);
+        }
+        $msg.innerHTML = html;
+        $btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Cerrar';
+        $btn.disabled = false;
+        $btn.onclick = () => { closeModal(); loadProfesoresDepto(deptoId, deptoNombre, centroId, centroNombre); };
+      } catch (err) {
+        $msg.innerHTML = formError(err.message);
+        $btn.disabled = false;
+      }
+    });
+  }
+
+  function normalizarSlug(texto) {
+    if (!texto) return "";
+    return texto
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  }
+
   // ═══════════════════════════════════════════════════════════════════
-  //  HORARIOS
+  //  HORARIOS (Centros -> Titulaciones -> Tabla)
   // ═══════════════════════════════════════════════════════════════════
+
+  const DIAS_SEMANA = { 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado" };
+
+  function horariosDisclaimerHTML() {
+    return `<div class="disclaimer">
+      <i class="fa-solid fa-circle-info"></i>
+      <div>
+        <strong>Extracción de horarios dependiente de centro.</strong>
+        Cada centro publica sus horarios en un formato distinto (PDF, web propia, etc.),
+        por lo que la extracción automática requiere un extractor específico en
+        <code>admin/horarios_extractores/</code>. Actualmente solo ETSII está soportada;
+        añadir un nuevo centro requiere crear un extractor equivalente.
+      </div>
+    </div>`;
+  }
 
   async function loadHorarios() {
     showLoading();
@@ -594,53 +987,217 @@
     ]);
 
     try {
-      const horarios = await fetchJSON(API("/api/admin/horarios"));
+      const centros = await fetchJSON(API("/api/admin/horarios/centros"));
+      if (!centros.length) {
+        showEmpty("building-columns", "No hay centros en la base de datos");
+        return;
+      }
 
-      let html = `<div class="section-header"><h2>Horarios</h2><span class="count-badge">${horarios.length}</span></div>`;
+      const cards = centros.map((c) => {
+        const badge = c.extraccion_soportada
+          ? '<span class="tag tag-completado">Extracción disponible</span>'
+          : '<span class="tag tag-pendiente">Extracción no soportada</span>';
+        return `
+          <div class="entity-card" data-centro-id="${esc(c.id)}" data-centro-codigo="${esc(c.codigo)}" data-centro-nombre="${esc(c.nombre)}" data-extraccion="${c.extraccion_soportada ? "1" : "0"}">
+            <div class="card-icon"><i class="fa-solid fa-building-columns"></i></div>
+            <div class="card-title">${esc(c.nombre)}</div>
+            <div class="card-subtitle">${esc(c.codigo)}</div>
+            <div class="card-meta">
+              <span><i class="fa-solid fa-clock"></i> ${c.num_horarios} horarios</span>
+              <span><i class="fa-solid fa-graduation-cap"></i> ${c.num_titulaciones} titulaciones</span>
+            </div>
+            <div style="margin-top:10px">${badge}</div>
+          </div>`;
+      }).join("");
+
+      $main.innerHTML =
+        `<div class="section-header"><h2>Horarios por centro</h2><span class="count-badge">${centros.length}</span></div>` +
+        horariosDisclaimerHTML() +
+        `<div class="card-grid ${gridClass(centros.length)}">${cards}</div>`;
+
+      $main.querySelectorAll(".entity-card").forEach((card) =>
+        card.addEventListener("click", () =>
+          loadTitulacionesHorarios(
+            card.dataset.centroId, card.dataset.centroCodigo,
+            card.dataset.centroNombre, card.dataset.extraccion === "1"
+          )
+        )
+      );
+    } catch (err) {
+      showEmpty("triangle-exclamation", "Error: " + err.message);
+    }
+  }
+
+  async function loadTitulacionesHorarios(centroId, centroCodigo, centroNombre, extraccionSoportada) {
+    showLoading();
+    setActiveTab("horarios");
+    setBreadcrumb([
+      { view: "home", label: '<i class="fa-solid fa-house"></i> Inicio' },
+      { view: "horarios", label: "Horarios" },
+      { view: "centro-horarios", label: centroNombre || "Centro" },
+    ]);
+
+    try {
+      const tits = await fetchJSON(API("/api/admin/horarios/titulaciones?centro_id=" + centroId));
+
+      const btnGenerar = extraccionSoportada
+        ? `<button class="btn-crear" id="btn-gen-horarios"><i class="fa-solid fa-wand-magic-sparkles"></i> Generar horarios</button>`
+        : "";
+
+      let html = `<div class="section-header"><h2>${esc(centroNombre)} — Horarios</h2><span class="count-badge">${tits.length} titulaciones</span>${btnGenerar}</div>`;
+      html += horariosDisclaimerHTML();
+
+      if (!extraccionSoportada) {
+        html += `<div class="form-error" style="margin-bottom:16px">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          Este centro no tiene extractor de horarios. Para añadirlo crea un módulo en <code>admin/horarios_extractores/</code> y regístralo.
+        </div>`;
+      }
+
+      if (!tits.length) {
+        html += '<div class="empty-state"><i class="fa-solid fa-graduation-cap"></i><p>No hay titulaciones en este centro</p></div>';
+      } else {
+        html += `<div class="card-grid ${gridClass(tits.length)}">` +
+          tits.map((t) => `
+            <div class="entity-card" data-tit-id="${esc(t.id)}" data-tit-nombre="${esc(t.nombre)}" data-centro-id="${esc(centroId)}" data-centro-nombre="${esc(centroNombre)}" data-centro-codigo="${esc(centroCodigo)}" data-extraccion="${extraccionSoportada ? "1" : "0"}">
+              <div class="card-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+              <div class="card-title">${esc(t.nombre)}</div>
+              <div class="card-subtitle">${esc(t.codigo)}</div>
+              <div class="card-meta">
+                <span><i class="fa-solid fa-clock"></i> ${t.num_horarios} horarios</span>
+                <span><i class="fa-solid fa-users"></i> ${t.num_grupos} grupos</span>
+              </div>
+            </div>`).join("") +
+          "</div>";
+      }
+
+      $main.innerHTML = html;
+
+      $main.querySelectorAll(".entity-card[data-tit-id]").forEach((card) =>
+        card.addEventListener("click", () =>
+          loadHorariosTabla(card.dataset.titId, card.dataset.titNombre, card.dataset.centroId, card.dataset.centroNombre, card.dataset.centroCodigo, card.dataset.extraccion === "1")
+        )
+      );
+      document.getElementById("btn-gen-horarios")?.addEventListener("click", () =>
+        abrirGenerarHorarios(centroId, centroCodigo, centroNombre)
+      );
+    } catch (err) {
+      showEmpty("triangle-exclamation", "Error: " + err.message);
+    }
+  }
+
+  async function loadHorariosTabla(titId, titNombre, centroId, centroNombre, centroCodigo, extraccionSoportada) {
+    showLoading();
+    setActiveTab("horarios");
+    setBreadcrumb([
+      { view: "home", label: '<i class="fa-solid fa-house"></i> Inicio' },
+      { view: "horarios", label: "Horarios" },
+      { view: "centro-horarios", label: centroNombre || "Centro" },
+      { view: "tit-horarios", label: titNombre || "Titulación" },
+    ]);
+
+    try {
+      const horarios = await fetchJSON(API("/api/admin/horarios?titulacion_id=" + titId));
+      let html = `<div class="section-header"><h2>${esc(titNombre)}</h2><span class="count-badge">${horarios.length}</span></div>`;
 
       if (!horarios.length) {
-        html += '<div class="empty-state"><i class="fa-solid fa-clock"></i><p>No hay horarios en la base de datos</p></div>';
+        html += '<div class="empty-state"><i class="fa-solid fa-clock"></i><p>No hay horarios para esta titulación</p></div>';
       } else {
-        // Agrupar por asignatura
-        const porAsig = {};
+        // Agrupar por curso y grupo
+        const porCursoGrupo = {};
         horarios.forEach((h) => {
-          const key = h.asignatura_nombre || "?";
-          if (!porAsig[key]) porAsig[key] = { codigo: h.asignatura_codigo, items: [] };
-          porAsig[key].items.push(h);
+          const key = `${h.curso || 0}|${h.grupo_numero}`;
+          if (!porCursoGrupo[key]) porCursoGrupo[key] = { curso: h.curso || 0, grupo: h.grupo_numero, items: [] };
+          porCursoGrupo[key].items.push(h);
         });
 
-        const dias = { 1: "Lunes", 2: "Martes", 3: "Miercoles", 4: "Jueves", 5: "Viernes", 6: "Sabado" };
-
-        html += `<div class="data-table-container"><table class="data-table">
-          <thead><tr>
-            <th>Asignatura</th><th>Grupo</th><th>Dia</th>
-            <th>Hora inicio</th><th>Hora fin</th><th>Aula</th><th>Tipo</th>
+        const keys = Object.keys(porCursoGrupo).sort();
+        keys.forEach((k) => {
+          const info = porCursoGrupo[k];
+          html += `<div class="curso-group">`;
+          html += `<div class="curso-group-title"><i class="fa-solid fa-layer-group"></i> Curso ${info.curso} · Grupo ${esc(info.grupo)} (${info.items.length} horarios)</div>`;
+          html += `<div class="data-table-container"><table class="data-table"><thead><tr>
+            <th>Asignatura</th><th>Día</th><th>Inicio</th><th>Fin</th><th>Aula</th>
           </tr></thead><tbody>`;
-
-        Object.keys(porAsig)
-          .sort()
-          .forEach((nombre) => {
-            const info = porAsig[nombre];
-            info.items.forEach((h) => {
-              html += `<tr>
-                <td><strong>${esc(nombre)}</strong><br><small style="color:#777">${esc(info.codigo)}</small></td>
-                <td>${esc(h.grupo_numero)}</td>
-                <td>${dias[h.dia_semana] || esc(h.dia_semana)}</td>
-                <td>${esc(h.hora_inicio)}</td>
-                <td>${esc(h.hora_fin)}</td>
-                <td>${esc(h.aula) || "-"}</td>
-                <td>${esc(h.tipo_sesion) || "-"}</td>
-              </tr>`;
-            });
+          info.items.forEach((h) => {
+            html += `<tr>
+              <td><strong>${esc(h.asignatura_nombre)}</strong><br><small style="color:#777">${esc(h.asignatura_codigo)}</small></td>
+              <td>${DIAS_SEMANA[h.dia_semana] || esc(h.dia_semana)}</td>
+              <td>${esc(h.hora_inicio)}</td>
+              <td>${esc(h.hora_fin)}</td>
+              <td>${esc(h.aula) || "-"}</td>
+            </tr>`;
           });
-
-        html += "</tbody></table></div>";
+          html += "</tbody></table></div></div>";
+        });
       }
 
       $main.innerHTML = html;
     } catch (err) {
       showEmpty("triangle-exclamation", "Error: " + err.message);
     }
+  }
+
+  async function abrirGenerarHorarios(centroId, centroCodigo, centroNombre) {
+    openModal("Generar horarios — " + centroNombre, `
+      <p style="font-size:13px;color:#555;margin-bottom:14px">
+        Ejecuta el extractor de horarios del centro <strong>${esc(centroNombre)}</strong>.
+        Descarga el PDF oficial, extrae los horarios y los inserta en la base de datos.
+      </p>
+      <div class="form-field">
+        <label>Curso académico</label>
+        <input type="text" id="gen-curso" value="2025-26" placeholder="2025-26">
+      </div>
+      <label style="display:flex;gap:8px;align-items:center;margin:12px 0;font-size:13px">
+        <input type="checkbox" id="gen-limpiar">
+        Borrar horarios existentes del centro antes de insertar
+      </label>
+      <div class="disclaimer" style="margin:14px 0">
+        <i class="fa-solid fa-clock"></i>
+        <div>Este proceso tarda ~30-60s. No cierres la ventana.</div>
+      </div>
+      <div id="gen-msg"></div>
+      <div class="form-actions">
+        <button class="btn-submit" id="btn-gen-submit"><i class="fa-solid fa-play"></i> Generar</button>
+      </div>`);
+
+    document.getElementById("btn-gen-submit").addEventListener("click", async () => {
+      const $msg = document.getElementById("gen-msg");
+      const $btn = document.getElementById("btn-gen-submit");
+      const curso = document.getElementById("gen-curso").value.trim();
+      const limpiar = document.getElementById("gen-limpiar").checked;
+
+      $msg.innerHTML = '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Descargando PDF y procesando...</div>';
+      $btn.disabled = true;
+
+      try {
+        const res = await postJSON(API("/api/admin/horarios/generar"), {
+          centro_id: centroId,
+          curso_academico: curso,
+          limpiar,
+        });
+
+        let html = `<div class="form-success">
+          <strong>${res.horarios_insertados || 0}</strong> horarios insertados,
+          <strong>${res.grupos_clase_insertados || 0}</strong> grupos_clase nuevos,
+          <strong>${res.aulas_insertadas || 0}</strong> aulas nuevas.<br>
+          Titulaciones procesadas: ${(res.titulaciones_procesadas || []).join(", ") || "-"}.
+        </div>`;
+        if ((res.alias_no_resueltos || []).length) {
+          html += `<div class="form-error" style="margin-top:10px">
+            <strong>Alias no resueltos:</strong> ${res.alias_no_resueltos.join(", ")}<br>
+            <small>(son asignaturas cuya abreviatura no está en el diccionario de alias; revisa <code>actions/shared/config.py</code>)</small>
+          </div>`;
+        }
+        $msg.innerHTML = html;
+        $btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Cerrar';
+        $btn.disabled = false;
+        $btn.onclick = () => { closeModal(); loadTitulacionesHorarios(centroId, centroCodigo, centroNombre, true); };
+      } catch (err) {
+        $msg.innerHTML = formError(err.message);
+        $btn.disabled = false;
+      }
+    });
   }
 
   // ═══════════════════════════════════════════════════════════════════
@@ -883,7 +1440,7 @@
       const $btn = e.target.querySelector("[type=submit]");
       const val = document.getElementById("centro-sevius").value;
       if (!val) { $msg.innerHTML = formError("Selecciona un centro"); return; }
-      const [, nombre] = val.split("||");
+      const [codSevius, nombre] = val.split("||");
 
       $msg.innerHTML = "";
       $btn.disabled = true;
@@ -894,6 +1451,7 @@
           codigo: document.getElementById("centro-codigo").value.trim(),
           nombre: nombre,
           nombre_corto: document.getElementById("centro-nombre-corto").value.trim(),
+          codigo_sevius: codSevius,
         });
         $msg.innerHTML = formSuccess(`Centro <strong>${esc(row.nombre)}</strong> creado correctamente.`);
         setTimeout(() => { closeModal(); loadCentros(); }, 1500);
@@ -963,90 +1521,169 @@
     });
   }
 
-  // ─── Sincronizar asignaturas desde Sevius ────────────────────────
+  // ─── Enriquecer asignaturas desde us.es ──────────────────────────
 
-  async function abrirFormSyncAsignaturas(titulacionId, titulacionNombre) {
-    openModal("Sincronizar asignaturas desde Sevius", '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Cargando centros de Sevius...</div>');
+  async function abrirEnrichAsignaturas(titulacionId, titulacionNombre) {
+    openModal("Enriquecer datos desde us.es", `
+      <p style="font-size:13px;color:#555;margin-bottom:16px">
+        Se buscara <strong>${esc(titulacionNombre)}</strong> en la web de la Universidad de Sevilla
+        y se actualizaran <strong>curso, creditos y tipologia</strong> de las asignaturas.
+      </p>
+      <div id="enrich-msg"></div>
+      <div class="form-actions">
+        <button class="btn-submit" id="btn-enrich-submit">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Enriquecer datos
+        </button>
+      </div>`);
 
-    let centrosSevius;
+    document.getElementById("btn-enrich-submit").addEventListener("click", async () => {
+      const $msg = document.getElementById("enrich-msg");
+      const $btn = document.getElementById("btn-enrich-submit");
+      $msg.innerHTML = '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Buscando en us.es y actualizando datos... (puede tardar unos segundos)</div>';
+      $btn.disabled = true;
+
+      try {
+        const res = await postJSON(API("/api/admin/asignaturas/enrich"), {
+          titulacion_id: titulacionId,
+        });
+        let msg = `<strong>${res.actualizadas.length}</strong> asignaturas actualizadas de ${res.total_bd} totales.`;
+        if (res.no_encontradas.length) {
+          msg += `<br><strong>${res.no_encontradas.length}</strong> no encontradas en us.es.`;
+        }
+        $msg.innerHTML = formSuccess(msg);
+        setTimeout(() => { closeModal(); loadAsignaturas(titulacionId, titulacionNombre); }, 2000);
+      } catch (err) {
+        $msg.innerHTML = formError(err.message);
+        $btn.disabled = false;
+        $btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Enriquecer datos';
+      }
+    });
+  }
+
+  // ─── Sincronizar titulaciones desde Sevius ───────────────────────
+
+  async function abrirFormSyncTitulaciones(centroId, centroNombre) {
+    openModal("Sincronizar titulaciones desde Sevius", '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Consultando centro...</div>');
+
+    // Necesitamos el codigo_sevius del centro
+    let centro;
     try {
-      centrosSevius = await fetchJSON(API("/api/admin/sevius/centros"));
+      const centros = await fetchJSON(API("/api/admin/centros"));
+      centro = centros.find((c) => c.id === centroId);
+    } catch {
+      $modalBody.innerHTML = formError("No se pudieron cargar los centros");
+      return;
+    }
+
+    if (!centro || !centro.codigo_sevius) {
+      $modalBody.innerHTML = formError("Este centro no tiene codigo de Sevius asociado. Recrealo seleccionandolo desde Sevius.");
+      return;
+    }
+
+    // Preview: consultar titulaciones disponibles en Sevius
+    let titsSevius;
+    try {
+      titsSevius = await fetchJSON(API("/api/admin/sevius/titulaciones?codcentro=" + centro.codigo_sevius));
     } catch {
       $modalBody.innerHTML = formError("No se pudo conectar con Sevius");
       return;
     }
 
-    const opsCentros = centrosSevius.map((c) => ({ value: c.codigo_sevius, label: c.nombre }));
+    $modalBody.innerHTML = `
+      <p style="font-size:13px;color:#555;margin-bottom:16px">
+        Se importaran las titulaciones de <strong>${esc(centroNombre)}</strong> desde Sevius.
+      </p>
+      <div style="margin:12px 0;font-size:13px;color:#2a7a2a">
+        <i class="fa-solid fa-circle-check"></i> ${titsSevius.length} titulaciones encontradas en Sevius
+      </div>
+      <div id="form-sync-tit-msg"></div>
+      <div class="form-actions">
+        <button class="btn-submit" id="btn-sync-tit-submit">
+          <i class="fa-solid fa-rotate"></i> Sincronizar titulaciones
+        </button>
+      </div>`;
+
+    document.getElementById("btn-sync-tit-submit").addEventListener("click", async () => {
+      const $msg = document.getElementById("form-sync-tit-msg");
+      const $btn = document.getElementById("btn-sync-tit-submit");
+      $msg.innerHTML = "";
+      $btn.disabled = true;
+      $btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sincronizando...';
+
+      try {
+        const res = await postJSON(API("/api/admin/titulaciones/sync"), {
+          centro_id: centroId,
+          codigo_sevius: centro.codigo_sevius,
+        });
+        const msg = `
+          <strong>${res.creadas.length}</strong> titulaciones creadas,
+          <strong>${res.existentes.length}</strong> ya existian
+          (${res.total_sevius} en Sevius).`;
+        $msg.innerHTML = formSuccess(msg);
+        setTimeout(() => { closeModal(); loadTitulaciones(centroId, centroNombre); }, 2000);
+      } catch (err) {
+        $msg.innerHTML = formError(err.message);
+        $btn.disabled = false;
+        $btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Sincronizar titulaciones';
+      }
+    });
+  }
+
+  // ─── Sincronizar asignaturas desde Sevius ────────────────────────
+
+  async function abrirFormSyncAsignaturas(titulacionId, titulacionNombre) {
+    openModal("Sincronizar asignaturas desde Sevius", '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Consultando datos...</div>');
+
+    // Buscar la titulacion y su centro para obtener los codigos de Sevius
+    let titulacion, centro;
+    try {
+      const tits = await fetchJSON(API("/api/admin/titulaciones"));
+      titulacion = tits.find((t) => t.id === titulacionId);
+      if (titulacion) {
+        const centros = await fetchJSON(API("/api/admin/centros"));
+        centro = centros.find((c) => c.nombre === titulacion.centro_nombre);
+      }
+    } catch {
+      $modalBody.innerHTML = formError("No se pudieron cargar los datos");
+      return;
+    }
+
+    if (!centro || !centro.codigo_sevius) {
+      $modalBody.innerHTML = formError("El centro no tiene codigo de Sevius asociado. Recrealo seleccionandolo desde Sevius.");
+      return;
+    }
+    if (!titulacion || !titulacion.codigo) {
+      $modalBody.innerHTML = formError("La titulacion no tiene codigo asociado.");
+      return;
+    }
+
+    const codcentro = centro.codigo_sevius;
+    const codtit = titulacion.codigo;
+
+    // Preview: consultar asignaturas en Sevius
+    let asigsSevius;
+    try {
+      asigsSevius = await fetchJSON(API(`/api/admin/sevius/asignaturas?codcentro=${codcentro}&titulacion=${codtit}`));
+    } catch {
+      $modalBody.innerHTML = formError("No se pudo conectar con Sevius");
+      return;
+    }
 
     $modalBody.innerHTML = `
       <p style="font-size:13px;color:#555;margin-bottom:16px">
-        Selecciona el centro y titulacion en Sevius. Se crearan en la BD las asignaturas que no existan.
+        Se importaran las asignaturas de <strong>${esc(titulacionNombre)}</strong> desde Sevius.
       </p>
-      <form id="form-sync">
-        ${formSelect("sync-centro", "Centro en Sevius", opsCentros)}
-        <div class="form-field">
-          <label>Titulacion en Sevius <span class="required">*</span></label>
-          <select id="sync-tit" required disabled><option value="">Primero selecciona un centro</option></select>
-        </div>
-        <div id="sync-preview" style="margin:12px 0;font-size:13px;color:#777"></div>
-        <div id="form-sync-msg"></div>
-        <div class="form-actions">
-          <button type="submit" class="btn-submit" disabled id="btn-sync-submit">
-            <i class="fa-solid fa-rotate"></i> Sincronizar asignaturas
-          </button>
-        </div>
-      </form>`;
+      <div style="margin:12px 0;font-size:13px;color:#2a7a2a">
+        <i class="fa-solid fa-circle-check"></i> ${asigsSevius.length} asignaturas encontradas en Sevius
+      </div>
+      <div id="form-sync-msg"></div>
+      <div class="form-actions">
+        <button class="btn-submit" id="btn-sync-submit">
+          <i class="fa-solid fa-rotate"></i> Sincronizar asignaturas
+        </button>
+      </div>`;
 
-    // Al cambiar centro, cargar titulaciones de Sevius
-    document.getElementById("sync-centro").addEventListener("change", async (e) => {
-      const codcentro = e.target.value;
-      const $titSelect = document.getElementById("sync-tit");
-      const $preview = document.getElementById("sync-preview");
-      const $submitBtn = document.getElementById("btn-sync-submit");
-
-      if (!codcentro) {
-        $titSelect.innerHTML = "<option>Primero selecciona un centro</option>";
-        $titSelect.disabled = true;
-        $submitBtn.disabled = true;
-        return;
-      }
-
-      $titSelect.innerHTML = "<option>Cargando...</option>";
-      $titSelect.disabled = true;
-      $preview.innerHTML = "";
-
-      try {
-        const tits = await fetchJSON(API("/api/admin/sevius/titulaciones?codcentro=" + codcentro));
-        $titSelect.innerHTML = '<option value="">Selecciona titulacion...</option>' +
-          tits.map((t) => `<option value="${esc(t.codigo)}">${esc(t.nombre)} (${esc(t.codigo)})</option>`).join("");
-        $titSelect.disabled = false;
-      } catch {
-        $titSelect.innerHTML = "<option>Error cargando titulaciones</option>";
-      }
-    });
-
-    // Al cambiar titulacion, mostrar preview de asignaturas
-    document.getElementById("sync-tit").addEventListener("change", async (e) => {
-      const codcentro = document.getElementById("sync-centro").value;
-      const codtit = e.target.value;
-      const $preview = document.getElementById("sync-preview");
-      const $submitBtn = document.getElementById("btn-sync-submit");
-
-      if (!codtit) { $preview.innerHTML = ""; $submitBtn.disabled = true; return; }
-
-      $preview.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Consultando Sevius...';
-      try {
-        const asigs = await fetchJSON(API(`/api/admin/sevius/asignaturas?codcentro=${codcentro}&titulacion=${codtit}`));
-        $preview.innerHTML = `<span style="color:#2a7a2a"><i class="fa-solid fa-circle-check"></i> ${asigs.length} asignaturas encontradas en Sevius</span>`;
-        $submitBtn.disabled = false;
-      } catch {
-        $preview.innerHTML = formError("No se pudieron cargar las asignaturas");
-        $submitBtn.disabled = true;
-      }
-    });
-
-    document.getElementById("form-sync").addEventListener("submit", async (e) => {
-      e.preventDefault();
+    document.getElementById("btn-sync-submit").addEventListener("click", async () => {
       const $msg = document.getElementById("form-sync-msg");
       const $btn = document.getElementById("btn-sync-submit");
       $msg.innerHTML = "";
@@ -1056,8 +1693,8 @@
       try {
         const res = await postJSON(API("/api/admin/asignaturas/sync"), {
           titulacion_id: titulacionId,
-          codcentro: document.getElementById("sync-centro").value,
-          codigo_titulacion_sevius: document.getElementById("sync-tit").value,
+          codcentro: codcentro,
+          codigo_titulacion_sevius: codtit,
         });
 
         const msg = `
@@ -1070,6 +1707,142 @@
         $msg.innerHTML = formError(err.message);
         $btn.disabled = false;
         $btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Sincronizar asignaturas';
+      }
+    });
+  }
+
+  // ─── Vectorizar planes docentes ──────────────────────────────────
+
+  async function abrirFormVectorizar(titulacionId, titulacionNombre) {
+    openModal("Vectorizar planes docentes", '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Cargando asignaturas...</div>');
+
+    // Resolver codcentro + codigo titulacion Sevius
+    let titulacion, centro;
+    try {
+      const tits = await fetchJSON(API("/api/admin/titulaciones"));
+      titulacion = tits.find((t) => t.id === titulacionId);
+      if (titulacion) {
+        const centros = await fetchJSON(API("/api/admin/centros"));
+        centro = centros.find((c) => c.nombre === titulacion.centro_nombre);
+      }
+    } catch {
+      $modalBody.innerHTML = formError("No se pudieron cargar los datos");
+      return;
+    }
+    if (!centro || !centro.codigo_sevius || !titulacion || !titulacion.codigo) {
+      $modalBody.innerHTML = formError("Faltan codigos de Sevius en centro o titulacion");
+      return;
+    }
+
+    let data;
+    try {
+      data = await fetchJSON(API("/api/admin/planes_docentes/vectorizables?titulacion_id=" + titulacionId));
+    } catch (err) {
+      $modalBody.innerHTML = formError("Error cargando asignaturas: " + err.message);
+      return;
+    }
+
+    const asigs = data.asignaturas || [];
+    if (!asigs.length) {
+      $modalBody.innerHTML = formError("No hay asignaturas en esta titulacion");
+      return;
+    }
+
+    const disponibles = asigs.filter((a) => !a.ya_vectorizada);
+    const rows = asigs.map((a) => {
+      const disabled = a.ya_vectorizada ? "disabled" : "";
+      const badge = a.ya_vectorizada
+        ? '<span class="tag tag-completado">Ya vectorizada</span>'
+        : "";
+      return `
+        <label class="vec-row ${a.ya_vectorizada ? "vec-done" : ""}">
+          <input type="checkbox" class="vec-asig" value="${esc(a.id)}" ${disabled}>
+          <span class="vec-name">${esc(a.nombre)}</span>
+          <span class="vec-meta">${esc(a.codigo)} · Curso ${a.curso || "?"}</span>
+          ${badge}
+        </label>`;
+    }).join("");
+
+    $modalBody.innerHTML = `
+      <p style="font-size:13px;color:#555;margin-bottom:12px">
+        Curso <strong>${esc(data.curso_academico)}</strong>. Se scrapearan los grupos
+        y se vectorizaran <strong>todos</strong> los planes docentes de cada asignatura seleccionada.
+        Las ya vectorizadas en este curso aparecen deshabilitadas.
+      </p>
+      <div class="vec-toolbar">
+        <button type="button" class="btn-secondary" id="vec-select-all">Seleccionar todas (disponibles)</button>
+        <button type="button" class="btn-secondary" id="vec-clear">Limpiar</button>
+        <span style="margin-left:auto;font-size:12px;color:#777">
+          ${disponibles.length} disponibles / ${asigs.length} totales
+        </span>
+      </div>
+      <div class="vec-list">${rows}</div>
+      <div id="vec-msg"></div>
+      <div class="form-actions">
+        <button class="btn-submit" id="vec-submit">
+          <i class="fa-solid fa-cube"></i> Vectorizar seleccionadas
+        </button>
+      </div>`;
+
+    document.getElementById("vec-select-all").addEventListener("click", () => {
+      $modalBody.querySelectorAll(".vec-asig:not(:disabled)").forEach((cb) => (cb.checked = true));
+    });
+    document.getElementById("vec-clear").addEventListener("click", () => {
+      $modalBody.querySelectorAll(".vec-asig").forEach((cb) => (cb.checked = false));
+    });
+
+    document.getElementById("vec-submit").addEventListener("click", async () => {
+      const ids = Array.from($modalBody.querySelectorAll(".vec-asig:checked")).map((cb) => cb.value);
+      const $msg = document.getElementById("vec-msg");
+      const $btn = document.getElementById("vec-submit");
+      if (!ids.length) {
+        $msg.innerHTML = formError("Selecciona al menos una asignatura");
+        return;
+      }
+      $msg.innerHTML = '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Vectorizando... (puede tardar varios minutos)</div>';
+      $btn.disabled = true;
+
+      try {
+        const res = await postJSON(API("/api/admin/planes_docentes/vectorize"), {
+          titulacion_id: titulacionId,
+          codcentro: centro.codigo_sevius,
+          codigo_titulacion_sevius: titulacion.codigo,
+          asignatura_ids: ids,
+        });
+        const r = res.resumen;
+        let html = `
+          <div class="form-success">
+            <strong>${r.completado}</strong> completados,
+            <strong>${r.sin_cambios}</strong> sin cambios,
+            <strong>${r.error}</strong> errores
+            (<strong>${r.total_chunks}</strong> chunks insertados).
+          </div>
+          <div class="vec-results">`;
+        res.resultados.forEach((a) => {
+          html += `<div class="vec-result-asig"><strong>${esc(a.nombre)} (${esc(a.codigo)})</strong>`;
+          if (a.error) {
+            html += ` <span style="color:#be0f2e">— ${esc(a.error)}</span>`;
+          } else if (!a.grupos.length) {
+            html += ` <span style="color:#777">— sin grupos</span>`;
+          } else {
+            html += "<ul>";
+            a.grupos.forEach((g) => {
+              const col = g.estado === "completado" ? "#2a7a2a" :
+                          g.estado === "error" ? "#be0f2e" : "#777";
+              html += `<li style="color:${col}">${esc(g.grupo)}: ${esc(g.estado)} — ${esc(g.accion)}${g.chunks ? ` (${g.chunks} chunks)` : ""}</li>`;
+            });
+            html += "</ul>";
+          }
+          html += "</div>";
+        });
+        html += "</div>";
+        $msg.innerHTML = html;
+        $btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Cerrar';
+        $btn.disabled = false;
+        $btn.onclick = () => { closeModal(); loadAsignaturas(titulacionId, titulacionNombre); };
+      } catch (err) {
+        $msg.innerHTML = formError(err.message);
+        $btn.disabled = false;
       }
     });
   }

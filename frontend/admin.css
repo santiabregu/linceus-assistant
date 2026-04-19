@@ -463,6 +463,21 @@ a:hover { color: var(--us-teal-hover); }
 .btn-submit:hover:not(:disabled) { background: var(--us-red-dark); }
 .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
+.btn-delete {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 13px;
+  transition: color 0.2s, background 0.2s;
+}
+.btn-delete:hover {
+  color: var(--us-red);
+  background: #fdf0f2;
+}
+
 .form-error {
   margin-top: 12px;
   padding: 10px 14px;
@@ -481,4 +496,101 @@ a:hover { color: var(--us-teal-hover); }
   border-radius: 6px;
   color: #2a7a2a;
   font-size: 13px;
+}
+
+/* ─── Vectorizar modal ─────────────────────────────────────────────── */
+
+.vec-toolbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--us-border);
+}
+
+.btn-secondary {
+  background: #f3f3f3;
+  border: 1px solid var(--us-border);
+  color: var(--us-text);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background var(--transition);
+  font-family: 'Open Sans', sans-serif;
+}
+
+.btn-secondary:hover { background: #e8e8e8; }
+
+.vec-list {
+  max-height: 380px;
+  overflow-y: auto;
+  border: 1px solid var(--us-border);
+  border-radius: 6px;
+  background: #fafafa;
+}
+
+.vec-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--us-border);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.vec-row:last-child { border-bottom: none; }
+.vec-row:hover:not(.vec-done) { background: #f0f0f0; }
+.vec-row.vec-done { opacity: 0.55; cursor: not-allowed; }
+
+.vec-row .vec-name { flex: 1; font-weight: 600; }
+.vec-row .vec-meta { font-size: 11px; color: var(--us-muted); }
+
+.vec-results {
+  margin-top: 14px;
+  max-height: 320px;
+  overflow-y: auto;
+  font-size: 13px;
+}
+
+.vec-result-asig {
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--us-border);
+}
+
+.vec-result-asig ul {
+  margin: 4px 0 0 20px;
+  font-size: 12px;
+}
+
+/* ─── Depto "sin departamento" card ───────────────────────────────── */
+.entity-card.depto-sin {
+  background: #fafafa;
+  border-left: 4px dashed var(--us-muted);
+}
+.entity-card.depto-sin .card-icon { color: var(--us-muted); }
+
+/* ─── Disclaimer banner (horarios) ────────────────────────────────── */
+.disclaimer {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 16px;
+  background: #fff8e1;
+  border: 1px solid #f0c14b;
+  border-left: 4px solid #e67e22;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #4a3a1a;
+}
+.disclaimer i { color: #e67e22; font-size: 18px; margin-top: 2px; }
+.disclaimer code {
+  background: rgba(0,0,0,0.06);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 12px;
 }

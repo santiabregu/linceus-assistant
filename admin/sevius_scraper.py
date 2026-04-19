@@ -13,6 +13,7 @@ import requests
 from bs4 import BeautifulSoup
 
 SEVIUS_URL = "https://sevius4.us.es/index.php?PyP=LISTA"
+SEVIUS_ASIG_URL = "https://sevius4.us.es/index.php?PyP=LISTA&codcentro={codcentro}&titulacion={titulacion}&asignatura={asignatura}"
 TIMEOUT = 15
 
 
@@ -82,3 +83,75 @@ def obtener_asignaturas(codcentro: str, titulacion: str) -> list[dict]:
             nombre = re.sub(r"\s*\(\d+\)\s*$", "", texto)
             asignaturas.append({"codigo": val, "nombre": nombre})
     return asignaturas
+
+
+def obtener_grupos_asignatura(
+    codcentro: str,
+    titulacion: str,
+    codigo_asignatura: str,
+    curso: str = "2025-26",
+) -> list[dict]:
+    """
+    Obtiene los grupos y el valor 'proyecto' (para descargar el PDF) de una
+    asignatura para un curso academico.
+
+    Returns:
+        [{"nombre": "Grupo 1", "proyecto": "2050006/2025-26/1099319/1"}, ...]
+    """
+    url = SEVIUS_ASIG_URL.format(
+        codcentro=codcentro, titulacion=titulacion, asignatura=codigo_asignatura
+    )
+    resp = requests.get(url, timeout=TIMEOUT, verify=False)
+    resp.raise_for_status()
+    soup = BeautifulSoup(resp.text, "html.parser")
+
+    grupos: list[dict] = []
+    for th_curso in soup.find_all("th", string=lambda t: t and curso in t):
+        tabla = th_curso.find_parent("table")
+        if not tabla:
+            continue
+        recolectando = False
+        for tr in tabla.find_all("tr"):
+            ths = tr.find_all("th")
+            textos = [th.get_text(strip=True) for th in ths]
+            if curso in " ".join(textos):
+                recolectando = True
+                continue
+            if not recolectando:
+                continue
+            if any(re.search(r"Curso \d{4}-\d{2}", t) for t in textos):
+                break
+            for th in ths:
+                texto = th.get_text(strip=True)
+                m = re.search(r"Proyecto del grupo\s+(.+)", texto, re.IGNORECASE)
+                if m:
+                    etiqueta = m.group(1).strip()
+                    nombre_grupo = f"Grupo {etiqueta}"
+                    inp = th.find("input", {"name": "proyecto"})
+                    valor = inp["value"] if inp else None
+                    if nombre_grupo not in [g["nombre"] for g in grupos]:
+                        grupos.append({"nombre": nombre_grupo, "proyecto": valor})
+    return grupos
+
+
+def descargar_proyecto_pdf(valor_proyecto: str, ruta_destino) -> bool:
+    """
+    Descarga el PDF del proyecto docente a ruta_destino via POST. True si ok.
+    """
+    try:
+        resp = requests.post(
+            SEVIUS_URL,
+            data={"proyecto": valor_proyecto},
+            timeout=30,
+            stream=True,
+            verify=False,
+        )
+        resp.raise_for_status()
+        if "application/pdf" not in resp.headers.get("Content-Type", ""):
+            return False
+        with open(ruta_destino, "wb") as f:
+            for chunk in resp.iter_content(chunk_size=8192):
+                f.write(chunk)
+        return True
+    except requests.RequestException:
+        return False
