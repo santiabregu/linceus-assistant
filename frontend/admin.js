@@ -7,6 +7,20 @@
 (function () {
   "use strict";
 
+  // ─── Auth ────────────────────────────────────────────────────────────
+  const SUPABASE_URL = "https://ejekixebxeaidmhslwjs.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqZWtpeGVieGVhaWRtaHNsd2pzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg0ODYzNDYsImV4cCI6MjA3NDA2MjM0Nn0.TRELbRomO7ERtlDG35MEvCho_voWP-Xfsi1cABqVjCs";
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    if (!session) window.location.href = "login.html";
+  });
+
+  document.getElementById("btn-logout").addEventListener("click", async () => {
+    await supabase.auth.signOut();
+    window.location.href = "login.html";
+  });
+
   // Config
   const API_BASE = (function () {
     const h = window.location.hostname;
