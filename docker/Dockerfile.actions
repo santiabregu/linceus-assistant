@@ -1,0 +1,27 @@
+FROM python:3.10.14-slim-bookworm
+
+WORKDIR /app
+
+# Build dependencies (capa cacheada mientras no cambien)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copiar solo requirements para aprovechar la caché de Docker
+COPY requirements-actions.txt .
+RUN pip install --no-cache-dir -r requirements-actions.txt
+
+# Descargar modelo de spaCy para español
+RUN python -m spacy download es_core_news_md
+
+# Copiar código de acciones, RAG y datos de profesores
+# (en desarrollo se sobreescriben con volúmenes en docker-compose)
+COPY actions/ actions/
+COPY rag/ rag/
+COPY knowledge_base/profesores_data/ knowledge_base/profesores_data/
+
+EXPOSE 5055
+
+# --auto-reload recarga automáticamente cuando cambian los archivos montados
+CMD ["python", "-m", "rasa_sdk", "--actions", "actions", "--port", "5055", "--auto-reload"]

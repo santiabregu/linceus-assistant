@@ -199,6 +199,38 @@ nlu:
     - cuéntame más
     - dame más detalles
     - y la metodología
+    # ─── Follow-up adicionales (inspirados en el piloto) ───────────────
+    - y que se hace?
+    - pero que se hace en esa?
+    - que tecnologia usa?
+    - que tecnologia se usa?
+    - que herramientas se usan?
+    - se usa spring boot?
+    - se usa java?
+    - en que lenguaje se programa?
+    - dame ejemplos
+    - me puedes dar ejemplos?
+    - cuentame mas sobre eso
+    - cuentame mas de esa
+    - dime mas
+    - explicame mejor
+    - y las practicas?
+    - tiene laboratorio?
+    - tiene practicas?
+    - y los examenes?
+    - cuantas convocatorias tiene?
+    - se puede aprobar sin examen final?
+    - y por evaluacion continua?
+    - y el examen final?
+    - que nota minima necesito?
+    - y la nota de corte?
+    - es dificil?
+    - es facil?
+    - cual es su dificultad?
+    - hay trabajos grupales?
+    - y los trabajos?
+    - se entrega algo?
+    - hay entregables?
     - info de [Contabilidad](nombre_asignatura)
     - que es [Psicologia Social](nombre_asignatura)
     - cuantas horas tiene [Calculo](nombre_asignatura)
@@ -236,6 +268,90 @@ nlu:
     - se imparte en ingles el grupo 4 de [ADDA](nombre_asignatura)?
     - las clases de [Diseno y Pruebas](nombre_asignatura) grupo 4 son en ingles?
     - [Estadistica](nombre_asignatura) grupo 5 en que idioma se da?
+    - ¿En qué aula tengo [FP](nombre_asignatura)?
+    - ¿En qué aula es [FP](nombre_asignatura)?
+    - ¿Dónde se da [FP](nombre_asignatura)?
+    - ¿Dónde tengo clase de [FP](nombre_asignatura)?
+    - ¿Dónde es la clase de [ALN](nombre_asignatura)?
+    - ¿Cuándo tengo [FP](nombre_asignatura)?
+    - ¿Cuándo es [FP](nombre_asignatura)?
+    - ¿Cuándo tengo [CED](nombre_asignatura)?
+    - ¿A qué hora es [FP](nombre_asignatura)?
+    - ¿A qué hora tengo [ALN](nombre_asignatura)?
+    - ¿A qué hora es la clase de [IMD](nombre_asignatura)?
+    - ¿En qué aula tengo [Redes](nombre_asignatura)?
+    - ¿Dónde se imparte [Fundamentos de Programación](nombre_asignatura)?
+    - aula de [FP](nombre_asignatura)
+    - aula de [CED](nombre_asignatura)
+    - aula de [IMD](nombre_asignatura)
+    - horario de [FP](nombre_asignatura)
+    - horario de [ALN](nombre_asignatura)
+    - ¿Cuándo tengo clase de [Estructuras de Datos](nombre_asignatura)?
+    - ¿A qué hora es [EdC](nombre_asignatura)?
+    - ¿Dónde tengo [FFI](nombre_asignatura)?
+    - ¿En qué aula es [CIN](nombre_asignatura)?
+    - ¿Cuándo tengo [AE](nombre_asignatura)?
+    - ¿Qué aula tiene [ADDA](nombre_asignatura)?
+    - ¿Dónde es [SO](nombre_asignatura)?
+    - ¿Cuándo tengo [RC](nombre_asignatura)?
+    - ¿A qué hora es [IISSI1](nombre_asignatura)?
+    - ¿En qué aula está [MD](nombre_asignatura)?
+    - ¿Dónde es la clase de [AC](nombre_asignatura)?
+    - ¿Cuándo tengo clase de [TC](nombre_asignatura)?
+    - ¿A qué hora es [DSD](nombre_asignatura)?
+    - donde esta [TIS](nombre_asignatura)
+    - en que clase esta [ADDA](nombre_asignatura)
+    - qué días es
+    - qué días se da
+    - qué días se imparte
+    - en qué días es
+    - qué día es
+    - y qué días tiene
+    - y en qué aula es
+    - y cuándo es
+    - y a qué hora
+    - y dónde se da
+    - cuándo es esa asignatura
+    - en qué aula es esa
+    - qué horario tiene esa asignatura
+    - y su horario
+    - y el horario
+    - y cuándo se da esa asignatura
+    - y en qué aula se imparte
+    - dónde son los labs de [FP](nombre_asignatura)
+    - en qué laboratorio es [FP](nombre_asignatura)
+    - laboratorio de [DP1](nombre_asignatura)
+    - donde están los labs de [DP1](nombre_asignatura) y [PSG1](nombre_asignatura)
+    - en qué aula son las prácticas de [FP](nombre_asignatura)
+    - laboratorios de [FP](nombre_asignatura) para el grupo 1
+    - donde es el laboratorio de [ADDA](nombre_asignatura)
+    - labs de [DP1](nombre_asignatura) y [PSG1](nombre_asignatura) grupo 1
+    - en qué laboratorio tengo las prácticas de [CED](nombre_asignatura)
+    - dónde son las prácticas de [DP1](nombre_asignatura) y [DP2](nombre_asignatura)
+    - qué horario tiene esa
+    - y los horarios
+    - en qué días se imparte esa
+    - en que planta esta la aula A1.10
+    - La aula A1.10 donde esta
+    - donde se imparte [CED](nombre_asignatura) los jueves grupo 4
+    - donde se da [FP](nombre_asignatura) los lunes grupo 1
+    - horario de [CED](nombre_asignatura) grupo 4
+    - horario de [ADDA](nombre_asignatura) grupo 2
+    - horario de la asignatura [CED](nombre_asignatura) grupo 4
+    - horario de la asignatura [FP](nombre_asignatura)
+    - horario de la asignatura [Redes](nombre_asignatura) grupo 1
+    - dame el horario de [FP](nombre_asignatura) grupo 3
+    - dame el horario de [ADDA](nombre_asignatura)
+    - ¿Cuándo tengo [CED](nombre_asignatura) los jueves?
+    - ¿Cuándo es [FP](nombre_asignatura) grupo 2?
+    - ¿En qué aula es [CED](nombre_asignatura) grupo 4 los jueves?
+    - ¿En qué aula tengo [ADDA](nombre_asignatura) grupo 1 los martes?
+    - ¿Dónde se imparte [Estadistica](nombre_asignatura) grupo 2?
+    - ¿A qué hora es [SO](nombre_asignatura) grupo 3?
+    - aula de [FP](nombre_asignatura) grupo 1
+    - aula de [CED](nombre_asignatura) grupo 4 los jueves
+    - ¿Qué días se da [RC](nombre_asignatura) grupo 1?
+    - ¿Qué días tengo [IISSI1](nombre_asignatura) grupo 2?
 
 # =============================================================================
 # INTENT 2: LISTADO - Pide una LISTA de asignaturas con filtros
@@ -456,3 +572,36 @@ nlu:
     - dame la lista completa
     - ensenname el resto
     - quiero ver mas
+
+# =============================================================================
+# INTENT: PREGUNTAR SI HAY MÁS (grupos / asignaturas / profesores)
+# =============================================================================
+- intent: preguntar_hay_mas
+  examples: |
+    - hay mas grupos
+    - hay mas grupos?
+    - hay otros grupos
+    - hay otros grupos?
+    - no hay mas grupos?
+    - no hay mas grupos
+    - y mas grupos?
+    - mas grupos?
+    - existe otro grupo
+    - existen mas grupos
+    - cuantos grupos hay
+    - hay mas asignaturas
+    - hay mas asignaturas?
+    - hay otras asignaturas
+    - no hay mas asignaturas?
+    - hay mas optativas
+    - hay mas obligatorias
+    - que otras asignaturas hay
+    - hay mas profesores
+    - hay mas profesores?
+    - hay otros profesores
+    - hay mas resultados
+    - tienes mas resultados
+    - y hay mas?
+    - no hay mas?
+    - hay mas?
+    - mas?

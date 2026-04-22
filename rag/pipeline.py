@@ -54,7 +54,7 @@ from rag.db_vectores import (
 )
 
 # ── Configuración ──────────────────────────────────────────────────────────────
-PROYECTOS_DIR = PROJECT_ROOT / "proyectos_docentes" / "ing_software"
+PROYECTOS_DIR = PROJECT_ROOT / "knowledge_base" / "proyectos_docentes" / "ing_software"
 CURSO_ACADEMICO = "2025-26"
 
 # Patrón para extraer nombre y código de las carpetas de asignatura

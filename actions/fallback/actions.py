@@ -4,6 +4,7 @@ y decide si puede resolverla con los actions disponibles o responde directamente
 """
 
 import json
+import re
 from typing import Any, Text, Dict, List, Optional
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
@@ -13,6 +14,53 @@ from ..shared.gemini_client import llamar_gemini
 from ..shared.db import db_client
 from ..shared.config import BotConfig, ALIAS_ASIGNATURAS
 from ..asignaturas.actions import comprobar_titulacion
+
+
+# ─── Heuristicas de continuacion / memoria ───────────────────────────────────
+
+# Maximo numero de turnos de usuario tras los que un slot se considera "stale".
+_TURNOS_SLOT_RECIENTE = 3
+
+# Frases de continuacion sin mencionar el sujeto: "dime la de todos los grupos",
+# "y los otros grupos?", "y del grupo 3?", "dame la de los demas".
+# Si hay slot reciente de asignatura -> heredar y quitar filtro de grupo.
+_RE_CONTINUACION_TODOS_GRUPOS = re.compile(
+    r"\b(todos\s+los\s+grupos|los\s+dem[aá]s\s+grupos|los\s+otros\s+grupos|"
+    r"de\s+los\s+dem[aá]s|otros\s+grupos|el\s+resto\s+de\s+grupos)\b",
+    re.IGNORECASE,
+)
+
+
+def _contar_turnos_desde_slot(tracker, slot_name: str) -> int:
+    """
+    Cuenta turnos de usuario desde la ultima vez que se seteo el slot.
+    Devuelve 999 si no hay registro del slot.
+    """
+    turnos = 0
+    for event in reversed(tracker.events):
+        if event.get("event") == "user":
+            turnos += 1
+        if event.get("event") == "slot" and event.get("name") == slot_name:
+            return turnos
+    return 999
+
+
+def _ultimos_intercambios(tracker, n: int = 3) -> list:
+    """
+    Devuelve los ultimos N intercambios (user, bot) en orden cronologico.
+    Cada elemento: {"user": "...", "bot": "..."}.
+    """
+    pares = []
+    user_msg = None
+    for event in tracker.events:
+        if event.get("event") == "user":
+            user_msg = event.get("text") or ""
+        elif event.get("event") == "bot" and user_msg is not None:
+            pares.append({"user": user_msg, "bot": event.get("text") or ""})
+            user_msg = None
+    return pares[-n:] if n else pares
+
+
 
 
 # Actions disponibles que el fallback puede invocar
@@ -37,8 +85,27 @@ Contexto actual del usuario:
 - Titulacion: {titulacion}
 - Ultima asignatura consultada: {ultima_asignatura}
 
+Intercambios recientes (mas antiguo primero):
+{historial}
+
 Actions disponibles:
 {actions}
+
+REGLAS DE CONTINUACION (IMPORTANTE):
+- Si la pregunta del usuario es corta, pronominal o referencial (ej: "y del otro grupo?",
+  "dime la de los demas", "dame ese", "mas info", "y de tercero?"), esta hablando de la
+  **ultima asignatura consultada**. Usa ese nombre como "nombre_asignatura".
+- Si pide informacion que ya hemos dado pero con variantes ("todos los grupos",
+  "otro dia", "otro cuatrimestre"), mantener "nombre_asignatura" del contexto y
+  ajustar curso/grupo segun pida.
+- Si no hay "ultima asignatura consultada" (valor "ninguna") no asumas nada.
+
+METAPREGUNTAS SOBRE LA CONVERSACION:
+- Si el usuario pregunta por lo que ya ha dicho o se le ha respondido
+  (ej: "que te dije antes", "recuerdas lo que pregunte", "de que hemos hablado",
+  "mi pregunta anterior"), action = "NINGUNO" y en "respuesta_directa" resume
+  de forma natural el bloque "Intercambios recientes". No inventes preguntas
+  que no esten ahi. Si no hay intercambios previos, dilo.
 
 Responde SOLO con un JSON valido (sin markdown, sin ```):
 {{
@@ -137,28 +204,31 @@ def _ejecutar_consulta_horario(nombre_asignatura: str = None, curso: str = None,
 
             cur.execute(
                 """SELECT a.nombre, h.dia_semana, h.hora_inicio, h.hora_fin,
-                          h.aula_codigo, gc.codigo as grupo
+                          COALESCE(au.codigo, '') AS aula, gc.codigo as grupo
                    FROM horarios h
-                   JOIN grupos_clase gc ON h.grupo_clase_id = gc.id
+                   JOIN grupos_clase gc ON h.grupo_id = gc.id
                    JOIN asignaturas a ON gc.asignatura_id = a.id
                    JOIN titulaciones t ON a.titulacion_id = t.id
+                   LEFT JOIN aulas au ON au.id = h.aula_id
                    WHERE t.codigo = %s
                    AND (a.nombre_normalizado ILIKE %s OR a.nombre ILIKE %s)
-                   ORDER BY h.dia_semana, h.hora_inicio
-                   LIMIT 20""",
+                   AND h.activo = true
+                   ORDER BY gc.codigo, h.dia_semana, h.hora_inicio
+                   LIMIT 40""",
                 (titulacion, f"%{nombre_expandido}%", f"%{nombre_expandido}%")
             )
         elif curso:
             cur.execute(
                 """SELECT a.nombre, h.dia_semana, h.hora_inicio, h.hora_fin,
-                          h.aula_codigo, gc.codigo as grupo
+                          COALESCE(au.codigo, '') AS aula, gc.codigo as grupo
                    FROM horarios h
-                   JOIN grupos_clase gc ON h.grupo_clase_id = gc.id
+                   JOIN grupos_clase gc ON h.grupo_id = gc.id
                    JOIN asignaturas a ON gc.asignatura_id = a.id
                    JOIN titulaciones t ON a.titulacion_id = t.id
-                   WHERE t.codigo = %s AND a.curso = %s
-                   ORDER BY h.dia_semana, h.hora_inicio
-                   LIMIT 30""",
+                   LEFT JOIN aulas au ON au.id = h.aula_id
+                   WHERE t.codigo = %s AND a.curso = %s AND h.activo = true
+                   ORDER BY gc.codigo, h.dia_semana, h.hora_inicio
+                   LIMIT 40""",
                 (titulacion, int(curso))
             )
         else:
@@ -251,11 +321,43 @@ class ActionSmartFallback(Action):
 
         print(f"🧠 Smart Fallback: analizando '{pregunta}'")
 
+        # ── 1. Continuacion "todos los grupos" + slot reciente de asignatura ─
+        slot_asig = tracker.get_slot("ultimo_nombre_asignatura")
+        turnos_asig = _contar_turnos_desde_slot(tracker, "ultimo_nombre_asignatura")
+        if (slot_asig and turnos_asig <= _TURNOS_SLOT_RECIENTE
+                and _RE_CONTINUACION_TODOS_GRUPOS.search(pregunta)):
+            print(f"   → Continuacion detectada: heredando asignatura '{slot_asig}' "
+                  f"({turnos_asig} turnos), sin filtro de grupo")
+            titulacion_ok, _ev = comprobar_titulacion(tracker, dispatcher)
+            if not titulacion_ok:
+                return []
+            respuesta_cont = _ejecutar_consulta_horario(
+                nombre_asignatura=slot_asig,
+                curso=None, grupo=None,
+                pregunta=pregunta, tracker=tracker,
+            )
+            if respuesta_cont:
+                dispatcher.utter_message(text=respuesta_cont)
+                return [SlotSet("ultimo_nombre_asignatura", slot_asig)]
+            # si falla, seguimos al flujo normal para que el LLM intente
+
         # Paso 1: Clasificar con Gemini
+        pares_recientes = _ultimos_intercambios(tracker, n=3)
+        # Excluimos el turno actual (la propia pregunta); nos quedamos con los anteriores
+        pares_previos = pares_recientes[:-1] if pares_recientes else pares_recientes
+        if pares_previos:
+            historial_txt = "\n".join(
+                f"  Usuario: {p['user'][:200]}\n  Bot: {(p['bot'] or '')[:200]}"
+                for p in pares_previos
+            )
+        else:
+            historial_txt = "  (sin intercambios previos en esta sesion)"
+
         prompt = PROMPT_CLASIFICAR.format(
             pregunta=pregunta,
             titulacion=titulacion,
             ultima_asignatura=ultima_asignatura,
+            historial=historial_txt,
             actions=ACTIONS_DISPONIBLES,
         )
 

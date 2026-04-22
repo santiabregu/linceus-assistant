@@ -1,12 +1,13 @@
 """
-Actions de Rasa para consultas de horarios.
+Actions de Rasa para consultas de horarios personales (curso + grupo).
 Consulta la BD (tablas horarios, grupos_clase, asignaturas, aulas) y responde
 preguntas como:
   - "¿Qué horario tiene 2º de Computadores grupo 1?"
-  - "¿En qué aula tengo FP?"
-  - "¿Qué clases hay los lunes en primero?"
+  - "¿Qué clases hay los lunes en primero grupo 2?"
 
-Si el usuario no especifica grupo, se le devuelve el enlace al PDF.
+Requiere curso y grupo. Si el usuario no los da, se le piden.
+Las consultas de horario de asignaturas concretas ("¿cuándo tengo FP?",
+"¿en qué aula es ADDA?") se gestionan desde ActionConsultaEspecifica.
 """
 
 import re
@@ -20,7 +21,7 @@ from rasa_sdk.events import SlotSet
 from ..shared.config import BotConfig, ALIAS_ASIGNATURAS
 from ..shared.db import db_client
 from ..shared.gemini_client import llamar_gemini as llamar_llm
-from ..asignaturas.actions import comprobar_titulacion
+from ..asignaturas.actions import comprobar_titulacion, _contar_turnos_desde_slot
 
 # ─── Constantes ──────────────────────────────────────────────────────────────
 
@@ -48,23 +49,11 @@ def _normalizar(texto: str) -> str:
     return texto.lower().strip()
 
 
-def _contar_turnos_desde_slot(tracker, slot_name: str) -> int:
-    """Cuenta turnos de usuario desde la última vez que se seteó el slot."""
-    turnos = 0
-    for event in reversed(tracker.events):
-        if event.get("event") == "user":
-            turnos += 1
-        if event.get("event") == "slot" and event.get("name") == slot_name:
-            return turnos
-    return 999
-
-
 def _detectar_curso(texto: str) -> Optional[int]:
     texto_lower = texto.lower()
     patrones = [
         (r"\b(\d)[ºª°]\b", lambda m: int(m.group(1))),
         (r"\bcurso\s+(\d)\b", lambda m: int(m.group(1))),
-        (r"\bde\s+(\d)\b", lambda m: int(m.group(1))),
         (r"\bprimero\b", lambda m: 1),
         (r"\bsegundo\b", lambda m: 2),
         (r"\btercero\b", lambda m: 3),
@@ -94,6 +83,20 @@ def _detectar_grupo(texto: str) -> Optional[int]:
     return None
 
 
+# Patron "letra X del DNI" / "inicial de apellido": el usuario no sabe su
+# numero de grupo y pregunta por la letra. Detectamos la presencia para no
+# interpretar la letra como alias de asignatura (ej. T = Teledeteccion).
+_RE_LETRA_DNI = re.compile(
+    r"letra\s+([a-zñ])(?:\s+(?:de|del)\s+(?:mi\s+)?dni|\s+de\s+apellido|\s+inicial)?",
+    re.IGNORECASE,
+)
+
+
+def _tiene_referencia_letra_dni(texto: str) -> bool:
+    """True si el usuario se refiere a grupos por letra del DNI/apellido."""
+    return bool(_RE_LETRA_DNI.search(texto or ""))
+
+
 def _detectar_dia(texto: str) -> Optional[int]:
     texto_norm = _normalizar(texto)
     for dia_txt, dia_num in DIAS_SEMANA.items():
@@ -114,28 +117,6 @@ def _detectar_cuatrimestre(texto: str) -> Optional[int]:
         if re.search(patron, texto_lower):
             return val
     return None
-
-
-def _detectar_asignatura(texto: str) -> Optional[str]:
-    """Detecta abreviatura de asignatura en el texto usando el diccionario central."""
-    texto_norm = _normalizar(texto)
-    aliases_ordenados = sorted(ALIAS_ASIGNATURAS.keys(), key=len, reverse=True)
-    for abr in aliases_ordenados:
-        if re.search(r"\b" + re.escape(abr) + r"\b", texto_norm):
-            return abr
-    return None
-
-
-def _detectar_multiples_asignaturas(texto: str) -> List[str]:
-    """Detecta TODAS las abreviaturas de asignatura en el texto."""
-    texto_norm = _normalizar(texto)
-    encontradas = []
-    aliases_ordenados = sorted(ALIAS_ASIGNATURAS.keys(), key=len, reverse=True)
-    for abr in aliases_ordenados:
-        if re.search(r"\b" + re.escape(abr) + r"\b", texto_norm):
-            encontradas.append(abr)
-            texto_norm = re.sub(r"\b" + re.escape(abr) + r"\b", "", texto_norm, count=1)
-    return encontradas
 
 
 # ─── Queries a la BD ─────────────────────────────────────────────────────────
@@ -249,6 +230,45 @@ def _query_asignatura(titulacion: str, alias_asig: str,
         if conn:
             conn.close()
         return []
+
+
+def _query_grupos_de_asignatura(titulacion: str, alias_asig: str) -> tuple[Optional[str], list]:
+    """
+    Dada una asignatura, devuelve (nombre_real, [grupos_codigo]) en esa titulacion.
+    Sirve para dar un mensaje claro cuando el usuario pide un grupo que no existe.
+    """
+    nombre_norm = ALIAS_ASIGNATURAS.get(alias_asig.lower())
+    if not nombre_norm:
+        return None, []
+    conn = db_client.get_connection()
+    if not conn:
+        return None, []
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT a.nombre, gc.codigo
+            FROM grupos_clase gc
+            JOIN asignaturas a ON gc.asignatura_id = a.id
+            JOIN titulaciones t ON a.titulacion_id = t.id
+            WHERE t.codigo = %s
+              AND a.nombre_normalizado LIKE %s
+              AND gc.activo = true
+            GROUP BY a.nombre, gc.codigo
+            ORDER BY gc.codigo
+        """, (titulacion, f"%{nombre_norm}%"))
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+        if not rows:
+            return None, []
+        nombre_real = rows[0][0]
+        grupos = [r[1] for r in rows]
+        return nombre_real, grupos
+    except Exception as e:
+        print(f"Error consultando grupos de asignatura: {e}")
+        if conn:
+            conn.close()
+        return None, []
 
 
 def _query_grupos_disponibles(titulacion: str, curso: int) -> list:
@@ -382,6 +402,7 @@ REGLAS:
 - No digas "según los datos" ni menciones la base de datos
 - No saludes (nada de "¡Hola!", "Hola!", "Buenos días", etc.) — ve directo a la respuesta
 - Si hay muchas entradas, organízalas bien para que sea fácil de leer
+- IMPORTANTE: Tu respuesta debe tener como MÁXIMO 1500 caracteres. Si los datos son muy extensos, resume agrupando de forma compacta
 
 Respuesta:"""
 
@@ -391,8 +412,8 @@ Respuesta:"""
             timeout=120,
             options={
                 "temperature": 0.3,
-                "num_predict": 400,
-                "num_ctx": 2048,
+                "num_predict": 800,
+                "num_ctx": 4096,
             }
         )
         if respuesta:
@@ -407,6 +428,11 @@ Respuesta:"""
 # ─── Action de Rasa ──────────────────────────────────────────────────────────
 
 class ActionConsultaHorario(Action):
+    """
+    Maneja consultas de horario personal: requiere curso y grupo.
+    Si faltan, pide al usuario que los especifique.
+    """
+
     def name(self) -> Text:
         return "action_consulta_horario"
 
@@ -427,81 +453,100 @@ class ActionConsultaHorario(Action):
         grupo = _detectar_grupo(mensaje)
         dia = _detectar_dia(mensaje)
         cuatrimestre = _detectar_cuatrimestre(mensaje)
-        asignatura = _detectar_asignatura(mensaje)
 
-        # ── Refinamiento de grupo: si solo hay grupo y la última action fue consulta_especifica,
-        #    el usuario quiere refinar la consulta anterior (ej: "en el grupo 2" tras preguntar profesores)
-        #    → re-ejecutar la consulta de asignaturas con el grupo añadido ──
-        if grupo and not curso and not dia and not asignatura:
-            ultima_action = tracker.get_slot("ultima_action_ejecutada")
-            ultimo_nombre = tracker.get_slot("ultimo_nombre_asignatura")
-            if ultima_action == "consulta_especifica" and ultimo_nombre:
+        # Si el usuario se refiere a grupos por letra del DNI (ej. "letra T"),
+        # no podemos mapearlo automaticamente: los grupos por letra cambian por
+        # titulacion y curso. Mejor pedir el numero de grupo directamente.
+        if _tiene_referencia_letra_dni(mensaje) and not grupo:
+            dispatcher.utter_message(
+                text=("La asignación de grupos por letra del DNI varía cada curso "
+                      "y titulación, así que no puedo deducir tu grupo con certeza. "
+                      "¿Puedes decirme directamente el **número de grupo** (1, 2, 3…)? "
+                      "Lo encontrarás en SEVIUS o en el tablón de la ETSII.")
+            )
+            return []
+
+        print(f"\n{'='*60}")
+        print(f"📅 CONSULTA HORARIO PERSONAL: {mensaje}")
+        print(f"   Titulación: {titulacion} | Curso: {curso} | Grupo: {grupo} | Día: {dia} | Cuatri: {cuatrimestre}")
+        print(f"{'='*60}")
+
+        # ── Si el NLU detectó una asignatura, redirigir a ActionConsultaEspecifica ──
+        tiene_asignatura = any(
+            e.get("entity") == "nombre_asignatura"
+            for e in tracker.latest_message.get("entities", [])
+        )
+        if not tiene_asignatura:
+            # Fallback: buscar alias en el texto por si el NLU no lo extrajo como entidad
+            texto_lower = mensaje.lower()
+            aliases_ordenados = sorted(ALIAS_ASIGNATURAS.keys(), key=len, reverse=True)
+            # Excluir alias cortos que son palabras comunes del español
+            # SALVO cuando el contexto lo convierte claramente en asignatura
+            # (precedido por "asignatura", "de la", "horario de", etc.).
+            STOP_WORDS = {'e', 'c', 't', 'y', 'o', 'a'}
+            CONTEXTO_ASIGNATURA = (
+                r'(?:asignatura\s+(?:de\s+)?|horario\s+de\s+(?:la\s+)?|'
+                r'aula\s+de\s+|clase\s+de\s+|materia\s+(?:de\s+)?)'
+            )
+            for alias in aliases_ordenados:
+                # Alias corto (≤2) y en stop list: exigir contexto explícito
+                if len(alias) <= 2 and alias in STOP_WORDS:
+                    pat_contexto = CONTEXTO_ASIGNATURA + re.escape(alias) + r'\b'
+                    if re.search(pat_contexto, texto_lower):
+                        tiene_asignatura = True
+                        print(f"   → Alias corto con contexto: '{alias}'")
+                        break
+                    continue
+                # 'si' no está en STOP_WORDS: es alias real de Sistemas de
+                # Información. Lo aceptamos si aparece como palabra completa.
+                if re.search(r'\b' + re.escape(alias) + r'\b', texto_lower):
+                    tiene_asignatura = True
+                    print(f"   → Alias detectado en texto: '{alias}'")
+                    break
+
+        if tiene_asignatura:
+            print(f"   → Redirigiendo a ActionConsultaEspecifica (detectada asignatura)")
+            from ..asignaturas.actions import ActionConsultaEspecifica
+            action_especifica = ActionConsultaEspecifica()
+            return action_especifica.run(dispatcher, tracker, domain)
+
+        # ── Follow-up: sin asignatura ni curso/grupo, pero con slot reciente ──
+        # Ej: tras "hablame de DP1" -> "que horario tiene?". Heredamos la
+        # asignatura del slot y redirigimos a ActionConsultaEspecifica para
+        # que use el flujo de horario por asignatura.
+        if not curso and not grupo:
+            ultimo_asig = tracker.get_slot("ultimo_nombre_asignatura")
+            if ultimo_asig:
                 turnos = _contar_turnos_desde_slot(tracker, "ultimo_nombre_asignatura")
                 if turnos <= 3:
-                    # Reconstruir la pregunta incluyendo la asignatura para que
-                    # ActionConsultaEspecifica la resuelva correctamente
+                    print(f"   → Seguimiento horario: heredando asignatura "
+                          f"'{ultimo_asig}' del slot ({turnos} turnos)")
                     from ..asignaturas.actions import ActionConsultaEspecifica
-                    print(f"   Refinamiento de grupo: redirigiendo a consulta_especifica "
-                          f"'{ultimo_nombre}' grupo {grupo}")
                     action_especifica = ActionConsultaEspecifica()
                     return action_especifica.run(dispatcher, tracker, domain)
 
-        # ── Seguimiento heurístico: si no hay asignatura ni curso, y hay slot reciente ──
-        if not asignatura and not curso:
-            ultimo_nombre = tracker.get_slot("ultimo_nombre_asignatura")
-            if ultimo_nombre:
-                turnos = _contar_turnos_desde_slot(tracker, "ultimo_nombre_asignatura")
-                if turnos <= 3:
-                    # Buscar el alias correspondiente al nombre completo
-                    nombre_norm = _normalizar(ultimo_nombre)
-                    for alias, nombre_map in ALIAS_ASIGNATURAS.items():
-                        if nombre_map in nombre_norm or nombre_norm in nombre_map:
-                            asignatura = alias
-                            break
-                    if not asignatura:
-                        asignatura = ultimo_nombre
-                    print(f"   Seguimiento horario heurístico: '{asignatura}' ({turnos} turnos atrás)")
+        # ── Follow-up: rellena curso/grupo parciales con slots recientes ──
+        # Ej: tras "horario de 2 grupo 1" -> "y del grupo 2?".
+        if not curso:
+            ultimo_curso = tracker.get_slot("ultimo_curso_consultado")
+            if ultimo_curso and _contar_turnos_desde_slot(
+                tracker, "ultimo_curso_consultado") <= 3:
+                try:
+                    curso = int(ultimo_curso)
+                    print(f"   → Seguimiento horario: heredando curso {curso}")
+                except (TypeError, ValueError):
+                    pass
+        if not grupo:
+            ultimo_grupo = tracker.get_slot("ultimo_grupo_consultado")
+            if ultimo_grupo and _contar_turnos_desde_slot(
+                tracker, "ultimo_grupo_consultado") <= 3:
+                try:
+                    grupo = int(ultimo_grupo)
+                    print(f"   → Seguimiento horario: heredando grupo {grupo}")
+                except (TypeError, ValueError):
+                    pass
 
-        # ── Multi-asignatura: detectar si hay varias ──
-        multi = _detectar_multiples_asignaturas(mensaje)
-        if len(multi) >= 2:
-            print(f"   Multi-horario: {multi}")
-            datos_combinados = []
-            for asig in multi:
-                resultados = _query_asignatura(titulacion, asig, grupo)
-                if resultados:
-                    datos_combinados.append(
-                        _datos_asignatura_a_texto(resultados, asig, titulacion)
-                    )
-            if datos_combinados:
-                respuesta = _generar_respuesta_horario(
-                    mensaje, "\n\n".join(datos_combinados)
-                )
-                dispatcher.utter_message(text=respuesta)
-            else:
-                nombres = " y ".join(a.upper() for a in multi)
-                dispatcher.utter_message(
-                    text=f"No encuentro horarios de {nombres} en "
-                         f"{NOMBRES_TITULACION.get(titulacion, titulacion)}."
-                )
-            return []
-
-        # ── Búsqueda por asignatura ──
-        if asignatura:
-            resultados = _query_asignatura(titulacion, asignatura, grupo)
-            datos_texto = _datos_asignatura_a_texto(resultados, asignatura, titulacion)
-
-            if not resultados:
-                dispatcher.utter_message(
-                    text=f"No encuentro **{asignatura.upper()}** en los horarios de "
-                         f"{NOMBRES_TITULACION.get(titulacion, titulacion)}."
-                )
-            else:
-                respuesta = _generar_respuesta_horario(mensaje, datos_texto)
-                dispatcher.utter_message(text=respuesta)
-            return []
-
-        # ── Búsqueda por curso/grupo ──
+        # ── Se requiere curso y grupo ──
         if not curso or not grupo:
             dispatcher.utter_message(
                 text=_respuesta_faltan_datos(titulacion, curso, grupo)
@@ -514,4 +559,9 @@ class ActionConsultaHorario(Action):
         )
         respuesta = _generar_respuesta_horario(mensaje, datos_texto)
         dispatcher.utter_message(text=respuesta)
-        return []
+        # Persistir curso/grupo consultados para follow-ups posteriores
+        return [
+            SlotSet("ultimo_curso_consultado", curso),
+            SlotSet("ultimo_grupo_consultado", grupo),
+            SlotSet("ultima_action_ejecutada", "action_consulta_horario"),
+        ]

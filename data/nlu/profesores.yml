@@ -73,3 +73,31 @@ nlu:
     - ¿cómo le contacto?
     - ¿y su email?
     - ¿y su web?
+    # ─── Seguimiento sobre el ultimo profesor / asignatura consultados ───
+    - y quien lo da?
+    - y quien la imparte?
+    - quien da esa asignatura?
+    - quienes la imparten?
+    - quien es el coordinador?
+    - y el coordinador?
+    - quienes son sus profesores?
+    - y sus profesores?
+    - quien es el profesor?
+    - quien es la profesora?
+    - dame sus profesores
+    - y los profesores de esa asignatura
+    - y quien la ensena?
+    - dame su correo
+    - dame su email
+    - y su tutoría?
+    - sus tutorías
+    - tiene tutorías?
+    - y donde tiene tutoria?
+    - a que hora son sus tutorias?
+    - y su horario de tutorias?
+    - y el de [otro profesor](nombre_profesor)?
+    - y [Parejo Matos](nombre_profesor)?
+    - y [Ruiz Cortes](nombre_profesor)?
+    - y [Alejandro Garcia Fernandez](nombre_profesor)?
+    - dame el contacto
+    - y su contacto?

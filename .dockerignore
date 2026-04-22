@@ -32,8 +32,7 @@ proyectos_docentes/
 # Rasa internals
 .rasa/
 
-# Los modelos se montan como volumen en docker-compose local,
-# pero se copian en la imagen para Render
+# Los modelos se montan como volumen en docker-compose local
 # models/
 
 # El .env se pasa con env_file en docker-compose, no se copia en la imagen

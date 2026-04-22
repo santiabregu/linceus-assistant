@@ -876,17 +876,18 @@ REGLAS:
 - No repitas la pregunta del usuario
 - No digas "según los datos" ni menciones la base de datos
 - No saludes (nada de "¡Hola!", "Hola!", "Buenos días", etc.) — ve directo a la respuesta
+- IMPORTANTE: Tu respuesta debe tener como MÁXIMO 1500 caracteres. Si hay mucha información, resume lo más relevante
 
 Respuesta:"""
 
     try:
         respuesta = llamar_llm(
             prompt,
-            timeout=120,  # Aumentado para Ollama en CPU
+            timeout=120,
             options={
-                "temperature": 0.3,    # Algo más creativo para prosa natural
-                "num_predict": 200,    # Reducido para respuestas más rápidas
-                "num_ctx": 1024,       # Contexto reducido para mayor velocidad
+                "temperature": 0.3,
+                "num_predict": 800,
+                "num_ctx": 2048,
             }
         )
         if respuesta:

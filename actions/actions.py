@@ -15,9 +15,10 @@ from .horarios import (
     ActionConsultaHorario,
 )
 
-from .multi_intent import (
-    ActionMultiIntent,
-)
+# Multi-intent desactivado temporalmente para testear las 4 actions basicas.
+# from .multi_intent import (
+#     ActionMultiIntent,
+# )
 
 from .profesores import (
     ActionConsultaProfesor,
@@ -25,6 +26,12 @@ from .profesores import (
 
 from .fallback import (
     ActionSmartFallback,
+)
+
+from .shared.resolver_afirmacion import (
+    ActionResolverAfirmacion,
+    ActionResolverNegacion,
+    ActionPreguntarHayMas,
 )
 
 __all__ = [
@@ -36,7 +43,10 @@ __all__ = [
     'ActionConsultarContexto',
     'ActionConsultaTitulaciones',
     'ActionConsultaHorario',
-    'ActionMultiIntent',
+    # 'ActionMultiIntent',  # desactivado temporalmente
     'ActionConsultaProfesor',
     'ActionSmartFallback',
+    'ActionResolverAfirmacion',
+    'ActionResolverNegacion',
+    'ActionPreguntarHayMas',
 ]
