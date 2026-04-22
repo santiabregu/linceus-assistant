@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinceUS - Acceso Administración</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Raleway:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="admin.css">
+  <style>
+    .login-wrapper {
+      min-height: calc(100vh - 120px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+    }
+    .login-card {
+      background: var(--us-white);
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow-lg);
+      padding: 40px 48px;
+      width: 100%;
+      max-width: 420px;
+    }
+    .login-card h2 {
+      font-family: 'Raleway', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--us-text);
+      margin-bottom: 6px;
+    }
+    .login-card p.subtitle {
+      font-size: 13px;
+      color: var(--us-muted);
+      margin-bottom: 28px;
+    }
+    .login-card .form-group {
+      margin-bottom: 18px;
+    }
+    .login-card label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--us-text);
+      margin-bottom: 6px;
+    }
+    .login-card input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--us-border);
+      border-radius: 6px;
+      font-family: 'Open Sans', sans-serif;
+      font-size: 14px;
+      color: var(--us-text);
+      background: var(--us-gray-bg);
+      transition: border-color var(--transition);
+      outline: none;
+    }
+    .login-card input:focus {
+      border-color: var(--us-red);
+      background: var(--us-white);
+    }
+    .login-card .btn-login {
+      width: 100%;
+      padding: 11px;
+      background: var(--us-red);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-family: 'Open Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background var(--transition);
+    }
+    .login-card .btn-login:hover { background: var(--us-red-dark); }
+    .login-card .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
+    .login-error {
+      display: none;
+      margin-top: 14px;
+      padding: 10px 14px;
+      background: #fdecea;
+      border: 1px solid #f5c6cb;
+      border-radius: 6px;
+      color: #a94442;
+      font-size: 13px;
+    }
+    .login-error i { margin-right: 6px; }
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-container">
+    <ul class="top-menu">
+      <li><a href="pagina-principal.html"><i class="fa-solid fa-arrow-left"></i> Volver al sitio</a></li>
+    </ul>
+  </div>
+</div>
+
+<header class="main-header">
+  <div class="header-container">
+    <div class="header-left">
+      <a href="pagina-principal.html" class="logo-link">
+        <img src="logo-us.png" alt="Universidad de Sevilla" class="us-logo">
+      </a>
+      <div class="admin-title">
+        <h1>Panel de Administración</h1>
+        <span class="admin-subtitle">LinceUS - Acceso restringido</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="login-wrapper">
+  <div class="login-card">
+    <h2>Iniciar sesión</h2>
+    <p class="subtitle">Acceso exclusivo para administradores de LinceUS</p>
+
+    <div class="form-group">
+      <label for="email">Correo electrónico</label>
+      <input type="email" id="email" placeholder="usuario@us.es" autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label for="password">Contraseña</label>
+      <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+
+    <button class="btn-login" id="btn-login">
+      <i class="fa-solid fa-right-to-bracket"></i> Entrar
+    </button>
+
+    <div class="login-error" id="login-error">
+      <i class="fa-solid fa-circle-exclamation"></i>
+      <span id="error-msg">Credenciales incorrectas.</span>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="login.js"></script>
+</body>
+</html>
