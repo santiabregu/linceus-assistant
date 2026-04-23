@@ -7,7 +7,9 @@ preguntas como:
 
 Requiere curso y grupo. Si el usuario no los da, se le piden.
 Las consultas de horario de asignaturas concretas ("¿cuándo tengo FP?",
-"¿en qué aula es ADDA?") se gestionan desde ActionConsultaEspecifica.
+"¿en qué aula es ADDA?") se gestionan desde
+`ActionConsultaHorarioAsignatura` (módulo asignaturas, intent
+`consulta_horario_asignatura`).
 """
 
 import re
@@ -471,59 +473,10 @@ class ActionConsultaHorario(Action):
         print(f"   Titulación: {titulacion} | Curso: {curso} | Grupo: {grupo} | Día: {dia} | Cuatri: {cuatrimestre}")
         print(f"{'='*60}")
 
-        # ── Si el NLU detectó una asignatura, redirigir a ActionConsultaEspecifica ──
-        tiene_asignatura = any(
-            e.get("entity") == "nombre_asignatura"
-            for e in tracker.latest_message.get("entities", [])
-        )
-        if not tiene_asignatura:
-            # Fallback: buscar alias en el texto por si el NLU no lo extrajo como entidad
-            texto_lower = mensaje.lower()
-            aliases_ordenados = sorted(ALIAS_ASIGNATURAS.keys(), key=len, reverse=True)
-            # Excluir alias cortos que son palabras comunes del español
-            # SALVO cuando el contexto lo convierte claramente en asignatura
-            # (precedido por "asignatura", "de la", "horario de", etc.).
-            STOP_WORDS = {'e', 'c', 't', 'y', 'o', 'a'}
-            CONTEXTO_ASIGNATURA = (
-                r'(?:asignatura\s+(?:de\s+)?|horario\s+de\s+(?:la\s+)?|'
-                r'aula\s+de\s+|clase\s+de\s+|materia\s+(?:de\s+)?)'
-            )
-            for alias in aliases_ordenados:
-                # Alias corto (≤2) y en stop list: exigir contexto explícito
-                if len(alias) <= 2 and alias in STOP_WORDS:
-                    pat_contexto = CONTEXTO_ASIGNATURA + re.escape(alias) + r'\b'
-                    if re.search(pat_contexto, texto_lower):
-                        tiene_asignatura = True
-                        print(f"   → Alias corto con contexto: '{alias}'")
-                        break
-                    continue
-                # 'si' no está en STOP_WORDS: es alias real de Sistemas de
-                # Información. Lo aceptamos si aparece como palabra completa.
-                if re.search(r'\b' + re.escape(alias) + r'\b', texto_lower):
-                    tiene_asignatura = True
-                    print(f"   → Alias detectado en texto: '{alias}'")
-                    break
-
-        if tiene_asignatura:
-            print(f"   → Redirigiendo a ActionConsultaEspecifica (detectada asignatura)")
-            from ..asignaturas.actions import ActionConsultaEspecifica
-            action_especifica = ActionConsultaEspecifica()
-            return action_especifica.run(dispatcher, tracker, domain)
-
-        # ── Follow-up: sin asignatura ni curso/grupo, pero con slot reciente ──
-        # Ej: tras "hablame de DP1" -> "que horario tiene?". Heredamos la
-        # asignatura del slot y redirigimos a ActionConsultaEspecifica para
-        # que use el flujo de horario por asignatura.
-        if not curso and not grupo:
-            ultimo_asig = tracker.get_slot("ultimo_nombre_asignatura")
-            if ultimo_asig:
-                turnos = _contar_turnos_desde_slot(tracker, "ultimo_nombre_asignatura")
-                if turnos <= 3:
-                    print(f"   → Seguimiento horario: heredando asignatura "
-                          f"'{ultimo_asig}' del slot ({turnos} turnos)")
-                    from ..asignaturas.actions import ActionConsultaEspecifica
-                    action_especifica = ActionConsultaEspecifica()
-                    return action_especifica.run(dispatcher, tracker, domain)
+        # Nota: las preguntas "horario de ASIGNATURA" las clasifica el NLU
+        # como `consulta_horario_asignatura` y las gestiona
+        # `ActionConsultaHorarioAsignatura` (módulo asignaturas). Aquí solo
+        # procesamos horario por curso+grupo.
 
         # ── Follow-up: rellena curso/grupo parciales con slots recientes ──
         # Ej: tras "horario de 2 grupo 1" -> "y del grupo 2?".

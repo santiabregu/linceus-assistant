@@ -196,6 +196,12 @@ def _expandir_alias(nombre: str, titulacion: str = None) -> str:
     if not nombre:
         return nombre
     nombre_lower = nombre.lower().strip()
+    # R2: los aliases de 1 sola letra ('t', 'c', 'e') son demasiado ambiguos
+    # (chocan con palabras comunes y con "letra del DNI"). No se expanden
+    # automaticamente; se exige que el usuario use el nombre o un alias >=2.
+    if len(nombre_lower) == 1:
+        print(f"   ⚠ Alias de 1 letra ignorado por ambiguedad: '{nombre}'")
+        return nombre
     # 1. Buscar en tabla manual
     if nombre_lower in ALIAS_ASIGNATURAS:
         print(f"   → Alias manual: '{nombre}' → '{ALIAS_ASIGNATURAS[nombre_lower]}'")

@@ -15,6 +15,7 @@ intents:
   - consulta_titulaciones
   # Intents separados para asignaturas (Text-to-SQL)
   - consulta_asignatura_especifica   # "¿Cuántos créditos tiene Redes?"
+  - consulta_horario_asignatura      # "¿A qué hora tengo FP?" / "aula de ADDA"
   - consulta_asignaturas_listado     # "Dame las optativas de cuarto"
   - consulta_asignaturas_conteo      # "¿Cuántas asignaturas hay en primero?"
   - pedir_mas_resultados
@@ -211,11 +212,12 @@ actions:
   - action_consulta_titulaciones
   # Actions separadas para Text-to-SQL
   - action_consulta_especifica      # Consulta sobre UNA asignatura
+  - action_consulta_horario_asignatura  # Horario/aula de UNA asignatura
   - action_consulta_listado         # Listar asignaturas con filtros
   - action_consulta_conteo          # Contar asignaturas
   - action_mostrar_todas_asignaturas
   # Horarios
-  - action_consulta_horario
+  - action_consulta_horario         # Horario por curso + grupo
   # Profesores
   - action_consulta_profesor
   # Multi-intent (desactivado temporalmente)

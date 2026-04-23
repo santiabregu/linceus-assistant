@@ -1,5 +1,6 @@
 from .asignaturas import (
     ActionConsultaEspecifica,
+    ActionConsultaHorarioAsignatura,
     ActionConsultaListado,
     ActionConsultaConteo,
     ActionMostrarTodasAsignaturas,
@@ -36,6 +37,7 @@ from .shared.resolver_afirmacion import (
 
 __all__ = [
     'ActionConsultaEspecifica',
+    'ActionConsultaHorarioAsignatura',
     'ActionConsultaListado',
     'ActionConsultaConteo',
     'ActionMostrarTodasAsignaturas',

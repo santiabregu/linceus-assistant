@@ -31,6 +31,15 @@ stories:
   - intent: consulta_asignatura_especifica
   - action: action_consulta_especifica
 
+- story: saludo y seleccion titulacion y horario de asignatura
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: cambiar_contexto_academico
+  - action: action_cambiar_contexto
+  - intent: consulta_horario_asignatura
+  - action: action_consulta_horario_asignatura
+
 # =============================================================================
 # STORIES: CAMBIO DE TITULACIÓN EN MEDIO DE CONVERSACIÓN
 # =============================================================================
@@ -64,6 +73,18 @@ stories:
   - action: action_consulta_especifica
   - intent: consulta_asignatura_especifica
   - action: action_consulta_especifica
+
+- story: consulta horario de asignatura
+  steps:
+  - intent: consulta_horario_asignatura
+  - action: action_consulta_horario_asignatura
+
+- story: horario de asignatura con seguimiento (mismo intent)
+  steps:
+  - intent: consulta_horario_asignatura
+  - action: action_consulta_horario_asignatura
+  - intent: consulta_horario_asignatura
+  - action: action_consulta_horario_asignatura
 
 - story: listar asignaturas con filtros
   steps:
@@ -100,7 +121,14 @@ stories:
 # STORIES CROSS-DOMAIN: ASIGNATURAS ↔ HORARIOS ↔ PROFESORES
 # =============================================================================
 
-- story: especifica y luego su horario
+- story: especifica y luego su horario (de la asignatura)
+  steps:
+  - intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+  - intent: consulta_horario_asignatura
+  - action: action_consulta_horario_asignatura
+
+- story: especifica y luego horario personal
   steps:
   - intent: consulta_asignatura_especifica
   - action: action_consulta_especifica
@@ -114,14 +142,28 @@ stories:
   - intent: consulta_profesor
   - action: action_consulta_profesor
 
-- story: horario y luego profesores
+- story: horario de asignatura y luego profesores
+  steps:
+  - intent: consulta_horario_asignatura
+  - action: action_consulta_horario_asignatura
+  - intent: consulta_profesor
+  - action: action_consulta_profesor
+
+- story: horario personal y luego profesores
   steps:
   - intent: consulta_horario
   - action: action_consulta_horario
   - intent: consulta_profesor
   - action: action_consulta_profesor
 
-- story: horario y luego especifica
+- story: horario de asignatura y luego ficha
+  steps:
+  - intent: consulta_horario_asignatura
+  - action: action_consulta_horario_asignatura
+  - intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+
+- story: horario personal y luego especifica
   steps:
   - intent: consulta_horario
   - action: action_consulta_horario
@@ -135,7 +177,14 @@ stories:
   - intent: consulta_asignatura_especifica
   - action: action_consulta_especifica
 
-- story: profesor y luego horario
+- story: profesor y luego horario de asignatura
+  steps:
+  - intent: consulta_profesor
+  - action: action_consulta_profesor
+  - intent: consulta_horario_asignatura
+  - action: action_consulta_horario_asignatura
+
+- story: profesor y luego horario personal
   steps:
   - intent: consulta_profesor
   - action: action_consulta_profesor
@@ -146,26 +195,26 @@ stories:
 # STORIES: FOLLOW-UP DE HORARIO (cambio de grupo, cambio de curso, etc.)
 # =============================================================================
 
-- story: horario y luego otro grupo
+- story: horario personal y luego otro grupo
   steps:
   - intent: consulta_horario
   - action: action_consulta_horario
   - intent: consulta_horario
   - action: action_consulta_horario
 
-- story: especifica y luego todos los grupos
+- story: especifica y luego pedir aula o hora
   steps:
   - intent: consulta_asignatura_especifica
   - action: action_consulta_especifica
-  - intent: consulta_horario
-  - action: action_consulta_horario
+  - intent: consulta_horario_asignatura
+  - action: action_consulta_horario_asignatura
 
-- story: horario asignatura y luego todos los grupos
+- story: horario de asignatura y luego otro grupo
   steps:
-  - intent: consulta_horario
-  - action: action_consulta_horario
-  - intent: consulta_horario
-  - action: action_consulta_horario
+  - intent: consulta_horario_asignatura
+  - action: action_consulta_horario_asignatura
+  - intent: consulta_horario_asignatura
+  - action: action_consulta_horario_asignatura
 
 # =============================================================================
 # STORIES: FLUJOS COMPLETOS DE ALUMNO (simulan conversacion real)
@@ -181,10 +230,19 @@ stories:
   - action: action_consulta_listado
   - intent: consulta_asignatura_especifica
   - action: action_consulta_especifica
-  - intent: consulta_horario
-  - action: action_consulta_horario
+  - intent: consulta_horario_asignatura
+  - action: action_consulta_horario_asignatura
   - intent: consulta_profesor
   - action: action_consulta_profesor
+
+- story: flujo alumno - seleccion y horario personal de su curso
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: cambiar_contexto_academico
+  - action: action_cambiar_contexto
+  - intent: consulta_horario
+  - action: action_consulta_horario
 
 - story: flujo alumno - asignatura y tutorias de su profesor
   steps:
@@ -208,12 +266,19 @@ stories:
   - intent: consulta_asignatura_especifica
   - action: action_consulta_especifica
 
-- story: fallback y luego reformulacion como horario
+- story: fallback y luego reformulacion como horario personal
   steps:
   - intent: nlu_fallback
   - action: action_smart_fallback
   - intent: consulta_horario
   - action: action_consulta_horario
+
+- story: fallback y luego reformulacion como horario de asignatura
+  steps:
+  - intent: nlu_fallback
+  - action: action_smart_fallback
+  - intent: consulta_horario_asignatura
+  - action: action_consulta_horario_asignatura
 
 - story: fallback y luego reformulacion como profesor
   steps:

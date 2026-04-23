@@ -327,6 +327,35 @@ def _resolver_nombre_desde_texto(pregunta: str, titulacion: str) -> Optional[str
     return None
 
 
+def _sugerencias_asignatura(texto: str, titulacion: str, n: int = 3) -> list[str]:
+    """Devuelve hasta n nombres de asignaturas más parecidas al texto, sin threshold mínimo."""
+    from rapidfuzz import fuzz, process
+
+    conn = db_client.get_connection()
+    if not conn:
+        return []
+    try:
+        cursor = conn.cursor()
+        sql = "SELECT nombre FROM asignaturas WHERE activa = true"
+        params = []
+        if titulacion:
+            sql += " AND titulacion_id = (SELECT id FROM titulaciones WHERE codigo = %s LIMIT 1)"
+            params.append(titulacion)
+        cursor.execute(sql, params)
+        nombres_bd = [row[0] for row in cursor.fetchall()]
+        cursor.close()
+    finally:
+        conn.close()
+
+    if not nombres_bd:
+        return []
+
+    nombres_norm = [normalizar_texto(n) for n in nombres_bd]
+    texto_norm = normalizar_texto(texto)
+    resultados = process.extract(texto_norm, nombres_norm, scorer=fuzz.token_set_ratio, limit=n)
+    return [nombres_bd[r[2]] for r in resultados]
+
+
 def resolver_asignatura(
     pregunta: str,
     tracker,
@@ -485,44 +514,12 @@ Respuesta:"""
 
 
 # ============================================================================
-# DETECCIÓN DE PREGUNTAS DE HORARIO/AULA DE ASIGNATURA
+# HELPER: RESPUESTA DE HORARIO DE ASIGNATURA
 # ============================================================================
-
-_PALABRAS_HORARIO_ASIGNATURA = [
-    'horario', 'horarios', 'aula', 'aulas',
-    'cuando tengo', 'cuándo tengo', 'cuando es', 'cuándo es',
-    'a que hora', 'a qué hora', 'que hora es',
-    'donde tengo', 'dónde tengo', 'donde es', 'dónde es',
-    'donde se da', 'dónde se da', 'donde se imparte', 'dónde se imparte',
-    'que dias', 'qué dias', 'qué días', 'que días',
-    'laboratorio', 'laboratorios', 'labs',
-    'en que clase', 'en qué clase',
-    'donde esta', 'dónde está',
-]
-
-# Follow-ups que SOLO tienen sentido si el turno previo fue horario
-# (ej. "todos los grupos" tras "horario de TIS")
-_PALABRAS_HORARIO_FOLLOWUP_GRUPO = [
-    'todos los grupos', 'los demas grupos', 'los demás grupos',
-    'otros grupos', 'otro grupo', 'el resto de grupos',
-    'del grupo', 'del otro grupo',
-]
-
-
-def _es_pregunta_horario_asignatura(pregunta: str) -> bool:
-    """Detecta si la pregunta es sobre horario/aula de una asignatura concreta."""
-    pregunta_lower = pregunta.lower()
-    return any(p in pregunta_lower for p in _PALABRAS_HORARIO_ASIGNATURA)
-
-
-def _es_followup_horario_grupo(pregunta: str) -> bool:
-    """
-    Detecta follow-ups sobre grupos que implican consulta de horario
-    (ej. "todos los grupos", "del otro grupo"). Solo deben activarse cuando
-    el contexto previo es ya una consulta de horario.
-    """
-    pregunta_lower = pregunta.lower()
-    return any(p in pregunta_lower for p in _PALABRAS_HORARIO_FOLLOWUP_GRUPO)
+# La detección de intent vive en el NLU (intent `consulta_horario_asignatura`);
+# este helper solo formula la respuesta a partir de una asignatura ya resuelta
+# y un grupo opcional. Lo usan `ActionConsultaHorarioAsignatura` y
+# potencialmente futuros Actions que necesiten formatear un horario puntual.
 
 
 def _responder_horario_asignatura(
@@ -687,8 +684,16 @@ class ActionConsultaEspecifica(Action):
         if not asignatura:
             if nombre_asignatura:
                 nombre_titulacion = BotConfig.get_nombre_titulacion(contexto_titulacion)
-                msg = f"No encontré ninguna asignatura llamada '{nombre_asignatura}' en {nombre_titulacion}."
                 print(f"   ❌ Asignatura no encontrada: {nombre_asignatura}")
+                sugerencias = _sugerencias_asignatura(nombre_asignatura, contexto_titulacion)
+                if sugerencias:
+                    lista = "\n".join(f"- {s}" for s in sugerencias)
+                    msg = (
+                        f"No encontré ninguna asignatura llamada '{nombre_asignatura}' en {nombre_titulacion}. "
+                        f"¿Quizás te refieres a alguna de estas?\n{lista}"
+                    )
+                else:
+                    msg = f"No encontré ninguna asignatura llamada '{nombre_asignatura}' en {nombre_titulacion}."
                 dispatcher.utter_message(text=msg)
                 return eventos_contexto
             else:
@@ -720,46 +725,8 @@ class ActionConsultaEspecifica(Action):
                 dispatcher.utter_message(text="No pude identificar la asignatura en tu pregunta. ¿Puedes decirme el nombre?")
                 return []
 
-        # ── Horario/aula de asignatura: consultar tabla horarios ──
-        # Tambien entra si es un follow-up de grupos tras una consulta de
-        # horario previa (ej. "todos los grupos" tras preguntar por TIS).
-        ultima_action = tracker.get_slot("ultima_action_ejecutada")
-        es_continuacion_horario = (
-            _es_followup_horario_grupo(pregunta) and
-            ultima_action in ("action_consulta_horario", "consulta_especifica")
-        )
-        if _es_pregunta_horario_asignatura(pregunta) or es_continuacion_horario:
-            print(f"   📅 Detectada pregunta de horario/aula → consultando tabla horarios")
-            grupo_detectado = _detectar_grupo(pregunta)
-            # Bloquear referencias tipo "letra T del DNI" sin grupo numerico:
-            # las letras sueltas chocan con alias (T=Teledeteccion, C=Criptografia)
-            # y no hay mapeo fiable a numero de grupo.
-            from ..horarios.actions import _tiene_referencia_letra_dni
-            if _tiene_referencia_letra_dni(pregunta) and not grupo_detectado:
-                dispatcher.utter_message(
-                    text=("La asignación de grupos por letra del DNI varía cada curso y titulación. "
-                          "¿Puedes indicar el **número de grupo** (1, 2, 3…)? Lo tienes en SEVIUS.")
-                )
-                return eventos_contexto
-            respuesta_horario = _responder_horario_asignatura(
-                pregunta, asignatura, contexto_titulacion, grupo_detectado
-            )
-            if respuesta_horario:
-                dispatcher.utter_message(text=respuesta_horario)
-                return eventos_contexto + [
-                    SlotSet("ultimo_codigo_consultado", asignatura.get('codigo')),
-                    SlotSet("ultimo_nombre_asignatura", asignatura.get('nombre')),
-                    SlotSet("ultima_action_ejecutada", "consulta_especifica"),
-                ]
-            else:
-                nombre_tit = BotConfig.get_nombre_titulacion(contexto_titulacion)
-                dispatcher.utter_message(
-                    text=f"No encontré horarios de **{asignatura.get('nombre')}** en {nombre_tit}."
-                )
-                return eventos_contexto + [
-                    SlotSet("ultimo_nombre_asignatura", asignatura.get('nombre')),
-                    SlotSet("ultima_action_ejecutada", "consulta_especifica"),
-                ]
+        # Horario/aula de asignatura → intent `consulta_horario_asignatura`
+        # (ver ActionConsultaHorarioAsignatura al final de este archivo).
 
         # Clasificar si necesita RAG
         from .text_to_sql import _clasificar_necesita_rag
@@ -1157,4 +1124,108 @@ class ActionMostrarTodasAsignaturas(Action):
 
         # Limpiar el slot
         return [SlotSet("ultimos_resultados_asignaturas", None)]
+
+
+# ============================================================================
+# ACTION: HORARIO/AULA DE UNA ASIGNATURA
+# ============================================================================
+
+class ActionConsultaHorarioAsignatura(Action):
+    """
+    Consulta la tabla `horarios` para una asignatura concreta.
+
+    Se activa por el intent `consulta_horario_asignatura`:
+      - "¿A qué hora tengo FP?" / "aula de ADDA"
+      - "horario de Redes grupo 1" / "¿dónde es SO grupo 3?"
+      - Follow-ups sin entidad: "y en qué aula", "qué horario tiene esa" →
+        usan `ultimo_nombre_asignatura`.
+
+    Separado de `ActionConsultaEspecifica` (R1): el NLU distingue entre
+    ficha/plan docente (evaluación, temario, profesores…) y horario (aula,
+    día, hora). Esto elimina la lista `_PALABRAS_HORARIO_ASIGNATURA` y
+    rompe el ciclo de imports `asignaturas ↔ horarios`.
+    """
+
+    def name(self) -> Text:
+        return "action_consulta_horario_asignatura"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+
+        pregunta = tracker.latest_message.get("text", "")
+        contexto_titulacion, eventos_contexto = comprobar_titulacion(tracker, dispatcher)
+        if not contexto_titulacion:
+            return []
+
+        print(f"\n{'='*60}")
+        print(f"📅 HORARIO DE ASIGNATURA: {pregunta}")
+        print(f"   Contexto: {contexto_titulacion}")
+        print(f"{'='*60}")
+
+        # Bloquear "letra del DNI" antes de resolver asignatura (las letras
+        # sueltas chocan con alias, p.ej. T = Teledetección).
+        from ..horarios.actions import _tiene_referencia_letra_dni
+        grupo_detectado = _detectar_grupo(pregunta)
+        if _tiene_referencia_letra_dni(pregunta) and not grupo_detectado:
+            dispatcher.utter_message(
+                text=("La asignación de grupos por letra del DNI varía cada curso y titulación. "
+                      "¿Puedes indicar el **número de grupo** (1, 2, 3…)? Lo tienes en SEVIUS.")
+            )
+            return eventos_contexto
+
+        # Multi-asignatura no soportado en horario: preferible pedir una
+        # sola antes que devolver datos mezclados o alucinados por el LLM.
+        nombres_multi = _extraer_multiples_nombres(pregunta, contexto_titulacion)
+        if len(nombres_multi) >= 2:
+            opciones = " o ".join(f"**{n}**" for n in nombres_multi[:3])
+            dispatcher.utter_message(
+                text=(f"Por ahora solo puedo mostrarte el horario de una asignatura a la vez. "
+                      f"¿De cuál quieres empezar: {opciones}?")
+            )
+            return eventos_contexto
+
+        asignatura, nombre_asignatura = resolver_asignatura(
+            pregunta, tracker, contexto_titulacion
+        )
+
+        if not asignatura:
+            nombre_titulacion = BotConfig.get_nombre_titulacion(contexto_titulacion)
+            if nombre_asignatura:
+                sugerencias = _sugerencias_asignatura(nombre_asignatura, contexto_titulacion)
+                if sugerencias:
+                    lista = "\n".join(f"- {s}" for s in sugerencias)
+                    msg = (
+                        f"No encontré ninguna asignatura llamada '{nombre_asignatura}' en {nombre_titulacion}. "
+                        f"¿Quizás te refieres a alguna de estas?\n{lista}"
+                    )
+                else:
+                    msg = f"No encontré ninguna asignatura llamada '{nombre_asignatura}' en {nombre_titulacion}."
+                dispatcher.utter_message(text=msg)
+            else:
+                dispatcher.utter_message(
+                    text="¿De qué asignatura quieres saber el horario? Dime su nombre o alias (p.ej. FP, ADDA, DP1)."
+                )
+            return eventos_contexto
+
+        respuesta = _responder_horario_asignatura(
+            pregunta, asignatura, contexto_titulacion, grupo_detectado
+        )
+
+        if respuesta:
+            dispatcher.utter_message(text=respuesta)
+        else:
+            nombre_tit = BotConfig.get_nombre_titulacion(contexto_titulacion)
+            dispatcher.utter_message(
+                text=f"No encontré horarios de **{asignatura.get('nombre')}** en {nombre_tit}."
+            )
+
+        return eventos_contexto + [
+            SlotSet("ultimo_codigo_consultado", asignatura.get('codigo')),
+            SlotSet("ultimo_nombre_asignatura", asignatura.get('nombre')),
+            SlotSet("ultima_action_ejecutada", "action_consulta_horario_asignatura"),
+        ]
 

@@ -95,6 +95,9 @@ def _expandir_alias_asignatura(nombre: str, titulacion: str = None) -> str:
     if not nombre:
         return nombre
     nombre_lower = nombre.lower().strip()
+    # R2: ignorar aliases de 1 letra (demasiado ambiguos).
+    if len(nombre_lower) == 1:
+        return nombre
     if titulacion and titulacion in ALIAS_POR_TITULACION:
         if nombre_lower in ALIAS_POR_TITULACION[titulacion]:
             return ALIAS_POR_TITULACION[titulacion][nombre_lower]

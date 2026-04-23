@@ -67,6 +67,32 @@ nlu:
     - que horario semanal tengo si soy del grupo 1 de primero
     - horario del grupo 2 de segundo cuatrimestre 1
     - que clases tengo en segundo grupo 1 los lunes
+    # ─── Respuesta escueta al "dime curso y grupo" que pide el bot ──────
+    # El usuario contesta solo "curso 3 grupo 1" o "3º grupo 2", sin la
+    # palabra "horario". Sin estos ejemplos el NLU no distingue de ficha
+    # de asignatura y clasifica mal.
+    - curso 1 grupo 1
+    - curso 1 grupo 2
+    - curso 2 grupo 1
+    - curso 2 grupo 2
+    - curso 3 grupo 1
+    - curso 3 grupo 2
+    - curso 3 grupo 3
+    - curso 4 grupo 1
+    - curso 4 grupo 2
+    - 1º grupo 1
+    - 2º grupo 2
+    - 3º grupo 3
+    - 4º grupo 1
+    - primero grupo 1
+    - segundo grupo 2
+    - tercero grupo 3
+    - cuarto grupo 1
+    - tercero del grupo 3
+    - segundo del grupo 2
+    - del curso 2 grupo 1
+    - soy de tercero grupo 3
+    - soy de 2º grupo 1
     # ─── Seguimiento / follow-up sin asignatura ni curso explicitos ─────
     # Se apoyan en los slots ultimo_curso_consultado / ultimo_grupo_consultado
     # y ultimo_nombre_asignatura fijados por el turno anterior.
