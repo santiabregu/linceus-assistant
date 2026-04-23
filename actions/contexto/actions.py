@@ -45,28 +45,47 @@ class ActionCambiarContexto(Action):
     def name(self) -> Text:
         return "action_cambiar_contexto"
     
+    # Tokens discriminantes: el input debe compartir al menos uno para
+    # considerarse una titulación. Evita que "Ingeniería de la Salud" haga
+    # match con "Ingeniería del Software" solo por "ingeniería".
+    _TOKENS_TITULACION = {
+        'software', 'computadores', 'tecnologias', 'tecnologías',
+        'informaticas', 'informáticas',
+        'is', 'ti', 'ic', 'gii-is', 'gii-ti', 'gii-ic',
+    }
+
     def _normalizar_titulacion(self, texto: str) -> str:
-        """Intenta encontrar el código de titulación a partir del texto"""
+        """Intenta encontrar el código de titulación a partir del texto.
+
+        R3: cutoff endurecido a 85 + filtro por token discriminante. "Ingeniería
+        de la Salud" ya no hace match con GII-IS."""
         if not texto:
             return None
-        
+
         texto_lower = texto.lower().strip()
-        
+
         # Match exacto
         if texto_lower in self.TITULACION_MAP:
             return self.TITULACION_MAP[texto_lower]
-        
-        # Fuzzy matching
+
+        # Guard: el texto debe contener al menos un token discriminante
+        # (software, computadores, tecnologias, is/ti/ic…). Si no, no es
+        # una titulación conocida.
+        tokens_input = set(texto_lower.split())
+        if not (tokens_input & self._TOKENS_TITULACION):
+            return None
+
+        # Fuzzy matching (cutoff 85 — antes era 70, demasiado permisivo)
         resultado = process.extractOne(
             texto_lower,
             list(self.TITULACION_MAP.keys()),
             scorer=fuzz.WRatio,
-            score_cutoff=70
+            score_cutoff=85
         )
-        
+
         if resultado:
             return self.TITULACION_MAP[resultado[0]]
-        
+
         return None
     
     def run(self, dispatcher: CollectingDispatcher,

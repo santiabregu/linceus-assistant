@@ -151,10 +151,6 @@ nlu:
     - que contenidos tiene [IS2](nombre_asignatura)
     - que bloques tematicos tiene [Calculo](nombre_asignatura)
     - que se ve en [Sistemas Operativos](nombre_asignatura)
-    - horarios de [Redes](nombre_asignatura)
-    - cuando son las clases de [Fundamentos de Programacion](nombre_asignatura)
-    - horario de [IS2](nombre_asignatura)
-    - en que horario se imparte [Bases de Datos](nombre_asignatura)
     - objetivos de [Fundamentos de Programacion](nombre_asignatura)
     - que se aprende en [Redes](nombre_asignatura)
     - competencias de [IS2](nombre_asignatura)
@@ -164,6 +160,17 @@ nlu:
     - actividades de [Redes](nombre_asignatura)
     - hay practicas en [IS2](nombre_asignatura)
     - tiene laboratorio [Bases de Datos](nombre_asignatura)
+    - quiero saber mas de las [practicas](nombre_asignatura)
+    - informacion sobre [practicas](nombre_asignatura)
+    - dime algo de las [practicas externas](nombre_asignatura)
+    - que sabes de las [practicas en empresas](nombre_asignatura)
+    - como funcionan las [practicas profesionales](nombre_asignatura)
+    - cuando son las [practicas](nombre_asignatura)
+    - me puedes hablar de las [practicas](nombre_asignatura)
+    - cuantos creditos tienen las [practicas externas](nombre_asignatura)
+    - quien tutoriza las [practicas](nombre_asignatura)
+    - como se evaluan las [practicas](nombre_asignatura)
+    - como se aprueban las [practicas externas](nombre_asignatura)
     - en que idioma se imparte [Redes](nombre_asignatura)
     - el idioma de [Fundamentos de Programacion](nombre_asignatura)
     - cuando son los examenes de [Calculo](nombre_asignatura)
@@ -268,6 +275,17 @@ nlu:
     - se imparte en ingles el grupo 4 de [ADDA](nombre_asignatura)?
     - las clases de [Diseno y Pruebas](nombre_asignatura) grupo 4 son en ingles?
     - [Estadistica](nombre_asignatura) grupo 5 en que idioma se da?
+    - en que planta esta la aula A1.10
+    - La aula A1.10 donde esta
+
+# =============================================================================
+# INTENT 1.b: HORARIO DE ASIGNATURA - Pregunta por horario/aula/dia de una
+# asignatura concreta. Se separa de `consulta_asignatura_especifica` (ficha
+# basica y plan docente) porque la fuente de datos es la tabla `horarios`,
+# no el plan docente. Split introducido en R1 (ver docs/asignaturas/plan_refactor).
+# =============================================================================
+- intent: consulta_horario_asignatura
+  examples: |
     - ¿En qué aula tengo [FP](nombre_asignatura)?
     - ¿En qué aula es [FP](nombre_asignatura)?
     - ¿Dónde se da [FP](nombre_asignatura)?
@@ -286,6 +304,10 @@ nlu:
     - aula de [IMD](nombre_asignatura)
     - horario de [FP](nombre_asignatura)
     - horario de [ALN](nombre_asignatura)
+    - horarios de [Redes](nombre_asignatura)
+    - cuando son las clases de [Fundamentos de Programacion](nombre_asignatura)
+    - horario de [IS2](nombre_asignatura)
+    - en que horario se imparte [Bases de Datos](nombre_asignatura)
     - ¿Cuándo tengo clase de [Estructuras de Datos](nombre_asignatura)?
     - ¿A qué hora es [EdC](nombre_asignatura)?
     - ¿Dónde tengo [FFI](nombre_asignatura)?
@@ -301,23 +323,6 @@ nlu:
     - ¿A qué hora es [DSD](nombre_asignatura)?
     - donde esta [TIS](nombre_asignatura)
     - en que clase esta [ADDA](nombre_asignatura)
-    - qué días es
-    - qué días se da
-    - qué días se imparte
-    - en qué días es
-    - qué día es
-    - y qué días tiene
-    - y en qué aula es
-    - y cuándo es
-    - y a qué hora
-    - y dónde se da
-    - cuándo es esa asignatura
-    - en qué aula es esa
-    - qué horario tiene esa asignatura
-    - y su horario
-    - y el horario
-    - y cuándo se da esa asignatura
-    - y en qué aula se imparte
     - dónde son los labs de [FP](nombre_asignatura)
     - en qué laboratorio es [FP](nombre_asignatura)
     - laboratorio de [DP1](nombre_asignatura)
@@ -328,11 +333,6 @@ nlu:
     - labs de [DP1](nombre_asignatura) y [PSG1](nombre_asignatura) grupo 1
     - en qué laboratorio tengo las prácticas de [CED](nombre_asignatura)
     - dónde son las prácticas de [DP1](nombre_asignatura) y [DP2](nombre_asignatura)
-    - qué horario tiene esa
-    - y los horarios
-    - en qué días se imparte esa
-    - en que planta esta la aula A1.10
-    - La aula A1.10 donde esta
     - donde se imparte [CED](nombre_asignatura) los jueves grupo 4
     - donde se da [FP](nombre_asignatura) los lunes grupo 1
     - horario de [CED](nombre_asignatura) grupo 4
@@ -352,6 +352,36 @@ nlu:
     - aula de [CED](nombre_asignatura) grupo 4 los jueves
     - ¿Qué días se da [RC](nombre_asignatura) grupo 1?
     - ¿Qué días tengo [IISSI1](nombre_asignatura) grupo 2?
+    # ─── Variantes con typos comunes (robustez) ─────────────────────────
+    - en que alua es [DP2](nombre_asignatura)
+    - en que aula es [DP2](nombre_asignatura)
+    - en que aula es [dp2](nombre_asignatura)
+    - en que gruo es [FP](nombre_asignatura)
+    - donde se da [dp1](nombre_asignatura)
+    - a que hora es [adda](nombre_asignatura)
+    - a que hora tengo [fp](nombre_asignatura)
+    - cuando tengo [so](nombre_asignatura) grupo 2
+    # ─── Follow-ups sin entidad: dependen de ultimo_nombre_asignatura ───
+    - qué días es
+    - qué días se da
+    - qué días se imparte
+    - en qué días es
+    - qué día es
+    - y qué días tiene
+    - y en qué aula es
+    - y cuándo es
+    - y a qué hora
+    - y dónde se da
+    - cuándo es esa asignatura
+    - en qué aula es esa
+    - qué horario tiene esa asignatura
+    - y su horario
+    - y el horario
+    - y cuándo se da esa asignatura
+    - y en qué aula se imparte
+    - qué horario tiene esa
+    - y los horarios
+    - en qué días se imparte esa
 
 # =============================================================================
 # INTENT 2: LISTADO - Pide una LISTA de asignaturas con filtros

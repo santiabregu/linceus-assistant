@@ -56,6 +56,11 @@ rules:
   - intent: consulta_asignatura_especifica
   - action: action_consulta_especifica
 
+- rule: Consulta de horario de asignatura
+  steps:
+  - intent: consulta_horario_asignatura
+  - action: action_consulta_horario_asignatura
+
 - rule: Listado de asignaturas
   steps:
   - intent: consulta_asignaturas_listado

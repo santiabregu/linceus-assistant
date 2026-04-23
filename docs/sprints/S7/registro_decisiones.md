@@ -213,6 +213,64 @@ Se aplica **solo al crear** registros nuevos. Registros existentes con separaci�
 
 ---
 
+## Iteración 5 (2026-04-23): Refactor de Actions tras auditoría con feedback del piloto
+
+### D-053: Split del intent `consulta_asignatura_especifica` en dos intents (ficha vs horario)
+
+**Problema:** El Action `ActionConsultaEspecifica` mezclaba dos flujos en cascada: ficha/plan docente (evaluación, temario, profesores, bibliografía…) y consulta de horario/aula de la asignatura. La detección entre flujos vivía en una lista hardcodeada `_PALABRAS_HORARIO_ASIGNATURA` (~30 strings en español). Paralelamente, `ActionConsultaHorario` (módulo horarios) reenviaba a `ActionConsultaEspecifica` cuando detectaba una asignatura en el mensaje — provocando **doble detección** y **ciclo de imports** entre los módulos.
+**Decisión:** Separar a nivel de NLU:
+- Nuevo intent `consulta_horario_asignatura` con ~70 ejemplos movidos desde `consulta_asignatura_especifica` (todas las preguntas sobre aula, día, hora, laboratorio de una asignatura concreta).
+- Nuevo Action `ActionConsultaHorarioAsignatura` en `asignaturas/actions.py` que importa las utilidades de consulta SQL desde `horarios/` (import en una sola dirección: asignaturas → horarios).
+- Eliminación de la lista `_PALABRAS_HORARIO_ASIGNATURA` y del bloque de reenvío en `ActionConsultaHorario`.
+**Justificación:** Rasa ya clasificaba correctamente los intents con el modelo entrenado; la detección manual por keywords era deuda heredada de cuando el NLU no distinguía bien. El split elimina ~130 líneas de código duplicado/obsoleto y rompe el ciclo de imports.
+**Archivos:** `data/nlu/asignaturas.yml` (nuevo intent), `data/rules.yml` (nueva regla), `data/stories.yml` (flujos cross-domain actualizados), `domain.yml`, `actions/asignaturas/actions.py`, `actions/horarios/actions.py` (bloque de reenvío borrado)
+
+### D-054: Bloqueo de alias de letra única en `_expandir_alias`
+
+**Problema:** Los alias `t`, `c`, `e` colisionan con asignaturas reales (Teledetección, Criptografía, Estadística) cuando el usuario los menciona en contextos no relacionados. Documentado en el piloto: "letra T del DNI" → Teledetección, "cristiano ronaldo" → match con `c` → Criptografía.
+**Decisión:** En `_expandir_alias` (text_to_sql), si el input tiene longitud 1, devolver el nombre original sin expandir. El pipeline downstream decide qué hacer (pedir más contexto, fuzzy, etc.). Se conserva el parche ya existente en horarios para "letra del DNI" como refuerzo explícito.
+**Justificación:** Los aliases de una letra son intrinsecamente ambiguos en lenguaje natural; prefiere "no encontré X" a "interpreté mal tu mensaje". Coste: 3 líneas.
+**Archivos:** `actions/asignaturas/text_to_sql.py`
+
+### D-055: Endurecimiento del fuzzy cutoff en `ActionCambiarContexto`
+
+**Problema:** El cutoff 70 del fuzzy sobre `TITULACION_MAP` era demasiado permisivo. "Ingeniería de la Salud" matcheaba con "Ingeniería del Software" → GII-IS (observado en el piloto, interacción 52).
+**Decisión:** Subir el cutoff a 85 y añadir lista de palabras bloqueantes (`salud`, `medicina`, etc.) que invalidan el match incluso si el score supera el umbral.
+**Justificación:** Coste mínimo con impacto en un fallo reproducible del piloto. Mantener `TITULACION_MAP` hardcodeado se justifica en D-056.
+**Archivos:** `actions/contexto/actions.py`
+
+### D-056: `ALIAS_ASIGNATURAS` y `TITULACION_MAP` como datos de dominio estables
+
+**Problema:** Durante la auditoría se evaluó si los diccionarios hardcodeados de aliases (ASIGNATURAS: ~200 entradas, TITULACIÓN: ~20) deberían generarse automáticamente desde la BD para escalar a otras titulaciones.
+**Decisión:** Mantenerlos como están. Se consideran **datos de dominio**, no heurísticas:
+- "DP1", "ADDA", "PSG2" son los aliases oficiales que usan los estudiantes de Sevilla. Son una fuente de verdad determinista, no una aproximación.
+- Ya existe fallback dinámico: `_parece_acronimo` + `_buscar_por_acronimo_en_bd` genera aliases automáticos desde nombres de BD cuando el alias manual no existe.
+- Escalabilidad: añadir una titulación nueva requiere cargar asignaturas en BD (automático) + actualizar `TITULACION_MAP` (manual, ~5 entradas). Aceptable para el TFG.
+**Archivos:** `actions/shared/config.py` (sin cambios, decisión documentada)
+
+### D-057: Multi-asignatura en `ActionConsultaHorarioAsignatura` — fallback por diseño
+
+**Problema:** `_extraer_multiples_nombres` solo detecta múltiples asignaturas si **todas aparecen como alias** del diccionario. Preguntas como "horario de diseño y pruebas 1 y fundamentos de programación" (nombres completos) no se reconocen como multi — el pipeline resuelve una sola y el LLM puede alucinar datos de la otra.
+**Decisión:** No extender la detección multi-asignatura a nombres completos en el Action de horario. En su lugar, cuando `_extraer_multiples_nombres` devuelve ≥2 resultados, `ActionConsultaHorarioAsignatura` responde pidiendo desambiguar:
+
+> "Por ahora solo puedo mostrarte el horario de una asignatura a la vez. ¿De cuál quieres empezar: **DP1** o **FP**?"
+
+Se evaluaron tres alternativas:
+1. **NLU con múltiples entidades:** frágil — el extractor español ya falla en separar "diseño y pruebas 1 y fundamentos" correctamente.
+2. **Split del texto por conectores `y`/`e`/`,`:** colisiona con nombres que contienen "y" en su propio título (p.ej. "Diseño **y** Pruebas").
+3. **LLM extractor:** añade latencia a un flujo que ya hace múltiples llamadas al modelo.
+**Justificación:** Prioridad a **precisión sobre cobertura**. Es preferible responder bien sobre una asignatura que arriesgar una respuesta inventada sobre dos. El comportamiento actual (desambiguar explícitamente) se defiende como decisión de diseño, no como limitación. En `ActionConsultaEspecifica` sí se mantiene la detección multi basada en aliases — ahí el RAG absorbe la ambigüedad mejor y los casos observados en el piloto (p.ej. "¿cómo se evaluaban DP1 y PSG2?") funcionan correctamente.
+**Archivos:** `actions/asignaturas/actions.py` (`ActionConsultaHorarioAsignatura.run`)
+
+### D-058: Ejemplos cortos `curso N grupo M` al intent `consulta_horario`
+
+**Problema:** Cuando el bot pide "dime curso y grupo" y el usuario responde literalmente "curso 3 grupo 3", Rasa no tenía ningún ejemplo corto con ese patrón sin la palabra "horario". El mensaje caía en `consulta_asignatura_especifica` por similitud con otros ejemplos sueltos.
+**Decisión:** Añadir ~22 ejemplos cortos al intent `consulta_horario` cubriendo "curso N grupo M", "Nº grupo M", "primero/segundo/tercero/cuarto grupo M" y variantes con "soy de" / "del curso N". Sin ellos el split de D-053 es incompleto: horarios personales mal clasificados acababan en el flujo de ficha.
+**Justificación:** Es el input más natural del usuario tras una pregunta aclaratoria del bot. Cero coste, soluciona un fallo observado en la validación manual de D-053.
+**Archivos:** `data/nlu/horarios.yml`
+
+---
+
 ## Pendiente
 
 - **Job queue para scrapes largos** (ETSII completo ≈ 8-10 min): migrar de síncrono a background + polling si la fricción se nota.
