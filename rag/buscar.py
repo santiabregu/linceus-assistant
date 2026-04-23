@@ -27,31 +27,36 @@ GRUPO_DEFAULT = "Grupo 1"
 # Mapea (tipo_consulta, seccion_chunk) → bonus de score.
 # El bonus se SUMA a la similitud coseno (0-1) para reordenar.
 RERANK_WEIGHTS = {
+    # El chunker etiqueta la sección best-effort y a veces se equivoca (p.ej.
+    # nombres de profesorado acaban en chunks etiquetados como 'bibliografia'
+    # o 'evaluacion_grupo' cuando la cabecera de la siguiente sección cae
+    # dentro del chunk). Por eso NO filtramos por sección en la query —
+    # dejamos que la similitud vectorial decida — y usamos estos pesos solo
+    # como empujón suave cuando la sección acierta. Bonus positivos
+    # pequeños, sin penalizaciones negativas (antes -0.30 para bibliografia
+    # enmascaraba chunks con nombres de profes mal etiquetados).
     "profesorado": {
-        "profesorado": 0.25,
-        "coordinador": 0.20,
-        "datos_basicos": 0.05,
-        "bibliografia": -0.30,   # penalizar fuertemente
+        "profesorado": 0.15,
+        "coordinador": 0.12,
+        "datos_basicos": 0.03,
     },
     "evaluacion": {
-        "evaluacion_general": 0.20,
-        "evaluacion_grupo": 0.20,
-        "metodologia": 0.05,
-        "bibliografia": -0.10,
+        "evaluacion_general": 0.15,
+        "evaluacion_grupo": 0.15,
+        "metodologia": 0.03,
     },
     "contenidos": {
-        "contenidos": 0.20,
-        "contenidos_detallados": 0.20,
-        "objetivos": 0.10,
-        "bibliografia": 0.05,
+        "contenidos": 0.15,
+        "contenidos_detallados": 0.15,
+        "objetivos": 0.05,
     },
     "horarios": {
-        "horarios": 0.25,
-        "calendario_examenes": 0.10,
+        "horarios": 0.15,
+        "calendario_examenes": 0.05,
     },
     "bibliografia": {
-        "bibliografia": 0.25,
-        "informacion_adicional": 0.05,
+        "bibliografia": 0.15,
+        "informacion_adicional": 0.03,
     },
 }
 
@@ -152,13 +157,6 @@ def _resolver_grupo(codigo_asignatura: str, grupo: str) -> str:
         conn.close()
 
 
-def _seccion_preferida(tipo_consulta: Optional[str]) -> Optional[str]:
-    """Devuelve la sección a filtrar según el tipo de consulta, o None."""
-    if tipo_consulta == "profesorado":
-        return "profesorado"
-    return None
-
-
 def buscar_en_plan_docente(
     pregunta: str,
     codigo_asignatura: str = None,
@@ -186,29 +184,19 @@ def buscar_en_plan_docente(
     # Detectar tipo de consulta para reranking
     tipo_consulta = _detectar_tipo_consulta(pregunta)
 
-    # Si no se pasa seccion_filtro explícito, inferirlo del tipo
-    if seccion_filtro is None:
-        seccion_filtro = _seccion_preferida(tipo_consulta)
-
+    # Nota: ya NO filtramos por sección en la query. El chunker etiqueta
+    # best-effort y la clasificación puede fallar (p.ej. nombres de profes
+    # en chunks marcados como 'bibliografia'). Traemos los N más similares
+    # y la sección se usa únicamente como empujón en el reranking.
     if seccion_filtro:
-        print(f"  🔎 Filtro por sección: {seccion_filtro}")
+        print(f"  🔎 Filtro por sección (explícito): {seccion_filtro}")
 
     # --- Intento 1: búsqueda vectorial ---
     embedding = generar_embedding(pregunta, task_type="SEMANTIC_SIMILARITY")
     if embedding:
-        # Primero con filtro de sección (si aplica)
-        if seccion_filtro:
-            resultados = _buscar_vectorial(
-                embedding, codigo_asignatura, grupo, limite, umbral,
-                seccion=seccion_filtro,
-            )
-            if resultados:
-                return _rerank(resultados, tipo_consulta)
-            print(f"  ⚠ Sin resultados con sección={seccion_filtro}, buscando sin filtro")
-
-        # Sin filtro de sección (o como fallback)
         resultados = _buscar_vectorial(
             embedding, codigo_asignatura, grupo, limite, umbral,
+            seccion=seccion_filtro,
         )
         if resultados:
             return _rerank(resultados, tipo_consulta)
@@ -220,11 +208,6 @@ def buscar_en_plan_docente(
         pregunta, codigo_asignatura, grupo, limite,
         seccion=seccion_filtro,
     )
-    if not resultados and seccion_filtro:
-        print(f"  ⚠ Keywords sin resultados con sección={seccion_filtro}, buscando sin filtro")
-        resultados = _buscar_por_keywords(
-            pregunta, codigo_asignatura, grupo, limite,
-        )
     return _rerank(resultados, tipo_consulta)
 
 

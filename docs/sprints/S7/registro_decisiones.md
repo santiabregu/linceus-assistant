@@ -262,6 +262,20 @@ Se evaluaron tres alternativas:
 **Justificación:** Prioridad a **precisión sobre cobertura**. Es preferible responder bien sobre una asignatura que arriesgar una respuesta inventada sobre dos. El comportamiento actual (desambiguar explícitamente) se defiende como decisión de diseño, no como limitación. En `ActionConsultaEspecifica` sí se mantiene la detección multi basada en aliases — ahí el RAG absorbe la ambigüedad mejor y los casos observados en el piloto (p.ej. "¿cómo se evaluaban DP1 y PSG2?") funcionan correctamente.
 **Archivos:** `actions/asignaturas/actions.py` (`ActionConsultaHorarioAsignatura.run`)
 
+### D-058.b: RAG sin filtro por sección — la sección es solo señal de reranking
+
+**Problema:** En el piloto, "el profesorado de algebra" devolvía "el plan docente indica que las clases se realizarán en inglés" en vez del listado de profesores. Diagnóstico: el retrieval aplicaba `WHERE seccion = 'profesorado'` en la búsqueda vectorial. Los nombres reales de profesores ("ANDRES ARMARIO SAMPALO…") estaban en chunks etiquetados como `bibliografia` o `evaluacion_grupo` por el chunker actual (que usa `_detectar_seccion` tomando la *última* cabecera encontrada en cada chunk, criterio frágil cuando dos secciones caen en el mismo trozo).
+
+**Decisión:** Desactivar el filtro por sección en la query SQL. La búsqueda vectorial trae los N chunks más similares sin restricción. La sección se usa **solo como señal de reranking**: bonus positivo suave (+0.12 a +0.15) si la sección etiquetada coincide con el tipo de consulta, sin penalizaciones negativas. Se eliminó el `-0.30` que penalizaba `bibliografia` en consultas de profesorado, porque precisamente enmascaraba los chunks con nombres mal etiquetados.
+
+**Alternativas descartadas:**
+1. **Chunking por secciones (partir primero por cabeceras)**: arreglo raíz pero asume estructura PDF estable. El formato del proyecto docente de ETSII es consistente, pero otras escuelas/universidades pueden variar, y un fallo silencioso de parsing perdería chunks enteros.
+2. **Etiquetado de sección con LLM** (pedir al modelo que marque cada chunk con una frase-descripción): coste y latencia altos en ingesta (~20k llamadas para reindexar todos los grados), etiquetas no deterministas, y no arregla la mezcla cuando un chunk tiene contenido de dos secciones — la IA sigue teniendo que elegir una.
+
+**Justificación:** La decisión pragmática es "confiar en el embedding y usar la sección solo como señal débil". El coseno de `gemini-embedding-001` es lo bastante bueno para encontrar el chunk con nombres propios aunque su etiqueta de sección esté mal. Es robusto a futuros cambios de formato de PDF y no añade dependencias ni coste de ingesta. Coste total: 1 función eliminada + ajuste de pesos + un bloque condicional limpiado (~40 líneas menos en `rag/buscar.py`).
+
+**Archivos:** `rag/buscar.py` (eliminada `_seccion_preferida`; `RERANK_WEIGHTS` rebalanceado)
+
 ### D-058: Ejemplos cortos `curso N grupo M` al intent `consulta_horario`
 
 **Problema:** Cuando el bot pide "dime curso y grupo" y el usuario responde literalmente "curso 3 grupo 3", Rasa no tenía ningún ejemplo corto con ese patrón sin la palabra "horario". El mensaje caía en `consulta_asignatura_especifica` por similitud con otros ejemplos sueltos.

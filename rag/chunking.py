@@ -1,54 +1,60 @@
 """
-Chunking de documentos con solapamiento (overlap).
+Chunking de documentos de proyectos docentes.
 
-Enfoque genérico: divide cualquier texto en chunks de tamaño fijo con overlap,
-sin depender de la estructura del documento. La búsqueda vectorial se encarga
-de encontrar los fragmentos relevantes.
+Estrategia: **chunking por secciones**. Primero se parte el texto por los
+títulos de sección conocidos del proyecto docente de la ETSII (usando una
+tabla de cabeceras), luego dentro de cada sección se chunka por tamaño con
+overlap. Un chunk NUNCA cruza la frontera de una sección.
 
-Opcionalmente, intenta etiquetar cada chunk con la sección del proyecto docente
-a la que pertenece (best-effort: si no la detecta, el chunk se marca como
-'general' y funciona igual).
+Razonamiento (raíz de un bug del piloto):
+  Antes se chunkaba por párrafos y se asignaba sección "best-effort"
+  buscando la ÚLTIMA etiqueta dentro del chunk. Esto hacía que un chunk
+  con los nombres de profesorado seguido de "Bibliografía recomendada"
+  acabara etiquetado como `bibliografia` — rompiendo los filtros por
+  sección del retrieval RAG.
+
+  Al partir PRIMERO por sección, el etiquetado es determinista y el
+  retrieval `seccion=profesorado` devuelve solo contenido de ese bloque.
 """
 
 import re
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Tuple
 
 
 # ── Configuración de chunking ─────────────────────────────────────────────────
 
-# Tamaño máximo de chunk en caracteres.
-# ~800 chars ≈ ~150-200 tokens → buen balance entre especificidad y contexto.
 MAX_CHUNK_SIZE = 800
-# Solapamiento entre chunks consecutivos para no perder contexto en los bordes.
 OVERLAP_SIZE = 100
-# Tamaño mínimo para que un chunk valga la pena vectorizarlo.
 MIN_CHUNK_SIZE = 50
 
 
-# ── Etiquetas de sección (best-effort, opcional) ──────────────────────────────
-# Si un chunk contiene uno de estos patrones, se etiqueta con la sección.
-# No afecta al chunking en sí, solo enriquece metadata.
+# ── Cabeceras de sección del proyecto docente ─────────────────────────────────
+# Tuplas (regex, nombre_normalizado). El regex detecta la cabecera en el
+# texto extraído; el nombre se usa como valor de la columna `seccion`.
+# El ORDEN de la lista NO importa para la detección: se localizan todas las
+# ocurrencias y se ordenan por posición en el texto.
 
-ETIQUETAS_SECCION: List[Tuple[str, str]] = [
+_SECTION_HEADERS: List[Tuple[str, str]] = [
     (r"Datos b[áa]sicos de la asignatura", "datos_basicos"),
     (r"Coordinador de la asignatura", "coordinador"),
-    (r"Profesorado", "profesorado"),
+    (r"Profesorado(?:\s+del\s+grupo)?", "profesorado"),
     (r"Objetivos y resultados del aprendizaje", "objetivos"),
     (r"Contenidos o bloques tem[áa]ticos", "contenidos"),
     (r"Relaci[óo]n detallada y ordenaci[óo]n temporal", "contenidos_detallados"),
     (r"Actividades formativas", "actividades_formativas"),
-    (r"Idioma de impartici[óo]n", "idioma"),
-    (r"criterios de evaluaci[óo]n y calificaci[óo]n del grupo", "evaluacion_grupo"),
-    (r"criterios de evaluaci[óo]n y calificaci[óo]n", "evaluacion_general"),
-    (r"Metodolog[íi]a de ense[ñn]anza", "metodologia"),
-    (r"Horarios del grupo", "horarios"),
+    (r"Metodolog[íi]a de ense[ñn]anza[\s\S-]{0,30}aprendizaje", "metodologia"),
+    (r"Idioma de impartici[óo]n(?:\s+del\s+grupo)?", "idioma"),
+    (r"Sistemas y criterios de evaluaci[óo]n y calificaci[óo]n del grupo",
+     "evaluacion_grupo"),
+    (r"Sistemas y criterios de evaluaci[óo]n y calificaci[óo]n", "evaluacion_general"),
+    (r"Horarios del grupo(?:\s+del\s+proyecto\s+docente)?", "horarios"),
     (r"Calendario de ex[áa]menes", "calendario_examenes"),
-    (r"Tribunales espec[íi]ficos", "tribunales"),
+    (r"Tribunales espec[íi]ficos(?:\s+de\s+evaluaci[óo]n)?", "tribunales"),
     (r"Bibliograf[íi]a recomendada", "bibliografia"),
     (r"Informaci[óo]n Adicional", "informacion_adicional"),
-    (r"(?:PRIMERA|SEGUNDA|TERCERA) CONVOCATORIA", "evaluacion_grupo"),
-    (r"[Ee]valuaci[óo]n continua", "evaluacion_grupo"),
 ]
+
+_HEADERS_COMPILED = [(re.compile(p, re.IGNORECASE), name) for p, name in _SECTION_HEADERS]
 
 
 def procesar_documento(
@@ -58,97 +64,119 @@ def procesar_documento(
     min_size: int = MIN_CHUNK_SIZE,
 ) -> List[Dict]:
     """
-    Divide un texto en chunks con solapamiento.
-
-    Estrategia: corte por párrafos respetando tamaño máximo.
-    Cada chunk recibe una etiqueta de sección best-effort.
-
-    Args:
-        texto_completo: Texto limpio del documento.
-        max_size: Tamaño máximo de chunk en caracteres.
-        overlap: Caracteres de solapamiento entre chunks.
-        min_size: Tamaño mínimo para crear un chunk.
+    Divide un proyecto docente en chunks, partiendo PRIMERO por secciones
+    detectadas y chunkando DESPUÉS por tamaño dentro de cada sección.
 
     Returns:
-        Lista de dicts con:
-            - contenido (str): Texto del chunk.
-            - seccion (str): Etiqueta de sección (best-effort, 'general' si no detectada).
-            - orden_chunk (int): Número de orden (1-indexed).
-            - subseccion (str | None): Siempre None (compatibilidad con BD).
+        Lista de dicts con: contenido, seccion, orden_chunk, subseccion.
     """
     if not texto_completo or not texto_completo.strip():
         return []
 
-    # 1. Dividir en párrafos (doble salto de línea)
-    parrafos = re.split(r"\n\s*\n", texto_completo)
-    parrafos = [p.strip() for p in parrafos if p.strip()]
+    bloques = _partir_por_secciones(texto_completo)
 
-    if not parrafos:
-        return []
-
-    # 2. Agrupar párrafos en chunks con overlap
-    fragmentos = _agrupar_con_overlap(parrafos, max_size, overlap, min_size)
-
-    # 3. Crear chunks con metadata
-    chunks = []
-    for i, fragmento in enumerate(fragmentos, start=1):
-        seccion = _detectar_seccion(fragmento)
-        chunks.append({
-            "contenido": fragmento,
-            "seccion": seccion,
-            "orden_chunk": i,
-            "subseccion": None,
-        })
+    chunks: List[Dict] = []
+    orden = 1
+    for seccion, texto_seccion in bloques:
+        if not texto_seccion.strip():
+            continue
+        fragmentos = _chunkar_texto(texto_seccion, max_size, overlap, min_size)
+        for fragmento in fragmentos:
+            chunks.append({
+                "contenido": fragmento,
+                "seccion": seccion,
+                "orden_chunk": orden,
+                "subseccion": None,
+            })
+            orden += 1
 
     return chunks
 
 
-def _detectar_seccion(texto: str) -> str:
+def _partir_por_secciones(texto: str) -> List[Tuple[str, str]]:
     """
-    Intenta detectar a qué sección pertenece un chunk (best-effort).
-    Busca la ÚLTIMA etiqueta que aparezca, ya que es la más relevante
-    para el contenido del chunk.
+    Parte el texto por las cabeceras conocidas. Devuelve lista de
+    `(seccion, contenido)` en orden de aparición.
 
-    Returns:
-        Nombre normalizado de la sección, o 'general' si no se detecta.
+    El contenido anterior a la primera cabecera detectada se etiqueta como
+    'general' (suele contener la portada / título del proyecto docente).
+
+    Si una misma cabecera aparece varias veces (por repetirse en cada página
+    del PDF), cada ocurrencia delimita un bloque nuevo: **se desduplica
+    posteriormente** conservando el bloque más largo por sección, para
+    evitar los duplicados que se observaron en BD.
     """
-    ultima_seccion = "general"
-    ultima_pos = -1
+    matches: List[Tuple[int, int, str]] = []
+    for regex, nombre in _HEADERS_COMPILED:
+        for m in regex.finditer(texto):
+            matches.append((m.start(), m.end(), nombre))
 
-    for patron, nombre in ETIQUETAS_SECCION:
-        match = None
-        for m in re.finditer(patron, texto, re.IGNORECASE):
-            match = m
-        if match and match.start() >= ultima_pos:
-            # Si hay empate de posición, preferir el nombre más específico
-            if match.start() > ultima_pos or len(nombre) > len(ultima_seccion):
-                ultima_seccion = nombre
-                ultima_pos = match.start()
+    if not matches:
+        return [("general", texto)]
 
-    return ultima_seccion
+    matches.sort(key=lambda t: t[0])
+
+    bloques_raw: List[Tuple[str, str]] = []
+
+    # Contenido antes del primer header -> "general"
+    primer_inicio = matches[0][0]
+    pre = texto[:primer_inicio].strip()
+    if pre:
+        bloques_raw.append(("general", pre))
+
+    # Recorre headers y toma el rango hasta el siguiente header
+    for i, (ini, fin, nombre) in enumerate(matches):
+        siguiente = matches[i + 1][0] if i + 1 < len(matches) else len(texto)
+        contenido = texto[fin:siguiente].strip()
+        if contenido:
+            bloques_raw.append((nombre, contenido))
+
+    return _deduplicar_bloques(bloques_raw)
 
 
-def _agrupar_con_overlap(
-    parrafos: List[str],
+def _deduplicar_bloques(bloques: List[Tuple[str, str]]) -> List[Tuple[str, str]]:
+    """
+    Si una sección aparece varias veces (cabeceras repetidas por página),
+    conserva solo la de mayor longitud. Evita la duplicación observada en
+    `planes_docentes_chunks` donde cada sección tenía 2-4 copias.
+    """
+    mejor: Dict[str, Tuple[int, str]] = {}
+    orden_primera_aparicion: Dict[str, int] = {}
+    for idx, (seccion, contenido) in enumerate(bloques):
+        orden_primera_aparicion.setdefault(seccion, idx)
+        if seccion not in mejor or len(contenido) > mejor[seccion][0]:
+            mejor[seccion] = (len(contenido), contenido)
+
+    return [
+        (seccion, mejor[seccion][1])
+        for seccion in sorted(mejor.keys(), key=lambda s: orden_primera_aparicion[s])
+    ]
+
+
+def _chunkar_texto(
+    texto: str,
     max_size: int,
     overlap: int,
     min_size: int,
 ) -> List[str]:
     """
-    Agrupa párrafos en fragmentos de tamaño <= max_size con solapamiento.
+    Chunking por tamaño dentro de una sección. Respeta párrafos y añade
+    overlap entre chunks consecutivos — pero nunca cruza la frontera de
+    la sección (la función opera sobre texto ya segmentado por sección).
     """
-    fragmentos = []
+    parrafos = re.split(r"\n\s*\n", texto)
+    parrafos = [p.strip() for p in parrafos if p.strip()]
+
+    if not parrafos:
+        return []
+
+    fragmentos: List[str] = []
     buffer = ""
 
     for parrafo in parrafos:
-        if not parrafo:
-            continue
-
-        # Si añadir este párrafo supera el máximo, guardar el buffer actual
         if buffer and len(buffer) + len(parrafo) + 2 > max_size:
             if len(buffer) >= min_size:
                 fragmentos.append(buffer.strip())
-            # Solapamiento: mantener el final del buffer anterior
             if overlap > 0 and buffer:
                 buffer = buffer[-overlap:] + "\n\n" + parrafo
             else:
@@ -156,10 +184,12 @@ def _agrupar_con_overlap(
         else:
             buffer = buffer + "\n\n" + parrafo if buffer else parrafo
 
-    # Último fragmento
     if buffer.strip() and len(buffer.strip()) >= min_size:
         fragmentos.append(buffer.strip())
 
-    return fragmentos if fragmentos else [
-        "\n\n".join(p for p in parrafos if p.strip())
-    ]
+    # Si un solo párrafo supera max_size y no se ha emitido nada,
+    # devolver el texto entero para no perderlo.
+    if not fragmentos and texto.strip():
+        fragmentos = [texto.strip()]
+
+    return fragmentos
