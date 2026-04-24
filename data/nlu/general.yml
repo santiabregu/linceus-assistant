@@ -162,3 +162,23 @@ nlu:
     - dame una receta de cocina
     - quien escribio el quijote
     - cuantos planetas hay
+    # ─── Preguntas subjetivas sobre asignaturas/profesores/titulación ────
+    # El bot no tiene criterio de "mejor/peor/más difícil". Deben ir al
+    # fallback en vez de engancharse con preguntar_hay_mas (por la palabra
+    # "más") o con listados.
+    - cual es la asignatura mas dificil
+    - cual es la asignatura mas facil
+    - cuales son las asignaturas mas dificiles
+    - cuales son las mas faciles
+    - que asignatura es la mas dificil
+    - que asignatura recomiendas
+    - cual es la mejor asignatura
+    - cual es la peor asignatura
+    - cual es el mejor profesor
+    - cuales son los mejores profesores
+    - quien es el profesor mas exigente
+    - cual es la mejor titulacion
+    - cual es la carrera mas dificil
+    - que titulacion es mejor
+    - cristiano o messi
+    - messi o ronaldo

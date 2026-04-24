@@ -193,171 +193,91 @@ def _construir_historial(tracker: Tracker, max_turnos: int = 4) -> str:
 
 # ─── Clasificador RAG ───────────────────────────────────────────────────────
 
-def _clasificar_necesita_rag(
-    pregunta: str, nombre_profesor: str, nombre_asignatura: str
-) -> bool:
-    """
-    Decide si necesitamos RAG para resolver la consulta.
-    Caso típico: el usuario menciona un nombre parcial + asignatura,
-    y necesitamos el plan docente para saber qué profesores dan esa asignatura
-    y así poder hacer match con el nombre parcial.
+# Roles no modelados en `profesor_asignatura`: cuando el usuario los menciona
+# explícitamente, RAG vectorial es la única fuente de verdad.
+_PALABRAS_SOLO_RAG = (
+    'coordinador', 'coordinadora', 'coordina', 'coordinan',
+    'suplente', 'suplentes',
+)
 
-    Solo aplica cuando hay asignatura — si solo hay nombre de profesor,
-    basta con buscar directamente en la tabla profesores.
-    """
-    # Sin asignatura → no necesita RAG, SQL directo
-    if not nombre_asignatura:
-        return False
 
-    # Si no hay nombre de profesor → no necesita RAG tampoco,
-    # el text-to-SQL puede buscar por profesor_asignatura directamente
-    if not nombre_profesor:
-        return False
+def _pregunta_menciona_rol_rag(pregunta: str) -> bool:
+    """True si la pregunta menciona coordinador/suplente: fuerza RAG directo."""
+    pregunta_lower = pregunta.lower()
+    return any(p in pregunta_lower for p in _PALABRAS_SOLO_RAG)
 
-    # Hay profesor + asignatura → la IA decide si el nombre es suficientemente
-    # ambiguo como para necesitar el plan docente para desambiguar
-    prompt = f"""Eres un clasificador. Decide si necesitamos consultar el plan docente de una asignatura para identificar a un profesor.
 
-CONTEXTO: El usuario pregunta por un profesor dando su nombre (posiblemente parcial) y una asignatura.
-Tenemos una tabla de profesores con nombre_normalizado que permite búsqueda fuzzy.
+# ─── Flujo RAG: búsqueda vectorial sobre el plan docente ─────────────────────
 
-Si el nombre del profesor es un apellido completo o nombre+apellido (ej: "Parejo", "Ruiz Cortés", "José Antonio Parejo") → NO necesita plan docente, podemos buscar directamente.
-
-Si el nombre es solo un nombre de pila común/corto (ej: "Belén", "Diana", "Antonio", "Juan") y hay una asignatura que ayudaría a desambiguar → SÍ necesita plan docente para saber cuál de los posibles "Belén" o "Diana" es.
-
-NOMBRE DEL PROFESOR: "{nombre_profesor}"
-ASIGNATURA: "{nombre_asignatura}"
-PREGUNTA: "{pregunta}"
-
-Responde SOLO con: true o false"""
-
+def _rag_chunks_plan_docente(
+    pregunta: str, codigo_asignatura: str, nombre_asignatura: str,
+) -> List[Dict]:
+    """Búsqueda vectorial (con reranking) sobre el plan docente de la asignatura.
+    Mismo patrón que ActionConsultaEspecifica: la titulación ya quedó aplicada
+    al resolver la asignatura aguas arriba."""
     try:
-        respuesta = llamar_llm(
-            prompt, timeout=15,
-            options={"temperature": 0.0, "num_predict": 5}
-        )
-        if respuesta:
-            resp_lower = respuesta.strip().lower()
-            if 'true' in resp_lower:
-                print(f"   → Clasificador RAG profesor: true (LLM)")
-                return True
-            if 'false' in resp_lower:
-                print(f"   → Clasificador RAG profesor: false (LLM)")
-                return False
-    except Exception as e:
-        print(f"   Error clasificando RAG profesor: {e}")
-
-    # Heurística fallback: si el nombre tiene solo 1 palabra y ≤8 chars, probablemente
-    # es un nombre de pila y necesita RAG
-    partes = nombre_profesor.strip().split()
-    if len(partes) == 1 and len(partes[0]) <= 8:
-        print(f"   → Clasificador RAG profesor: true (heurística: nombre corto)")
-        return True
-
-    print(f"   → Clasificador RAG profesor: false (heurística: nombre largo)")
-    return False
-
-
-# ─── Flujo RAG: plan docente → match profesor → info contacto ────────────────
-
-def _resolver_profesor_via_rag(
-    pregunta: str,
-    nombre_profesor: str,
-    codigo_asignatura: str,
-    nombre_asignatura: str,
-) -> Optional[List[Dict]]:
-    """
-    Flujo RAG simple:
-      1. Buscar chunks con el nombre del profesor en plan docente de la asignatura
-      2. Buscar candidatos con ese nombre en tabla profesores
-      3. Si hay varios, filtrar por los que aparecen en el texto de los chunks
-
-    Returns: lista de dicts con datos del profesor, o None si falla.
-    """
-    try:
-        from rag.buscar import _buscar_por_keywords
+        from rag.buscar import buscar_en_plan_docente
     except ImportError as e:
         print(f"   ⚠ RAG no disponible: {e}")
+        return []
+
+    print(f"   📚 RAG vectorial: plan docente de {nombre_asignatura} ({codigo_asignatura})")
+    chunks = buscar_en_plan_docente(
+        pregunta,
+        codigo_asignatura=codigo_asignatura,
+        grupo=None,
+        limite=10,
+    )
+    print(f"   📊 Chunks recuperados: {len(chunks) if chunks else 0}")
+    return chunks or []
+
+
+def _generar_respuesta_rag(
+    pregunta: str, chunks: List[Dict], nombre_asignatura: str,
+) -> Optional[str]:
+    """Convierte chunks del plan docente en una respuesta natural.
+    Mismo prompt/estilo que ActionConsultaEspecifica en asignaturas."""
+    if not chunks:
         return None
 
-    nombre_prof_norm = _normalizar(nombre_profesor)
-    print(f"   📚 RAG: buscando '{nombre_prof_norm}' en plan docente de {nombre_asignatura} ({codigo_asignatura})")
+    def _chunk_header(c):
+        label = c.get('_asignatura_label') or c.get('asignatura_nombre', '')
+        seccion = c.get('seccion', 'general')
+        return f"[{seccion}] ({label})" if label else f"[{seccion}]"
 
-    # Paso 1: buscar por keyword el nombre del profesor directamente
-    chunks = _buscar_por_keywords(
-        nombre_profesor, codigo_asignatura=codigo_asignatura, grupo=None, limite=6
+    contexto = "\n\n---\n\n".join(
+        f"{_chunk_header(c)}\n{c.get('contenido', '')}\nMetadatos: {c.get('metadata', {})}"
+        for c in chunks
     )
 
-    # Paso 2: si no hay resultados, buscar "profesorado coordinador" en todos los grupos
-    if not chunks:
-        print(f"   ⚠ Keyword '{nombre_prof_norm}' sin resultados, buscando sección profesorado...")
-        chunks = _buscar_por_keywords(
-            "profesorado coordinador", codigo_asignatura=codigo_asignatura, grupo=None, limite=10
-        )
+    prompt = f"""Eres Linceus, un asistente universitario de la ETSII (Universidad de Sevilla).
+Responde a la pregunta del usuario usando SOLO la información del plan docente proporcionada.
 
-    if not chunks:
-        print(f"   ⚠ RAG: sin chunks para {nombre_asignatura}")
-        return None
+PREGUNTA DEL USUARIO: "{pregunta}"
+ASIGNATURA: {nombre_asignatura}
 
-    print(f"   📊 Chunks encontrados: {len(chunks)}")
+INFORMACIÓN DEL PLAN DOCENTE:
+{contexto}
 
-    # Paso 3: juntar texto, normalizar, verificar que el nombre aparece
-    texto_completo = _normalizar(" ".join(c['contenido'] for c in chunks))
+REGLAS:
+- Responde de forma natural, cercana y concisa
+- Usa solo la información proporcionada, no inventes datos
+- Puedes usar markdown para formatear (negritas, listas)
+- No menciones que consultaste un "plan docente" ni "chunks"
+- No saludes — ve directo a la respuesta
+- Si la información no es suficiente para responder, dilo amablemente
+- IMPORTANTE: Cada fragmento tiene una etiqueta de sección entre corchetes (ej. [profesorado], [bibliografia]).
+  Los nombres en secciones [bibliografia] son AUTORES DE LIBROS, NO profesores de la asignatura.
+  Solo menciona como profesores a personas de secciones [profesorado] o [coordinador].
+- IMPORTANTE: Tu respuesta debe tener como MÁXIMO 1500 caracteres. Si hay mucha información, resume lo más relevante
 
-    if nombre_prof_norm not in texto_completo:
-        print(f"   ⚠ RAG: '{nombre_prof_norm}' no aparece en los chunks del plan docente")
-        return None
+Respuesta:"""
 
-    print(f"   ✅ '{nombre_prof_norm}' encontrado en plan docente")
-
-    # Paso 4: buscar candidatos en tabla profesores por nombre_normalizado
-    conn = db_client.get_connection()
-    if not conn:
-        return None
-    try:
-        cur = conn.cursor()
-        cur.execute("""
-            SELECT p.id, p.nombre, p.apellidos, p.nombre_normalizado,
-                   p.email, p.telefono, p.despacho, p.edificio, p.planta,
-                   p.web_personal, p.orcid, p.categoria_academica,
-                   p.enlace_perfil, d.siglas AS departamento
-            FROM profesores p
-            LEFT JOIN departamentos d ON p.departamento_id = d.id
-            WHERE p.activo = true AND (
-                p.nombre_normalizado ILIKE %s
-                OR LOWER(p.nombre || ' ' || p.apellidos) ILIKE %s
-                OR LOWER(p.apellidos || ' ' || p.nombre) ILIKE %s
-            )
-        """, (f"%{nombre_prof_norm}%",) * 3)
-        columnas = [desc[0] for desc in cur.description]
-        candidatos = [dict(zip(columnas, row)) for row in cur.fetchall()]
-        cur.close()
-        conn.close()
-    except Exception as e:
-        print(f"   ⚠ RAG: error buscando en BD: {e}")
-        if conn:
-            conn.close()
-        return None
-
-    if not candidatos:
-        print(f"   ⚠ RAG: '{nombre_prof_norm}' no encontrado en tabla profesores")
-        return None
-
-    # Paso 5: si hay varios candidatos, filtrar por nombre_normalizado completo en el texto
-    if len(candidatos) > 1:
-        filtrados = [
-            c for c in candidatos
-            if c.get('nombre_normalizado', '') in texto_completo
-        ]
-        if filtrados:
-            for f in filtrados:
-                print(f"   ✅ Match: '{f['nombre_normalizado']}' en plan docente")
-            candidatos = filtrados
-
-    for c in candidatos:
-        print(f"   ✅ Resultado: {c.get('nombre')} {c.get('apellidos')} ({c.get('email')})")
-
-    return candidatos
+    respuesta = llamar_llm(
+        prompt, timeout=30,
+        options={"temperature": 0.3, "num_predict": 800},
+    )
+    return respuesta.strip() if respuesta else None
 
 
 # ─── Consulta de tutorías por ID ─────────────────────────────────────────────
@@ -486,33 +406,24 @@ class ActionConsultaProfesor(Action):
             if nombre_profesor:
                 print(f"  → Profesor extraído por LLM: '{nombre_profesor}'")
 
-        # ── Clasificar si necesita RAG (IA decide) ──
-        necesita_rag = _clasificar_necesita_rag(pregunta, nombre_profesor, nombre_asignatura)
-
-        if necesita_rag:
-            print(f"  → Flujo RAG: plan docente de '{nombre_asignatura}' para resolver '{nombre_profesor}'")
-            resultados_rag = _resolver_profesor_via_rag(
-                pregunta, nombre_profesor, codigo_asignatura, nombre_asignatura
-            )
-            if resultados_rag:
-                resultados_rag = _enriquecer_con_tutorias(resultados_rag)
-                datos_texto = formatear_datos_para_prompt(resultados_rag)
-                respuesta = generar_respuesta_natural(pregunta, resultados_rag)
-                dispatcher.utter_message(text=respuesta)
-
-                primer = resultados_rag[0]
-                apellidos = primer.get('apellidos', '')
-                nombre = primer.get('nombre', '')
-                prof_display = f"{apellidos}, {nombre}" if apellidos else nombre
-                slots.append(SlotSet("ultimo_profesor_consultado", prof_display))
-                return slots
-            else:
-                print(f"  ⚠ RAG no dio resultados, cayendo a text-to-SQL")
+        # ── Atajo: "coordinador"/"suplente" → RAG vectorial directo ──
+        # Esos roles no viven en `profesor_asignatura`; el plan docente es la
+        # única fuente. Si además tenemos la asignatura resuelta, saltamos SQL.
+        if codigo_asignatura and _pregunta_menciona_rol_rag(pregunta):
+            print(f"  → Atajo RAG: rol (coordinador/suplente) en pregunta")
+            chunks = _rag_chunks_plan_docente(pregunta, codigo_asignatura, nombre_asignatura)
+            if chunks:
+                respuesta_rag = _generar_respuesta_rag(pregunta, chunks, nombre_asignatura)
+                if respuesta_rag:
+                    dispatcher.utter_message(text=respuesta_rag)
+                    slots.append(SlotSet("ultimo_nombre_asignatura", nombre_asignatura))
+                    slots.append(SlotSet("ultimo_codigo_consultado", codigo_asignatura))
+                    return slots
+            # Si RAG no da resultados, caemos al flujo SQL normal como último recurso.
+            print(f"  ⚠ RAG vectorial sin respuesta, cayendo a text-to-SQL")
 
         # ── Text-to-SQL: generar query con LLM ──
-        # Si RAG se intentó (había profesor + asignatura), no pasar la asignatura
-        # al text-to-SQL porque profesor_asignatura está vacía y generaría JOINs inútiles
-        asignatura_para_sql = None if necesita_rag else nombre_asignatura
+        asignatura_para_sql = nombre_asignatura
 
         historial = _construir_historial(tracker)
 
@@ -559,6 +470,20 @@ class ActionConsultaProfesor(Action):
                     print(f"  ✅ Fallback apellido encontró: {len(resultados)} resultados")
 
         if not resultados:
+            # Último recurso: RAG vectorial sobre el plan docente. Cubre los
+            # casos en que `profesor_asignatura` está vacía o no cuadra con el
+            # nombre parcial que dio el usuario.
+            if codigo_asignatura:
+                print(f"  → Fallback RAG vectorial: plan docente de '{nombre_asignatura}'")
+                chunks = _rag_chunks_plan_docente(pregunta, codigo_asignatura, nombre_asignatura)
+                if chunks:
+                    respuesta_rag = _generar_respuesta_rag(pregunta, chunks, nombre_asignatura)
+                    if respuesta_rag:
+                        dispatcher.utter_message(text=respuesta_rag)
+                        slots.append(SlotSet("ultimo_nombre_asignatura", nombre_asignatura))
+                        slots.append(SlotSet("ultimo_codigo_consultado", codigo_asignatura))
+                        return slots
+
             msg = "No encontré resultados para tu consulta."
             if nombre_profesor:
                 msg = (f"No encontré ningún profesor con el nombre \"{nombre_profesor}\". "

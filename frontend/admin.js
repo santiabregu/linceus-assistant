@@ -448,7 +448,7 @@
 
       const cursoNames = { 1: "1er Curso", 2: "2o Curso", 3: "3er Curso", 4: "4o Curso", 0: "Sin curso" };
 
-      let html = `<div class="section-header"><h2>Asignaturas</h2><span class="count-badge">${asignaturas.length}</span><button class="btn-crear" id="btn-vectorizar"><i class="fa-solid fa-cube"></i> Vectorizar planes docentes</button><button class="btn-crear" id="btn-enrich-asigs"><i class="fa-solid fa-wand-magic-sparkles"></i> Enriquecer datos (us.es)</button><button class="btn-crear" id="btn-sync-asigs"><i class="fa-solid fa-rotate"></i> Sincronizar desde Sevius</button></div>`;
+      let html = `<div class="section-header"><h2>Asignaturas</h2><span class="count-badge">${asignaturas.length}</span><button class="btn-crear" id="btn-vectorizar"><i class="fa-solid fa-cube"></i> Vectorizar planes docentes</button><button class="btn-crear" id="btn-enrich-asigs"><i class="fa-solid fa-wand-magic-sparkles"></i> Enriquecer datos (us.es)</button><button class="btn-crear" id="btn-cargar-docencia" title="Popula la tabla profesor_asignatura con la docencia declarada en us.es"><i class="fa-solid fa-chalkboard-user"></i> Cargar docencia</button><button class="btn-crear" id="btn-sync-asigs"><i class="fa-solid fa-rotate"></i> Sincronizar desde Sevius</button></div>`;
 
       Object.keys(grupos)
         .sort((a, b) => a - b)
@@ -508,6 +508,9 @@
       document.getElementById("btn-vectorizar")?.addEventListener("click", () =>
         abrirFormVectorizar(titulacionId, titulacionNombre)
       );
+      document.getElementById("btn-cargar-docencia")?.addEventListener("click", () =>
+        abrirCargarDocencia(titulacionId, titulacionNombre)
+      );
     } catch (err) {
       showEmpty("triangle-exclamation", "Error cargando asignaturas: " + err.message);
     }
@@ -518,9 +521,10 @@
   async function openAsignaturaDetail(id) {
     openModal("Cargando...", '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i></div>');
     try {
-      const [asig, planes] = await Promise.all([
+      const [asig, planes, profes] = await Promise.all([
         fetchJSON(API("/api/admin/asignaturas/" + id)),
         fetchJSON(API("/api/admin/planes_docentes?asignatura_id=" + id)),
+        fetchJSON(API("/api/admin/asignaturas/" + id + "/profesores")),
       ]);
 
       let html = `<div class="detail-grid">
@@ -555,12 +559,37 @@
         html += '<p style="margin-top:20px;color:#777;font-size:13px">No hay planes docentes procesados para esta asignatura.</p>';
       }
 
+      html += `<h3 style="margin:24px 0 12px;font-family:'Raleway',sans-serif;font-weight:600;font-size:16px"><i class="fa-solid fa-user-tie"></i> Profesores (${profes.length})</h3>`;
+      if (profes.length) {
+        html += '<div class="data-table-container"><table class="data-table"><thead><tr><th>Nombre</th><th>Departamento</th><th>Email</th><th>Despacho</th><th>Año acad.</th></tr></thead><tbody>';
+        profes.forEach((p) => {
+          const fullName = p.apellidos ? `${esc(p.apellidos)}, ${esc(p.nombre)}` : esc(p.nombre || p.nombre_completo);
+          html += `<tr data-profesor-id="${esc(p.id)}" style="cursor:pointer">
+            <td><strong>${fullName}</strong>${p.es_coordinador ? ' <span style="background:#fee;color:#c00;font-size:10px;padding:2px 6px;border-radius:3px;margin-left:4px">COORD</span>' : ""}</td>
+            <td>${esc(p.departamento_siglas || p.departamento_nombre) || "-"}</td>
+            <td>${p.email ? `<a href="mailto:${esc(p.email)}">${esc(p.email)}</a>` : "-"}</td>
+            <td>${esc(p.despacho) || "-"}</td>
+            <td style="font-size:12px;color:#777">${esc(p.curso_academico || "-")}</td>
+          </tr>`;
+        });
+        html += "</tbody></table></div>";
+      } else {
+        html += '<p style="color:#777;font-size:13px">Sin profesorado registrado en profesor_asignatura. Ejecuta "Cargar docencia" desde la vista de titulación.</p>';
+      }
+
       $modalTitle.textContent = asig.nombre;
       $modalBody.innerHTML = html;
 
       // Bind chunk buttons
       $modalBody.querySelectorAll(".btn-ver-chunks").forEach((btn) =>
         btn.addEventListener("click", () => loadChunksInModal(btn.dataset.planId))
+      );
+      // Click en fila de profesor -> abrir detalle
+      $modalBody.querySelectorAll("tr[data-profesor-id]").forEach((tr) =>
+        tr.addEventListener("click", (e) => {
+          if (e.target.tagName === "A") return;
+          openProfesorDetail(tr.dataset.profesorId);
+        })
       );
     } catch (err) {
       $modalBody.innerHTML = '<p style="color:red">Error: ' + esc(err.message) + "</p>";
@@ -691,6 +720,9 @@
           <button class="btn-crear" id="btn-enrich-centro">
             <i class="fa-solid fa-wand-magic-sparkles"></i> Enriquecer desde us.es
           </button>
+          <button class="btn-crear" id="btn-refresh-enlaces" title="Busca cada profesor en el directorio PDI de us.es y guarda su enlace de perfil. Necesario para cargar docencia.">
+            <i class="fa-solid fa-link"></i> Refrescar enlaces us.es
+          </button>
         </div>`;
 
       if (!deptos.length && !sinDepto.num_profesores) {
@@ -737,6 +769,9 @@
       );
       document.getElementById("btn-enrich-centro")?.addEventListener("click", () =>
         abrirEnrichCentro(centroId, centroNombre, centroCodigoUs)
+      );
+      document.getElementById("btn-refresh-enlaces")?.addEventListener("click", () =>
+        abrirRefreshEnlaces(centroId, centroNombre)
       );
     } catch (err) {
       showEmpty("triangle-exclamation", "Error: " + err.message);
@@ -836,10 +871,14 @@
   async function openProfesorDetail(id) {
     openModal("Cargando...", '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i></div>');
     try {
-      const p = await fetchJSON(API("/api/admin/profesores/" + id));
+      const [p, asigs] = await Promise.all([
+        fetchJSON(API("/api/admin/profesores/" + id)),
+        fetchJSON(API("/api/admin/profesores/" + id + "/asignaturas")),
+      ]);
       const fullName = p.apellidos ? `${p.apellidos}, ${p.nombre}` : (p.nombre_completo || p.nombre);
       $modalTitle.textContent = fullName;
-      $modalBody.innerHTML = `<div class="detail-grid">
+
+      let html = `<div class="detail-grid">
         <div class="detail-field"><div class="field-label">Centro</div><div class="field-value">${esc(p.centro_nombre) || "-"}</div></div>
         <div class="detail-field"><div class="field-label">Departamento</div><div class="field-value">${esc(p.departamento_nombre) || "Sin departamento"}</div></div>
         <div class="detail-field"><div class="field-label">Categoria</div><div class="field-value">${esc(p.categoria_academica) || "-"}</div></div>
@@ -850,6 +889,30 @@
         <div class="detail-field"><div class="field-label">Web personal</div><div class="field-value">${p.web_personal ? `<a href="${esc(p.web_personal)}" target="_blank" rel="noreferrer">${esc(p.web_personal)}</a>` : "-"}</div></div>
         <div class="detail-field"><div class="field-label">Perfil us.es</div><div class="field-value">${p.enlace_perfil ? `<a href="${esc(p.enlace_perfil)}" target="_blank" rel="noreferrer">Ver perfil</a>` : "-"}</div></div>
       </div>`;
+
+      html += `<h3 style="margin:24px 0 12px;font-family:'Raleway',sans-serif;font-weight:600;font-size:16px"><i class="fa-solid fa-chalkboard-user"></i> Asignaturas que imparte (${asigs.length})</h3>`;
+      if (asigs.length) {
+        html += '<div class="data-table-container"><table class="data-table"><thead><tr><th>Código</th><th>Asignatura</th><th>Titulación</th><th>Curso</th><th>Año acad.</th></tr></thead><tbody>';
+        asigs.forEach((a) => {
+          html += `<tr data-asignatura-id="${esc(a.id)}" style="cursor:pointer">
+            <td><code>${esc(a.codigo)}</code></td>
+            <td><strong>${esc(a.nombre)}</strong>${a.es_coordinador ? ' <span style="background:#fee;color:#c00;font-size:10px;padding:2px 6px;border-radius:3px;margin-left:4px">COORD</span>' : ""}</td>
+            <td>${esc(a.titulacion_codigo || "-")}</td>
+            <td>${a.curso || "-"}</td>
+            <td style="font-size:12px;color:#777">${esc(a.curso_academico || "-")}</td>
+          </tr>`;
+        });
+        html += "</tbody></table></div>";
+      } else {
+        html += '<p style="color:#777;font-size:13px">Sin docencia registrada. Ejecuta "Cargar docencia" desde la vista de titulación.</p>';
+      }
+
+      $modalBody.innerHTML = html;
+
+      // Click en fila de asignatura -> abrir detalle
+      $modalBody.querySelectorAll("tr[data-asignatura-id]").forEach((tr) =>
+        tr.addEventListener("click", () => openAsignaturaDetail(tr.dataset.asignaturaId))
+      );
     } catch (err) {
       $modalBody.innerHTML = '<p style="color:red">Error: ' + esc(err.message) + "</p>";
     }
@@ -959,6 +1022,119 @@
         $btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Cerrar';
         $btn.disabled = false;
         $btn.onclick = () => { closeModal(); loadProfesoresDepto(deptoId, deptoNombre, centroId, centroNombre); };
+      } catch (err) {
+        $msg.innerHTML = formError(err.message);
+        $btn.disabled = false;
+      }
+    });
+  }
+
+  async function abrirRefreshEnlaces(centroId, centroNombre) {
+    openModal("Refrescar enlaces us.es", `
+      <p style="font-size:13px;color:#555;margin-bottom:14px">
+        Por cada profesor del centro que no tenga enlace al directorio PDI de
+        us.es, se buscara su perfil por nombre y se guardara el enlace.
+        Esto es <strong>prerequisito</strong> para "Cargar docencia" (tabla
+        profesor_asignatura).
+      </p>
+      <p style="font-size:12px;color:#777;margin-bottom:14px">
+        Puede tardar varios minutos segun el numero de profesores.
+      </p>
+      <div id="refresh-msg"></div>
+      <div class="form-actions">
+        <button class="btn-submit" id="btn-refresh-submit">
+          <i class="fa-solid fa-link"></i> Refrescar enlaces
+        </button>
+      </div>`);
+
+    document.getElementById("btn-refresh-submit").addEventListener("click", async () => {
+      const $msg = document.getElementById("refresh-msg");
+      const $btn = document.getElementById("btn-refresh-submit");
+      $msg.innerHTML = '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Buscando en us.es... (puede tardar)</div>';
+      $btn.disabled = true;
+
+      try {
+        const res = await postJSON(API("/api/admin/centros/" + centroId + "/refresh_enlaces_us"), {});
+        const noEnc = res.no_encontrados || [];
+        let html = `<div class="form-success">
+          <strong>${res.ya_con_enlace_us || 0}</strong> ya tenian enlace us.es.<br>
+          <strong>${res.resueltos || 0}</strong> enlaces nuevos resueltos.<br>
+          <strong>${noEnc.length}</strong> sin resolver (0 o >1 coincidencias).
+        </div>`;
+        if (noEnc.length) {
+          const lista = noEnc.slice(0, 15).map((x) =>
+            `<li>${esc(x.nombre || x.id)} \u2014 ${esc(x.motivo || "")}</li>`
+          ).join("");
+          html += `<details style="margin-top:8px">
+            <summary style="cursor:pointer;font-size:12px">Ver no resueltos (${noEnc.length})</summary>
+            <ul style="font-size:12px;margin-top:6px">${lista}</ul>
+          </details>`;
+          console.warn("No resueltos:", noEnc);
+        }
+        $msg.innerHTML = html;
+        $btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Cerrar';
+        $btn.disabled = false;
+        $btn.onclick = () => closeModal();
+      } catch (err) {
+        $msg.innerHTML = formError(err.message);
+        $btn.disabled = false;
+      }
+    });
+  }
+
+  async function abrirCargarDocencia(titulacionId, titulacionNombre) {
+    openModal("Cargar docencia desde us.es", `
+      <p style="font-size:13px;color:#555;margin-bottom:14px">
+        Para cada profesor del centro con enlace us.es, se scrapeara su
+        seccion <strong>"Asignaturas que imparte"</strong> y se poblara la
+        tabla <code>profesor_asignatura</code> de <strong>${esc(titulacionNombre)}</strong>.
+      </p>
+      <p style="font-size:12px;color:#777;margin-bottom:14px">
+        <strong>Requisito:</strong> los profesores del centro deben tener su
+        enlace us.es guardado. Si no, ejecuta antes
+        <em>"Refrescar enlaces us.es"</em> desde la pesta\u00f1a Profesores.
+      </p>
+      <div id="docencia-msg"></div>
+      <div class="form-actions">
+        <button class="btn-submit" id="btn-docencia-submit">
+          <i class="fa-solid fa-chalkboard-user"></i> Cargar docencia
+        </button>
+      </div>`);
+
+    document.getElementById("btn-docencia-submit").addEventListener("click", async () => {
+      const $msg = document.getElementById("docencia-msg");
+      const $btn = document.getElementById("btn-docencia-submit");
+      $msg.innerHTML = '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Scrapeando perfiles us.es... (puede tardar varios minutos)</div>';
+      $btn.disabled = true;
+
+      try {
+        const res = await postJSON(API("/api/admin/titulaciones/" + titulacionId + "/sync_docencia"), {});
+        const noMatch = res.ejemplos_no_matcheadas || [];
+        let html = `<div class="form-success">
+          <strong>${res.total_profes || 0}</strong> profesores procesados,
+          <strong>${res.profes_con_docencia || 0}</strong> con docencia.<br>
+          <strong>${res.relaciones_creadas || 0}</strong> relaciones creadas,
+          <strong>${res.ya_existentes || 0}</strong> ya existentes.<br>
+          <strong>${res.no_matcheadas_en_titulacion || 0}</strong> asignaturas us.es
+          no matcheadas con esta titulacion (otras carreras).
+        </div>`;
+        if (noMatch.length) {
+          const lista = noMatch.map((x) =>
+            `<li><code>${esc(x.codigo_us)}</code> \u2014 ${esc(x.nombre_us)} <em>(${esc(x.titulacion_slug)})</em></li>`
+          ).join("");
+          html += `<details style="margin-top:8px">
+            <summary style="cursor:pointer;font-size:12px">Ver ejemplos no matcheados (${noMatch.length})</summary>
+            <ul style="font-size:12px;margin-top:6px">${lista}</ul>
+          </details>`;
+        }
+        if ((res.errores || []).length) {
+          html += `<div class="form-error">${res.errores.length} errores. Ver consola.</div>`;
+          console.warn("Errores sync docencia:", res.errores);
+        }
+        $msg.innerHTML = html;
+        $btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Cerrar';
+        $btn.disabled = false;
+        $btn.onclick = () => closeModal();
       } catch (err) {
         $msg.innerHTML = formError(err.message);
         $btn.disabled = false;
