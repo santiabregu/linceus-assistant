@@ -247,6 +247,43 @@ nlu:
     - [Estadistica](nombre_asignatura) grupo 5 en que idioma se da?
     - en que planta esta la aula A1.10
     - La aula A1.10 donde esta
+    # ─── Casos reales observados en conversation_log (2026-04) ──────────
+    # Variantes de "cómo se evalúa" (acentos, typos, imperfecto, plural con
+    # dos asignaturas), preguntas ultracortas que son solo un alias, y
+    # parafraseos del tipo "háblame de X" / "qué se hace en X".
+    - Cómo se evalúa [DP1](nombre_asignatura)
+    - cómo se evaluaba [DP1](nombre_asignatura)
+    - Cómo se evaluaba [DP1](nombre_asignatura)?
+    - Cómo se evaluaban [DP1](nombre_asignatura) y [PSG2](nombre_asignatura)?
+    - Cómo se evalúa [DP2](nombre_asignatura)?
+    - Como se evalua [dp](nombre_asignatura)
+    - Como se evalua [dp](nombre_asignatura)?
+    - como se evalua [dp](nombre_asignatura)?
+    - como se evalua [algebra](nombre_asignatura)
+    - Como se evalua [fp](nombre_asignatura)
+    - como se evalua [ispp](nombre_asignatura)
+    - Dime la evaluacion de [ispp](nombre_asignatura)
+    - dime como se evalua [algebr](nombre_asignatura)
+    - Cuantos creditos tiene [algebra](nombre_asignatura)
+    - Pero qué se hace en [dp1](nombre_asignatura)?
+    - Pero qué tecnología usa? Dame ejemplos
+    - No, me refería a [dp1](nombre_asignatura), si se usa spring boot o qué se usa
+    - Que dificultad tiene [DP](nombre_asignatura) respecto a [MSN](nombre_asignatura)?
+    - Que evaluación tenia [DP](nombre_asignatura) antes de que se partiera la asignatura?
+    - Cuantas convocatorias puedo ir a [FP](nombre_asignatura)?
+    - Háblame de [DP2](nombre_asignatura)
+    - Háblame de [IISSI1](nombre_asignatura)
+    - Háblame de [IISSI2](nombre_asignatura)
+    - Háblame de [ISSI2](nombre_asignatura)
+    - Me gustaría saber sobre qué va la asignatura de [ISSI-2](nombre_asignatura)
+    - Quiero saber sobre qué va la asignatura [IISSI2](nombre_asignatura)
+    # Alias sueltos como mensaje (follow-up implícito con ultimo_nombre_asignatura).
+    - [PD](nombre_asignatura)?
+    - [adda](nombre_asignatura)
+    - [fp](nombre_asignatura)
+    - [matematicas 1](nombre_asignatura)
+    - [Diseño y Pruebas I](nombre_asignatura)
+    - Y de [Estadística](nombre_asignatura)?
 
 # =============================================================================
 # INTENT 1.b: HORARIO DE ASIGNATURA - Pregunta por horario/aula/dia de una
@@ -352,6 +389,20 @@ nlu:
     - qué horario tiene esa
     - y los horarios
     - en qué días se imparte esa
+    # ─── Casos reales observados en conversation_log (2026-04) ──────────
+    # Preguntas por aula/laboratorio/hora con asignatura explícita, incluyendo
+    # referencia temporal ("próximo lunes") y grupo alfabético.
+    - A qué hora tengo [SI](nombre_asignatura)
+    - A que hora es [FP](nombre_asignatura) el próximo lunes
+    - a qué hora era mi laboratorio de [DP1](nombre_asignatura)
+    - cuándo tenemos laboratorio de [SO](nombre_asignatura) los del grupo b?
+    - Donde es mi laboratorio de [matemática discreta](nombre_asignatura) de primero
+    - Donde son las practicas de [Adda](nombre_asignatura)
+    - En q aula se imparte [ispp](nombre_asignatura)
+    - En qué laboratorio son las practicas de [FP](nombre_asignatura)?
+    - Dime cuál es la clase de laboratorio de [TIS](nombre_asignatura)
+    - Dime el horario de [SI](nombre_asignatura) GRUPO 3
+    - Dime horario de [SI](nombre_asignatura) para la letra T del dni
 
 # =============================================================================
 # INTENT 2: LISTADO - Pide una LISTA de asignaturas con filtros
@@ -456,6 +507,10 @@ nlu:
     - ensenname todas las asignaturas
     - dame todas las asignaturas del grado
     - quiero todas las asignaturas
+    # ─── Casos reales observados en conversation_log (2026-04) ──────────
+    - Dame las optativas de cuarto
+    - Cuales son las asignaturas de 1º?
+    - Cuáles son las asignaturas del grado desglosadas por curso académico?
 
 # =============================================================================
 # INTENT 3: CONTEO - Pregunta por CANTIDAD de asignaturas

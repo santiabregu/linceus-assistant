@@ -69,6 +69,20 @@ nlu:
     - la primera, [IS](nombre_titulacion)
     - la segunda, [TI](nombre_titulacion)
     - la tercera, [IC](nombre_titulacion)
+    # ─── Casos reales observados en conversation_log (2026-04) ──────────
+    # Variantes cortas, abreviadas y con typos del nombre de la titulación,
+    # y un caso explícito de especialidad (GII-IA) que no pertenece al catálogo
+    # ETSII y debe caer en el pipeline normal (el action resuelve fuzzy).
+    - [Ing de software](nombre_titulacion)
+    - [ing de software](nombre_titulacion)
+    - [Ingeniería de software](nombre_titulacion)
+    - [Software](nombre_titulacion)
+    - [Is](nombre_titulacion)
+    - Soy de [IS](nombre_titulacion)
+    - [gii is](nombre_titulacion)
+    - [GII IS](nombre_titulacion)
+    - soy de la especialidad de IA ([GII-IA](nombre_titulacion))
+    - [Ingeniería de la Salud](nombre_titulacion)
 
 - intent: consulta_titulaciones
   examples: |

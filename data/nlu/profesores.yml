@@ -178,3 +178,38 @@ nlu:
     - y [Alejandro Garcia Fernandez](nombre_profesor)?
     - dame el contacto
     - y su contacto?
+    # ─── Casos reales observados en conversation_log (2026-04) ──────────
+    # Tutorías por profesor con typos ("Titorias"), uso de "profesorado"
+    # en vez de "profesores", y variantes largas con "Cuáles son todos".
+    # Referencia a profesor con nombre completo o en mayúsculas.
+    - Titorias del [parejo](nombre_profesor)
+    - Tutorias de [jose parejo](nombre_profesor)
+    - tutorias del [parejo](nombre_profesor)
+    - Tutorías del profesor [parejo](nombre_profesor)
+    - Cuál es el horario de tutorías de [José Antonio Parejo](nombre_profesor)?
+    - A que hora son las tutorias de la asignatura [administracion de empresas](nombre_asignatura)?
+    - profesorado de [egc](nombre_asignatura)
+    - profesorado de [adda](nombre_asignatura)
+    - el profesorado de [algebra](nombre_asignatura)?
+    - profesores de [egc](nombre_asignatura)
+    - Que profesores dan [DP](nombre_asignatura)?
+    - Que profesores imparten [ISPP](nombre_asignatura)?
+    - Cuáles son los profesores de [EGC](nombre_asignatura)
+    - Cuáles son todos los profesores de [EGC](nombre_asignatura)?
+    - quienes son los profesores de [egc](nombre_asignatura)
+    - quienes son los profesores de [pgpi](nombre_asignatura)
+    - quienes son los profesores del grupo 3 de [dp2](nombre_asignatura)
+    - quienes son los profesores de esa asignatura
+    - dame el correo de [ANDRES ARMARIO SAMPALO](nombre_profesor)
+    - dame el correo de [parejo](nombre_profesor)
+    - Cuál es la despacho de [Joaquín peña](nombre_profesor)
+    - en que despacho esta [ruiz cortes](nombre_profesor)
+    - [José María ucha](nombre_profesor) dime su despacho
+    - [Joaquín peña siles](nombre_profesor)
+    - [José Antonio Parejo Maestre](nombre_profesor)
+    - dame info sobre [carlos muller](nombre_profesor)
+    - quien es [adrian romero flores](nombre_profesor)
+    - que asignatura da el profesor [adrian romero flores](nombre_profesor)
+    - Sabes quién es [Alfonso bengoa](nombre_profesor)?
+    - Y [bedilia](nombre_profesor)?
+    - Pruebalo con [jose](nombre_profesor)
