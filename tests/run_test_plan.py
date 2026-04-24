@@ -806,8 +806,9 @@ def generate_report(
     """Genera informes en JSON y Markdown."""
     os.makedirs(output_dir, exist_ok=True)
 
-    # --- JSON completo ---
-    json_path = os.path.join(output_dir, f"results_{timestamp}.json")
+    # Solo guardamos la última ejecución (sobrescribe por diseño).
+    # El timestamp sigue apareciendo dentro del informe como metadato.
+    json_path = os.path.join(output_dir, "asignaturas.json")
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(
             [asdict(r) for r in all_results],
@@ -816,8 +817,7 @@ def generate_report(
             indent=2,
         )
 
-    # --- Markdown resumen ---
-    md_path = os.path.join(output_dir, f"report_{timestamp}.md")
+    md_path = os.path.join(output_dir, "asignaturas.md")
 
     # Agrupar resultados por test_id
     results_by_id: dict[str, list[TestResult]] = {}
