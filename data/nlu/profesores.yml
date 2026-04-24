@@ -97,6 +97,19 @@ nlu:
     - profesorado de [Proceso Software y Gestion](nombre_asignatura)
     - quien imparte [Proceso Software](nombre_asignatura) en el grupo 1
     - quien da [PSG](nombre_asignatura) en el grupo 2
+    # ─── Tutorías por asignatura (devuelve profesores + aviso de contacto) ───
+    - tutorías de [EGC](nombre_asignatura)
+    - tutorias de [FP](nombre_asignatura)
+    - tutorías de [Diseno y Pruebas](nombre_asignatura)
+    - ¿cuándo son las tutorías de [ADDA](nombre_asignatura)?
+    - ¿a qué hora son las tutorías de [IS2](nombre_asignatura)?
+    - ¿dónde son las tutorías de [Redes](nombre_asignatura)?
+    - horario de tutorías de [Bases de Datos](nombre_asignatura)
+    - horario de tutorías de [Estadistica](nombre_asignatura)
+    - tutoría de [Calculo](nombre_asignatura)
+    - tutorías de la asignatura [FP](nombre_asignatura)
+    - quiero ir a tutoría de [DP1](nombre_asignatura)
+    - ¿a qué hora puedo ir a tutoría de [PSG](nombre_asignatura)?
     # ─── Coordinador y suplentes (solo plan docente, se resuelven via RAG) ───
     - quien coordina [FP](nombre_asignatura)
     - quien coordina [DP1](nombre_asignatura)

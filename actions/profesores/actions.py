@@ -18,6 +18,8 @@ Flujo:
   6. LLM genera respuesta natural
 """
 
+import difflib
+import re
 import unicodedata
 from typing import Any, Text, Dict, List, Optional
 
@@ -48,6 +50,27 @@ def _normalizar(texto: str) -> str:
     texto = unicodedata.normalize("NFKD", texto)
     texto = "".join(c for c in texto if not unicodedata.combining(c))
     return texto.lower().strip()
+
+
+# Objetivo para fuzzy match: los tokens normalizados de "tutoría(s)".
+_TUTORIA_VARIANTES = ("tutoria", "tutorias")
+
+
+def _pregunta_sobre_tutorias(pregunta: str) -> bool:
+    """True si la pregunta menciona tutorías (tolerando typos).
+
+    Tokeniza la pregunta y compara cada token (≥5 chars, empieza por 't')
+    contra {"tutoria","tutorias"} con SequenceMatcher. Umbral 0.8 acierta
+    'tutuoria', 'tutoriaa', 'tuturia' y descarta 'turista'/'historia'.
+    """
+    for token in re.findall(r"[a-záéíóúñ]+", pregunta.lower()):
+        tok = _normalizar(token)
+        if len(tok) < 5 or not tok.startswith("t"):
+            continue
+        for ref in _TUTORIA_VARIANTES:
+            if difflib.SequenceMatcher(None, tok, ref).ratio() >= 0.8:
+                return True
+    return False
 
 
 def _clasificar_resultados_por_similitud(
@@ -422,18 +445,32 @@ class ActionConsultaProfesor(Action):
             # Si RAG no da resultados, caemos al flujo SQL normal como último recurso.
             print(f"  ⚠ RAG vectorial sin respuesta, cayendo a text-to-SQL")
 
-        # ── Text-to-SQL: generar query con LLM ──
-        asignatura_para_sql = nombre_asignatura
+        # ── Detección de consulta de tutorías (fuzzy, tolera typos) ──
+        # Si el usuario pregunta por tutorías, tratamos la consulta como
+        # "dame los profesores relevantes" + aviso de contactar por email
+        # (la tabla `tutorias` está vacía — ver D-061). Usamos `_fallback_sql`
+        # directo para evitar que el LLM genere un JOIN con `tutorias`.
+        consulta_tutorias = _pregunta_sobre_tutorias(pregunta)
+        if consulta_tutorias:
+            print(f"  → Consulta de tutorías detectada: tratando como 'profesores de' + aviso")
 
         historial = _construir_historial(tracker)
 
-        resultado_sql = generar_sql_profesor(
-            pregunta=pregunta,
-            nombre_profesor=nombre_profesor,
-            nombre_asignatura=asignatura_para_sql,
-            nombre_departamento=nombre_departamento,
-            historial=historial,
-        )
+        if consulta_tutorias and (nombre_profesor or nombre_asignatura):
+            asig_norm = _normalizar(nombre_asignatura) if nombre_asignatura else None
+            resultado_sql = _fallback_sql(
+                nombre_profesor, asig_norm, nombre_departamento,
+                contexto_titulacion=titulacion,
+            )
+        else:
+            # ── Text-to-SQL: generar query con LLM ──
+            resultado_sql = generar_sql_profesor(
+                pregunta=pregunta,
+                nombre_profesor=nombre_profesor,
+                nombre_asignatura=nombre_asignatura,
+                nombre_departamento=nombre_departamento,
+                historial=historial,
+            )
 
         if not resultado_sql.get('valido'):
             dispatcher.utter_message(
@@ -524,7 +561,13 @@ class ActionConsultaProfesor(Action):
         resultados = _enriquecer_con_tutorias(resultados)
 
         # ── Generar respuesta natural con LLM ──
-        respuesta = generar_respuesta_natural(pregunta, resultados)
+        # `tutorias_no_disponibles`: la tabla `tutorias` está vacía (D-061);
+        # si el usuario preguntó por tutorías, instruimos al LLM a redirigir
+        # al email en lugar de intentar responder con horarios.
+        respuesta = generar_respuesta_natural(
+            pregunta, resultados,
+            tutorias_no_disponibles=consulta_tutorias,
+        )
         dispatcher.utter_message(text=respuesta)
 
         # ── Guardar contexto en slots ──
