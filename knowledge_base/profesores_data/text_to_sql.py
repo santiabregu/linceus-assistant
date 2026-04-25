@@ -7,7 +7,17 @@ import re
 import json
 import sys
 import os
+import unicodedata
 from typing import Dict, Any, List, Optional, Tuple
+
+
+def _sin_tildes_lower(texto: str) -> str:
+    """Normaliza igual que `nombre_normalizado` en BD: minúsculas y sin tildes."""
+    if not texto:
+        return ""
+    nfkd = unicodedata.normalize("NFKD", texto)
+    sin_tildes = "".join(c for c in nfkd if not unicodedata.combining(c))
+    return sin_tildes.lower().strip()
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 from actions.shared.gemini_client import llamar_gemini as llamar_llm
@@ -150,7 +160,19 @@ def generar_sql_profesor(
     if nombre_profesor:
         entidades += f'PROFESOR MENCIONADO: "{nombre_profesor}"\n'
     if nombre_asignatura:
-        entidades += f'ASIGNATURA MENCIONADA: "{nombre_asignatura}"\n'
+        asig_norm = _sin_tildes_lower(nombre_asignatura)
+        entidades += (
+            f'ASIGNATURA MENCIONADA (nombre completo ya resuelto desde alias/sigla): '
+            f'"{nombre_asignatura}"\n'
+            f'  ⚠ OBLIGATORIO: en el WHERE usa exactamente '
+            f"`a.nombre_normalizado ILIKE '%{asig_norm}%'` "
+            f"(string ya en minúsculas y SIN tildes, copia literal). "
+            f"NO uses la sigla, abreviatura o forma corta que aparezca en la "
+            f"PREGUNTA del usuario (p.ej. 'PSG1', 'IA', 'BD'); el alias ya está "
+            f"resuelto al nombre completo. La columna `nombre_normalizado` "
+            f"contiene el nombre completo en minúsculas y sin tildes, así que "
+            f"NO añadas tildes al string.\n"
+        )
     if nombre_departamento:
         entidades += f'DEPARTAMENTO MENCIONADO: "{nombre_departamento}"\n'
     if contexto_titulacion:
@@ -481,6 +503,7 @@ def generar_respuesta_natural(
     pregunta: str,
     datos: List[Dict],
     tutorias_no_disponibles: bool = False,
+    nombre_asignatura_resuelto: str = None,
 ) -> str:
     """Genera respuesta natural usando el LLM.
 
@@ -488,6 +511,12 @@ def generar_respuesta_natural(
     redirigir al usuario al email del profesor en vez de intentar responder
     sobre horarios de tutorías (la tabla `tutorias` está vacía, no los
     tenemos).
+
+    Si `nombre_asignatura_resuelto` se pasa, el prompt indica al LLM que la
+    sigla/alias usado por el usuario ya se resolvió a esa asignatura, para
+    evitar que la regla anti-alucinación rechace los datos por no contener
+    literalmente la sigla (ej. el usuario pregunta por "PSG1" y los datos
+    son de "Proceso Software y Gestión I").
     """
     datos_texto = formatear_datos_para_prompt(datos)
 
@@ -501,11 +530,21 @@ def generar_respuesta_natural(
             "No inventes horarios ni ubicaciones de tutorías."
         )
 
+    nota_asignatura = ""
+    if nombre_asignatura_resuelto:
+        nota_asignatura = (
+            f"\nCONTEXTO DE ASIGNATURA: La sigla/alias usado por el usuario en su "
+            f"pregunta ya ha sido resuelto a la asignatura "
+            f"\"{nombre_asignatura_resuelto}\". Trata ambas formas como equivalentes: "
+            f"los DATOS DE PROFESORES corresponden a esa asignatura, aunque su nombre "
+            f"completo no aparezca literal en la pregunta."
+        )
+
     prompt = f"""Eres Linceus, un asistente universitario de la ETSII (Universidad de Sevilla).
 Responde a la pregunta del usuario usando SOLO los datos proporcionados.
 
 PREGUNTA DEL USUARIO: "{pregunta}"
-
+{nota_asignatura}
 DATOS DE PROFESORES:
 {datos_texto}
 
@@ -513,7 +552,16 @@ REGLAS:
 - Responde de forma natural, cercana y concisa
 - Presenta la información de forma organizada y legible
 - Usa markdown para formatear (negritas, listas)
-- No inventes datos que no estén proporcionados
+- **PROHIBIDO INVENTAR DATOS.** Esta regla es absoluta y prevalece sobre todas las demás:
+    - No inventes nombres de profesores, emails, despachos, teléfonos ni grupos
+    - Si los DATOS DE PROFESORES están vacíos o no contienen lo que pregunta el usuario,
+      di explícitamente que no tienes esa información y NO completes la respuesta con
+      datos plausibles
+    - Si el usuario pregunta por un grupo concreto (p.ej. "grupo 2") y los datos no
+      indican grupo para cada profesor, NO asignes profesores a ese grupo: di que
+      no consta la división por grupo en los datos disponibles
+    - Si hay un nombre cercano pero no idéntico al pedido, dilo como sugerencia
+      ("¿quizás te refieres a X?"), no lo afirmes como respuesta
 - Si no hay resultados, dilo amablemente y sugiere buscar de otra forma
 - No repitas la pregunta del usuario
 - No digas "según los datos" ni menciones la base de datos

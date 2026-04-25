@@ -396,6 +396,45 @@ Con un solo grado cargado en `profesor_asignatura` el bug no se veía, pero al c
 
 **Archivos:** `actions/profesores/actions.py` (~6 líneas), `knowledge_base/profesores_data/text_to_sql.py` (schema + instrucción condicional + rama de fallback).
 
+### D-066: Cuatrimestre como dimensión de horarios (perdida en S6)
+
+**Problema:** Detectado durante la fase de pruebas de aceptación (sesión 2026-04-25). El extractor de horarios ETSII (`admin/horarios_extractores/etsii.py`) parsea correctamente el cuatrimestre del PDF — los códigos de tabla son `xGy-Cz` con `z = 1|2` — y crea objetos `EntradaHorario(cuatrimestre=…)` (`base.py:33,236`). Sin embargo, al insertar en BD, la tabla `horarios` **no tenía columna `cuatrimestre`** y el campo se descartaba al persistir. El campo `grupos_clase.cuatrimestre` existía pero nunca fue concebido como dimensión de horario semanal — quedaba sin poblar (0/267) y resultaba irrelevante.
+
+**Síntoma observado en datos:** 9+ asignaturas con tres filas de `horarios` para el mismo grupo/día/hora (Fundamentos de Programación grupo 1 miércoles 10:40 → 3 filas). Esas filas son la misma asignatura impartida en distintas instancias temporales (C1, C2 y/o la versión "anual" `duracion='A'`) que al perder el cuatrimestre se mezclan. El bot devolvía el horario incorrecto durante el 50% del año.
+
+Este bug es residual de S6 (D-005), donde se diseñó la primera versión del extractor de horarios. La separación por cuatrimestre nunca llegó al schema porque las primeras consultas de prueba eran por asignatura cuatrimestral pura ("¿cuándo es Cálculo?") y no por horario semanal del alumno ("¿qué tengo el lunes?").
+
+**Decisión:** Hacer del cuatrimestre dimensión de primera clase, **a nivel de `horarios`**:
+
+1. **Migración SQL** (ejecutada manualmente en Supabase 2026-04-25):
+   ```sql
+   ALTER TABLE horarios ADD COLUMN cuatrimestre varchar(2);
+   ```
+2. **Modelo**: un mismo grupo de teoría es **una sola fila** en `grupos_clase` (la UNIQUE constraint `(asignatura_id, codigo, curso_academico, tipo)` ya lo imponía). Lo que cambia entre C1 y C2 no es el "grupo" como entidad — el alumno sigue cursando el grupo 1 de FP todo el año — sino su **horario semanal**. Por tanto el cuatrimestre vive en `horarios`. Una asignatura anual (`duracion='A'`) genera filas en `horarios` con `cuatrimestre='1'` y otras con `cuatrimestre='2'`, todas colgando del mismo `grupos_clase`.
+3. **Extractor** (`admin/horarios_extractores/base.py`):
+   - El cache `mapa_gc` mantiene la clave `(asignatura_id, codigo)` (sin cuatrimestre).
+   - El INSERT a `horarios` añade el campo `cuatrimestre`, leído de `EntradaHorario.cuatrimestre` que ya se parseaba correctamente.
+4. **Runtime** (pendiente, ver D-067): la query de horarios filtra por cuatrimestre o lo muestra como columna explícita en la respuesta. Sin esto el fix de ingesta no resuelve la experiencia del usuario.
+
+Se descartó la alternativa de duplicar `grupos_clase` por cuatrimestre (clave `(asig, codigo, cuatri)`) porque exigía relajar la UNIQUE constraint y multiplicaba filas que no aportan información nueva — el grupo de teoría "1" de FP es la misma entidad de gestión académica todo el curso.
+
+**Justificación:**
+
+- **Coste mínimo en ingesta:** una columna nullable en `horarios` y dos campos extra en los INSERT. Sin coste en queries existentes.
+- **Resuelve la causa raíz:** la información ya se extrae correctamente del PDF; el problema era de persistencia, no de parsing. El fix mantiene el extractor 95% intacto.
+- **Argumentable en la memoria:** el descubrimiento del bug **es** el caso de uso de las pruebas de aceptación — sirve como ejemplo concreto de por qué tener una suite estructurada importa, y se referenciará en el capítulo de pruebas.
+
+**Alternativas descartadas:**
+
+- **Tratar las asignaturas anuales (`duracion='A'`) como caso especial sin cuatrimestre:** no funciona porque incluso esas tienen horarios distintos en C1 vs C2 (p. ej. FP cambia de día/hora entre cuatrimestres). El cuatrimestre es siempre relevante a nivel de instancia de horario.
+- **Inferir el cuatrimestre en runtime desde la fecha del sistema:** falla durante exámenes (febrero-marzo) y vacaciones, donde "el horario actual" no aplica. Mejor persistir el dato y dejar que la action decida cómo mostrarlo.
+- **Borrar y re-scrapear todo:** sí se hace, pero como **consecuencia** del fix, no como alternativa. Se borran los 753 horarios actuales y se vuelven a importar con el extractor corregido. Validación: comprobar que las 9 asignaturas con duplicados ya no los tienen.
+
+**Archivos:**
+- Migración SQL ejecutada manualmente.
+- `admin/horarios_extractores/base.py` (3 ediciones: clave de `mapa_gc`, INSERT a `grupos_clase`, INSERT a `horarios`).
+- `actions/horarios/...` (pendiente, D-067).
+
 ### D-064: RAG de profesores como vectorial puro — sin double-check en BD
 
 **Problema:** El pipeline establecido en D-062 tenía dos piezas que no envejecieron bien tras el despliegue:

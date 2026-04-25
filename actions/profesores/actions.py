@@ -81,6 +81,24 @@ def _clasificar_resultados_por_similitud(
     return clasificar_por_normalizado(nombre_consulta, resultados)
 
 
+def _detectar_grupo(texto: str) -> Optional[str]:
+    """Detecta 'grupo X' o 'gX' en la pregunta y lo devuelve como 'Grupo X'.
+
+    Mismo patrón que `_detectar_grupo` en actions/asignaturas/actions.py;
+    se duplica aquí para evitar importes cruzados entre módulos de actions.
+    """
+    if not texto:
+        return None
+    texto_lower = texto.lower()
+    match = re.search(r'\bgrupo\s+(\d+)\b', texto_lower)
+    if match:
+        return f"Grupo {match.group(1)}"
+    match = re.search(r'\bg(\d+)\b', texto_lower)
+    if match:
+        return f"Grupo {match.group(1)}"
+    return None
+
+
 def _formatear_sugerencia(nombre_consulta: str, sugerencias: list) -> str:
     """
     Construye el mensaje 'no encontre X, ¿quizas Y?' cuando no hay match firme.
@@ -234,21 +252,29 @@ def _pregunta_menciona_rol_rag(pregunta: str) -> bool:
 
 def _rag_chunks_plan_docente(
     pregunta: str, codigo_asignatura: str, nombre_asignatura: str,
+    grupo: Optional[str] = None,
 ) -> List[Dict]:
     """Búsqueda vectorial (con reranking) sobre el plan docente de la asignatura.
     Mismo patrón que ActionConsultaEspecifica: la titulación ya quedó aplicada
-    al resolver la asignatura aguas arriba."""
+    al resolver la asignatura aguas arriba.
+
+    Si `grupo` viene informado (p.ej. "Grupo 2"), se filtra el RAG por ese grupo
+    para responder a preguntas tipo "profesores del grupo 2 de Redes". La
+    columna `profesor_asignatura.grupo` no está poblada por el scraping
+    actual (decisión Cat 2), así que el grupo solo es fiable vía plan docente.
+    """
     try:
         from rag.buscar import buscar_en_plan_docente
     except ImportError as e:
         print(f"   ⚠ RAG no disponible: {e}")
         return []
 
-    print(f"   📚 RAG vectorial: plan docente de {nombre_asignatura} ({codigo_asignatura})")
+    print(f"   📚 RAG vectorial: plan docente de {nombre_asignatura} ({codigo_asignatura})"
+          + (f" [grupo={grupo}]" if grupo else ""))
     chunks = buscar_en_plan_docente(
         pregunta,
         codigo_asignatura=codigo_asignatura,
-        grupo=None,
+        grupo=grupo,
         limite=10,
     )
     print(f"   📊 Chunks recuperados: {len(chunks) if chunks else 0}")
@@ -284,7 +310,10 @@ INFORMACIÓN DEL PLAN DOCENTE:
 
 REGLAS:
 - Responde de forma natural, cercana y concisa
-- Usa solo la información proporcionada, no inventes datos
+- **PROHIBIDO INVENTAR DATOS.** Si la información proporcionada no contiene
+  nombres, emails, grupos o cualquier dato concreto, NO los completes con
+  datos plausibles. Di que esa información no consta y, si procede, sugiere
+  consultar otra fuente.
 - Puedes usar markdown para formatear (negritas, listas)
 - No menciones que consultaste un "plan docente" ni "chunks"
 - No saludes — ve directo a la respuesta
@@ -429,12 +458,25 @@ class ActionConsultaProfesor(Action):
             if nombre_profesor:
                 print(f"  → Profesor extraído por LLM: '{nombre_profesor}'")
 
+        # ── Detección de grupo en la pregunta ──
+        # `profesor_asignatura.grupo` no está poblado por el scraping actual
+        # (Cat 2), así que cuando el usuario menciona grupo el SQL no podrá
+        # responder con fiabilidad. La única fuente con la asignación a grupo
+        # es el plan docente (RAG). Si hay asignatura resuelta + grupo,
+        # bypaseamos SQL y vamos directos al RAG con filtro por grupo.
+        grupo_detectado = _detectar_grupo(pregunta)
+        if grupo_detectado:
+            print(f"  → Grupo detectado en pregunta: {grupo_detectado}")
+
         # ── Atajo: "coordinador"/"suplente" → RAG vectorial directo ──
         # Esos roles no viven en `profesor_asignatura`; el plan docente es la
         # única fuente. Si además tenemos la asignatura resuelta, saltamos SQL.
         if codigo_asignatura and _pregunta_menciona_rol_rag(pregunta):
             print(f"  → Atajo RAG: rol (coordinador/suplente) en pregunta")
-            chunks = _rag_chunks_plan_docente(pregunta, codigo_asignatura, nombre_asignatura)
+            chunks = _rag_chunks_plan_docente(
+                pregunta, codigo_asignatura, nombre_asignatura,
+                grupo=grupo_detectado,
+            )
             if chunks:
                 respuesta_rag = _generar_respuesta_rag(pregunta, chunks, nombre_asignatura)
                 if respuesta_rag:
@@ -444,6 +486,24 @@ class ActionConsultaProfesor(Action):
                     return slots
             # Si RAG no da resultados, caemos al flujo SQL normal como último recurso.
             print(f"  ⚠ RAG vectorial sin respuesta, cayendo a text-to-SQL")
+
+        # ── Atajo: pregunta por grupo + asignatura resuelta → RAG directo ──
+        # La columna `profesor_asignatura.grupo` no está poblada, así que SQL
+        # no puede filtrar por grupo. Vamos directos al RAG con filtro de grupo.
+        if codigo_asignatura and grupo_detectado and not _pregunta_menciona_rol_rag(pregunta):
+            print(f"  → Atajo RAG: grupo {grupo_detectado} en pregunta (SQL no tiene grupo)")
+            chunks = _rag_chunks_plan_docente(
+                pregunta, codigo_asignatura, nombre_asignatura,
+                grupo=grupo_detectado,
+            )
+            if chunks:
+                respuesta_rag = _generar_respuesta_rag(pregunta, chunks, nombre_asignatura)
+                if respuesta_rag:
+                    dispatcher.utter_message(text=respuesta_rag)
+                    slots.append(SlotSet("ultimo_nombre_asignatura", nombre_asignatura))
+                    slots.append(SlotSet("ultimo_codigo_consultado", codigo_asignatura))
+                    return slots
+            print(f"  ⚠ RAG por grupo sin respuesta, cayendo a text-to-SQL")
 
         # ── Detección de consulta de tutorías (fuzzy, tolera typos) ──
         # Si el usuario pregunta por tutorías, tratamos la consulta como
@@ -512,7 +572,10 @@ class ActionConsultaProfesor(Action):
             # nombre parcial que dio el usuario.
             if codigo_asignatura:
                 print(f"  → Fallback RAG vectorial: plan docente de '{nombre_asignatura}'")
-                chunks = _rag_chunks_plan_docente(pregunta, codigo_asignatura, nombre_asignatura)
+                chunks = _rag_chunks_plan_docente(
+                    pregunta, codigo_asignatura, nombre_asignatura,
+                    grupo=grupo_detectado,
+                )
                 if chunks:
                     respuesta_rag = _generar_respuesta_rag(pregunta, chunks, nombre_asignatura)
                     if respuesta_rag:
@@ -567,6 +630,7 @@ class ActionConsultaProfesor(Action):
         respuesta = generar_respuesta_natural(
             pregunta, resultados,
             tutorias_no_disponibles=consulta_tutorias,
+            nombre_asignatura_resuelto=nombre_asignatura,
         )
         dispatcher.utter_message(text=respuesta)
 

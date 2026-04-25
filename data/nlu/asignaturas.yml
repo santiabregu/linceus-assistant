@@ -284,6 +284,16 @@ nlu:
     - [matematicas 1](nombre_asignatura)
     - [Diseño y Pruebas I](nombre_asignatura)
     - Y de [Estadística](nombre_asignatura)?
+    # ─── Cat 1: "qué es X" debe ir a ficha (post-eval E-P09) ─────────────
+    - qué es [DP1](nombre_asignatura)
+    - qué es [FP](nombre_asignatura)
+    - qué es [PSG2](nombre_asignatura)
+    - qué es [Redes](nombre_asignatura)
+    # ─── Cat 1: "qué asignatura es <código>" (post-eval E-P12) ──────────
+    - qué asignatura es la [2050010](nombre_asignatura)
+    - qué asignatura es [2050035](nombre_asignatura)
+    - qué es la asignatura [2050006](nombre_asignatura)
+    - información sobre el código [2060001](nombre_asignatura)
 
 # =============================================================================
 # INTENT 1.b: HORARIO DE ASIGNATURA - Pregunta por horario/aula/dia de una
@@ -403,6 +413,20 @@ nlu:
     - Dime cuál es la clase de laboratorio de [TIS](nombre_asignatura)
     - Dime el horario de [SI](nombre_asignatura) GRUPO 3
     - Dime horario de [SI](nombre_asignatura) para la letra T del dni
+    # ─── Cat 1: "cuándo tenemos X" (post-eval HA-P07) ────────────────────
+    - cuándo tenemos [Bases de Datos](nombre_asignatura)
+    - cuándo tenemos [Lógica](nombre_asignatura) este año
+    - cuándo tenemos [SO](nombre_asignatura)
+    # ─── Cat 1: "laboratorio de X" / "lab de X" (post-eval HA-P10, HA-W06)
+    - laboratorio de [Cálculo](nombre_asignatura)
+    - laboratorio de [Estadística](nombre_asignatura) grupo 2
+    - laboratorio de [Algebra](nombre_asignatura) grupo 1
+    - lab de [DP1](nombre_asignatura) grupo 3
+    - labs de [Redes](nombre_asignatura)
+    # ─── Cat 1: día con typo no debe robar la entidad (post-eval HA-W04)
+    - qué aula es [SO](nombre_asignatura) los marrtes
+    - donde tenemos [DP1](nombre_asignatura) los miercoles
+    - [FP](nombre_asignatura) los lunees
 
 # =============================================================================
 # INTENT 2: LISTADO - Pide una LISTA de asignaturas con filtros
@@ -511,6 +535,11 @@ nlu:
     - Dame las optativas de cuarto
     - Cuales son las asignaturas de 1º?
     - Cuáles son las asignaturas del grado desglosadas por curso académico?
+    # ─── Cat 1: "qué optativas hay" como query corta (post-eval L-P03) ──
+    - qué optativas tiene la carrera
+    - lista de optativas del grado
+    - muéstrame las optativas
+    - qué optativas se pueden elegir
 
 # =============================================================================
 # INTENT 3: CONTEO - Pregunta por CANTIDAD de asignaturas

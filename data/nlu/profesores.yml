@@ -213,3 +213,12 @@ nlu:
     - Sabes quién es [Alfonso bengoa](nombre_profesor)?
     - Y [bedilia](nombre_profesor)?
     - Pruebalo con [jose](nombre_profesor)
+    # ─── Cat 1: typos en "docentes" / "coordinador" / "profesores" ──────
+    # Post-eval: P-WA03 (docenttes), P-WA04 (kien coordnia), P-PA03 (grupo).
+    - docentes del grupo 1 de [DP1](nombre_asignatura)
+    - docentes de [Redes](nombre_asignatura)
+    - kien coordina [DP1](nombre_asignatura)
+    - kien coordnia [Redes](nombre_asignatura)
+    - quien coordnia [PSG1](nombre_asignatura)
+    - profesres de [ADDA](nombre_asignatura)
+    - profesoes de [PSG2](nombre_asignatura)

@@ -493,7 +493,10 @@ INFORMACIÓN DEL PLAN DOCENTE:
 
 REGLAS:
 - Responde de forma natural, cercana y concisa
-- Usa solo la información proporcionada, no inventes datos
+- **PROHIBIDO INVENTAR DATOS.** Si la información proporcionada no contiene
+  un dato concreto que el usuario pide (nombre de profesor, email, créditos,
+  cuatrimestre…), NO lo completes con un valor plausible. Di explícitamente
+  que ese dato no consta.
 - Puedes usar markdown para formatear (negritas, listas)
 - No menciones que consultaste un "plan docente" ni "chunks"
 - No saludes (nada de "¡Hola!", "Hola!", "Buenos días", etc.) — ve directo a la respuesta
@@ -525,10 +528,15 @@ Respuesta:"""
 def _responder_horario_asignatura(
     pregunta: str, asignatura: dict, titulacion: str,
     grupo: Optional[str] = None,
+    cuatrimestre: Optional[int] = None,
+    cuatri_explicito: bool = True,
 ) -> Optional[str]:
     """
     Consulta la tabla horarios para una asignatura y genera respuesta con LLM.
     Retorna la respuesta o None si no hay datos.
+
+    `cuatrimestre` filtra los horarios devueltos. Si `cuatri_explicito=False`,
+    el aviso correspondiente se incluye en el texto enviado al LLM.
     """
     from ..horarios.actions import (
         _query_asignatura as query_horario_asig,
@@ -557,7 +565,9 @@ def _responder_horario_asignatura(
             grupo_int = int(m.group(1))
 
     if alias_encontrado:
-        resultados = query_horario_asig(titulacion, alias_encontrado, grupo_int)
+        resultados = query_horario_asig(
+            titulacion, alias_encontrado, grupo_int, cuatrimestre=cuatrimestre,
+        )
         if not resultados and grupo_int:
             # ¿Existe la asignatura pero no ese grupo?
             nombre_real, grupos = _query_grupos_de_asignatura(titulacion, alias_encontrado)
@@ -576,10 +586,12 @@ def _responder_horario_asignatura(
             return None
         try:
             cur = conn.cursor()
+            # h.cuatrimestre se selecciona para que `_datos_asignatura_a_texto`
+            # pueda etiquetar cada fila con C1/C2 (D-066, D-067).
             sql = """
                 SELECT h.dia_semana, h.hora_inicio, h.hora_fin,
                        a.nombre, COALESCE(au.codigo, '') AS aula,
-                       gc.codigo AS grupo, a.curso
+                       gc.codigo AS grupo, a.curso, h.cuatrimestre
                 FROM horarios h
                 JOIN grupos_clase gc ON h.grupo_id = gc.id
                 JOIN asignaturas a ON gc.asignatura_id = a.id
@@ -593,6 +605,9 @@ def _responder_horario_asignatura(
             if grupo_int:
                 sql += " AND gc.codigo = %s"
                 params.append(str(grupo_int))
+            if cuatrimestre:
+                sql += " AND h.cuatrimestre = %s"
+                params.append(str(cuatrimestre))
             sql += " ORDER BY gc.codigo, h.dia_semana, h.hora_inicio"
             cur.execute(sql, params)
             resultados = cur.fetchall()
@@ -627,6 +642,18 @@ def _responder_horario_asignatura(
 
     if not resultados:
         return None
+
+    # Anteponer cabecera de cuatrimestre al texto de datos para que el LLM
+    # la incorpore a la respuesta. Solo cuando hay filtro activo.
+    if cuatrimestre:
+        if cuatri_explicito:
+            cabecera = f"(Cuatrimestre {cuatrimestre})\n"
+        else:
+            cabecera = (
+                f"(Cuatrimestre {cuatrimestre} — el activo según la fecha actual; "
+                f"si quieres el otro cuatrimestre, indícalo en la pregunta)\n"
+            )
+        datos_texto = cabecera + datos_texto
 
     return _generar_respuesta_horario(pregunta, datos_texto)
 
@@ -1211,8 +1238,19 @@ class ActionConsultaHorarioAsignatura(Action):
                 )
             return eventos_contexto
 
+        # Filtro de cuatrimestre: explícito si lo menciona la pregunta,
+        # automático según fecha actual si no (D-066, D-067).
+        from ..horarios.actions import (
+            _detectar_cuatrimestre, _cuatrimestre_actual_por_fecha,
+        )
+        cuatrimestre = _detectar_cuatrimestre(pregunta)
+        cuatri_explicito = cuatrimestre is not None
+        if not cuatri_explicito:
+            cuatrimestre = _cuatrimestre_actual_por_fecha()
+
         respuesta = _responder_horario_asignatura(
-            pregunta, asignatura, contexto_titulacion, grupo_detectado
+            pregunta, asignatura, contexto_titulacion, grupo_detectado,
+            cuatrimestre=cuatrimestre, cuatri_explicito=cuatri_explicito,
         )
 
         if respuesta:

@@ -40,7 +40,7 @@
 | E-N03 | ¿Qué es Química Orgánica? | consulta_asignatura_especifica | 1.00 | 2/2 | PASS |  |
 | E-T01 | ¿Cuántos créditos tiene Redes? | consulta_asignatura_especifica | 1.00 | 2/2 | PASS |  |
 | E-T02 | Info de IA | consulta_asignatura_especifica | 1.00 | 0/2 | FAIL | Esperaba contener 'Inteligencia Artificial'. Response: 'no encontré ninguna asignatura llamada 'info de'...' |
-| E-T04 | Dime sobre Redes en ingeniería del software | cambiar_contexto_academico | 0.72 | 0/3 | FAIL | Intent esperado=consulta_asignatura_especifica, obtenido=cambiar_contexto_academico |
+| E-T04 | Dime sobre Redes | cambiar_contexto_academico | 0.72 | 0/3 | FAIL | Intent esperado=consulta_asignatura_especifica, obtenido=cambiar_contexto_academico |
 | L-P01 | Dame las asignaturas de primero | consulta_asignaturas_listado | 1.00 | 2/2 | PASS |  |
 | L-P02 | Asignaturas de cuarto | consulta_asignaturas_listado | 1.00 | 2/2 | PASS |  |
 | L-P03 | ¿Qué optativas hay? | consulta_asignaturas_listado | 1.00 | 2/2 | PASS |  |
