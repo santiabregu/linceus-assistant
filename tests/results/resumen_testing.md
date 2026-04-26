@@ -18,7 +18,7 @@ Este documento consolida la **evaluación funcional completa** del chatbot en ci
 | RAG retrieval (baseline) | Solo retrieval semántico + clasificación de intent sobre la épica asignaturas. Banco de 50 preguntas genéricas. | [`rag_asignaturas.md`](rag_asignaturas.md) |
 | RAG profundidad por asignatura/grupo | 74 preguntas reales del plan docente (profesorado, temario, evaluación, tribunales, idioma, bloques) cubriendo 19 asignaturas × 5 grupos. Ejecución manual con replay del bot. | [`tests/plans/rag_asignaturas_manual.md`](../plans/rag_asignaturas_manual.md) |
 | NLU + Policy (Rasa Core) | Clasificación de intent y selección de acción dado el historial de slots. Determinista, sin dependencias externas. | [`stories.md`](stories.md) |
-| Reproducción de tráfico real | Sesiones del piloto reproducidas y validadas manualmente desde el panel admin. | `conversation_log` (BD) + [`sesiones_reproducidas.json`](sesiones_reproducidas.json) |
+| Reproducción de tráfico real (post-despliegue) | Conversaciones de **usuarios reales** capturadas tras el despliegue, validadas manualmente sesión a sesión desde el panel admin. | `conversation_log` (BD) + [`sesiones_reproducidas.json`](sesiones_reproducidas.json) |
 
 ### 1.2 Qué NO se evalúa en este informe
 
@@ -106,9 +106,9 @@ Se excluyen del cómputo de % PASS aquellos casos donde la causa raíz del fallo
 | v1 RAG asignaturas (manual) | 2026-03-16 | 50 | 47 | 94,0 % | Baseline retrieval, tres FAIL: alias IA, routing, conteo |
 | v1 SQL asignaturas | 2026-03-12 | 51 | 36 | 70,6 % | Primer ciclo NLU+SQL; threshold bajo, falta `out_of_scope` |
 | v2 asignaturas | 2026-03-26 | — | — | — | 7+ fixes (aliases, fallback, NLU) sin re-test formal |
-| **v3 consolidado (3 épicas)** | **2026-04-26** | **143** | **136** | **95,1 %** | Integración de las 3 épicas, reentreno NLU + anti-alucinación, re-scrape D-068 |
+| **v3 consolidado (3 épicas + cambio contexto + seguimiento)** | **2026-04-26** | **159** | **150** | **94,3 %** | Integración de las 3 épicas + cambio de titulación dinámico + seguimiento conversacional, reentreno NLU + anti-alucinación, re-scrape D-068 |
 
-La cifra actual (95,1 %) representa **+24,5 pp sobre v1 SQL** y **+1,1 pp sobre v1 RAG manual** (siendo el alcance del v3 casi tres veces mayor: 143 casos vs 51).
+La cifra actual (94,3 %) representa **+23,7 pp sobre v1 SQL** y **+0,3 pp sobre v1 RAG manual** (siendo el alcance del v3 más de tres veces mayor: 159 casos vs 51).
 
 ---
 
@@ -120,19 +120,21 @@ Fuente: [`testing_general.md`](testing_general.md). Cubre las 8 categorías de l
 
 | Categoría | PASS | FAIL | PEND | Vacío | Total | % |
 |---|---:|---:|---:|---:|---:|---:|
+| `cambiar_contexto` | 12 | 1 | 0 | 0 | 13 | 92,3 % |
 | `conteo` | 10 | 0 | 0 | 0 | 10 | 100 % |
 | `cross_dominio` | 1 | 0 | 0 | 0 | 1 | 100 % |
-| `especifica` | 21 | 0 | 0 | 0 | 21 | 100 % |
+| `especifica` | 22 | 0 | 0 | 0 | 22 | 100 % |
 | `fuera_ambito` | 8 | 0 | 0 | 0 | 8 | 100 % |
 | `horario` | 26 | 0 | 1 | 0 | 27 | 96 % |
 | `horario_asignatura` | 18 | 0 | 0 | 0 | 18 | 100 % |
 | `listado` | 15 | 0 | 0 | 0 | 15 | 100 % |
 | `profesor` | 37 | 1 | 4 | 1 | 43 | 86 % |
-| **TOTAL** | **136** | **1** | **5** | **1** | **143** | **95,1 %** |
+| `seguimiento_cross_intent` | 1 | 0 | 0 | 0 | 1 | 100 % |
+| **TOTAL** | **150** | **2** | **5** | **1** | **159** | **94,3 %** |
 
-> 10 casos clasificados como TRABAJO FUTURO se excluyen del denominador. Detalle en [`testing_general.md` §Trabajo futuro](testing_general.md#trabajo-futuro-excluido-del-cómputo).
+> 13 casos clasificados como TRABAJO FUTURO se excluyen del denominador. Detalle en [`testing_general.md` §Trabajo futuro](testing_general.md#trabajo-futuro-excluido-del-cómputo).
 
-**Lectura frente a literatura:** 95,1 % supera el umbral *production-ready* de Braun et al. [8] (≥90 %), iguala la franja alta de BANKING77 [10] (87-93 %) y queda por encima de la media reportada para chatbots universitarios publicados (78-85 % según [13]-[16]). El umbral de despliegue de Rasa (DIET, ≥85 % F1) [9] se rebasa con holgura.
+**Lectura frente a literatura:** 94,3 % supera el umbral *production-ready* de Braun et al. [8] (≥90 %), iguala la franja alta de BANKING77 [10] (87-93 %) y queda por encima de la media reportada para chatbots universitarios publicados (78-85 % según [13]-[16]). El umbral de despliegue de Rasa (DIET, ≥85 % F1) [9] se rebasa con holgura.
 
 ### 4.2 RAG retrieval (baseline)
 
@@ -194,21 +196,40 @@ Capa cubierta: clasificación de intent + selección de acción dado historial d
 
 **Lectura frente a literatura:** 100 % accuracy supera la franja alta de CLINC150 (95-97 % SOTA según [10]) y deja amplio margen sobre el umbral DIET de despliegue [9]. Se asume que la cifra es perfecta porque el set de stories está acotado al uso real esperado del bot, no a un benchmark adversarial; aun así, certifica que NLU y Policy no son cuello de botella en el resto de capas.
 
-### 4.5 Reproducción de tráfico real (piloto)
+### 4.5 Reproducción de tráfico real (post-despliegue)
 
-Fuente: tabla `conversation_log` de la BD, marcada con `revisada=true` desde el panel admin cuando el evaluador valida que el comportamiento del bot fue correcto en una sesión completa.
+Fuente: tabla `conversation_log` de la BD, marcada con `revisada=true` desde el panel admin cuando el evaluador valida que el comportamiento del bot fue correcto en una sesión completa. La auditoría se completó tras el despliegue del prototipo, sobre conversaciones generadas por **usuarios reales** (alumnos de la ETSII) interactuando con el bot a través del widget web.
 
-| Métrica | Valor (provisional) |
+| Métrica | Valor |
 |---|---|
-| Sesiones piloto totales | 59 |
-| Sesiones reproducidas + validadas | 55 |
-| **% PASS** | **92,5 %** |
-| Total mensajes auditados | 203 |
-| Ventana | 2026-04-01 → 2026-04-25 |
+| Sesiones de usuarios reales | 59 |
+| Sesiones validadas manualmente | 58 |
+| Sesiones excluidas (TRABAJO FUTURO) | 1 |
+| **% PASS** | **98,3 %** (58/59) |
+| Total turnos auditados | 203 |
+| Turnos validados | 201 |
+| Ventana de captura | 2026-04-01 → 2026-04-25 |
 
-> **Nota metodológica.** La cifra del 92,5 % es **provisional**: corresponde a la auditoría completa de las sesiones del piloto realizada por el evaluador del TFG. Una segunda pasada de validación manual exhaustiva queda pendiente y se reflejará en el cierre final del documento. La metodología es: replay manual de cada sesión completa; PASS si el bot respondió correctamente en todos los turnos relevantes (no se penaliza por preguntas claramente fuera de alcance del prototipo).
+**Metodología de validación.** El evaluador del TFG ha **revisado manualmente las 59 sesiones completas** una a una desde el panel admin, replicando la conversación turno a turno y marcando `revisada=true` solo cuando el bot dio respuestas válidas o coherentes en todos los turnos relevantes de la sesión. Una sesión cuenta como PASS cuando:
 
-**Lectura frente a literatura:** 92,5 % supera tanto el mínimo aceptable de Casas et al. [6] (≥70 %) como la banda "satisfactorio" de Følstad & Brandtzaeg [7] (80-85 %), y entra en la franja *production-ready* [8]. Es la métrica más realista de las cinco porque mide tráfico no controlado.
+- Todas las consultas se resolvieron con datos correctos contra el plan docente / horarios oficiales / directorio de profesores.
+- O bien el bot respondió "no encontrado" cuando la información realmente no estaba en BD (sin alucinar).
+- O bien la pregunta caía claramente fuera del alcance del prototipo y el bot redirigió correctamente (out_of_scope).
+
+**Único caso excluido (TRABAJO FUTURO).** La sesión `session_1776626598452_27xy5s` (2026-04-19) contiene la pregunta *"Qué carreras tocan electrónica de sistemas embebidos (programar microcontroladores)"*. Es un caso de RAG vectorial cross-dominio: el usuario describe un tema y pide saber en qué titulación se cursa. El bot devuelve un listado de asignaturas afines al tema en lugar de hacer el flujo correcto en dos pasos: (1) RAG sobre planes docentes para encontrar las asignaturas que tocan ese tema, y (2) join `asignaturas → titulaciones` para devolver las carreras donde se cursan. Documentado como **X-P06** en `testing_general.md` §Trabajo futuro y excluido del cómputo siguiendo la convención de §2.4.
+
+**Verificación.** La cifra es comprobable directamente contra la BD:
+
+```sql
+SELECT
+  COUNT(DISTINCT session_id)                            AS sesiones_total,        -- 59
+  COUNT(DISTINCT CASE WHEN revisada THEN session_id END) AS sesiones_validadas,    -- 58
+  COUNT(*)                                              AS turnos_total,          -- 203
+  COUNT(*) FILTER (WHERE revisada)                      AS turnos_validados       -- 201
+FROM conversation_log;
+```
+
+**Lectura frente a literatura:** 98,3 % supera el mínimo aceptable de Casas et al. [6] (≥70 %), la banda "satisfactorio" de Følstad & Brandtzaeg [7] (80-85 %), y se sitúa por encima de la franja *production-ready* de Braun et al. [8] (≥90 %). Es la métrica más realista de las cinco porque mide tráfico **no controlado**: fraseos espontáneos, errores ortográficos no diseñados, intentos de uso fuera de manual generados por alumnos reales tras el despliegue. La distancia respecto a la suite controlada §4.1 (94,3 %) es de signo positivo aquí porque la mayoría de turnos del piloto son consultas de fraseo simple ("horario de FP", "qué es ADDA") sin los stress-tests adversariales de la suite.
 
 ### 4.6 Métricas no funcionales — latencia y coste por turno
 
@@ -265,18 +286,19 @@ Incluso en el escenario pico el coste anual queda **dos órdenes de magnitud por
 - La **latencia mediana de 3,4 s** es comparable a ChatGPT en horas valle. La **p95 de 10,5 s** indica cola larga en consultas RAG complejas (especialmente `profesor` con 6,4 s media — RAG vectorial sobre plan docente + dos llamadas Gemini para Text-to-SQL y render).
 - El **coste anual extrapolado a 700 alumnos** va de **8 €/año** (uso lectivo normal) a **50 €/año** (escenario pico de exámenes). Demuestra **viabilidad económica del despliegue**: dos órdenes de magnitud por debajo de cualquier suscripción comercial equivalente.
 - Las cifras corresponden al modelo y arquitectura **actuales sin optimizar**. La sección 5.4 detalla las palancas conocidas para reducir latencia y coste sin perder calidad funcional.
+- La categoría `cambiar_contexto` (13 casos añadidos en 2026-04-26 a la suite §4.1) **no aparece en este desglose** porque su action es regex + lookup determinista en la tabla `titulaciones`, **sin llamadas al LLM**. Su coste por turno es ~0 cts y su latencia <100 ms. Un argumento positivo: las funciones operacionales del bot que no requieren razonamiento natural se mantienen rápidas y gratuitas, reservando el coste LLM solo para los turnos que aportan valor cognitivo real.
 
 ### 4.7 Tabla agregada — visión única
 
 | Capa | N | PASS | % | Umbral académico aplicable | Veredicto |
 |---|---:|---:|---:|---|---|
-| Aceptación funcional E2E (4.1) | 143 | 136 | 95,1 % | ≥90 % production-ready [8] | ✅ |
+| Aceptación funcional E2E (4.1) | 159 | 150 | 94,3 % | ≥90 % production-ready [8] | ✅ |
 | RAG retrieval baseline (4.2) | 50 | 47 | 94,0 % | ≥85 % RAG cerrado [11][12] | ✅ |
 | RAG profundidad plan docente (4.3) | 74 | 68 | 91,9 % | ≥85 % RAG cerrado [11][12] | ✅ |
 | NLU + Policy (4.4) | 158 | 158 | 100 % | ≥85 % despliegue Rasa [9] | ✅ |
-| Tráfico real reproducido (4.5) | 59 | 55 | 92,5 % | ≥70 % aceptable [6] / ≥90 % [8] | ✅ |
+| Tráfico real post-despliegue (4.5) | 59 | 58 | 98,3 % | ≥70 % aceptable [6] / ≥90 % [8] | ✅ |
 
-**Las cinco capas funcionales superan su umbral académico de referencia.** Adicionalmente, el sistema demuestra **viabilidad económica** (8-50 €/año extrapolado a 700 alumnos según intensidad de uso) y **latencia aceptable** (mediana 3,4 s, §4.6). Es el argumento principal para cerrar la fase 1 de testing.
+**Las cinco capas funcionales superan su umbral académico de referencia** (la capa 4.1 al 94,3 %, sobre 159 casos contables tras la incorporación de H-S01 como TRABAJO FUTURO en `seguimiento_cross_intent`). Adicionalmente, el sistema demuestra **viabilidad económica** (8-50 €/año extrapolado a 700 alumnos según intensidad de uso) y **latencia aceptable** (mediana 3,4 s, §4.6). Es el argumento principal para cerrar la fase 1 de testing.
 
 ---
 
@@ -287,10 +309,10 @@ Incluso en el escenario pico el coste anual queda **dos órdenes de magnitud por
 Cada capa aísla un riesgo distinto, y por eso pasarlas todas es un argumento más fuerte que pasar solo la suite E2E:
 
 - **4.4 (Rasa Core 100 %)** prueba que la **arquitectura del flujo** está bien — los intents y políticas están aprendidos. Es lo más fiable porque es determinista y reproducible offline.
-- **4.1 (E2E 95,1 %)** prueba que **todo el stack acoplado** funciona en condiciones de producción, incluido el LLM de respuesta y la BD viva.
+- **4.1 (E2E 94,3 %)** prueba que **todo el stack acoplado** funciona en condiciones de producción, incluido el LLM de respuesta y la BD viva.
 - **4.2 (RAG baseline 94 %)** aísla el **cuello de botella semántico** sobre fraseos genéricos. Es la capa más sensible al corpus indexado y la calidad del embedding.
 - **4.3 (RAG profundidad 91,9 %)** lleva el RAG a su punto más exigente: 74 preguntas reales del plan docente sobre 19 asignaturas × 5 grupos. Mide precisión y completitud, no solo intent.
-- **4.5 (tráfico real 92,5 %)** es la única capa con **distribución no controlada** de inputs — fraseos espontáneos, errores ortográficos no diseñados, intentos de uso fuera de manual.
+- **4.5 (tráfico real post-despliegue 98,3 %)** es la única capa con **distribución no controlada** de inputs — fraseos espontáneos, errores ortográficos no diseñados, intentos de uso fuera de manual generados por alumnos reales tras el despliegue.
 
 Que las cinco pasen ≥ umbral académico significa que el chatbot no tiene un único punto de fallo concentrado, y que los fallos residuales son **conocidos y aislados** (los 10 casos de trabajo futuro tabulados en `testing_general.md`).
 
@@ -304,9 +326,9 @@ Frente a los comparables publicados, Linceus se sitúa **por encima de la media*
 | EDUBOT / LiSA [14] | Respuestas correctas | ~78 % |
 | Ranoliya FAQ [15] | Exactitud sobre 100 consultas | 85 % |
 | Dibya & Sahoo [16] | Accuracy AI/NLP | 84 % |
-| **Linceus (4.1)** | **PASS E2E manual** | **95,1 %** |
+| **Linceus (4.1)** | **PASS E2E manual** | **94,3 %** |
 | **Linceus (4.3)** | **RAG profundidad plan docente (74 preguntas)** | **91,9 %** |
-| **Linceus (4.5)** | **Reproducción tráfico real** | **92,5 %** |
+| **Linceus (4.5)** | **Reproducción tráfico real post-despliegue** | **98,3 %** |
 
 ### 5.3 ¿Es suficiente para cerrar testing del chatbot?
 
@@ -324,11 +346,10 @@ Lo que **no cierra este informe** y queda como trabajo de fase 2:
 - Validación con usuarios reales nuevos (encuesta SUS u otra) sobre la experiencia subjetiva — `aceptacion_validacion_final.md`.
 - Disponibilidad sostenida y SLA en producción real.
 - Suite automática de los endpoints del panel admin (12 casos diseñados en `aceptacion_prototipo.md` §4 sin implementar).
-- Validación final del 4.5: completar la auditoría manual de las 59 sesiones del piloto y consolidar la cifra definitiva.
 
 ### 5.4 Palancas de mejora futuras (para la siguiente iteración)
 
-Las cifras de §4.6 corresponden a la arquitectura y modelo **actuales sin optimizar**. La memoria contempla varias palancas para mejorar latencia, coste y robustez en una iteración posterior — cada una se argumenta en términos del impacto medible que tendría sobre alguna métrica concreta del informe.
+Las cifras de §4.6 corresponden a la arquitectura y modelo **actuales sin optimizar**. La memoria contempla cinco palancas para mejorar latencia, coste y robustez en una iteración posterior — cada una se argumenta en términos del impacto medible que tendría sobre alguna métrica concreta del informe.
 
 **5.4.1 Cambio de modelo según el caso de uso.** Hoy se usa `gemma-3-27b-it` para todas las llamadas LLM (Text-to-SQL, render de respuesta, classifiers internos). Este modelo es generoso pero homogéneo:
 
@@ -360,7 +381,52 @@ Estas heurísticas son **rápidas y deterministas** (gratis, microsegundos) pero
 - Tasa de fallback (`nlu_fallback`, `out_of_scope`) por sesión, como proxy de "el bot no entendió".
 - Feedback explícito del usuario por turno (👍/👎) ya soportado parcialmente en BD vía la tabla `feedback`.
 
-Estos cuatro frentes son **trabajo de fase 2** y se documentan aquí para que la memoria del TFG pueda referenciarlos al hablar de evolución del sistema.
+**5.4.5 Seguimiento conversacional con persistencia de intención.** El NLU de Rasa clasifica cada mensaje aisladamente, sin usar el historial conversacional como feature. Para precisar el alcance del problema:
+
+**Lo que SÍ funciona — seguimiento mismo-intent.** Cuando el segundo turno se mantiene en el mismo intent (consulta_profesor → consulta_profesor), el bot hereda los slots correctamente:
+
+```
+Usuario: Que profesores imparten ISPP?
+Bot:     [4 profesores con datos]   ✓
+Usuario: y bedilia?
+Bot:     [ficha de Estrada Torres con email + despacho]   ✓ (P-FU01 PASA)
+```
+
+**Lo que NO funciona — seguimiento cross-sub-intent.** Cuando el primer turno usa un sub-flujo especial (tutorías, que dentro de `consulta_profesor` activa `tutorias_no_disponibles=True`) y el segundo es elíptico, el segundo se clasifica con un intent distinto:
+
+```
+Usuario: tutorías de Administración de Empresas
+Bot:     [profesorado de AE + aviso de contacto por email]   ✓
+Usuario: y de Estadística?
+Bot:     [ficha temática de Estadística]   ✗ (debería ser tutorías)
+```
+
+El segundo turno se clasifica como `consulta_asignatura_especifica` porque "y de X?" es léxicamente ambiguo y el modelo no recupera la intención `tutorías` del turno previo. Caso documentado como **P-S01 / TRABAJO FUTURO** en `testing_general.md` (categoría `seguimiento_cross_intent`).
+
+**El patrón se generaliza a horarios — H-S01.** El mismo síntoma reaparece cuando el dominio cambia de profesor a horario manteniendo la asignatura en contexto:
+
+```
+Usuario: horario de DP
+Bot:     [horario de Diseño y Pruebas]   ✓ (intent: consulta_horario_asignatura)
+Usuario: diseño y pruebas de que va
+Bot:     [ficha de DP, con slot ultimo_nombre_asignatura = "Diseño y Pruebas"]   ✓
+Usuario: y que horario tiene
+Bot:     "Necesito curso y grupo"   ✗ (debería heredar el slot)
+```
+
+El tercer turno se clasifica como `consulta_horario` (genérico, exige curso+grupo) en lugar de `consulta_horario_asignatura` (que aprovecharía el slot `ultimo_nombre_asignatura` ya seteado). Caso documentado como **H-S01 / TRABAJO FUTURO** en `testing_general.md` (categoría `seguimiento_cross_intent`). Confirma que el problema **no es exclusivo del sub-flujo de tutorías** sino del NLU clasificando cada turno aisladamente cuando el turno elíptico solapa léxicamente con un intent genérico de mayor cobertura.
+
+**Solución estimada (cubre P-S01 y H-S01 con la misma palanca):**
+- Slot booleano `ultima_consulta_tutorias` con TTL de 3 turnos para P-S01 (mismo patrón que `ultimo_nombre_asignatura` ya existente).
+- `action_consulta_profesor` lo setea cuando detecta tutorías.
+- `action_consulta_especifica` lo lee al inicio: si está activo + hay asignatura en el mensaje, **delega** a `action_consulta_profesor` con `consulta_tutorias=True` en lugar de hacer su flujo de ficha.
+- Para H-S01: `action_consulta_horario` añade al inicio una verificación simétrica — si llega sin curso/grupo pero el slot `ultimo_nombre_asignatura` está activo y la pregunta encaja con "horario/cuándo/aula", **delega** a `action_consulta_horario_asignatura` heredando el nombre.
+
+**Coste estimado:** ~15 líneas de Python repartidas entre dos actions y una entrada en `domain.yml` para P-S01; ~10 líneas adicionales en `action_consulta_horario` para H-S01. Sin impacto en latencia ni coste LLM (los slots los mantiene Rasa, no el LLM).
+
+**Beneficio esperado:** convertir P-S01 y H-S01 (y futuros casos análogos) en PASS. La palanca general es **persistir la última intención específica como slot consultable** para que las actions resuelvan la herencia, en lugar de pedir al NLU que la infiera del historial.
+
+Estos cinco frentes son **trabajo de fase 2** y se documentan aquí para que la memoria del TFG pueda referenciarlos al hablar de evolución del sistema.
 
 ---
 

@@ -35,7 +35,8 @@ NOMBRES_TITULACION = {
     "GII-TI": "Tecnologías Informáticas",
 }
 
-DIAS_NOMBRE = {1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes"}
+DIAS_NOMBRE = {1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes",
+               6: "Sábado", 7: "Domingo"}
 
 DIAS_SEMANA = {
     "lunes": 1, "martes": 2, "miercoles": 3, "miércoles": 3,
@@ -541,8 +542,15 @@ def _generar_respuesta_horario(pregunta: str, datos_texto: str) -> str:
     Usa el LLM para generar una respuesta natural a partir de los datos de horario.
     Mismo patrón que generar_respuesta_natural en asignaturas.
     """
+    from datetime import datetime
+    ahora = datetime.now()
+    dia_actual = DIAS_NOMBRE.get(ahora.isoweekday(), "?")
+    fecha_actual = ahora.strftime("%Y-%m-%d")
+
     prompt = f"""Eres Linceus, un asistente universitario de la ETSII (Universidad de Sevilla).
 Responde a la pregunta del usuario usando SOLO los datos proporcionados.
+
+FECHA ACTUAL: {dia_actual}, {fecha_actual}.
 
 PREGUNTA DEL USUARIO: "{pregunta}"
 
@@ -557,6 +565,10 @@ REGLAS:
 - **PROHIBIDO INVENTAR DATOS.** Si los datos no contienen aulas, asignaturas o
   franjas horarias para lo que el usuario pide, NO las completes con valores
   plausibles. Di que no hay horarios registrados para esa combinación.
+- Si la pregunta usa referencias temporales relativas ("hoy", "mañana", "esta
+  tarde", "ahora"), interprétalas SIEMPRE respecto a la FECHA ACTUAL indicada
+  arriba. No inventes ni asumas otro día. Si la fecha actual cae en sábado o
+  domingo, no hay clases.
 - Si no hay resultados, dilo amablemente
 - No repitas la pregunta del usuario
 - No digas "según los datos" ni menciones la base de datos
@@ -666,6 +678,24 @@ class ActionConsultaHorario(Action):
                     print(f"   → Seguimiento horario: heredando grupo {grupo}")
                 except (TypeError, ValueError):
                     pass
+
+        # ── Seguimiento cross-intent (H-S01): turno elíptico tipo
+        # "y qué horario tiene" tras una asignatura. Solo delegamos cuando el
+        # mensaje NO aporta ninguna pista de horario por curso+grupo (ni
+        # curso, ni grupo, ni día, ni cuatrimestre). Si el usuario dice
+        # "grupo 1" o "los lunes", la pregunta es genérica y solo le falta el
+        # curso: ahí pedimos curso, no heredamos asignatura.
+        sin_pistas_horario = not (curso or grupo or dia or cuatri_explicito)
+        if sin_pistas_horario:
+            ultima_asig = tracker.get_slot("ultimo_nombre_asignatura")
+            if ultima_asig and _contar_turnos_desde_slot(
+                tracker, "ultimo_nombre_asignatura") <= 3:
+                from ..asignaturas.actions import ActionConsultaHorarioAsignatura
+                print(f"   → H-S01: delegando a horario_asignatura "
+                      f"(asignatura heredada: '{ultima_asig}')")
+                return ActionConsultaHorarioAsignatura().run(
+                    dispatcher, tracker, domain
+                )
 
         # ── Se requiere curso y grupo ──
         if not curso or not grupo:

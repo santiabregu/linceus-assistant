@@ -21,17 +21,19 @@ Cubre las **8 categorías** de la suite end-to-end (`run_test_plan.py`): asignat
 
 | Categoría | PASS | FAIL | PENDING | Vacío | Total | % PASS |
 |---|---:|---:|---:|---:|---:|---:|
+| `cambiar_contexto` | 12 | 1 | 0 | 0 | 13 | 92% |
 | `conteo` | 10 | 0 | 0 | 0 | 10 | 100% |
 | `cross_dominio` | 1 | 0 | 0 | 0 | 1 | 100% |
-| `especifica` | 21 | 0 | 0 | 0 | 21 | 100% |
+| `especifica` | 22 | 0 | 0 | 0 | 22 | 100% |
 | `fuera_ambito` | 8 | 0 | 0 | 0 | 8 | 100% |
 | `horario` | 26 | 0 | 1 | 0 | 27 | 96% |
 | `horario_asignatura` | 18 | 0 | 0 | 0 | 18 | 100% |
 | `listado` | 15 | 0 | 0 | 0 | 15 | 100% |
 | `profesor` | 37 | 1 | 4 | 1 | 43 | 86% |
-| **TOTAL** | **136** | **1** | **5** | **1** | **143** | **95%** |
+| `seguimiento_cross_intent` | 1 | 0 | 0 | 0 | 1 | 100% |
+| **TOTAL** | **150** | **2** | **5** | **1** | **159** | **94,3%** |
 
-> Cómputo: 136 PASS de 143 casos contables = **95,1 %**. Se han excluido 10 casos clasificados como **TRABAJO FUTURO** (ver tabla dedicada al final del informe). El vacío restante es el pendiente de evaluación manual del lote Cat 1: P-PA03.
+> Cómputo: 150 PASS de 159 casos contables = **94,3 %**. Se han excluido 13 casos clasificados como **TRABAJO FUTURO** (ver tabla dedicada al final del informe), incluyendo P-S01 y H-S01 (`seguimiento_cross_intent`) y X-P06 (`cross_dominio` descripción-temática → titulación). El vacío restante es P-PA03.
 
 ### Cat 1 — Re-ejecución tras reentreno NLU + prompts anti-alucinación
 
@@ -123,6 +125,7 @@ Resultados aparentes (pendientes de evaluación manual; ver tabla detallada al f
 | X-P03 | dame el email del profesor que coordina IISSI2 | consulta_profesor | El coordinador es MARTIN DIAZ, OCTAVIO. No se proporciona su email. | TRABAJO FUTURO | Atajo coordinador/suplente solo RAG (D-064). |
 | X-P04 | web personal de la coordinadora de Matemática Discreta | consulta_profesor | La coordinadora es OSUNA LUCENA, AMPARO. | TRABAJO FUTURO | Atajo coordinador/suplente solo RAG (D-064). |
 | X-P05 | ¿dónde imparten los profesores del grupo 1 de FP? | consulta_profesor | Los profesores del grupo 1 de FP son: Benavides Cuevas, Galindo Duarte, Ramos Gutiérrez, Reina Jiménez, Sánchez Gómez, Vega Márquez. | TRABAJO FUTURO | Routing cross-dominio: la pregunta apunta a aulas (horarios), no a profesores. Requiere ejemplos NLU en `consulta_horario_asignatura` con fraseos tipo "donde imparten los profes de X grupo Y". |
+| X-P06 | Qué carreras tocan electrónica de sistemas embebidos (programar microcontroladores) | consulta_asignatura_especifica | (RAG vectorial sobre planes docentes; el bot devuelve un listado de asignaturas relacionadas con sistemas embebidos en lugar de las titulaciones donde se cursan) | TRABAJO FUTURO | Routing cross-dominio descripción-temática → titulación: la pregunta debería resolverse en dos pasos (1) RAG vectorial sobre planes docentes para encontrar asignaturas que toquen el tema; (2) join `asignaturas → titulaciones` para devolver las titulaciones reales. Hoy el RAG devuelve solo el paso 1 y se queda ahí. Requiere un nuevo flujo `consulta_titulacion_por_tema` o un post-procesado en `action_consulta_especifica` cuando la pregunta usa el patrón "qué carrera/grado/titulación + descripción". |
 
 ### Categoría: `especifica`
 
@@ -149,6 +152,7 @@ Resultados aparentes (pendientes de evaluación manual; ver tabla detallada al f
 | E-T01 | ¿Cuántos créditos tiene Redes? | consulta_asignatura_especifica | Redes tiene 6.0 ECTS. | PASS |  |
 | E-T02 | Info de IA | consulta_asignatura_especifica | Ampliación de IA es optativa de 3º C2. | PASS |  |
 | E-T04 | Dime sobre Redes en ingeniería del software | consulta_asignatura_especifica | La asignatura Redes de Computadores abarca... | PASS |  |
+| E-M01 | Cómo se evaluaban DP1 y PSG2? | consulta_asignatura_especifica | Devuelve evaluación de PSG2 (T*=30%, D*=70%) y de DP1 (entregables E, control teórico CT, control práctico CP) en bloques separados. | PASS | Multi-asignatura en un solo turno: el routing reconoce ambas y construye respuestas independientes. |
 
 ### Categoría: `fuera_ambito`
 
@@ -292,11 +296,41 @@ Resultados aparentes (pendientes de evaluación manual; ver tabla detallada al f
 | P-N03 | tutorías del profesor Cristiano Ronaldo | consulta_profesor | No encontré resultados. | PASS |  |
 | P-N04 | profesores de Fabricación Asistida | consulta_profesor | No encontré resultados. | PASS |  |
 
+### Categoría: `cambiar_contexto` (añadida 2026-04-26)
+
+Cambio dinámico de titulación durante la conversación. Disparado por `cambiar_contexto_academico` → `action_cambiar_contexto`. **Action determinista (regex + lookup en BD), sin llamadas al LLM**, por lo que su coste por turno es ~0 cts.
+
+| ID | Consulta | Intent detectado | Respuesta del bot | Resultado | Notas evaluador |
+|----|---|---|---|---|---|
+| CC-P01 | titulacion Tecnologías Informáticas | cambiar_contexto_academico | ✅ Cambiado a: Grado en Ingeniería Informática - Tecnologías Informáticas. | PASS |  |
+| CC-P02 | soy de IC | cambiar_contexto_academico | ✅ Cambiado a: Grado en Ingeniería Informática - Ingeniería de Computadores. | PASS |  |
+| CC-P03 | kambiame a tecnologias | cambiar_contexto_academico | ✅ Cambiado a: Tecnologías Informáticas. | PASS |  |
+| CC-P04 | ingenieria software | cambiar_contexto_academico | ✅ Cambiado a: Ingeniería del Software. | PASS |  |
+| CC-P05 | titulacion ing software | cambiar_contexto_academico | ✅ Cambiado a: Ingeniería del Software. | PASS |  |
+| CC-P06 | cambia a ingenieria de computadores | cambiar_contexto_academico | ✅ Cambiado a: Ingeniería de Computadores. | PASS |  |
+| CC-P07 | cambia a IS | cambiar_contexto_academico | ✅ Cambiado a: Ingeniería del Software. | PASS |  |
+| CC-P08 | titulacion TI | cambiar_contexto_academico | ✅ Cambiado a: Tecnologías Informáticas. | PASS |  |
+| CC-P09 | cambia a software | cambiar_contexto_academico | ✅ Cambiado a: Ingeniería del Software. | PASS |  |
+| CC-P10 | TI | cambiar_contexto_academico | ✅ Cambiado a: Tecnologías Informáticas. | PASS |  |
+| CC-P11 | kambiame a IC | cambiar_contexto_academico | ✅ Cambiado a: Ingeniería de Computadores. | PASS |  |
+| CC-N01 | cambia a Biología | cambiar_contexto_academico | No reconocí la titulación. Las opciones disponibles son: IS, TI, IC. | PASS | Rechazo correcto: titulación fuera del scope ETSII. |
+| CC-W01 | quiero consultar ing software | cambiar_contexto_academico | No reconocí la titulación. | FAIL | El prefijo "quiero consultar" rompe la detección de "ing software". El mismo input sin ese prefijo sí funciona (CC-P05). |
+
+### Categoría: `seguimiento_cross_intent` (añadida 2026-04-26)
+
+Cubre los casos en que el segundo turno es **elíptico** ("y de X?", "y bedilia?") y depende del intent del turno anterior. Importante: el seguimiento **mismo-intent** funciona (P-FU01); el problema solo aparece cuando el segundo turno **cambia de sub-intent** dentro del dominio profesor (tutorías → ficha de asignatura), porque el NLU clasifica cada turno aisladamente.
+
+| ID | Setup | Consulta | Intent detectado | Respuesta del bot | Resultado | Notas evaluador |
+|----|---|---|---|---|---|---|
+| P-FU01 | turno 1: "Que profesores imparten ISPP?" → 4 profes con sus datos | y bedilia? | consulta_profesor | Devuelve la ficha de Estrada Torres (categoría, email, despacho). El bot mantiene el slot `ultimo_profesor_consultado` y desambigua con el nombre. | PASS | Evidencia de que el seguimiento mismo-intent funciona correctamente. |
+| P-S01 | turno 1: "tutorias de administracion de empresas" → respuesta correcta | y de estadistica? | consulta_asignatura_especifica | Devuelve la ficha/temario de Estadística (Estadística Descriptiva, Cálculo de Probabilidades…) en lugar de las tutorías. | TRABAJO FUTURO | Cambio de sub-intent dentro del seguimiento: el bot pierde la intención "tutorías" porque "y de estadistica?" se clasifica como `consulta_asignatura_especifica` (ficha). Resoluble con slot booleano `ultima_consulta_tutorias` con TTL de 3 turnos que `action_consulta_especifica` lea para delegar a `action_consulta_profesor`. Detalle en `resumen_testing.md` §5.4.5. |
+| H-S01 | turno 1: "horario de DP" → consulta_horario_asignatura OK; turno 2: "diseño y pruebas de que va" → consulta_asignatura_especifica OK (slot `ultimo_nombre_asignatura` = DP) | y que horario tiene | consulta_horario | El bot pide curso+grupo en vez de heredar `ultimo_nombre_asignatura` y resolver el horario de DP. | TRABAJO FUTURO | Mismo patrón que P-S01 trasladado a horarios: el NLU clasifica el turno elíptico como `consulta_horario` (genérico curso+grupo) en vez de `consulta_horario_asignatura` (heredando el slot). Resoluble con la misma palanca de §5.4.5: que `action_consulta_horario` detecte slot `ultimo_nombre_asignatura` activo + ausencia de curso/grupo en el mensaje y delegue a `action_consulta_horario_asignatura`. |
+
 ---
 
 ## Trabajo futuro (excluido del cómputo)
 
-10 casos clasificados como **TRABAJO FUTURO**: limitaciones de diseño asumidas que no se van a corregir en esta iteración. Se sacan del denominador del % PASS.
+13 casos clasificados como **TRABAJO FUTURO**: limitaciones de diseño asumidas que no se van a corregir en esta iteración. Se sacan del denominador del % PASS.
 
 | ID | Categoría | Consulta | Motivo |
 |---|---|---|---|
@@ -304,9 +338,12 @@ Resultados aparentes (pendientes de evaluación manual; ver tabla detallada al f
 | X-P03 | cross_dominio | dame el email del profesor que coordina IISSI2 | Atajo coordinador/suplente solo RAG (D-064). |
 | X-P04 | cross_dominio | web personal de la coordinadora de Matemática Discreta | Atajo coordinador/suplente solo RAG (D-064). |
 | X-P05 | cross_dominio | ¿dónde imparten los profesores del grupo 1 de FP? | Routing cross-dominio profesor↔horario: requiere ejemplos NLU en `consulta_horario_asignatura` para fraseos "donde imparten los profes de X grupo Y". |
+| X-P06 | cross_dominio | Qué carreras tocan electrónica de sistemas embebidos (programar microcontroladores) | Cross-dominio descripción-temática → titulación. Hoy el RAG vectorial responde con asignaturas afines al tema; falta el segundo paso: cruzar `asignaturas → titulaciones` y devolver las carreras donde se cursan. Requiere flujo `consulta_titulacion_por_tema` o post-procesado equivalente. |
 | P-P08 | profesor | despacho del coordinador de Ingeniería del Software | Atajo coordinador/suplente solo RAG (D-064). |
 | P-P07 | profesor | email de la profesora que da ADDA en el grupo 2 | Matching profesor↔asignatura↔grupo no implementado. |
 | P-W03 | profesor | datos de la profa bernrdez | Fuzzy de typos severos en nombres de profesor. |
+| P-S01 | seguimiento_cross_intent | (turno 2) "y de estadistica?" tras "tutorias de AE" | Cambio de sub-intent dentro del seguimiento (tutorías → ficha): el NLU clasifica cada turno aisladamente. Resoluble con slot persistente `ultima_consulta_tutorias` (3 turnos de TTL). Ver §5.4.5. |
+| H-S01 | seguimiento_cross_intent | (turno 3) "y que horario tiene" tras ficha de DP | Mismo patrón que P-S01 trasladado a horarios: el turno elíptico se clasifica como `consulta_horario` (curso+grupo) en vez de heredar `ultimo_nombre_asignatura` y resolver vía `consulta_horario_asignatura`. Misma palanca de §5.4.5. |
 | HA-P09 | horario_asignatura | ¿dónde son las prácticas de Álgebra Lineal? | "prácticas" no es filtro de aula (colisiona con "Prácticas Externas" y con "clases teórico-prácticas" del plan docente); requiere ejemplos NLU para enrutar a `consulta_horario_asignatura` con filtro lab. |
 | HA-P10 | horario_asignatura | laboratorio de Inteligencia Artificial grupo 3 | Convención `aula.startswith('A') = teoría` falla cuando una asignatura usa varias aulas A como salas de práctica. Resoluble con heurística "primera aula = teoría, resto = lab" o con columna `tipo_uso` en `horarios`. |
 | HA-W06 | horario_asignatura | laboratorio de inteleigenicia artifical | Misma causa que HA-P10. |

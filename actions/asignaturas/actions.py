@@ -26,10 +26,6 @@ from ..shared.config import BotConfig, ALIAS_ASIGNATURAS
 from ..shared.db import db_client
 
 
-# ============================================================================
-# UTILIDADES
-# ============================================================================
-
 def _detectar_grupo(texto: str) -> Optional[str]:
     """
     Detecta si el usuario menciona un grupo específico en su mensaje.
@@ -113,9 +109,18 @@ def _contar_turnos_desde_slot(tracker, slot_name: str) -> int:
     return 999
 
 
+# Titulaciones cubiertas por el chatbot. La tabla `titulaciones` contiene
+# todas las del centro (importadas desde Sevius por el panel admin), pero el
+# alcance del TFG son solo los 3 grados de la ETSII. La interfaz web ya filtra
+# a estas 3; aquí lo dejamos consistente para el canal `rasa shell`.
+# TODO: migrar a una columna `cubierta_por_chatbot` en `titulaciones` si el bot
+# crece a más titulaciones.
+TITULACIONES_BOT = ("GII-IS", "GII-TI", "GII-IC")
+
+
 def _cargar_titulaciones_desde_bd() -> List[Dict]:
     """
-    Obtiene todas las titulaciones activas de la BD.
+    Obtiene las titulaciones activas cubiertas por el chatbot.
     Devuelve lista de dicts con 'codigo' y 'nombre'.
     Devuelve lista vacía si hay error de conexión.
     """
@@ -125,7 +130,9 @@ def _cargar_titulaciones_desde_bd() -> List[Dict]:
             return []
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT codigo, nombre FROM titulaciones WHERE activa = true ORDER BY nombre"
+            "SELECT codigo, nombre FROM titulaciones "
+            "WHERE activa = true AND codigo = ANY(%s) ORDER BY nombre",
+            (list(TITULACIONES_BOT),),
         )
         filas = cursor.fetchall()
         cursor.close()
@@ -259,9 +266,7 @@ def extraer_nombre_asignatura(tracker, titulacion_detectada_en_mensaje: bool = F
     return mejor
 
 
-# ============================================================================
-# RAG: BÚSQUEDA EN PLANES DOCENTES
-# ============================================================================
+# ── RAG: búsqueda en planes docentes ──
 
 def _resolver_nombre_desde_texto(pregunta: str, titulacion: str) -> Optional[str]:
     """
@@ -516,13 +521,9 @@ Respuesta:"""
     return respuesta.strip() if respuesta else None
 
 
-# ============================================================================
-# HELPER: RESPUESTA DE HORARIO DE ASIGNATURA
-# ============================================================================
-# La detección de intent vive en el NLU (intent `consulta_horario_asignatura`);
-# este helper solo formula la respuesta a partir de una asignatura ya resuelta
-# y un grupo opcional. Lo usan `ActionConsultaHorarioAsignatura` y
-# potencialmente futuros Actions que necesiten formatear un horario puntual.
+# ── Helper: respuesta de horario de asignatura ──
+# La detección de intent vive en el NLU (`consulta_horario_asignatura`).
+# Este helper solo formula la respuesta a partir de una asignatura resuelta.
 
 
 def _responder_horario_asignatura(
@@ -665,9 +666,7 @@ def _responder_horario_asignatura(
     return _generar_respuesta_horario(pregunta, datos_texto)
 
 
-# ============================================================================
-# ACTION: CONSULTA ESPECÍFICA
-# ============================================================================
+# ── Action: consulta específica ──
 
 class ActionConsultaEspecifica(Action):
     """
@@ -918,9 +917,7 @@ class ActionConsultaEspecifica(Action):
         ]
 
 
-# ============================================================================
-# ACTION: LISTADO DE ASIGNATURAS
-# ============================================================================
+# ── Action: listado de asignaturas ──
 
 class ActionConsultaListado(Action):
     """
@@ -984,11 +981,15 @@ class ActionConsultaListado(Action):
         hay_mas = len(resultados) > MAX_MOSTRAR
         datos_a_mostrar = resultados[:MAX_MOSTRAR] if hay_mas else resultados
 
-        # Generar respuesta natural con Ollama
+        # Generar respuesta natural con Ollama. Pasamos `total_resultados`
+        # para que el prompt avise al LLM de que está viendo una muestra y
+        # no afirme propiedades sobre el conjunto completo (p.ej. "todas
+        # son de 1º") cuando solo ve los primeros 8 ordenados por curso.
         respuesta = generar_respuesta_natural(
             pregunta=pregunta,
             datos=datos_a_mostrar,
-            tipo='listado'
+            tipo='listado',
+            total_resultados=len(resultados),
         )
 
         dispatcher.utter_message(
@@ -1006,9 +1007,7 @@ class ActionConsultaListado(Action):
         return eventos_contexto
 
 
-# ============================================================================
-# ACTION: CONTEO DE ASIGNATURAS
-# ============================================================================
+# ── Action: conteo de asignaturas ──
 
 class ActionConsultaConteo(Action):
     """
@@ -1119,9 +1118,7 @@ class ActionConsultaConteo(Action):
         return eventos_contexto
 
 
-# ============================================================================
-# ACTION: MOSTRAR TODAS (PAGINACIÓN)
-# ============================================================================
+# ── Action: mostrar todas (paginación) ──
 
 class ActionMostrarTodasAsignaturas(Action):
     """
@@ -1160,9 +1157,7 @@ class ActionMostrarTodasAsignaturas(Action):
         return [SlotSet("ultimos_resultados_asignaturas", None)]
 
 
-# ============================================================================
-# ACTION: HORARIO/AULA DE UNA ASIGNATURA
-# ============================================================================
+# ── Action: horario/aula de una asignatura ──
 
 class ActionConsultaHorarioAsignatura(Action):
     """

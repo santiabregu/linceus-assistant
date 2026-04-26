@@ -24,9 +24,7 @@ from actions.shared.gemini_client import llamar_gemini as llamar_llm
 from actions.shared.db import db_client
 
 
-# ============================================================================
-# SCHEMA DE LA BASE DE DATOS (para el prompt del LLM)
-# ============================================================================
+# ── Schema de la BD (para el prompt del LLM) ──
 
 PROFESORES_SCHEMA = """
 CREATE TABLE profesores (
@@ -129,9 +127,7 @@ COLUMNAS_PERMITIDAS_PROFESOR = {
 }
 
 
-# ============================================================================
-# GENERACIÓN DE SQL
-# ============================================================================
+# ── Generación de SQL ──
 
 def generar_sql_profesor(
     pregunta: str,
@@ -342,9 +338,7 @@ def _fallback_sql(
     }
 
 
-# ============================================================================
-# VALIDACIÓN DE SEGURIDAD SQL
-# ============================================================================
+# ── Validación de seguridad SQL ──
 
 def validar_sql(sql: str) -> Optional[str]:
     """Valida que la SQL generada sea segura."""
@@ -385,9 +379,7 @@ def validar_sql(sql: str) -> Optional[str]:
     return sql
 
 
-# ============================================================================
-# EJECUCIÓN SEGURA DE QUERIES
-# ============================================================================
+# ── Ejecución segura de queries ──
 
 def ejecutar_query(sql: str, parametros: List = None) -> Tuple[bool, Any]:
     """Ejecuta una query SQL de forma segura."""
@@ -436,9 +428,7 @@ def ejecutar_query(sql: str, parametros: List = None) -> Tuple[bool, Any]:
         return False, str(e)
 
 
-# ============================================================================
-# FORMATEO Y RESPUESTA NATURAL
-# ============================================================================
+# ── Formateo y respuesta natural ──
 
 DIAS_NOMBRE = {1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes"}
 

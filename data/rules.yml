@@ -47,6 +47,11 @@ rules:
   - intent: consulta_titulaciones
   - action: action_consulta_titulaciones
 
+- rule: Reset de contexto (cambiar titulación)
+  steps:
+  - intent: reset_contexto
+  - action: action_reset_contexto
+
 # =============================================================================
 # REGLAS PARA CONSULTAS DE ASIGNATURAS (Text-to-SQL)
 # =============================================================================

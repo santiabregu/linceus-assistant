@@ -518,6 +518,35 @@ Cambio cosmético adicional: `CountVectorsFeaturizer (char_wb)` con `min_ngram: 
 **Justificación:** Es el input más natural del usuario tras una pregunta aclaratoria del bot. Cero coste, soluciona un fallo observado en la validación manual de D-053.
 **Archivos:** `data/nlu/horarios.yml`
 
+### D-069: Limpieza de horarios espurios — el scraper colapsa franjas de varios grupos en uno
+
+**Problema:** Detectado durante validación manual del 2026-04-26. Al consultar "horario curso 4 grupo 1" en GII-IS, el bot devolvía para **Ingeniería del Software y Práctica Profesional (ISPP)** cuatro sesiones el jueves (10:40, 12:40, 15:30, 17:40), todas en H1.10. Lo correcto según el PDF oficial es solo dos: 10:40-12:30 y 12:40-14:30. Las otras dos pertenecen a los grupos 2 y 3, no al 1.
+
+Causa raíz: el scraper de horarios (de iteraciones previas a S7) crea un único `grupo_clase` (código "1") para asignaturas obligatorias y le asigna **todas las celdas que ve en la cuadrícula del PDF** que comparten aula, aunque correspondan a grupos distintos. Cuando el PDF reutiliza la misma aula para los 3 grupos consecutivos (caso típico de obligatorias en H1.10), las 6 sesiones reales (2 × 3 grupos) acaban como 6 sesiones del grupo 1 en BD.
+
+**Auditoría 2026-04-26 (4º GII-IS):** de las 4 obligatorias del curso, 3 tienen un solo `grupo_clase` cuando el plan tiene 3 grupos:
+- **EGC** (Evolución y Gestión de la Configuración): 3 filas martes 15:30-17:20 con aulas distintas (H1.10, F1.30, F1.31). **No es duplicación** — es 1 teoría + 2 labs en paralelo, el agregador ya lo trata bien (`_datos_horario_a_texto` con buckets `teoria`/`lab`). **No requiere fix.**
+- **PGPI** (Planificación y Gestión de Proyectos Informáticos): 3 filas jueves 15:30-17:20 con aulas distintas (H1.10, I2.33, I2.35). Mismo patrón teoría + 2 labs. **No requiere fix.**
+- **ISPP** (Ingeniería del Software y Práctica Profesional): 4 filas jueves con franjas DISTINTAS (10:40, 12:40, 15:30, 17:40), todas en H1.10. **Único caso real de colapso multi-grupo.**
+
+**Decisión (parche puntual):** borrar manualmente las 2 filas espurias del grupo 1 de ISPP (15:30-17:20 y 17:40-19:30 jueves) que en realidad son sesiones de los grupos 2 y 3. El grupo 1 queda correcto con sus 2 sesiones reales (10:40 y 12:40). Los grupos 2 y 3 quedan **ausentes** en BD hasta el re-scrape — preferimos vacío explícito a datos inventados (el bot responderá "no encontré horarios para grupo 2 de ISPP" en vez de mentir).
+
+```sql
+DELETE FROM horarios WHERE id IN (
+  '8d7316a9-77c4-4b52-b42b-50d574d7b694',  -- jue 15:30-17:20 H1.10 ISPP grupo 1 (espuria)
+  '08dccb76-205a-4e76-8542-c6eaab5e1d9b'   -- jue 17:40-19:30 H1.10 ISPP grupo 1 (espuria)
+);
+```
+
+**Justificación:** sin acceso al PDF oficial en esta sesión no podemos crear los `grupos_clase` 2 y 3 con sus franjas reales sin riesgo de inventarlas. Borrar lo claramente espurio (confirmado contra el plan docente por el usuario) deja la BD honesta. La asimetría "grupo 1 OK, grupos 2/3 ausentes" es preferible a "grupo 1 con datos de 2 y 3 mezclados".
+
+**Pendiente como trabajo futuro:**
+1. Re-scrape de ISPP con un parser que distinga grupos por columnas/marcas del PDF (no por aula).
+2. Auditoría análoga en cursos 2º y 3º — el patrón de colapso puede afectar a otras obligatorias compartidas de aula. Query útil: `SELECT a.nombre, a.curso, gc.codigo, COUNT(*) AS sesiones FROM horarios h JOIN grupos_clase gc … GROUP BY 1,2,3 HAVING COUNT(*) > 4` para detectar candidatos.
+3. **No es bug del bot** ni del agregador `_datos_horario_a_texto`: la SQL y la deduplicación funcionan bien. El bug vive en la capa de ingesta del scraper.
+
+**Archivos:** ninguno de código. Solo BD: `horarios` (2 filas borradas con UUIDs anotados arriba).
+
 ---
 
 ## Pendiente

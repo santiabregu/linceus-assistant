@@ -110,6 +110,19 @@ nlu:
     - tutorías de la asignatura [FP](nombre_asignatura)
     - quiero ir a tutoría de [DP1](nombre_asignatura)
     - ¿a qué hora puedo ir a tutoría de [PSG](nombre_asignatura)?
+    - tutorias de [AE](nombre_asignatura)
+    - tutorías de [administracion de empresas](nombre_asignatura)
+    - ¿a qué hora son las tutorías de la asignatura [administracion de empresas](nombre_asignatura)?
+    - tutorías de la asignatura [Algebra](nombre_asignatura)
+    - cuándo tiene tutorías la asignatura [IISSI2](nombre_asignatura)
+    - ¿dónde se hacen las tutorías de [Logica Informatica](nombre_asignatura)?
+    - cuando son las tutorias de [Inteligencia Artificial](nombre_asignatura)
+    - tuturias de la asignatura [Cripto](nombre_asignatura)
+    - turtorias de [SO](nombre_asignatura)
+    - horario de tutorías de la asignatura [Procesos Software](nombre_asignatura)
+    - dame las tutorías de [Estructura de Computadores](nombre_asignatura)
+    - tutorías [Matematica Discreta](nombre_asignatura)
+    - cual es el horario de tutorías de [TFG](nombre_asignatura)
     # ─── Coordinador y suplentes (solo plan docente, se resuelven via RAG) ───
     - quien coordina [FP](nombre_asignatura)
     - quien coordina [DP1](nombre_asignatura)

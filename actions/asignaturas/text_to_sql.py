@@ -10,9 +10,7 @@ from ..shared.gemini_client import llamar_gemini as llamar_llm
 from ..shared.db import db_client
 
 
-# ============================================================================
-# SCHEMA DE LA BASE DE DATOS (para el prompt de Ollama)
-# ============================================================================
+# ── Schema de la BD (para el prompt del LLM) ──
 
 ASIGNATURAS_SCHEMA = """
 CREATE TABLE asignaturas (
@@ -206,8 +204,16 @@ def _expandir_alias(nombre: str, titulacion: str = None) -> str:
     if nombre_lower in ALIAS_ASIGNATURAS:
         print(f"   → Alias manual: '{nombre}' → '{ALIAS_ASIGNATURAS[nombre_lower]}'")
         return ALIAS_ASIGNATURAS[nombre_lower]
-    # Limpiar prefijos comunes del NLU iterativamente (ej: "Datos de PGPI" → "de PGPI" → "PGPI")
+    # Lookup tolerante a separadores: la gente escribe "ISSI-2", "DP.1",
+    # "PSG 1" en vez de "iissi2"/"dp1"/"psg1". Quitamos guiones, puntos y
+    # espacios SOLO para el match de la tabla manual; el nombre original
+    # sigue intacto para el resto del flujo.
     import re
+    compactado = re.sub(r'[\s\-\.]+', '', nombre_lower)
+    if compactado != nombre_lower and compactado in ALIAS_ASIGNATURAS:
+        print(f"   → Alias manual (compactado): '{nombre}' → '{ALIAS_ASIGNATURAS[compactado]}'")
+        return ALIAS_ASIGNATURAS[compactado]
+    # Limpiar prefijos comunes del NLU iterativamente (ej: "Datos de PGPI" → "de PGPI" → "PGPI")
     limpio = nombre_lower
     for _ in range(3):  # máximo 3 pasadas
         nuevo = re.sub(r'^(de|del|la|el|las|los|sobre|info|datos)\s+', '', limpio).strip()
@@ -310,9 +316,7 @@ Responde SOLO con: true o false"""
     return _necesita_rag_heuristica(pregunta)
 
 
-# ============================================================================
-# GENERACIÓN DE SQL CON OLLAMA
-# ============================================================================
+# ── Generación de SQL con LLM ──
 
 def generar_sql_especifica(
     pregunta: str,
@@ -605,9 +609,7 @@ JSON:"""
     }
 
 
-# ============================================================================
-# VALIDACIÓN DE SEGURIDAD SQL
-# ============================================================================
+# ── Validación de seguridad SQL ──
 
 def validar_sql(sql: str, tipo: str = 'select') -> Optional[str]:
     """
@@ -686,9 +688,7 @@ def validar_sql(sql: str, tipo: str = 'select') -> Optional[str]:
     return sql
 
 
-# ============================================================================
-# EJECUCIÓN SEGURA DE QUERIES
-# ============================================================================
+# ── Ejecución segura de queries ──
 
 def ejecutar_query(sql: str, parametros: List = None) -> Tuple[bool, Any]:
     """
@@ -784,9 +784,7 @@ def ejecutar_count(sql: str, parametros: List = None) -> Tuple[bool, int]:
         return False, -1
 
 
-# ============================================================================
-# GENERACIÓN DE RESPUESTA NATURAL (CENTRALIZADA)
-# ============================================================================
+# ── Generación de respuesta natural (centralizada) ──
 
 DURACION_NOMBRES = {
     'A': 'Anual',
@@ -845,24 +843,47 @@ def formatear_datos_para_prompt(datos: Any, tipo: str) -> str:
 def generar_respuesta_natural(
     pregunta: str,
     datos: Any,
-    tipo: str = 'especifica'
+    tipo: str = 'especifica',
+    total_resultados: Optional[int] = None,
 ) -> str:
     """
     Función CENTRALIZADA de generación de respuesta.
     Recibe la pregunta del usuario + los datos crudos de la BD,
     y deja que Ollama genere una respuesta natural.
-    
+
     Args:
         pregunta: Pregunta original del usuario
         datos: Resultado de la query (dict, list, int, etc.)
         tipo: 'especifica' | 'listado' | 'conteo'
-    
+        total_resultados: Si la lista llega paginada (datos truncados),
+            número total real antes del recorte. Permite avisar al LLM de
+            que está viendo solo una muestra y evita que afirme "todas las
+            asignaturas son de X" cuando solo ve las primeras N.
+
     Returns:
         Respuesta natural generada por el modelo
     """
     # Preparar datos como texto legible
     datos_texto = formatear_datos_para_prompt(datos, tipo)
-    
+
+    # Si los datos vienen paginados, avisar al LLM para evitar que afirme
+    # propiedades sobre el conjunto completo a partir de la muestra.
+    aviso_paginacion = ""
+    if (
+        tipo == 'listado'
+        and isinstance(datos, list)
+        and total_resultados is not None
+        and total_resultados > len(datos)
+    ):
+        aviso_paginacion = (
+            f"\nIMPORTANTE: Los datos anteriores son una MUESTRA de los "
+            f"primeros {len(datos)} resultados de un total de "
+            f"{total_resultados}. NO afirmes propiedades sobre el conjunto "
+            f"completo (p.ej. 'todas son de 1º') porque solo ves la muestra. "
+            f"Limítate a listar lo que tienes y deja que el sistema se "
+            f"encargue de avisar de que hay más resultados."
+        )
+
     prompt = f"""Eres Linceus, un asistente universitario de la ETSII (Universidad de Sevilla).
 Responde a la pregunta del usuario usando SOLO los datos proporcionados.
 
@@ -870,7 +891,7 @@ PREGUNTA DEL USUARIO: "{pregunta}"
 
 DATOS OBTENIDOS DE LA BASE DE DATOS:
 {datos_texto}
-
+{aviso_paginacion}
 REGLAS:
 - Responde de forma natural, cercana y concisa
 - Si la pregunta es sobre un atributo concreto (créditos, curso, etc.), céntrate en ese dato

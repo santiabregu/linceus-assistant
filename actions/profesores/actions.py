@@ -283,9 +283,14 @@ def _rag_chunks_plan_docente(
 
 def _generar_respuesta_rag(
     pregunta: str, chunks: List[Dict], nombre_asignatura: str,
+    tutorias_no_disponibles: bool = False,
 ) -> Optional[str]:
     """Convierte chunks del plan docente en una respuesta natural.
-    Mismo prompt/estilo que ActionConsultaEspecifica en asignaturas."""
+
+    Si `tutorias_no_disponibles` es True, el prompt instruye al LLM para
+    listar al profesorado que aparezca en el plan docente y redirigir al
+    contacto por email (la tabla `tutorias` está vacía — D-061).
+    """
     if not chunks:
         return None
 
@@ -298,6 +303,19 @@ def _generar_respuesta_rag(
         f"{_chunk_header(c)}\n{c.get('contenido', '')}\nMetadatos: {c.get('metadata', {})}"
         for c in chunks
     )
+
+    nota_tutorias = ""
+    if tutorias_no_disponibles:
+        nota_tutorias = (
+            "\n- IMPORTANTE: el usuario ha preguntado por TUTORÍAS de la asignatura. "
+            "No tenemos registradas las tutorías de los profesores en la base de datos. "
+            "Si en el plan docente aparece la sección [profesorado] o [coordinador], "
+            "lístalos y sugiere contactar por email. NO devuelvas información de "
+            "evaluación, bibliografía u objetivos: sería irrelevante para una "
+            "consulta de tutorías. Si el plan docente tampoco menciona profesorado "
+            "claramente, responde que no hay tutorías registradas y sugiere "
+            "consultar al profesorado por email."
+        )
 
     prompt = f"""Eres Linceus, un asistente universitario de la ETSII (Universidad de Sevilla).
 Responde a la pregunta del usuario usando SOLO la información del plan docente proporcionada.
@@ -321,7 +339,7 @@ REGLAS:
 - IMPORTANTE: Cada fragmento tiene una etiqueta de sección entre corchetes (ej. [profesorado], [bibliografia]).
   Los nombres en secciones [bibliografia] son AUTORES DE LIBROS, NO profesores de la asignatura.
   Solo menciona como profesores a personas de secciones [profesorado] o [coordinador].
-- IMPORTANTE: Tu respuesta debe tener como MÁXIMO 1500 caracteres. Si hay mucha información, resume lo más relevante
+- IMPORTANTE: Tu respuesta debe tener como MÁXIMO 1500 caracteres. Si hay mucha información, resume lo más relevante{nota_tutorias}
 
 Respuesta:"""
 
@@ -424,21 +442,33 @@ class ActionConsultaProfesor(Action):
         print(f"{'='*60}")
 
         # ── Follow-up: si no hay entidades, usar contexto previo ──
+        # Prioridad por defecto: profesor > asignatura. Pero si la pregunta
+        # menciona explícitamente "asignatura"/"esa"/"esta", se invierte: el
+        # usuario está preguntando por la asignatura del turno anterior, no
+        # por el último profesor en memoria.
         if not nombre_profesor and not nombre_asignatura and not nombre_departamento:
-            ultimo_prof = tracker.get_slot("ultimo_profesor_consultado")
-            if ultimo_prof:
-                turnos = _contar_turnos_desde_slot(tracker, "ultimo_profesor_consultado")
-                if turnos <= 3:
-                    nombre_profesor = ultimo_prof
-                    print(f"  → Seguimiento profesor: '{ultimo_prof}' ({turnos} turnos)")
+            pregunta_lower = pregunta.lower()
+            menciona_asignatura = bool(re.search(
+                r"\b(asignatura|esa|esta|de la materia|misma)\b", pregunta_lower
+            ))
 
-            if not nombre_profesor:
-                ultimo_asig = tracker.get_slot("ultimo_nombre_asignatura")
-                if ultimo_asig:
-                    turnos = _contar_turnos_desde_slot(tracker, "ultimo_nombre_asignatura")
-                    if turnos <= 3:
-                        nombre_asignatura = ultimo_asig
-                        print(f"  → Seguimiento asignatura: '{ultimo_asig}' ({turnos} turnos)")
+            ultimo_prof = tracker.get_slot("ultimo_profesor_consultado")
+            ultimo_asig = tracker.get_slot("ultimo_nombre_asignatura")
+            turnos_prof = (_contar_turnos_desde_slot(tracker, "ultimo_profesor_consultado")
+                           if ultimo_prof else 999)
+            turnos_asig = (_contar_turnos_desde_slot(tracker, "ultimo_nombre_asignatura")
+                           if ultimo_asig else 999)
+
+            if menciona_asignatura and ultimo_asig and turnos_asig <= 3:
+                nombre_asignatura = ultimo_asig
+                print(f"  → Seguimiento asignatura (prioridad por '{pregunta_lower}'): "
+                      f"'{ultimo_asig}' ({turnos_asig} turnos)")
+            elif ultimo_prof and turnos_prof <= 3:
+                nombre_profesor = ultimo_prof
+                print(f"  → Seguimiento profesor: '{ultimo_prof}' ({turnos_prof} turnos)")
+            elif ultimo_asig and turnos_asig <= 3:
+                nombre_asignatura = ultimo_asig
+                print(f"  → Seguimiento asignatura: '{ultimo_asig}' ({turnos_asig} turnos)")
 
         slots = [SlotSet("ultima_action_ejecutada", "action_consulta_profesor")]
 
@@ -577,7 +607,10 @@ class ActionConsultaProfesor(Action):
                     grupo=grupo_detectado,
                 )
                 if chunks:
-                    respuesta_rag = _generar_respuesta_rag(pregunta, chunks, nombre_asignatura)
+                    respuesta_rag = _generar_respuesta_rag(
+                        pregunta, chunks, nombre_asignatura,
+                        tutorias_no_disponibles=consulta_tutorias,
+                    )
                     if respuesta_rag:
                         dispatcher.utter_message(text=respuesta_rag)
                         slots.append(SlotSet("ultimo_nombre_asignatura", nombre_asignatura))

@@ -1346,6 +1346,157 @@ def build_test_cases() -> list[TestCase]:
         expected_intent="bot_challenge",
     ))
 
+    # --- Cambiar contexto académico (titulación) ---
+    # Usuario que ya tiene una titulación seteada (slot_titulacion) cambia
+    # dinámicamente a otra en mitad de la conversación. El intent
+    # `cambiar_contexto_academico` dispara `action_cambiar_contexto` que
+    # actualiza el slot. No usa LLM, es regex + lookup en BD de titulaciones.
+    cases.append(TestCase(
+        id="CC-P01", category="cambiar_contexto", subcategory="bien_escrita",
+        query="titulacion Tecnologías Informáticas",
+        slot_titulacion="GII-IS",
+        expected_intent="cambiar_contexto_academico",
+        expected_action="action_cambiar_contexto",
+        expected_contains="Tecnologías Informáticas",
+    ))
+    cases.append(TestCase(
+        id="CC-P02", category="cambiar_contexto", subcategory="bien_escrita",
+        query="soy de IC",
+        slot_titulacion="GII-IS",
+        expected_intent="cambiar_contexto_academico",
+        expected_action="action_cambiar_contexto",
+        expected_contains="Ingeniería de Computadores",
+    ))
+    cases.append(TestCase(
+        id="CC-P03", category="cambiar_contexto", subcategory="con_typos",
+        query="kambiame a tecnologias",
+        slot_titulacion="GII-IS",
+        expected_intent="cambiar_contexto_academico",
+        expected_action="action_cambiar_contexto",
+        expected_contains="Tecnologías Informáticas",
+    ))
+    cases.append(TestCase(
+        id="CC-P04", category="cambiar_contexto", subcategory="bien_escrita",
+        query="ingenieria software",
+        slot_titulacion="GII-IC",
+        expected_intent="cambiar_contexto_academico",
+        expected_action="action_cambiar_contexto",
+        expected_contains="Ingeniería del Software",
+    ))
+    cases.append(TestCase(
+        id="CC-P05", category="cambiar_contexto", subcategory="bien_escrita",
+        query="titulacion ing software",
+        slot_titulacion="GII-IC",
+        expected_intent="cambiar_contexto_academico",
+        expected_action="action_cambiar_contexto",
+        expected_contains="Ingeniería del Software",
+    ))
+    cases.append(TestCase(
+        id="CC-P06", category="cambiar_contexto", subcategory="bien_escrita",
+        query="cambia a ingenieria de computadores",
+        slot_titulacion="GII-IS",
+        expected_intent="cambiar_contexto_academico",
+        expected_action="action_cambiar_contexto",
+        expected_contains="Ingeniería de Computadores",
+    ))
+    cases.append(TestCase(
+        id="CC-P07", category="cambiar_contexto", subcategory="bien_escrita",
+        query="cambia a IS",
+        slot_titulacion="GII-IC",
+        expected_intent="cambiar_contexto_academico",
+        expected_action="action_cambiar_contexto",
+        expected_contains="Ingeniería del Software",
+    ))
+    cases.append(TestCase(
+        id="CC-P08", category="cambiar_contexto", subcategory="bien_escrita",
+        query="titulacion TI",
+        slot_titulacion="GII-IS",
+        expected_intent="cambiar_contexto_academico",
+        expected_action="action_cambiar_contexto",
+        expected_contains="Tecnologías Informáticas",
+    ))
+    cases.append(TestCase(
+        id="CC-P09", category="cambiar_contexto", subcategory="bien_escrita",
+        query="cambia a software",
+        slot_titulacion="GII-IC",
+        expected_intent="cambiar_contexto_academico",
+        expected_action="action_cambiar_contexto",
+        expected_contains="Ingeniería del Software",
+    ))
+    cases.append(TestCase(
+        id="CC-P10", category="cambiar_contexto", subcategory="bien_escrita",
+        query="TI",
+        slot_titulacion="GII-IS",
+        expected_intent="cambiar_contexto_academico",
+        expected_action="action_cambiar_contexto",
+        expected_contains="Tecnologías Informáticas",
+    ))
+    cases.append(TestCase(
+        id="CC-P11", category="cambiar_contexto", subcategory="con_typos",
+        query="kambiame a IC",
+        slot_titulacion="GII-IS",
+        expected_intent="cambiar_contexto_academico",
+        expected_action="action_cambiar_contexto",
+        expected_contains="Ingeniería de Computadores",
+    ))
+    cases.append(TestCase(
+        id="CC-N01", category="cambiar_contexto", subcategory="negativa",
+        query="cambia a Biología",
+        slot_titulacion="GII-IS",
+        expected_intent="cambiar_contexto_academico",
+        expected_action="action_cambiar_contexto",
+        expected_contains="No reconocí",
+    ))
+    cases.append(TestCase(
+        id="CC-W01", category="cambiar_contexto", subcategory="con_typos",
+        query="quiero consultar ing software",
+        slot_titulacion="GII-IC",
+        expected_intent="cambiar_contexto_academico",
+        expected_action="action_cambiar_contexto",
+        expected_contains="Ingeniería del Software",
+    ))
+
+    # --- Seguimiento cross-intent ---
+    # Limitación específica: el NLU clasifica cada turno aisladamente. Cuando
+    # el segundo turno es elíptico ("y de X?") y la primera consulta era de
+    # un sub-dominio especial (tutorías), el sistema pierde esa intención.
+    # NB: el seguimiento "mismo intent" sí funciona (ver E-S0X y P-FU01).
+    cases.append(TestCase(
+        id="P-S01", category="seguimiento_cross_intent", subcategory="cross_intent",
+        query="y de estadistica?",
+        slot_titulacion="GII-IS",
+        setup_messages=["tutorias de administracion de empresas"],
+        expected_intent="consulta_profesor",
+        expected_action="action_consulta_profesor",
+        expected_contains="tutoría",
+    ))
+
+    # Seguimiento mismo intent (profesor) tras consulta multi-resultado.
+    # Validado manualmente 2026-04-26: PASA. Caso pega-evidencia para la
+    # discusión §5.1: el seguimiento general funciona; solo falla cuando
+    # cambia el sub-intent (tutorías ↔ ficha).
+    cases.append(TestCase(
+        id="P-FU01", category="seguimiento_cross_intent", subcategory="mismo_intent",
+        query="y bedilia?",
+        slot_titulacion="GII-IS",
+        setup_messages=["Que profesores imparten ISPP?"],
+        expected_intent="consulta_profesor",
+        expected_action="action_consulta_profesor",
+        expected_contains="iestrada@us.es",
+    ))
+
+    # Multi-asignatura en una sola consulta. Validado manualmente 2026-04-26:
+    # PASA. Demuestra que el routing reconoce dos asignaturas en el mismo
+    # turno y construye respuestas separadas para cada una.
+    cases.append(TestCase(
+        id="E-M01", category="especifica", subcategory="multi_asignatura",
+        query="Cómo se evaluaban DP1 y PSG2?",
+        slot_titulacion="GII-IS",
+        expected_intent="consulta_asignatura_especifica",
+        expected_action="action_consulta_especifica",
+        expected_contains="PSG2",
+    ))
+
     return cases
 
 
