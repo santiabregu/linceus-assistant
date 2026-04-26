@@ -4,10 +4,23 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Estructura de Descomposición del Trabajo (EDT) — fases y paquetes de trabajo.}}{21}{}%
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Estructura de Descomposición del Trabajo (EDT) — fases y paquetes de trabajo.}}{33}{}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {6.1}{\ignorespaces Diagrama de componentes del sistema Linceus.}}{31}{}%
-\contentsline {figure}{\numberline {6.2}{\ignorespaces Diagrama de despliegue del sistema Linceus en DigitalOcean (Ubuntu 24.04 LTS) con el pipeline de despliegue automatizado vía GitHub Actions.}}{38}{}%
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Widget conversacional accesible para el estudiante.}}{46}{}%
+\contentsline {figure}{\numberline {6.2}{\ignorespaces Panel de administración: gestión de asignaturas.}}{47}{}%
+\contentsline {figure}{\numberline {6.3}{\ignorespaces Panel de administración: auditoría de conversaciones.}}{47}{}%
+\contentsline {figure}{\numberline {6.4}{\ignorespaces Panel de administración: gestión de horarios.}}{47}{}%
+\contentsline {figure}{\numberline {6.5}{\ignorespaces Panel de administración: gestión de profesorado.}}{47}{}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {7.1}{\ignorespaces Diagrama de componentes del sistema Linceus.}}{51}{}%
+\contentsline {figure}{\numberline {7.2}{\ignorespaces Diagrama de despliegue del sistema Linceus en DigitalOcean (Ubuntu 24.04 LTS) con el pipeline de despliegue automatizado vía GitHub Actions.}}{58}{}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

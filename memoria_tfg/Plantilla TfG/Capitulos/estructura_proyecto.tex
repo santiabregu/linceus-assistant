@@ -148,6 +148,6 @@ La estructura del repositorio refleja una separación clara entre los distintos 
 \begin{itemize}
     \item \textbf{Mantenibilidad}: Cada módulo puede modificarse de forma independiente sin afectar al resto del sistema, siempre que se respete la interfaz entre capas.
     \item \textbf{Testabilidad}: Los módulos de acceso a datos y de clientes de IA pueden probarse de forma aislada mediante mocks.
-    \item \textbf{Escalabilidad}: Añadir soporte para nuevas épicas (profesores, horarios, trámites) implica crear nuevos ficheros en \texttt{actions/} y ampliar los datos en \texttt{data/nlu/}, sin modificar la arquitectura existente.
+    \item \textbf{Escalabilidad}: Añadir soporte para nuevas épicas (por ejemplo, ampliar el dominio a otros centros de la Universidad de Sevilla) implica crear nuevos ficheros en \texttt{actions/} y ampliar los datos en \texttt{data/nlu/}, sin modificar la arquitectura existente.
     \item \textbf{Colaboración}: La organización modular facilita el trabajo paralelo en distintas partes del sistema.
 \end{itemize}

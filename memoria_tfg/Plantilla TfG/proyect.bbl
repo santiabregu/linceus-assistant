@@ -1,77 +1,154 @@
-\begin{thebibliography}{}
+\begin{thebibliography}{10}
 
-\bibitem [\protect \citeauthoryear {%
-Autores%
-}{%
-Autores%
-}{%
-{\protect \APACyear {2014}}%
-}]{%
-informatica}
-\APACinsertmetastar {%
-informatica}%
-\begin{APACrefauthors}%
-Autores, V.%
-\end{APACrefauthors}%
-\unskip\
-\newblock
-\APACrefYearMonthDay{2014}{}{}.
-\newblock
-\APACrefbtitle {Escuela {T}\'ecnica {S}uperior de {I}ngenier{\'\i}a
-  {I}nform\'atica.} {Escuela {T}\'ecnica {S}uperior de {I}ngenier{\'\i}a
-  {I}nform\'atica.}
-\newblock
-\APACaddressPublisher{}{ETSII}.
-\newblock
-\begin{APACrefURL} \url{http://www.informatica.us.es} \end{APACrefURL}
-\newblock
-\APACrefnote{fecha de consulta: 24 de Noviembre de 2014}
-\PrintBackRefs{\CurrentBib}
+\bibitem{millionbotPlatform}
+{1MillionBot}, ``{1MillionBot}: {AI} for {U}niversities.''
+  \url{https://1millionbot.com/en/universidades/}, 2026.
+\newblock Consultado en abril de 2026.
 
-\bibitem [\protect \citeauthoryear {%
-Bezos%
-}{%
-Bezos%
-}{%
-{\protect \APACyear {2007}}%
-}]{%
-guiatitlesec}
-\APACinsertmetastar {%
-guiatitlesec}%
-\begin{APACrefauthors}%
-Bezos, J.%
-\end{APACrefauthors}%
-\unskip\
-\newblock
-\APACrefYearMonthDay{2007}{}{}.
-\newblock
-{\BBOQ}\APACrefatitle {The titlesec and titletoc Packages} {The titlesec and
-  titletoc packages}.{\BBCQ}
-\newblock
-\APACjournalVolNumPages{TexEmplares}{8}{}{283--298}.
-\PrintBackRefs{\CurrentBib}
+\bibitem{usCati}
+{Universidad de Sevilla}, ``{CATi} te ayuda y acompana en tu vida
+  universitaria.''
+  \url{https://www.us.es/actualidad-de-la-us/cati-te-ayuda-y-acompana-en-tu-vida-universitaria},
+  2022.
+\newblock Consultado en abril de 2026.
 
-\bibitem [\protect \citeauthoryear {%
-de Sousa%
-}{%
-de Sousa%
-}{%
-{\protect \APACyear {2004}}%
-}]{%
-desousa}
-\APACinsertmetastar {%
-desousa}%
-\begin{APACrefauthors}%
-de Sousa, J\BPBI M.%
-\end{APACrefauthors}%
-\unskip\
-\newblock
-\APACrefYear{2004}.
-\newblock
-\APACrefbtitle {Ortografía y ortotipografía del español actual} {Ortografía
-  y ortotipografía del español actual}.
-\newblock
-\APACaddressPublisher{}{Trea}.
-\PrintBackRefs{\CurrentBib}
+\bibitem{torrejuanaCati}
+{Torre Juana OST}, ``{CATi}, el asistente inteligente de la {U}niversidad de
+  {S}evilla: 98\% tasa de acierto.''
+  \url{https://ost.torrejuana.es/cati-asistente-universidad-sevilla-98-tasa-acierto/},
+  2022.
+\newblock Consultado en abril de 2026.
+
+\bibitem{umuLola}
+{Universidad de Murcia}, ``La {U}niversidad de {M}urcia presenta a {LOLA}, un
+  asistente de inteligencia artificial para ayudar a los nuevos alumnos.''
+  \url{https://www.um.es/web/sala-prensa/-/la-universidad-de-murcia-presenta-a-lola-un-asistente-de-inteligencia-artificial-para-ayudar-a-los-nuevos-alumnos},
+  2018.
+\newblock Consultado en abril de 2026.
+
+\bibitem{millionbotLola}
+{1MillionBot}, ``{Chatbot Lola} -- {U}niversidad de {M}urcia.''
+  \url{https://1millionbot.com/en/chatbot-lola-umu/}, 2018.
+\newblock Consultado en abril de 2026.
+
+\bibitem{ugrAlhe}
+{Universidad de Granada}, ``Nuevo asistente virtual llamado {Alhe}, dirigido al
+  estudiantado y futuro estudiantado.''
+  \url{https://www.ugr.es/universidad/noticias/asistente-virtual-llamado-ahle-dirigidoestudiantado-futuro-estudiantado},
+  2023.
+\newblock Consultado en abril de 2026.
+
+\bibitem{millionbotUgr}
+{1MillionBot}, ``La {IA} de {1MillionBot} se implementa en la {U}niversidad de
+  {G}ranada.''
+  \url{https://1millionbot.com/en/la-ia-de-1millionbot-se-implementa-en-la-universidad-de-granada/},
+  2023.
+\newblock Consultado en abril de 2026.
+
+\bibitem{ucaLuca}
+{Universidad de Cadiz}, ``{LUCA}, nuevo chatbot inteligente de la {U}niversidad
+  de {C}adiz para asistencia al estudiante.''
+  \url{https://sistinfo.uca.es/noticia/luca-nuevo-chatbot-inteligente-de-la-universidad-de-cadiz-para-asistencia-al-estudiante/},
+  2023.
+\newblock Consultado en abril de 2026.
+
+\bibitem{uahIsidra}
+{Universidad de Alcala}, ``La {U}niversidad de {A}lcala presenta un nuevo
+  asistente virtual para su pagina web.''
+  \url{https://portalcomunicacion.uah.es/sala-prensa/notas-prensa/la-universidad-de-alcala-presenta-un-nuevo-asistente-virtual-para-su-pagina-web.html},
+  2024.
+\newblock Consultado en abril de 2026.
+
+\bibitem{uahAiex}
+{El Complutense}, ``{AIex}, el asistente virtual creado por estudiantes de la
+  {UAH} que atiende consultas academicas en {AULA} 2026.''
+  \url{https://elcomplutense.com/aiex-chatbot-estudiantes-uah/}, 2026.
+\newblock Consultado en abril de 2026.
+
+\bibitem{unibuddy}
+{Unibuddy Ltd.}, ``{Unibuddy}: Student-to-student recruitment at scale.''
+  \url{https://unibuddy.com/}, 2026.
+\newblock Consultado en abril de 2026.
+
+\bibitem{unibuddyAssistant}
+{Unibuddy Ltd.}, ``Introducing a {Unibuddy Assistant}.''
+  \url{https://unibuddy.com/a-unibuddy-assistant/}, 2024.
+\newblock Consultado en abril de 2026.
+
+\bibitem{hubert}
+{Hubert AI AB}, ``{Hubert.ai} -- {AI} chatbot for course evaluation.''
+  \url{https://www.hubert.ai/}, 2026.
+\newblock Consultado en abril de 2026.
+
+\bibitem{gupta2019admitbot}
+R.~Gupta {\em et~al.}, ``{AdmitBot}: A system for automated admission
+  counseling,'' in {\em IJCAI Workshop}, 2019.
+
+\bibitem{colace2018edubot}
+F.~Colace, M.~De~Santo, M.~Lombardi, F.~Pascale, A.~Pietrosanto, and S.~Lemma,
+  ``Chatbot for {E}-{L}earning: A case of study,'' {\em International Journal
+  of Mechanical Engineering and Robotics Research (IJMERR)}, 2018.
+
+\bibitem{ranoliya2017chatbot}
+B.~R. Ranoliya, N.~Raghuwanshi, and S.~Singh, ``Chatbot for university related
+  {FAQs},'' in {\em IEEE ICACCI}, 2017.
+
+\bibitem{dibya2021chatbot}
+D.~K. Dibya and S.~Sahoo, ``Implementation of a chatbot system using {AI} and
+  {NLP},'' in {\em IEEE ICCCNT}, 2021.
+
+\bibitem{segura2024guiatfg}
+S.~Segura and A.~Ruiz, ``Guia para proyectos fin de grado sobre desarrollo de
+  software.'' \url{https://github.com/ssegura/Guia_TFG}, 2024.
+\newblock Departamento de Lenguajes y Sistemas Informaticos, ETSII, Universidad
+  de Sevilla.
+
+\bibitem{iso25010}
+{International Organization for Standardization}, ``{ISO/IEC 25010:2023} --
+  systems and software engineering -- systems and software quality requirements
+  and evaluation ({SQuaRE}) -- product quality model,'' 2023.
+
+\bibitem{north2006bdd}
+D.~North, ``Introducing {BDD}.'' Better Software Magazine, 2006.
+
+\bibitem{xoriantChatbot}
+{Xoriant}, ``A comprehensive guide to chatbot testing.'' White paper, 2020.
+
+\bibitem{testio}
+{Test IO Academy}, ``Chatbot testing: Approaches, challenges and best
+  practices,'' 2021.
+
+\bibitem{braun2017evaluating}
+D.~Braun, A.~Hernandez-Mendez, F.~Matthes, and M.~Langen, ``Evaluating natural
+  language understanding services for conversational question answering
+  systems,'' in {\em SIGDIAL, ACL}, 2017.
+
+\bibitem{casanueva2020efficient}
+I.~Casanueva, T.~Temcinas, D.~Gerz, M.~Henderson, and I.~Vulic, ``Efficient
+  intent detection with dual sentence encoders,'' in {\em ACL NLP4ConvAI
+  Workshop}, 2020.
+
+\bibitem{es2024ragas}
+S.~Es, J.~James, L.~Espinosa-Anke, and S.~Schockaert, ``{RAGAS}: Automated
+  evaluation of retrieval augmented generation,'' in {\em EACL}, 2024.
+
+\bibitem{lewis2020retrieval}
+P.~Lewis {\em et~al.}, ``Retrieval-augmented generation for knowledge-intensive
+  {NLP} tasks,'' in {\em NeurIPS}, 2020.
+
+\bibitem{bocklisch2020diet}
+T.~Bocklisch, J.~Faulkner, N.~Pawlowski, A.~Nichol, and V.~Vlasov, ``{DIET}:
+  Lightweight language understanding for dialogue systems.'' arXiv:2004.09936,
+  2020.
+
+\bibitem{casas2020trends}
+J.~Casas, M.-O. Tricot, O.~Abou~Khaled, E.~Mugellini, and P.~Cudre-Mauroux,
+  ``Trends \& methods in chatbot evaluation,'' in {\em CHIIR Workshop, ACM},
+  2020.
+
+\bibitem{folstad2020users}
+A.~Folstad and P.~B. Brandtzaeg, ``Users' experiences with chatbots: findings
+  from a questionnaire study,'' {\em Quality and User Experience, Springer},
+  2020.
 
 \end{thebibliography}

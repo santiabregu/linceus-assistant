@@ -1,58 +1,48 @@
 This is BibTeX, Version 0.99e
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: proyect.aux
-Reallocating 'name_of_file' (item size: 1) to 8 items.
-The style file: apacite.bst
 Reallocating 'name_of_file' (item size: 1) to 7 items.
-Reallocating 'glb_str_end' (item size: 4) to 20 items.
-Reallocating 'glb_str_ptr' (item size: 4) to 20 items.
-Reallocating 'global_strs' (item size: 1) to 4000000 items.
-Reallocating 'singl_function' (item size: 4) to 100 items.
-Reallocating 'wiz_functions' (item size: 4) to 6000 items.
-Reallocating 'singl_function' (item size: 4) to 100 items.
-Reallocating 'singl_function' (item size: 4) to 100 items.
-Reallocating 'wiz_functions' (item size: 4) to 9000 items.
-Reallocating 'singl_function' (item size: 4) to 100 items.
+The style file: ieeetr.bst
+Reallocating 'name_of_file' (item size: 1) to 7 items.
 Database file #1: pfcbib.bib
-apacite.bst [2013/07/21 v6.03 APA bibliography style]
-You've used 3 entries,
-            6951 wiz_defined-function locations,
-            1288 strings with 10999 characters,
-and the built_in function-call counts, 4486 in all, are:
-= -- 555
-> -- 30
-< -- 182
-+ -- 174
-- -- 6
-* -- 260
-:= -- 814
-add.period$ -- 13
-call.type$ -- 3
-change.case$ -- 51
+You've used 29 entries,
+            1876 wiz_defined-function locations,
+            612 strings with 8306 characters,
+and the built_in function-call counts, 4495 in all, are:
+= -- 371
+> -- 218
+< -- 0
++ -- 88
+- -- 59
+* -- 238
+:= -- 691
+add.period$ -- 43
+call.type$ -- 29
+change.case$ -- 29
 chr.to.int$ -- 0
-cite$ -- 6
-duplicate$ -- 107
-empty$ -- 216
-format.name$ -- 42
-if$ -- 892
+cite$ -- 29
+duplicate$ -- 198
+empty$ -- 569
+format.name$ -- 59
+if$ -- 1099
 int.to.chr$ -- 0
-int.to.str$ -- 9
-missing$ -- 0
-newline$ -- 73
-num.names$ -- 24
-pop$ -- 137
+int.to.str$ -- 29
+missing$ -- 10
+newline$ -- 104
+num.names$ -- 29
+pop$ -- 188
 preamble$ -- 1
-purify$ -- 12
+purify$ -- 0
 quote$ -- 0
-skip$ -- 288
+skip$ -- 84
 stack$ -- 0
-substring$ -- 191
-swap$ -- 60
-text.length$ -- 6
+substring$ -- 0
+swap$ -- 10
+text.length$ -- 0
 text.prefix$ -- 0
-top$ -- 1
-type$ -- 240
+top$ -- 0
+type$ -- 0
 warning$ -- 0
-while$ -- 15
-width$ -- 0
-write$ -- 78
+while$ -- 29
+width$ -- 31
+write$ -- 260

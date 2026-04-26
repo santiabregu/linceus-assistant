@@ -25,22 +25,35 @@
 % Para celdas que abarcan varias filas (resumen EDT por fases)
 \usepackage{multirow}
 
+% NOTA: hyperref desactivado.
+% La plantilla pclass.cls tiene un conflicto irresoluble con hyperref
+% al expandir \cite que rompe la compilacion. Se sacrifican los enlaces
+% clicables de citas, indices y URLs a cambio de que la memoria compile.
+% Las URLs siguen apareciendo en texto plano gracias al estilo ieeetr.
+% \usepackage[hidelinks]{hyperref}
+
 
 \begin{document}
-\tipo{Grado}   % Grado o M\'aster
-\titulopro{Especificaciones de formato}
-\tutor{Junta de Centro}
-\departamento{Comisi\'on de Trabajos fin de Grado de la E.T.S.I.I.}
-%\autores{Nombre 1}{Nombre 2}  % Dos autores
-\autores{(ponente): Jos\'e Ra. Portillo Fernández}{{\ }}   % Un autor
-\dia{1 de marzo de 2017 (v.0.91)}
-\titulacion{GIC, GIS y GITI}
+\tipo{Grado}
+\titulopro{Linceus Assistant: chatbot universitario con RAG para el alumnado de la ETSII}
+\tutor{Jos\'e Antonio Parejo Maestre}
+\departamento{Lenguajes y Sistemas Inform\'aticos}
+\autores{Santia Bregu}{{\ }}
+\dia{\today}
+\titulacion{Grado en Ingenier\'ia Inform\'atica -- Ingenier\'ia del Software}
 
 \hacerportada
 
 	\input{tocdef}
-\frontmatter
 
+% Resumen primero, con numeracion arabica desde la pagina 1.
+% Los indices van despues. \mainmatter se redefine para no resetear el contador.
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+	\input{Capitulos/resumen}
+
+	\clearpage
 	\tableofcontents % Índice general
 
 	\clearpage
@@ -52,6 +65,11 @@
 	\clearpage
 	\lstlistoflistings % Índice de extractos de código
 
+% Redefinimos \mainmatter para que no reinicie la numeracion (queremos
+% paginacion continua desde el resumen).
+\makeatletter
+\renewcommand\mainmatter{\clearpage\@mainmattertrue}
+\makeatother
  \mainmatter
 
 % =====================================================
@@ -76,19 +94,33 @@
 % =====================================================
 \part{Diseño e Implementación}
 
+     \input{Capitulos/requisitos}
      \input{Capitulos/arquitectura_diseno}
      \input{Capitulos/marco_tecnologico}
      \input{Capitulos/estructura_proyecto}
      \input{Capitulos/estructura_bd}
+     \input{Capitulos/implementacion}
+
+% =====================================================
+% PARTE IV: VALIDACIÓN Y CIERRE
+% =====================================================
+\part{Validación y Cierre}
+
+     \input{Capitulos/pruebas}
+     \input{Capitulos/manual}
+     \input{Capitulos/conclusiones}
+     \input{Capitulos/uso_ia}
+     \input{Capitulos/video_presentacion}
 
 \backmatter
 
-% \input{Capitulos/apendices}
+\input{Capitulos/apendices}
 
 % Bibliografía
 \clearpage
-\bibliographystyle{apacite}
-\nocite{*}  % Muestra todas las referencias sin necesidad de \cite{}
+% Estilo numerico tipo [1], [2], ordenado por orden de aparicion en el texto.
+% apacite ha sido desactivado en pclass.cls para evitar conflictos.
+\bibliographystyle{ieeetr}
 \bibliography{pfcbib}
 
 \end{document}

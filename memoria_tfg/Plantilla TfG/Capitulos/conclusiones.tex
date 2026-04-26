@@ -1,7 +1,91 @@
-\chapter{Conclusiones y desarrollos futuros}\label{pruebas}
+% !TEX root = ../proyect.tex
 
+\chapter{Conclusiones y desarrollos futuros}\label{cap:conclusiones}
 
+Este capítulo cierra la memoria del trabajo. Tras un proyecto extenso conviene levantar la vista del detalle técnico y revisar qué se planteó al inicio, qué ha quedado efectivamente construido y qué queda por hacer. La estructura del capítulo reproduce ese orden: se contrastan los objetivos enunciados en el Capítulo~\ref{cap:introduccion} con la evidencia recogida durante la validación, se recopilan las lecciones aprendidas a lo largo del desarrollo, se analiza la desviación de la planificación inicial, se enumeran las líneas de evolución previstas para una segunda iteración del sistema y se cierra con una reflexión personal sobre la experiencia.
 
-	
+\section{Cumplimiento de objetivos}\label{sec:conc-objetivos}
 
+El Capítulo~\ref{cap:introduccion} planteaba un objetivo general y un conjunto de objetivos técnicos y académicos. Resulta razonable revisar uno por uno hasta qué punto se han alcanzado, apoyándose en la evidencia recopilada en el Capítulo~\ref{cap:pruebas}.
 
+\subsection{Objetivo general}\label{subsec:conc-obj-general}
+
+El objetivo general consistía en diseñar y desarrollar un asistente conversacional que ofreciera al alumnado de la Universidad de Sevilla un punto de acceso centralizado, accesible y eficiente a la información académica y administrativa. Tras el cierre del prototipo, este objetivo puede considerarse alcanzado en su versión correspondiente a la fase 1: el sistema cubre las tres épicas funcionales previstas (asignaturas, profesorado y horarios), responde correctamente al 94,3\,\% de los casos de la suite de aceptación funcional y al 98,3\,\% de las sesiones generadas por usuarios reales durante el piloto. La pieza queda desplegada en infraestructura de DigitalOcean y accesible mediante navegador, sin necesidad de credenciales, lo que satisface la condición de accesibilidad. Los grupos a los que la propuesta atendía con mayor prioridad (alumnado de nuevo ingreso e internacional) figuran entre los principales usuarios del piloto, lo que respalda la utilidad práctica del sistema.
+
+\subsection{Objetivos técnicos}\label{subsec:conc-obj-tecnicos}
+
+La Tabla~\ref{tab:cumplimiento-tecnico} cruza cada objetivo técnico definido en el Capítulo~\ref{cap:introduccion} con su evidencia en el Capítulo~\ref{cap:pruebas}. Todos ellos se han cumplido en la fase 1, con dos matices: la interfaz web final no se ha desarrollado en React como contemplaba la propuesta inicial sino en JavaScript \textit{vanilla} sobre HTML estático, decisión justificada por el menor coste de mantenimiento del prototipo, y el cumplimiento del RGPD se materializa por la naturaleza anónima de las sesiones más que por un despliegue \textit{on-premise}, dado que la infraestructura final reside en DigitalOcean y la base de datos en Supabase.
+
+\begin{table}[hbtp]
+\centering
+\small
+\caption{Cruce entre objetivos técnicos y evidencia obtenida.}\label{tab:cumplimiento-tecnico}
+\begin{tabular}{p{6cm}p{7cm}}
+\hline
+\textbf{Objetivo técnico} & \textbf{Evidencia} \\
+\hline
+Sistema conversacional Rasa con flujos contextuales & Modelo Rasa 3.6 entrenado, 158/158 acciones correctas en la prueba de política (\S\ref{sec:pruebas-nlu}). \\
+Integración con Gemini & 216 llamadas medidas en la suite, coste medio de 0,012 cts/turno (\S\ref{subsec:no-funcional-coste}). \\
+Base de datos híbrida en Supabase con \texttt{pgvector} & Esquema relacional + tabla de \textit{embeddings}, capa RAG validada al 91,9\,\% de profundidad (\S\ref{subsec:rag-profundidad}). \\
+Acciones personalizadas en Python & Tres épicas implementadas; 150/159 PASS en la suite E2E (\S\ref{sec:pruebas-e2e}). \\
+\textit{Frontend} accesible & \textit{Widget} desplegado, validado mediante 59 sesiones reales (\S\ref{sec:pruebas-trafico}). \\
+Cumplimiento RGPD & Sesiones anónimas, sin almacenamiento de datos personales identificables. \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Objetivos académicos y personales}\label{subsec:conc-obj-academicos}
+
+Desde el punto de vista formativo, el proyecto ha permitido aplicar de forma articulada conocimientos procedentes de varias asignaturas del Grado en Ingeniería del Software (bases de datos, ingeniería del software, sistemas inteligentes, procesamiento del lenguaje natural y despliegue de aplicaciones), y ha exigido autoaprendizaje sobre tecnologías que no formaban parte del currículo oficial, como el módulo RAG y la integración de modelos de lenguaje. La metodología SCRUM adaptada a un proyecto individual ha sido también una novedad relevante, dado que el grado expone fundamentalmente a equipos de cinco o seis personas. El trabajo ha quedado documentado, validado mediante una suite de pruebas reproducible y desplegado en producción, lo que cumple los tres criterios formativos planteados al inicio: aplicar, integrar y dejar trazabilidad del proceso.
+
+\section{Lecciones aprendidas}\label{sec:conc-lecciones}
+
+La experiencia acumulada durante el desarrollo deja un conjunto de lecciones que resulta razonable consignar. Las primeras son de naturaleza técnica y se han ido formulando como decisiones documentadas a lo largo del repositorio (entradas \texttt{D-XXX}). Las segundas son de naturaleza metodológica y afectan al modo en que el proyecto se ha organizado en el tiempo. Las terceras son de naturaleza personal.
+
+En el plano técnico, la lección más relevante es que la combinación de \textit{Text-to-SQL} y recuperación aumentada por generación cubre dominios distintos y conviene mantenerlas como caminos separados. \textit{Text-to-SQL} resuelve con eficacia las consultas estructuradas (créditos, listados, conteos), mientras que el RAG es indispensable cuando la pregunta requiere fragmentos textuales no normalizados (criterios de evaluación, composición de tribunales, contenidos de bloques). El intento inicial de unificar ambas vías mediante un único \textit{prompt} produjo respuestas confusas y obligó a separar acciones específicas para cada caso. Una segunda lección es que el clasificador NLU debe re-entrenarse con ejemplos extraídos del tráfico real una vez disponible, dado que las formulaciones espontáneas de los usuarios reales cubren un espacio léxico que el conjunto de \textit{stories} sintéticas no anticipa.
+
+En el plano metodológico, la introducción de la suite de pruebas en una etapa temprana del desarrollo ha resultado decisiva. La primera versión de la suite contaba con 51 casos sobre la épica de asignaturas y arrojaba un 70,6\,\% de éxito; el sistema actual evalúa 159 casos con un 94,3\,\% de éxito. Sin la suite, las regresiones introducidas por cada cambio habrían sido muy difíciles de detectar a ojo. La lección complementaria es que cada decisión de diseño no trivial conviene registrarla en el momento, no al final: cuando se trata de reconstruir el porqué de un comportamiento al cabo de un mes, la memoria del autor ya no basta.
+
+En el plano personal, gestionar un proyecto individual de la magnitud de un TFG exige imponerse una cadencia regular de trabajo, especialmente durante los meses en los que coexiste con asignaturas. La adopción de \textit{sprints} de tres o cuatro semanas ha funcionado bien como mecanismo de auto-disciplina, y el cierre de cada \textit{sprint} con un incremento desplegable ha sostenido la motivación a lo largo del curso.
+
+\section{Análisis de desviación}\label{sec:conc-desviacion}
+
+La planificación inicial recogida en el Capítulo~\ref{cap:planificacion} estimaba el esfuerzo total del proyecto en torno a 300 horas, repartidas entre tres fases (Inicio, Desarrollo y Cierre) y un conjunto de paquetes de trabajo. La ejecución real ha respetado el orden y la estructura previstos, pero ha presentado desviaciones puntuales que conviene comentar.
+
+La fase de \textit{Inicio} ha consumido aproximadamente el esfuerzo previsto. La investigación tecnológica resultó algo más extensa de lo planeado por el tiempo dedicado a comparar modelos de lenguaje y a evaluar alternativas a Rasa, pero el diseño arquitectónico se completó dentro del margen estimado.
+
+La fase de \textit{Desarrollo} ha sido la más larga y la que más ha sufrido desviaciones positivas, en el sentido de que se ha invertido más esfuerzo del estimado en algunos paquetes. La épica de profesorado, en concreto, requirió un ciclo adicional para resolver la combinatoria entre profesor, asignatura y grupo y para ajustar el atajo de coordinador y suplente, ambos bloqueos identificados durante el testing de aceptación. El \textit{pipeline} RAG también consumió más tiempo del previsto, principalmente por la fase de afinado de los \textit{prompts} de respuesta, que pasó por varias iteraciones hasta alcanzar la cifra del 91,9\,\% de profundidad.
+
+La fase de \textit{Cierre}, por contra, se ha mantenido dentro del margen previsto. El piloto con usuarios reales y la auditoría manual de las 59 sesiones se ejecutaron en la ventana planificada (1 al 25 de abril de 2026), y la redacción de la memoria comenzó tan pronto como las épicas estuvieron estabilizadas, lo que ha evitado una concentración excesiva del esfuerzo en las últimas semanas.
+
+Como recomendación de la guía de referencia~\cite{segura2024guiatfg}, las desviaciones se han mantenido siempre en sentido positivo: en ningún momento se ha invertido un volumen de horas inferior al estimado, lo que descartaría un cumplimiento meramente nominal del proyecto. La lección aprendida en este apartado es que la estimación inicial subestimaba sistemáticamente el coste de las tareas con dependencia de modelo de lenguaje (afinado de \textit{prompts}, evaluación manual de respuestas), debido a la naturaleza no determinista de ese tipo de tareas.
+
+\section{Desarrollos futuros}\label{sec:conc-futuros}
+
+El estado actual de Linceus Assistant corresponde a una fase 1, equivalente a un prototipo plenamente funcional pero con un alcance acotado a tres épicas y a la titulación GII-IS. El trabajo identificado para iteraciones posteriores se organiza en tres bloques: optimización del sistema actual, ampliación funcional y validación reforzada.
+
+\subsection{Optimización del sistema actual}\label{subsec:conc-fut-optimizacion}
+
+A lo largo del Capítulo~\ref{cap:pruebas} se han identificado cinco palancas técnicas con potencial para reducir la latencia, abaratar el coste y mejorar la robustez del sistema sin alterar su funcionalidad esencial. La primera es la \textbf{elección de modelo Gemini en función del tipo de llamada}: las tareas de \textit{Text-to-SQL} y de clasificación binaria pueden resolverse con modelos más pequeños y rápidos (familia Gemini Flash Lite o Gemma~3 de 4B parámetros), reservando modelos mayores para el renderizado natural de la respuesta. La estimación es que esta diferenciación reduciría a la mitad el coste anual y la cola larga de latencia.
+
+La segunda palanca es la \textbf{sustitución de heurísticas por expresiones regulares por clasificadores ligeros basados en LLM}. Varias funciones del bot detectan curso, grupo, filtro de aula o intención de consulta de tutorías mediante patrones rígidos, lo que las hace robustas pero frágiles ante fraseos atípicos. Un clasificador LLM ligero por turno tendría un coste despreciable y convertiría varios de los casos actualmente excluidos como trabajo futuro en casos PASS.
+
+La tercera palanca es una \textbf{caché de respuestas a las consultas más frecuentes}. La distribución del tráfico recogida en la tabla \texttt{conversation\_log} muestra que un puñado de preguntas (``¿qué es ADDA?'', ``horario de IS 2 grupo 1'', ``email de Galindo'') concentran un porcentaje significativo de los turnos. Una caché por \textit{hash} de pregunta y titulación reduciría a la mitad el coste anual y bajaría la latencia mediana al rango de uno o dos segundos.
+
+La cuarta palanca es la \textbf{instrumentación de métricas en producción}: latencia por percentil, tasa de \textit{fallback}, tasa de \textit{out\_of\_scope} y \textit{feedback} explícito por turno. La tabla de \textit{feedback} ya está soportada parcialmente en la base de datos pero no se está explotando aún. Esta instrumentación permitiría detectar regresiones en producción mucho antes de que un usuario las reporte.
+
+La quinta palanca es la \textbf{persistencia de la última intención específica como \textit{slot} consultable}, dirigida a resolver los casos de seguimiento conversacional entre sub-\textit{intents} (P-S01 y H-S01 del Capítulo~\ref{cap:pruebas}). La solución consiste en mantener \textit{slots} con tiempo de vida acotado que permitan a las acciones recuperar la intención del turno previo sin pedir al clasificador NLU que la infiera del historial.
+
+\subsection{Ampliación funcional}\label{subsec:conc-fut-ampliacion}
+
+El alcance funcional del prototipo puede extenderse en varias direcciones. La más inmediata es la incorporación de las titulaciones del centro distintas a las tres de Ingeniería Informática actualmente cargadas, lo cual requiere principalmente trabajo de carga de datos en el panel de administración. A medio plazo, podría considerarse la incorporación de nuevos dominios al bot, como información sobre tutorías estructuradas, normativa académica o convocatorias de movilidad, siempre que se disponga de una fuente oficial estable y vectorizable. Por último, la ampliación natural a otros centros de la Universidad de Sevilla pasa por validar el grado en que los \textit{prompts} y los flujos diseñados son transferibles cuando cambian los datos de origen.
+
+\subsection{Validación reforzada}\label{subsec:conc-fut-validacion}
+
+La validación realizada en la fase 1 cubre cinco capas funcionales y dos métricas no funcionales, pero deja fuera tres aspectos que conviene atender en una segunda iteración. El primero es la medición de la experiencia subjetiva del usuario mediante una escala estandarizada como SUS, que permitiría situar el sistema frente a otras herramientas universitarias. El segundo es la garantía de disponibilidad sostenida del servicio mediante un acuerdo de nivel de servicio y la correspondiente monitorización de uptime. El tercero es la implementación de la suite automática de pruebas para los \textit{endpoints} del panel de administración, cuyo diseño ya consta en el plan de aceptación pero cuyo desarrollo se ha pospuesto.
+
+\section{Reflexión final}\label{sec:conc-reflexion}
+
+Mirar atrás al proyecto completo deja una impresión clara: la mayor dificultad de un sistema conversacional basado en modelos de lenguaje no reside en hacerlo funcionar, sino en hacerlo funcionar de forma fiable y trazable. Construir una primera versión que respondiera correctamente a un puñado de consultas demostrativas resultó relativamente rápido; alcanzar el punto en que cinco capas independientes de validación superan su umbral académico de referencia ha exigido un trabajo metódico de evaluación, corrección de defectos y registro de decisiones que ha constituido la mitad del esfuerzo del proyecto.
+
+Esta experiencia sugiere que la incorporación de modelos de lenguaje a aplicaciones reales no se resuelve únicamente con buenas elecciones tecnológicas. Exige adoptar prácticas de ingeniería del software clásicas, en particular pruebas de aceptación, registro de decisiones y validación con usuarios, adaptadas al carácter no determinista del componente generativo. Linceus Assistant, en su versión actual, es un primer paso en esa dirección dentro del contexto universitario; las cinco palancas y las tres ampliaciones identificadas para la fase 2 deberían permitir convertirlo en una herramienta utilizable de forma sostenida por la comunidad de la ETSII.
