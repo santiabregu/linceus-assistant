@@ -54,7 +54,10 @@ def _normalizar(texto: str) -> str:
 def _detectar_curso(texto: str) -> Optional[int]:
     texto_lower = texto.lower()
     patrones = [
+        # Ordinales tipográficos: 2º, 2ª, 2°
         (r"\b(\d)[ºª°]\b", lambda m: int(m.group(1))),
+        # Aproximaciones sin tecla de ordinal: 2o, 2a (en teclados sin "º")
+        (r"\b(\d)[oa]\b", lambda m: int(m.group(1))),
         (r"\bcurso\s+(\d)\b", lambda m: int(m.group(1))),
         (r"\bprimero\b", lambda m: 1),
         (r"\bsegundo\b", lambda m: 2),
@@ -82,6 +85,30 @@ def _detectar_grupo(texto: str) -> Optional[int]:
     m = re.search(r"\bg(\d+)\b", texto_lower)
     if m:
         return int(m.group(1))
+    return None
+
+
+# Convención ETSII: aulas con código que empieza por 'A' son teoría;
+# las demás (F, B, G, H, I, ...) son laboratorio.
+def _es_aula_teoria(codigo: str) -> bool:
+    return bool(codigo) and codigo.startswith("A")
+
+
+def _detectar_filtro_aula(texto: str) -> Optional[str]:
+    """Detecta si la pregunta pide solo lab o solo teoría.
+
+    Devuelve 'lab', 'teoria' o None (sin filtro). No se usa "prácticas"
+    porque colisiona con la asignatura "Prácticas Externas" y con la
+    expresión genérica "clases teórico-prácticas" del plan docente.
+    """
+    if not texto:
+        return None
+    t = unicodedata.normalize("NFKD", texto.lower())
+    t = "".join(c for c in t if not unicodedata.combining(c))
+    if re.search(r"\blab(oratorio)?s?\b", t):
+        return "lab"
+    if re.search(r"\bteori[ck]?as?\b", t):
+        return "teoria"
     return None
 
 
@@ -371,7 +398,8 @@ def _datos_horario_a_texto(resultados: list, titulacion: str,
                             curso: int, grupo: int,
                             dia_filtro: Optional[int] = None,
                             cuatrimestre: Optional[int] = None,
-                            cuatri_explicito: bool = True) -> str:
+                            cuatri_explicito: bool = True,
+                            filtro_aula: Optional[str] = None) -> str:
     """Convierte resultados de query de horario en texto plano para el LLM.
 
     Si `cuatrimestre` está fijado y `cuatri_explicito=False`, añade un aviso
@@ -391,26 +419,30 @@ def _datos_horario_a_texto(resultados: list, titulacion: str,
 
     # Agrupamos por slot (dia, hora, asig, cuatri) porque tras D-068 cada
     # aula del slot es una fila distinta en `horarios` (teoría + labs).
-    # Convención de la ETSII: aulas que empiezan por A son teoría, las demás
-    # (F, B, G, H, I) son laboratorio.
     slots = {}  # (dia, h_ini, h_fin, asig, h_cuatri) -> {aulas_teoria, aulas_lab}
     for dia, h_ini, h_fin, asig, aula, duracion, h_cuatri in resultados:
         key = (dia, h_ini, h_fin, asig, h_cuatri)
         if key not in slots:
             slots[key] = {"teoria": [], "lab": []}
         if aula:
-            categoria = "teoria" if aula.startswith("A") else "lab"
+            categoria = "teoria" if _es_aula_teoria(aula) else "lab"
             if aula not in slots[key][categoria]:
                 slots[key][categoria].append(aula)
 
     por_dia = {}
     for (dia, h_ini, h_fin, asig, h_cuatri), aulas in slots.items():
+        # Si el usuario pidió solo lab/teoría y este slot no tiene ese tipo,
+        # lo omitimos del resultado.
+        if filtro_aula == "lab" and not aulas["lab"]:
+            continue
+        if filtro_aula == "teoria" and not aulas["teoria"]:
+            continue
         if dia not in por_dia:
             por_dia[dia] = []
         partes_aula = []
-        if aulas["teoria"]:
+        if filtro_aula in (None, "teoria") and aulas["teoria"]:
             partes_aula.append("teoría: " + ", ".join(sorted(aulas["teoria"])))
-        if aulas["lab"]:
+        if filtro_aula in (None, "lab") and aulas["lab"]:
             partes_aula.append("lab: " + ", ".join(sorted(aulas["lab"])))
         aula_txt = f" ({'; '.join(partes_aula)})" if partes_aula else ""
         cuatri_txt = f" [C{h_cuatri}]" if (not cuatrimestre and h_cuatri) else ""
@@ -426,28 +458,78 @@ def _datos_horario_a_texto(resultados: list, titulacion: str,
         for _, entrada in sorted(por_dia[dia], key=lambda x: x[0]):
             lineas.append(f"  - {entrada}")
 
+    if len(lineas) == 1:  # solo header, todos los slots filtrados
+        if filtro_aula == "lab":
+            return "No hay sesiones de laboratorio registradas para esta combinación."
+        if filtro_aula == "teoria":
+            return "No hay sesiones de teoría registradas para esta combinación."
+
     return "\n".join(lineas)
 
 
 def _datos_asignatura_a_texto(resultados: list, alias: str,
-                               titulacion: str) -> str:
-    """Convierte resultados de búsqueda por asignatura en texto plano para el LLM."""
+                               titulacion: str,
+                               filtro_aula: Optional[str] = None) -> str:
+    """Convierte resultados de búsqueda por asignatura en texto plano para el LLM.
+
+    Tras D-068 cada aula del slot es una fila distinta en `horarios`. Aquí
+    agrupamos por (curso, grupo, día, hora, cuatri) y unimos las aulas
+    separando teoría (códigos que empiezan por 'A') de lab (resto). Si
+    `filtro_aula` viene informado, omite los slots que no tienen ese tipo
+    y oculta las aulas del tipo opuesto.
+    """
     nombre_tit = NOMBRES_TITULACION.get(titulacion, titulacion)
 
     if not resultados:
         return f"No se encontró {alias.upper()} en los horarios de {nombre_tit}."
 
     nombre_asig = resultados[0][3]
-    lineas = [f"Horarios de {nombre_asig} en {nombre_tit}:"]
 
+    # Agrupar por (curso, grupo, día, h_ini, h_fin, cuatri) → aulas
+    slots = {}
     for dia, h_ini, h_fin, asig, aula, grupo_cod, curso, h_cuatri in resultados:
-        dia_txt = DIAS_NOMBRE.get(dia, str(dia))
-        aula_txt = f", aula {aula}" if aula else ""
+        key = (curso, grupo_cod, dia, h_ini, h_fin, h_cuatri)
+        if key not in slots:
+            slots[key] = {"teoria": [], "lab": []}
+        if aula:
+            categoria = "teoria" if _es_aula_teoria(aula) else "lab"
+            if aula not in slots[key][categoria]:
+                slots[key][categoria].append(aula)
+
+    encabezado = f"Horarios de {nombre_asig} en {nombre_tit}"
+    if filtro_aula == "lab":
+        encabezado += " (solo laboratorio)"
+    elif filtro_aula == "teoria":
+        encabezado += " (solo teoría)"
+    lineas = [encabezado + ":"]
+
+    # Orden estable: curso, grupo, cuatri, día, hora.
+    for key in sorted(slots.keys(),
+                      key=lambda k: (k[0], k[1], k[5] or "", k[2], k[3])):
+        curso, grupo_cod, dia, h_ini, h_fin, h_cuatri = key
+        aulas = slots[key]
+        if filtro_aula == "lab" and not aulas["lab"]:
+            continue
+        if filtro_aula == "teoria" and not aulas["teoria"]:
+            continue
+        partes_aula = []
+        if filtro_aula in (None, "teoria") and aulas["teoria"]:
+            partes_aula.append("teoría: " + ", ".join(sorted(aulas["teoria"])))
+        if filtro_aula in (None, "lab") and aulas["lab"]:
+            partes_aula.append("lab: " + ", ".join(sorted(aulas["lab"])))
+        aula_txt = f" ({'; '.join(partes_aula)})" if partes_aula else ""
         cuatri_txt = f" [C{h_cuatri}]" if h_cuatri else ""
+        dia_txt = DIAS_NOMBRE.get(dia, str(dia))
         lineas.append(
             f"  - Curso {curso} Grupo {grupo_cod}{cuatri_txt}: "
             f"{dia_txt} {str(h_ini)[:5]}-{str(h_fin)[:5]}{aula_txt}"
         )
+
+    if len(lineas) == 1:  # solo header
+        if filtro_aula == "lab":
+            return f"No hay sesiones de laboratorio de {nombre_asig} registradas."
+        if filtro_aula == "teoria":
+            return f"No hay sesiones de teoría de {nombre_asig} registradas."
 
     return "\n".join(lineas)
 
@@ -593,9 +675,11 @@ class ActionConsultaHorario(Action):
             return []
 
         resultados = _query_horario(titulacion, curso, grupo, dia, cuatrimestre)
+        filtro_aula = _detectar_filtro_aula(mensaje)
         datos_texto = _datos_horario_a_texto(
             resultados, titulacion, curso, grupo, dia,
             cuatrimestre=cuatrimestre, cuatri_explicito=cuatri_explicito,
+            filtro_aula=filtro_aula,
         )
         respuesta = _generar_respuesta_horario(mensaje, datos_texto)
         dispatcher.utter_message(text=respuesta)

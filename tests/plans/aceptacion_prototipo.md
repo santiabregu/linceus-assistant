@@ -122,7 +122,7 @@ python tests/run_test_plan.py --only especifica,listado,conteo
 python tests/run_test_plan.py --runs 3
 ```
 
-**Salida:** `tests/results/asignaturas.md` (informe legible) y `tests/results/asignaturas.json` (datos crudos). Se **sobreescriben** en cada ejecución (ver `tests/README.md`).
+**Salida:** `tests/results/testing_general.md` (informe legible) y `tests/results/testing_general.json` (datos crudos). Se **sobreescriben** en cada ejecución (ver `tests/README.md`).
 
 ### 3.2 Desglose por categoría
 
@@ -185,7 +185,7 @@ Algunos casos existen por bugs observados específicamente en el piloto y docume
 
 ### 3.5 Fuera del alcance de la suite automática
 
-- **Calidad semántica de la respuesta del LLM**: "el email es correcto" es fácil de comprobar (`expected_contains`), pero "la respuesta suena natural" no. Se delega a la revisión manual (resumen ejecutivo en `results/asignaturas.md` + inspección manual de una muestra del 10 %).
+- **Calidad semántica de la respuesta del LLM**: "el email es correcto" es fácil de comprobar (`expected_contains`), pero "la respuesta suena natural" no. Se delega a la revisión manual (resumen ejecutivo en `results/testing_general.md` + inspección manual de una muestra del 10 %).
 - **RAG (profundidad de respuesta al plan docente)**: tiene su propia suite manual en [`tests/plans/rag_asignaturas_manual.md`](rag_asignaturas_manual.md), con resultados en `results/rag_asignaturas.md`.
 - **Multi-turno complejo**: decisión explícita de no cubrir en fase 1 (ver sección 7).
 
@@ -287,5 +287,5 @@ rasa test core --stories tests/test_stories.yml --fail-on-prediction-errors
 **Pendientes:**
 
 - Implementar el runner `run_admin_test_plan.py` y los 12 casos de importaciones.
-- Ejecutar la suite completa de 143 casos de conversaciones contra el último modelo y capturar el resultado en `results/asignaturas.md`.
+- Ejecutar la suite completa de 143 casos de conversaciones contra el último modelo y capturar el resultado en `results/testing_general.md`.
 - Revisar manualmente el 10 % de respuestas (muestreo) para validar calidad semántica (fuera del alcance del assertion automático).

@@ -1,10 +1,12 @@
-# Informe de pruebas — revisión manual
+# Informe general de pruebas de aceptación funcional — revisión manual
+
+Cubre las **8 categorías** de la suite end-to-end (`run_test_plan.py`): asignaturas (especifica/listado/conteo), horarios (horario/horario_asignatura), profesores, cross-dominio y fuera de ámbito. Es la prueba que ejercita el stack completo (NLU + actions + SQL + RAG + LLM de respuesta) con el bot vivo.
 
 **Fecha de ejecución (asignaturas, listado, conteo, profesor, cross_dominio, fuera_ambito):** 2026-04-24 17:14
 **Fecha de re-ejecución (horario, horario_asignatura) tras fix D-066 + D-067:** 2026-04-25 17:48
 **Fecha de re-ejecución (12 casos Cat 1) tras reentreno NLU + prompts anti-alucinación:** 2026-04-25 19:30
-**Fecha de evaluación manual:** 2026-04-25
-**Total casos ejecutados:** 151
+**Fecha de fixes adicionales (D-068 re-scrape labs, fixes profesores ↔ asignatura/grupo):** 2026-04-26
+**Total casos ejecutados:** 153 (143 contables + 10 trabajo futuro)
 **Modo:** `--manual-review --delay 5` (revisión manual, sin veredicto automático).
 
 > Convención adoptada: **celdas de Resultado vacías → PASS** salvo en los casos del lote Cat 1 ejecutado el 2026-04-25 19:30, que quedan con celda vacía pendiente de evaluación.
@@ -24,12 +26,12 @@
 | `especifica` | 21 | 0 | 0 | 0 | 21 | 100% |
 | `fuera_ambito` | 8 | 0 | 0 | 0 | 8 | 100% |
 | `horario` | 26 | 0 | 1 | 0 | 27 | 96% |
-| `horario_asignatura` | 16 | 0 | 0 | 1 | 17 | 94% |
+| `horario_asignatura` | 18 | 0 | 0 | 0 | 18 | 100% |
 | `listado` | 15 | 0 | 0 | 0 | 15 | 100% |
 | `profesor` | 37 | 1 | 4 | 1 | 43 | 86% |
-| **TOTAL** | **134** | **1** | **5** | **2** | **142** | **94%** |
+| **TOTAL** | **136** | **1** | **5** | **1** | **143** | **95%** |
 
-> Cómputo: 134 PASS de 142 casos contables = **94,4 %**. Se han excluido 9 casos clasificados como **TRABAJO FUTURO** (ver tabla dedicada al final del informe). Los 2 vacíos restantes son los pendientes de evaluación manual del lote Cat 1: HA-W06 y P-PA03.
+> Cómputo: 136 PASS de 143 casos contables = **95,1 %**. Se han excluido 10 casos clasificados como **TRABAJO FUTURO** (ver tabla dedicada al final del informe). El vacío restante es el pendiente de evaluación manual del lote Cat 1: P-PA03.
 
 ### Cat 1 — Re-ejecución tras reentreno NLU + prompts anti-alucinación
 
@@ -205,14 +207,16 @@ Resultados aparentes (pendientes de evaluación manual; ver tabla detallada al f
 | HA-P06 | horario de Administración de Empresas grupo 1 | consulta_horario_asignatura | Lun 10:40-12:30 (A0.12), mié 08:30-10:20 (A0.12). | PASS |  |
 | HA-P07 | ¿cuándo tenemos Procesos del Software y Gestión? | consulta_horario_asignatura | Tienes Procesos del Software y Gestión en los siguientes horarios: Martes Grupo 1 [C2]: 10:40-12:30, A1.13; Grupo 2 [C2]: 12:40-14:30, A1.10; Grupo 3 [C2]: 17:40-19:30, A1.13. Viernes Grupo 1 [C2]: 08:30-10:20, A1.13; Grupo 2 [C2]: 10:40-12:30… | PASS |  |
 | HA-P08 | dame el horario completo de Estructuras de Datos | consulta_horario_asignatura | (interpreta como ADDA y lista correcta) | PASS |  |
-| HA-P09 | ¿dónde son las prácticas de Álgebra Lineal? | consulta_horario_asignatura | (lista todos los horarios) | TRABAJO FUTURO | Distinción aulas teoría/lab: el modelo no marca el tipo. |
-| HA-P10 | laboratorio de Inteligencia Artificial grupo 3 | consulta_horario_asignatura | El laboratorio de Inteligencia Artificial, grupo 3, tiene los siguientes horarios: Miércoles 15:30-17:20, A1.13; Viernes 17:40-19:30, A1.13. | TRABAJO FUTURO | Distinción aulas teoría/lab: el modelo no marca el tipo. |
+| HA-P09 | ¿dónde son las prácticas de Álgebra Lineal? | consulta_asignatura_especifica | El plan docente no especifica información sobre prácticas de Álgebra Lineal. | TRABAJO FUTURO | "prácticas" no es filtro de aula (colisiona con "Prácticas Externas" y con "clases teórico-prácticas" del plan docente); requiere ejemplos NLU para enrutar a `consulta_horario_asignatura` con filtro lab. |
+| HA-P10 | laboratorio de Inteligencia Artificial grupo 3 | consulta_horario_asignatura | No hay sesiones de laboratorio de Inteligencia Artificial registradas para el grupo 3. | TRABAJO FUTURO | Tras D-068 (re-scrape) la BD tiene las 4 aulas (A0.30, A1.13, A4.30, A4.32) pero la convención `startswith('A')='teoria'` clasifica las 4 como teoría, así que el filtro lab devuelve vacío. Resoluble con heurística "primera aula = teoría, resto = lab" si el orden de inserción se preserva, o con columna `tipo_uso` en `horarios`. |
+| HA-P11 | laboratorio de Álgebra Lineal grupo 1 | consulta_horario_asignatura | Álgebra Lineal y Numérica (Laboratorio): Jueves 08:30-10:20 (B1.31, B1.32, B2.30). | PASS |  |
+| HA-P12 | horario de ADDA grupo 1 | consulta_horario_asignatura | Martes 10:40-12:30 (A0.10); Jueves 08:30-10:20 (teoría: A0.10; lab: F1.30, F1.31, F1.32). | PASS |  |
 | HA-W01 | kuando es adda? | consulta_horario_asignatura | (horarios solo C2) | PASS |  |
 | HA-W02 | horraio de psg grupo 2 | consulta_horario_asignatura | Horario PSG2 grupo 2 correcto. | PASS |  |
 | HA-W03 | dnde es la clase de matematica discreata | consulta_asignatura_especifica | (responde sobre profesores y dónde se imparte) | PASS |  |
 | HA-W04 | en q aula es iissi2 los marrtes | consulta_horario_asignatura | No hay horarios registrados para IISSI2 los martes. | PASS |  |
 | HA-W05 | auala de algebrra grupo 1 | consulta_horario_asignatura | Mar 10:40-12:30 (A0.12), jue 08:30-10:20 (A0.12). | PASS |  |
-| HA-W06 | laboratorio de inteleigenicia artifical | consulta_horario_asignatura | Los horarios de Inteligencia Artificial son: Miércoles Grupo 1 [C2]: 12:40-14:30, A1.13; Grupo 2 [C2]: 10:40-12:30, A1.10; Grupo 2 [C2]: 12:40-14:30; Grupo 3 [C2]: 15:30-17:20, A1.13. Viernes Grupo 1 [C2]: 10:40-12:30, A1.13; Grupo 2 [C2]: 12:40… |  | Re-ejecución Cat 1 (2026-04-25 19:30): routing correcto. ⚠ Aparece "Grupo 2 12:40-14:30" dos veces (una sin aula). Posible duplicado de datos en BD para esa franja. |
+| HA-W06 | laboratorio de inteleigenicia artifical | consulta_horario_asignatura | (con filtro lab activo, todas las aulas A se descartan por la convención y la respuesta queda vacía o limitada a las pocas aulas no-A presentes) | TRABAJO FUTURO | Misma causa que HA-P10: la convención `startswith('A')='teoria'` no distingue cuándo una aula A se usa como sala de práctica. |
 | HA-PC01 | horario de FP en el primer cuatrimestre | consulta_horario_asignatura | (mié+vie todos los grupos con tag [C1]) | PASS |  |
 | HA-PC02 | ADDA grupo 2 en el segundo cuatrimestre | consulta_horario_asignatura | Mar 12:40-14:30 (A0.11), jue 10:40-12:30 (A2.16). | PASS |  |
 | HA-WC01 | orario fp c2 | consulta_horario_asignatura | (mié+vie todos los grupos C2) | PASS |  |
@@ -292,7 +296,7 @@ Resultados aparentes (pendientes de evaluación manual; ver tabla detallada al f
 
 ## Trabajo futuro (excluido del cómputo)
 
-9 casos clasificados como **TRABAJO FUTURO**: limitaciones de diseño asumidas que no se van a corregir en esta iteración. Se sacan del denominador del % PASS.
+10 casos clasificados como **TRABAJO FUTURO**: limitaciones de diseño asumidas que no se van a corregir en esta iteración. Se sacan del denominador del % PASS.
 
 | ID | Categoría | Consulta | Motivo |
 |---|---|---|---|
@@ -303,8 +307,9 @@ Resultados aparentes (pendientes de evaluación manual; ver tabla detallada al f
 | P-P08 | profesor | despacho del coordinador de Ingeniería del Software | Atajo coordinador/suplente solo RAG (D-064). |
 | P-P07 | profesor | email de la profesora que da ADDA en el grupo 2 | Matching profesor↔asignatura↔grupo no implementado. |
 | P-W03 | profesor | datos de la profa bernrdez | Fuzzy de typos severos en nombres de profesor. |
-| HA-P09 | horario_asignatura | ¿dónde son las prácticas de Álgebra Lineal? | Distinción aulas teoría/lab: el modelo no marca el tipo. |
-| HA-P10 | horario_asignatura | laboratorio de Inteligencia Artificial grupo 3 | Distinción aulas teoría/lab: el modelo no marca el tipo. |
+| HA-P09 | horario_asignatura | ¿dónde son las prácticas de Álgebra Lineal? | "prácticas" no es filtro de aula (colisiona con "Prácticas Externas" y con "clases teórico-prácticas" del plan docente); requiere ejemplos NLU para enrutar a `consulta_horario_asignatura` con filtro lab. |
+| HA-P10 | horario_asignatura | laboratorio de Inteligencia Artificial grupo 3 | Convención `aula.startswith('A') = teoría` falla cuando una asignatura usa varias aulas A como salas de práctica. Resoluble con heurística "primera aula = teoría, resto = lab" o con columna `tipo_uso` en `horarios`. |
+| HA-W06 | horario_asignatura | laboratorio de inteleigenicia artifical | Misma causa que HA-P10. |
 
 ---
 

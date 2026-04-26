@@ -12,7 +12,7 @@ Los criterios de aceptación son más laxos para `con_typos` (ver
 
 Ejecuta cada caso contra el bot Rasa vía API REST, captura intent
 detectado, entidades, respuesta textual y (si el action lo emite)
-custom_data, y genera `results/asignaturas.md` + `results/asignaturas.json`
+custom_data, y genera `results/testing_general.md` + `results/testing_general.json`
 (sobreescritos en cada corrida).
 
 Requisitos previos:
@@ -1689,7 +1689,7 @@ def generate_report(
 
     # Solo guardamos la última ejecución (sobrescribe por diseño).
     # El timestamp sigue apareciendo dentro del informe como metadato.
-    json_path = os.path.join(output_dir, "asignaturas.json")
+    json_path = os.path.join(output_dir, "testing_general.json")
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(
             [asdict(r) for r in all_results],
@@ -1698,7 +1698,7 @@ def generate_report(
             indent=2,
         )
 
-    md_path = os.path.join(output_dir, "asignaturas.md")
+    md_path = os.path.join(output_dir, "testing_general.md")
 
     if manual_review:
         _write_manual_review_md(md_path, all_results, cases, timestamp)

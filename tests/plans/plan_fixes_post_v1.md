@@ -1,6 +1,6 @@
 # Plan de fixes — Post-v1 (138 casos)
 
-Clasificación de los 23 FAIL + 16 PENDING de [`results/asignaturas.md`](../results/asignaturas.md) en cuatro categorías según el tipo de intervención necesaria. La idea es ejecutar fixes por **lotes** según coste, validar y re-ejecutar la suite.
+Clasificación de los 23 FAIL + 16 PENDING de [`results/testing_general.md`](../results/testing_general.md) en cuatro categorías según el tipo de intervención necesaria. La idea es ejecutar fixes por **lotes** según coste, validar y re-ejecutar la suite.
 
 ---
 
@@ -54,7 +54,7 @@ python tests/run_test_plan.py --only fuera_ambito,horario_asignatura,profesor,li
 | P-N01 | ¿Existe profesor "Banderas"? | `SELECT * FROM profesores WHERE apellidos ILIKE '%banderas%' OR nombre ILIKE '%banderas%'`. |
 | P-N03/P-N04 | Verificar inexistencias. | Idem. |
 
-**Acción concreta**: lanzar las queries → actualizar `Resultado` en `asignaturas.md` (PENDING → OK/FAIL). No reentreno, no código. Si descubrimos datos erróneos en BD, abrir issue separado para limpieza.
+**Acción concreta**: lanzar las queries → actualizar `Resultado` en `testing_general.md` (PENDING → OK/FAIL). No reentreno, no código. Si descubrimos datos erróneos en BD, abrir issue separado para limpieza.
 
 ---
 
@@ -148,4 +148,4 @@ python tests/run_test_plan.py --only fuera_ambito,horario_asignatura,profesor,li
 
 ## Próximos pasos prácticos
 
-Si confirmas, propongo arrancar por **Cat 2** ahora mismo: te lanzo las 14 queries SQL desde un script y vamos resolviendo PENDING en una sola tanda. Resultado: `asignaturas.md` actualizado con `OK`/`FAIL` reales, sin PENDINGs de BD. Luego pasamos a Cat 1.
+Si confirmas, propongo arrancar por **Cat 2** ahora mismo: te lanzo las 14 queries SQL desde un script y vamos resolviendo PENDING en una sola tanda. Resultado: `testing_general.md` actualizado con `OK`/`FAIL` reales, sin PENDINGs de BD. Luego pasamos a Cat 1.

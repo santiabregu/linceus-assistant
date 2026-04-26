@@ -14,10 +14,11 @@ tests/
 ├── run_test_plan.py            Runner de tests end-to-end contra Rasa vía REST
 │
 └── results/                    ← SALIDA de la última ejecución (sobrescrita)
-    ├── asignaturas.md          Resumen ejecutado de tests SQL
-    ├── asignaturas.json        Datos en bruto del último `run_test_plan.py`
+    ├── testing_general.md      Informe end-to-end (8 categorías) tras `run_test_plan.py`
+    ├── testing_general.json    Datos en bruto del último `run_test_plan.py`
     ├── rag_asignaturas.md      Resumen ejecutado de tests RAG (asignaturas)
-    └── stories.md              Resumen de `rasa test core` contra test_stories.yml
+    ├── stories.md              Resumen de `rasa test core` contra test_stories.yml
+    └── resumen_testing.md      Documento de cierre: metodología + resultados consolidados
 ```
 
 ## Cómo se corre cada test
@@ -52,7 +53,7 @@ python tests/run_test_plan.py --only especifica  # solo un conjunto
 python tests/run_test_plan.py --runs 3           # más repeticiones
 ```
 
-Sobrescribe `tests/results/asignaturas.md` y `tests/results/asignaturas.json` en cada ejecución.
+Sobrescribe `tests/results/testing_general.md` y `tests/results/testing_general.json` en cada ejecución.
 
 ### 3. Tests RAG manuales
 

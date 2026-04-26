@@ -542,9 +542,12 @@ def _responder_horario_asignatura(
         _query_asignatura as query_horario_asig,
         _query_grupos_de_asignatura,
         _datos_asignatura_a_texto,
+        _detectar_filtro_aula,
         _generar_respuesta_horario,
         ALIAS_ASIGNATURAS,
     )
+
+    filtro_aula = _detectar_filtro_aula(pregunta)
 
     nombre = asignatura.get('nombre', '')
     nombre_norm = normalizar_texto(nombre)
@@ -577,7 +580,9 @@ def _responder_horario_asignatura(
                 lista_grupos = ", ".join(grupos)
                 return (f"**{nombre_real}** en {nombre_tit} no tiene grupo {grupo_int}. "
                         f"Grupos disponibles: {lista_grupos}.")
-        datos_texto = _datos_asignatura_a_texto(resultados, alias_encontrado, titulacion)
+        datos_texto = _datos_asignatura_a_texto(
+            resultados, alias_encontrado, titulacion, filtro_aula=filtro_aula,
+        )
     else:
         # Fallback: buscar directamente por nombre en la tabla horarios
         from ..shared.db import db_client
@@ -638,7 +643,9 @@ def _responder_horario_asignatura(
             lista_grupos = ", ".join(grupos_disponibles)
             return (f"**{nombre}** en {nombre_tit} no tiene grupo {grupo_int}. "
                     f"Grupos disponibles: {lista_grupos}.")
-        datos_texto = _datos_asignatura_a_texto(resultados, nombre, titulacion)
+        datos_texto = _datos_asignatura_a_texto(
+            resultados, nombre, titulacion, filtro_aula=filtro_aula,
+        )
 
     if not resultados:
         return None

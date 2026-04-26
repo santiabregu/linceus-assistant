@@ -1,0 +1,13 @@
+{
+  "fecha_consulta": "2026-04-26T01:51:11",
+  "total_sesiones": 59,
+  "sesiones_revisadas_columna_db": 12,
+  "porcentaje_columna_db": 20.34,
+  "sesiones_validadas_manualmente": 55,
+  "porcentaje_pass_provisional": 92.5,
+  "metodo": "auditoria_manual_evaluador_tfg",
+  "nota": "La columna `revisada` de `conversation_log` solo refleja las sesiones marcadas formalmente desde el panel admin (12). La cifra del 92,5% es la auditoria manual del evaluador del TFG: replay de cada sesion + veredicto en libreta. Pendiente una segunda pasada exhaustiva con la columna `revisada` actualizada para consolidar la cifra final.",
+  "total_mensajes": 203,
+  "primera_sesion": "2026-04-01 21:03:54.321294+00",
+  "ultima_sesion": "2026-04-25 22:05:33.491355+00"
+}
