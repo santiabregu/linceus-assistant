@@ -23,7 +23,7 @@ from rasa_sdk.events import SlotSet
 from ..shared.config import BotConfig, ALIAS_ASIGNATURAS
 from ..shared.db import db_client
 from ..shared.gemini_client import llamar_gemini as llamar_llm
-from ..asignaturas.actions import comprobar_titulacion, _contar_turnos_desde_slot
+from ..shared.follow_up import comprobar_titulacion, _contar_turnos_desde_slot
 
 # ─── Constantes ──────────────────────────────────────────────────────────────
 

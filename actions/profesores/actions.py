@@ -29,6 +29,7 @@ from rasa_sdk.events import SlotSet
 
 from ..shared.config import ALIAS_ASIGNATURAS, ALIAS_POR_TITULACION
 from ..shared.db import db_client
+from ..shared.follow_up import _contar_turnos_desde_slot
 from ..shared.gemini_client import llamar_gemini as llamar_llm
 from ..shared.matching import clasificar_por_normalizado
 
@@ -119,16 +120,6 @@ def _formatear_sugerencia(nombre_consulta: str, sugerencias: list) -> str:
     lista = ", ".join(nombres_sug[:-1]) + f" o {nombres_sug[-1]}"
     return (f"No encontré ningún profesor llamado \"{nombre_consulta}\". "
             f"¿Quizás te refieres a {lista}?")
-
-
-def _contar_turnos_desde_slot(tracker, slot_name: str) -> int:
-    turnos = 0
-    for event in reversed(tracker.events):
-        if event.get("event") == "user":
-            turnos += 1
-        if event.get("event") == "slot" and event.get("name") == slot_name:
-            return turnos
-    return 999
 
 
 def _expandir_alias_asignatura(nombre: str, titulacion: str = None) -> str:

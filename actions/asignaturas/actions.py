@@ -95,26 +95,12 @@ def obtener_historial_reciente(tracker, max_turnos: int = 2) -> str:
     return "\n".join(lineas)
 
 
-def _contar_turnos_desde_slot(tracker, slot_name: str) -> int:
-    """
-    Cuenta turnos de usuario desde la última vez que se seteó el slot.
-    Usado para determinar si el slot es reciente (seguimiento) o stale.
-    """
-    turnos = 0
-    for event in reversed(tracker.events):
-        if event.get("event") == "user":
-            turnos += 1
-        if event.get("event") == "slot" and event.get("name") == slot_name:
-            return turnos
-    return 999
+from ..shared.follow_up import (  # noqa: E402,F401
+    _contar_turnos_desde_slot,
+    comprobar_titulacion,
+)
 
 
-# Titulaciones cubiertas por el chatbot. La tabla `titulaciones` contiene
-# todas las del centro (importadas desde Sevius por el panel admin), pero el
-# alcance del TFG son solo los 3 grados de la ETSII. La interfaz web ya filtra
-# a estas 3; aquí lo dejamos consistente para el canal `rasa shell`.
-# TODO: migrar a una columna `cubierta_por_chatbot` en `titulaciones` si el bot
-# crece a más titulaciones.
 TITULACIONES_BOT = ("GII-IS", "GII-TI", "GII-IC")
 
 
@@ -157,28 +143,6 @@ def _construir_botones_titulaciones() -> List[Dict[str, str]]:
         {"title": "Tecnologías Informáticas (GII-TI)", "payload": "GII-TI"},
         {"title": "Ingeniería de Computadores (GII-IC)", "payload": "GII-IC"},
     ]
-
-
-def comprobar_titulacion(
-    tracker, dispatcher
-) -> Tuple[Optional[str], List]:
-    """
-    Comprueba si el usuario ya eligió titulación.
-    Si no, pide que la elija con botones.
-
-    Devuelve (codigo_titulacion, eventos_rasa).
-    """
-    titulacion = tracker.get_slot("contexto_titulacion")
-
-    if not titulacion:
-        botones = _construir_botones_titulaciones()
-        dispatcher.utter_message(
-            text="Antes de consultar asignaturas, necesito saber tu titulación:",
-            buttons=botones
-        )
-        return None, []
-
-    return titulacion, []
 
 
 def _extraer_multiples_nombres(pregunta: str, titulacion: str) -> List[str]:
@@ -455,8 +419,21 @@ def resolver_asignatura(
     if not exito or not resultados:
         return None, nombre_asignatura
 
-    # 8. Si hay múltiples resultados, reordenar por fuzzy match
+    # 8. Si hay múltiples resultados, reordenar por fuzzy match.
     if len(resultados) > 1:
+        # 8a. Match exacto contra el nombre que estamos resolviendo: si una de
+        # las filas se llama EXACTAMENTE como `nombre_asignatura` (post-alias /
+        # post-seguimiento), devolverla sin pasar por fuzzy. Evita que en el
+        # seguimiento "Administración de Empresas" se reordene a "Ampliación
+        # de Administración de Empresas" porque el ILIKE %nombre% trae ambas.
+        # Aplica a cualquier asignatura cuyo nombre sea prefijo de otra (AE/AAE,
+        # IA/AIA, BD/CBD, IS/ISPP…).
+        objetivo = normalizar_texto(nombre_asignatura)
+        for r in resultados:
+            if normalizar_texto(r.get('nombre', '')) == objetivo:
+                print(f"   → Match exacto: '{r.get('nombre')}' (sin reordenar fuzzy)")
+                return r, nombre_asignatura
+
         from rapidfuzz import fuzz
         pregunta_norm = normalizar_texto(pregunta)
         resultados.sort(

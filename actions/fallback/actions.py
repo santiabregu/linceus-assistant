@@ -13,7 +13,7 @@ from rasa_sdk.events import SlotSet
 from ..shared.gemini_client import llamar_gemini
 from ..shared.db import db_client
 from ..shared.config import BotConfig, ALIAS_ASIGNATURAS
-from ..asignaturas.actions import comprobar_titulacion
+from ..shared.follow_up import _contar_turnos_desde_slot, comprobar_titulacion
 
 
 # ─── Heuristicas de continuacion / memoria ───────────────────────────────────
@@ -29,20 +29,6 @@ _RE_CONTINUACION_TODOS_GRUPOS = re.compile(
     r"de\s+los\s+dem[aá]s|otros\s+grupos|el\s+resto\s+de\s+grupos)\b",
     re.IGNORECASE,
 )
-
-
-def _contar_turnos_desde_slot(tracker, slot_name: str) -> int:
-    """
-    Cuenta turnos de usuario desde la ultima vez que se seteo el slot.
-    Devuelve 999 si no hay registro del slot.
-    """
-    turnos = 0
-    for event in reversed(tracker.events):
-        if event.get("event") == "user":
-            turnos += 1
-        if event.get("event") == "slot" and event.get("name") == slot_name:
-            return turnos
-    return 999
 
 
 def _ultimos_intercambios(tracker, n: int = 3) -> list:
