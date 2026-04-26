@@ -1,0 +1,15 @@
+# Imagen Rasa con spaCy + modelo es_core_news_md preinstalados.
+# La imagen oficial rasa/rasa:3.6.21 no los trae, pero el pipeline NLU del
+# proyecto (config.yml) usa SpacyNLP/SpacyTokenizer/SpacyFeaturizer (D-058).
+# Sin estos paquetes, Rasa arranca el HTTP pero falla a cargar el agente con
+# `GraphComponentException: Error initializing graph component for node
+# provide_SpacyNLP0`.
+FROM rasa/rasa:3.6.21
+
+USER root
+
+RUN pip install --no-cache-dir spacy \
+ && python -m spacy download es_core_news_md
+
+# Volver al usuario por defecto de la imagen oficial.
+USER 1001
