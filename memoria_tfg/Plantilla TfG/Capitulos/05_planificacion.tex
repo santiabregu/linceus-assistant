@@ -2,7 +2,9 @@
 
 \chapter{Planificación}\label{cap:planificacion}
 
-Este capítulo presenta la planificación del proyecto LinceUS Assistant. Se describe la Estructura de Descomposición del Trabajo (EDT), el diccionario EDT que define cada paquete de trabajo, el backlog del producto organizado por épicas y la planificación temporal en sprints.
+Este capítulo presenta la planificación del proyecto Linceus Assistant. La organización del trabajo sigue el ciclo de vida clásico de un proyecto de ingeniería del software, dividido en \textbf{tres fases}: \textit{Inicio}, \textit{Desarrollo} y \textit{Cierre}. Esta estructura es coherente con la guía PMBOK y con la práctica habitual en proyectos académicos, y permite separar el trabajo de planificación previa, el desarrollo iterativo del producto y la validación con usuarios y entrega final.
+
+Dentro de cada fase se identifican \textbf{paquetes de trabajo} que agrupan tareas con un objetivo común y un entregable concreto. Las épicas de desarrollo en sentido SCRUM (asignaturas, profesores, horarios, etc.) se ubican en la fase de Desarrollo y se ejecutan de forma incremental sobre sprints de 3--4 semanas, según se detalla en el Capítulo~\ref{cap:metodologia}.
 
 % =====================================================
 % SECCIÓN 1: ESTRUCTURA DE DESCOMPOSICIÓN DEL TRABAJO
@@ -10,37 +12,79 @@ Este capítulo presenta la planificación del proyecto LinceUS Assistant. Se des
 
 \section{Estructura de Descomposición del Trabajo (EDT)}\label{sec:edt}
 
-La Estructura de Descomposición del Trabajo (EDT), o \textit{Work Breakdown Structure} (WBS), organiza jerárquicamente todo el trabajo necesario para completar el proyecto. El nivel 0 representa el proyecto completo, el nivel 1 los paquetes de trabajo principales y el nivel 2 las tareas individuales que componen cada paquete.
+La Estructura de Descomposición del Trabajo (EDT), o \textit{Work Breakdown Structure} (WBS), organiza jerárquicamente todo el trabajo necesario para completar el proyecto. El nivel 0 representa el proyecto completo, el nivel 1 las tres fases del ciclo de vida y el nivel 2 los paquetes de trabajo dentro de cada fase. Las tareas individuales (nivel 3) se detallan en el diccionario EDT de la Sección~\ref{sec:diccionario-edt}.
 
-La Figura~\ref{fig:edt} muestra la EDT a nivel de paquetes de trabajo (nivel 0 y 1), compuesta por \textbf{8 paquetes}: 2 transversales (gestión e investigación) y 6 épicas de desarrollo. El desglose de cada paquete en tareas individuales (nivel 2) se detalla en el diccionario EDT de la Sección~\ref{sec:diccionario-edt}.
+La Figura~\ref{fig:edt} muestra la EDT a nivel de fases y paquetes de trabajo.
 
 \begin{figure}[hbtp]
 \centering
-\resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[
-    level 1/.style={sibling distance=38mm, level distance=28mm},
-    every node/.style={font=\small\sffamily},
-    root/.style={rectangle, draw=black!80, fill=blue!15, minimum width=40mm, minimum height=12mm, align=center, font=\small\sffamily\bfseries, rounded corners=3pt},
-    pkg/.style={rectangle, draw=black!70, fill=#1, minimum width=32mm, minimum height=14mm, align=center, font=\footnotesize\sffamily\bfseries, rounded corners=3pt, text width=30mm},
-    pkg/.default={orange!15},
-    tasks/.style={font=\scriptsize\sffamily, text=black!60, align=center},
-    edge from parent/.style={draw=black!60, thick}
+    every node/.style={font=\footnotesize\sffamily},
+    root/.style={rectangle, draw=black!80, fill=blue!15,
+        minimum width=60mm, minimum height=9mm,
+        align=center, font=\small\sffamily\bfseries, rounded corners=3pt},
+    fase/.style={rectangle, draw=black!80, fill=#1,
+        minimum width=46mm, minimum height=9mm,
+        align=center, font=\small\sffamily\bfseries, rounded corners=3pt},
+    fase/.default={blue!10},
+    pkg/.style={rectangle, draw=black!70, fill=#1,
+        minimum width=46mm, minimum height=8mm,
+        text width=44mm, align=center,
+        font=\scriptsize\sffamily, rounded corners=3pt},
+    pkg/.default={white},
+    arrow/.style={draw=black!60, thick}
 ]
 
-\node[root] {LinceUS Assistant}
-    child { node[pkg=gray!15] {PT0\\Gestión del\\proyecto} }
-    child { node[pkg=gray!15] {PT1\\Investigación\\y preparación} }
-    child { node[pkg=green!15] {PT2\\Épica 1:\\Asignaturas v1} }
-    child { node[pkg=green!15] {PT3\\Épica 2:\\Profesores} }
-    child { node[pkg=cyan!15] {PT4\\Épica 3:\\RAG Asig. v2} }
-    child { node[pkg=green!15] {PT5\\Épica 4:\\Horarios} }
-    child { node[pkg=cyan!15] {PT6\\Épica 5:\\RAG Trámites} }
-    child { node[pkg=yellow!20] {PT7\\Épica 6:\\Frontend + Piloto} }
-;
+% Columnas: Inicio x=-52mm, Desarrollo x=0, Cierre x=52mm
+% Filas:    root y=0, fases y=-18mm, paquetes desde y=-32mm c/14mm
+
+% --- Nivel 0
+\node[root] (root) at (0,0) {Linceus Assistant};
+
+% --- Nivel 1
+\node[fase=green!20]  (f1) at (-52mm,-18mm) {1. Inicio};
+\node[fase=orange!25] (f2) at (  0mm,-18mm) {2. Desarrollo};
+\node[fase=red!20]    (f3) at ( 52mm,-18mm) {3. Cierre};
+
+\draw[arrow] (root.south) -- (f1.north);
+\draw[arrow] (root.south) -- (f2.north);
+\draw[arrow] (root.south) -- (f3.north);
+
+% --- Nivel 2 — Fase 1 (3 paquetes)
+\node[pkg=green!10] (p11) at (-52mm,-32mm) {1.1 Gestión del proyecto};
+\node[pkg=green!10] (p12) at (-52mm,-46mm) {1.2 Investigación tecnológica};
+\node[pkg=green!10] (p13) at (-52mm,-60mm) {1.3 Diseño de la arquitectura};
+
+\draw[arrow] (f1.south)  -- (p11.north);
+\draw[arrow] (p11.south) -- (p12.north);
+\draw[arrow] (p12.south) -- (p13.north);
+
+% --- Nivel 2 — Fase 2 (5 paquetes)
+\node[pkg=orange!12] (p21) at (0mm,-32mm) {2.1 \'Epica Asignaturas};
+\node[pkg=orange!12] (p22) at (0mm,-46mm) {2.2 \'Epica Profesores};
+\node[pkg=orange!12] (p23) at (0mm,-60mm) {2.3 \'Epica Horarios};
+\node[pkg=orange!12] (p24) at (0mm,-74mm) {2.4 Pipeline RAG};
+\node[pkg=orange!12] (p25) at (0mm,-88mm) {2.5 Panel admin y frontend};
+
+\draw[arrow] (f2.south)  -- (p21.north);
+\draw[arrow] (p21.south) -- (p22.north);
+\draw[arrow] (p22.south) -- (p23.north);
+\draw[arrow] (p23.south) -- (p24.north);
+\draw[arrow] (p24.south) -- (p25.north);
+
+% --- Nivel 2 — Fase 3 (4 paquetes)
+\node[pkg=red!10] (p31) at (52mm,-32mm) {3.1 Validaci\'on y testing};
+\node[pkg=red!10] (p32) at (52mm,-46mm) {3.2 Piloto con usuarios};
+\node[pkg=red!10] (p33) at (52mm,-60mm) {3.3 Despliegue (DigitalOcean)};
+\node[pkg=red!10] (p34) at (52mm,-74mm) {3.4 Memoria y defensa};
+
+\draw[arrow] (f3.south)  -- (p31.north);
+\draw[arrow] (p31.south) -- (p32.north);
+\draw[arrow] (p32.south) -- (p33.north);
+\draw[arrow] (p33.south) -- (p34.north);
 
 \end{tikzpicture}
-}%
-\caption{Estructura de Descomposición del Trabajo (EDT) — nivel de paquetes de trabajo.}
+\caption{Estructura de Descomposición del Trabajo (EDT) — fases y paquetes de trabajo.}
 \label{fig:edt}
 \end{figure}
 
@@ -50,12 +94,19 @@ La Figura~\ref{fig:edt} muestra la EDT a nivel de paquetes de trabajo (nivel 0 y
 
 \section{Diccionario EDT}\label{sec:diccionario-edt}
 
-El diccionario EDT define cada paquete de trabajo y sus tareas constituyentes, especificando su descripción, entregables y estimación de esfuerzo. Las estimaciones siguen la escala: \textbf{S} (Small, $\leq$1 semana), \textbf{M} (Medium, 1--2 semanas) y \textbf{L} (Large, 2--3 semanas).
+El diccionario EDT define cada paquete de trabajo y sus tareas constituyentes, especificando descripción, entregables y estimación de esfuerzo. Las estimaciones siguen la escala: \textbf{S} (Small, $\leq$1~semana), \textbf{M} (Medium, 1--2~semanas) y \textbf{L} (Large, 2--3~semanas).
 
-% --- PT0 ---
-\subsection{PT0 — Gestión del proyecto}\label{subsec:pt0}
+% =====================================================
+% --- FASE 1: INICIO -----------------------------------
+% =====================================================
+\subsection{Fase 1 — Inicio}\label{subsec:fase-inicio}
 
-Paquete transversal que abarca la planificación, seguimiento y documentación formal del proyecto a lo largo de todo su ciclo de vida.
+La fase de inicio agrupa todo el trabajo previo a la implementación: planificación, estudio del estado del arte, análisis de tecnologías y diseño arquitectónico. Es la fase más corta en duración pero condiciona todas las decisiones posteriores.
+
+% --- 1.1 ---
+\subsubsection{1.1 — Gestión del proyecto}\label{subsubsec:gestion}
+
+Paquete transversal: aunque su esfuerzo principal se concentra en el inicio (planificación) y en el cierre (memoria, defensa), la gestión del proyecto está activa durante todo el ciclo de vida.
 
 \begin{table}[hbtp]
 \centering
@@ -63,18 +114,18 @@ Paquete transversal que abarca la planificación, seguimiento y documentación f
 \begin{tabular}{|l|l|p{7.5cm}|c|}
 \hline
 \textbf{ID} & \textbf{Tarea} & \textbf{Descripción y entregables} & \textbf{Est.} \\ \hline
-0.1 & Planificación y seguimiento & Definición del alcance, elaboración de la EDT, planificación de sprints, seguimiento del progreso y gestión de riesgos. \textit{Entregable: anteproyecto, actas de seguimiento.} & L \\ \hline
-0.2 & Redacción de la memoria & Redacción continua de la memoria del TFG: introducción, marco teórico, metodología, diseño, implementación, pruebas y conclusiones. \textit{Entregable: memoria del TFG.} & L \\ \hline
-0.3 & Preparación de la defensa & Elaboración de las diapositivas de presentación, ensayo de la defensa y preparación de la demostración en vivo. \textit{Entregable: presentación, demo.} & M \\ \hline
+1.1.1 & Anteproyecto y planificación & Definición del alcance, objetivos, EDT inicial y cronograma orientativo. \textit{Entregable: anteproyecto aprobado.} & M \\ \hline
+1.1.2 & Seguimiento iterativo & Revisión del progreso al cierre de cada sprint, ajuste del backlog y gestión de riesgos. \textit{Entregable: registro de decisiones (\texttt{docs/sprints/}).} & L \\ \hline
+1.1.3 & Comunicación con tutor & Reuniones periódicas de seguimiento, actas y validación de hitos. \textit{Entregable: actas de seguimiento.} & M \\ \hline
 \end{tabular}
-\caption{Diccionario EDT — PT0: Gestión del proyecto.}
-\label{tab:dict-pt0}
+\caption{Diccionario EDT — 1.1: Gestión del proyecto.}
+\label{tab:dict-1-1}
 \end{table}
 
-% --- PT1 ---
-\subsection{PT1 — Investigación y preparación}\label{subsec:pt1}
+% --- 1.2 ---
+\subsubsection{1.2 — Investigación tecnológica}\label{subsubsec:investigacion}
 
-Paquete que recoge el trabajo previo de investigación tecnológica, toma de decisiones y configuración del entorno de desarrollo.
+Análisis del estado del arte y comparativa de tecnologías, base de las decisiones de diseño documentadas en el Capítulo~\ref{cap:arquitectura}.
 
 \begin{table}[hbtp]
 \centering
@@ -82,18 +133,19 @@ Paquete que recoge el trabajo previo de investigación tecnológica, toma de dec
 \begin{tabular}{|l|l|p{7.5cm}|c|}
 \hline
 \textbf{ID} & \textbf{Tarea} & \textbf{Descripción y entregables} & \textbf{Est.} \\ \hline
-1.1 & Estudio de tecnologías & Análisis comparativo de frameworks conversacionales (Rasa, Botpress, DeepPavlov), bases de datos (Supabase, PostgreSQL, motores vectoriales) y APIs de LLM (Gemini, OpenAI, DeepSeek). \textit{Entregable: tablas comparativas, decisión documentada.} & L \\ \hline
-1.2 & Setup del entorno & Instalación y configuración de Python, Rasa, Supabase, Gemini API, Git/GitHub. Creación del repositorio y estructura inicial del proyecto. \textit{Entregable: entorno funcional, repositorio.} & M \\ \hline
-1.3 & Diseño de la arquitectura & Definición de la arquitectura por capas, diseño de la base de datos, definición de interfaces entre componentes y protocolos de comunicación. \textit{Entregable: diagramas de arquitectura, esquema ER.} & M \\ \hline
+1.2.1 & Estado del arte de chatbots & Revisión de chatbots universitarios publicados (AdmitBot, EDUBOT/LiSA, Ranoliya FAQ, Dibya \& Sahoo) y umbrales académicos de calidad. \textit{Entregable: marco bibliográfico.} & M \\ \hline
+1.2.2 & Comparativa de frameworks & Análisis de Rasa, Botpress y DeepPavlov según coste, integración Python, RAG y despliegue local. \textit{Entregable: tabla comparativa, decisión documentada.} & L \\ \hline
+1.2.3 & Comparativa de LLM/embeddings & Análisis de Gemini, OpenAI, DeepSeek y Ollama según coste, calidad y privacidad. \textit{Entregable: tabla comparativa.} & M \\ \hline
+1.2.4 & Setup del entorno & Instalación de Python, Rasa, Supabase, Gemini API, Git/GitHub. Estructura inicial del repositorio. \textit{Entregable: entorno funcional reproducible.} & S \\ \hline
 \end{tabular}
-\caption{Diccionario EDT — PT1: Investigación y preparación.}
-\label{tab:dict-pt1}
+\caption{Diccionario EDT — 1.2: Investigación tecnológica.}
+\label{tab:dict-1-2}
 \end{table}
 
-% --- PT2 ---
-\subsection{PT2 — Épica 1: Asignaturas v1 (BD estructurada)}\label{subsec:pt2}
+% --- 1.3 ---
+\subsubsection{1.3 — Diseño de la arquitectura}\label{subsubsec:diseno}
 
-Primera épica de desarrollo. Implementa la consulta de información básica de asignaturas (código, nombre, curso, créditos, tipología, duración) mediante consultas SQL sobre la base de datos estructurada, sin RAG.
+Definición de la arquitectura por capas, modelo de datos y contratos entre componentes antes de empezar el desarrollo.
 
 \begin{table}[hbtp]
 \centering
@@ -101,23 +153,25 @@ Primera épica de desarrollo. Implementa la consulta de información básica de 
 \begin{tabular}{|l|l|p{7.5cm}|c|}
 \hline
 \textbf{ID} & \textbf{Tarea} & \textbf{Descripción y entregables} & \textbf{Est.} \\ \hline
-2.1 & Esquema de datos en Supabase & Definir tablas de asignaturas (código, nombre, curso, créditos, tipología, duración) con restricciones de integridad y relaciones. \textit{Entregable: script SQL de creación.} & S \\ \hline
-2.2 & Script de carga CSV + plantilla & Script Python/SQL con upsert, validaciones de obligatorios, tipos, duplicados y tildes. Plantilla vacía para nuevas titulaciones. \textit{Entregable: script de carga, plantilla CSV.} & M \\ \hline
-2.3 & Ingesta del curso objetivo & Cargar $\sim$9 asignaturas del curso elegido (ETSII) y verificar integridad y relaciones. \textit{Entregable: datos cargados y validados.} & M \\ \hline
-2.4 & Intents y entidades de consulta & Definir intents y entidades para ``calificación/evaluación/metodología/bibliografía de X'' con variaciones coloquiales y sinónimos. \textit{Entregable: ficheros NLU en YAML.} & M \\ \hline
-2.5 & Acción Rasa (SQL) & Acción personalizada con consulta parametrizada a Supabase, normalización de nombres (fuzzy matching) y formateo de respuesta con fallback. \textit{Entregable: módulo actions.} & L \\ \hline
-2.6 & Testing de la épica & Golden set $\geq$30 casos, unit tests y end-to-end. Objetivo: $\geq$90\% de acierto. \textit{Entregable: suite de tests, informe de resultados.} & M \\ \hline
-2.7 & Documentación breve & Diagrama ER de datos y guía reproducible de carga (pasos y validaciones). \textit{Entregable: documentación técnica.} & S \\ \hline
-2.8 & Preparación de RAG (inventario) & Lista de fuentes para proyectos docentes y criterios de inclusión/versión. \textit{Entregable: inventario de fuentes.} & L \\ \hline
+1.3.1 & Arquitectura por capas & Definición de las capas (presentación, NLU, lógica de negocio, IA, datos, admin) y de las interfaces entre ellas. \textit{Entregable: diagrama de componentes.} & M \\ \hline
+1.3.2 & Diagrama de despliegue & Modelo de despliegue sobre DigitalOcean con contenedores Docker, Supabase como BD gestionada y Gemini como servicio externo. \textit{Entregable: diagrama de despliegue.} & S \\ \hline
+1.3.3 & Modelo de datos & Diseño del esquema relacional (asignaturas, profesores, horarios, planes docentes) y vectorial (chunks + embeddings con pgvector). \textit{Entregable: diagrama ER.} & M \\ \hline
 \end{tabular}
-\caption{Diccionario EDT — PT2: Épica 1 — Asignaturas v1.}
-\label{tab:dict-pt2}
+\caption{Diccionario EDT — 1.3: Diseño de la arquitectura.}
+\label{tab:dict-1-3}
 \end{table}
 
-% --- PT3 ---
-\subsection{PT3 — Épica 2: Profesores}\label{subsec:pt3}
+% =====================================================
+% --- FASE 2: DESARROLLO -------------------------------
+% =====================================================
+\subsection{Fase 2 — Desarrollo}\label{subsec:fase-desarrollo}
 
-Segunda épica. Permite consultar datos de contacto, despacho y horarios de tutorías del profesorado, con búsqueda por nombre o por asignatura.
+Fase central del proyecto. Se ejecuta de forma iterativa siguiendo el marco SCRUM adaptado descrito en el Capítulo~\ref{cap:metodologia}, con sprints de 3--4 semanas. Cada paquete corresponde a una épica funcional del producto y se cierra con un incremento entregable.
+
+% --- 2.1 ---
+\subsubsection{2.1 — Épica Asignaturas}\label{subsubsec:epica-asig}
+
+Funcionalidad nuclear: consultas sobre asignaturas (ficha, listado, conteo) mediante \textit{Text-to-SQL} sobre la base de datos relacional y RAG sobre los planes docentes.
 
 \begin{table}[hbtp]
 \centering
@@ -125,20 +179,20 @@ Segunda épica. Permite consultar datos de contacto, despacho y horarios de tuto
 \begin{tabular}{|l|l|p{7.5cm}|c|}
 \hline
 \textbf{ID} & \textbf{Tarea} & \textbf{Descripción y entregables} & \textbf{Est.} \\ \hline
-3.1 & Esquema profesores/tutorías & Tablas \texttt{profesores} (nombre, departamento, correo, despacho) y \texttt{tutorias} (día, hora, modalidad) con FK hacia asignaturas. \textit{Entregable: script SQL.} & S \\ \hline
-3.2 & Carga y normalización & Cargar CSV de profesores y tutorías; normalizar alias, tildes y abreviaturas; control de duplicados. \textit{Entregable: datos cargados.} & M \\ \hline
-3.3 & Intents y entidades & Definir intents para ``Correo de\ldots'', ``Despacho de\ldots'', ``Tutorías de\ldots'' y ``¿Quién da [Asignatura]?''. \textit{Entregable: ficheros NLU.} & L \\ \hline
-3.4 & Acciones SQL & Consultas por nombre y por asignatura; manejo de ambigüedades (varios profesores con nombre similar). \textit{Entregable: módulo actions.} & L \\ \hline
-3.5 & Testing de la épica & Golden set $\geq$20 casos; $\geq$95\% de acierto; casos de alias y errores ortográficos menores. \textit{Entregable: suite de tests.} & M \\ \hline
+2.1.1 & Esquema y carga de datos & Tablas \texttt{asignaturas}, \texttt{titulaciones}, \texttt{centros} y carga inicial de las tres titulaciones GII de la ETSII. \textit{Entregable: scripts SQL + datos.} & M \\ \hline
+2.1.2 & NLU de asignaturas & Intents (\texttt{consulta\_asignatura\_especifica}, \texttt{consulta\_asignaturas\_listado}, \texttt{consulta\_asignaturas\_conteo}) y entidades. \textit{Entregable: ficheros NLU.} & M \\ \hline
+2.1.3 & Acción Text-to-SQL & Generación dinámica de SQL con Gemini, validación, ejecución y formateo de la respuesta natural. \textit{Entregable: módulo \texttt{actions/asignaturas/}.} & L \\ \hline
+2.1.4 & Resolución de seguimiento & Herencia de slot \texttt{ultimo\_nombre\_asignatura} para preguntas elípticas (``y cuántos créditos?''). \textit{Entregable: \texttt{resolver\_asignatura}.} & M \\ \hline
+2.1.5 & Testing de la épica & Suite de aceptación con $\geq$30~casos golden + casos negativos y con typos. \textit{Entregable: informe de pruebas.} & M \\ \hline
 \end{tabular}
-\caption{Diccionario EDT — PT3: Épica 2 — Profesores.}
-\label{tab:dict-pt3}
+\caption{Diccionario EDT — 2.1: Épica Asignaturas.}
+\label{tab:dict-2-1}
 \end{table}
 
-% --- PT4 ---
-\subsection{PT4 — Épica 3: RAG Asignaturas v2}\label{subsec:pt4}
+% --- 2.2 ---
+\subsubsection{2.2 — Épica Profesores}\label{subsubsec:epica-prof}
 
-Tercera épica. Extiende la consulta de asignaturas con información extraída de los proyectos docentes (PDF) mediante técnicas de RAG: extracción, chunking, embeddings y búsqueda semántica.
+Búsqueda de profesorado por nombre o por asignatura con datos de contacto, despacho, departamento y atajo de coordinador/suplente vía RAG sobre el plan docente.
 
 \begin{table}[hbtp]
 \centering
@@ -146,20 +200,19 @@ Tercera épica. Extiende la consulta de asignaturas con información extraída d
 \begin{tabular}{|l|l|p{7.5cm}|c|}
 \hline
 \textbf{ID} & \textbf{Tarea} & \textbf{Descripción y entregables} & \textbf{Est.} \\ \hline
-4.1 & Inventario de fuentes & Mapa de proyectos docentes (URLs/PDF) y decisión de extracción (scraping vs curación manual). \textit{Entregable: inventario documentado.} & M \\ \hline
-4.2 & Extracción y chunking & Parseo de PDF con pdfplumber, chunking semántico (800 caracteres, 100 de solapamiento) y metadatos (asignatura, año, sección, fecha de vigencia). \textit{Entregable: pipeline de extracción.} & M \\ \hline
-4.3 & Embeddings en Supabase & Generación de embeddings con Gemini (\texttt{gemini-embedding-001}, 2000 dimensiones) y almacenamiento en pgvector con índices HNSW. \textit{Entregable: pipeline de vectorización.} & M \\ \hline
-4.4 & Acción RAG con citas & Retrieval semántico + fallback por keywords; respuesta con cita (documento y sección) y umbral de confianza con fallback a enlaces útiles. \textit{Entregable: acción RAG integrada.} & L \\ \hline
-4.5 & Testing de la épica & Anti-alucinación con golden set $\geq$40 casos, $\geq$90\% de precisión factual, pruebas de no-regresión al actualizar documentos. \textit{Entregable: suite de tests.} & M \\ \hline
+2.2.1 & Esquema profesores & Tablas \texttt{profesores}, \texttt{departamentos}, \texttt{profesor\_asignatura} con FK hacia asignaturas. \textit{Entregable: script SQL.} & S \\ \hline
+2.2.2 & Importación desde us.es PDI & Scraper del directorio oficial de la US para importar profesorado de la ETSII; deduplicación por email. \textit{Entregable: scraper integrado en panel admin.} & L \\ \hline
+2.2.3 & NLU y acción & Intent \texttt{consulta\_profesor} con pipeline Text-to-SQL + fallback RAG sobre plan docente. \textit{Entregable: \texttt{actions/profesores/}.} & L \\ \hline
+2.2.4 & Testing de la épica & Suite con 43~casos cubriendo nombre, asignatura, tutorías y coordinador. \textit{Entregable: informe de pruebas.} & M \\ \hline
 \end{tabular}
-\caption{Diccionario EDT — PT4: Épica 3 — RAG Asignaturas v2.}
-\label{tab:dict-pt4}
+\caption{Diccionario EDT — 2.2: Épica Profesores.}
+\label{tab:dict-2-2}
 \end{table}
 
-% --- PT5 ---
-\subsection{PT5 — Épica 4: Horarios}\label{subsec:pt5}
+% --- 2.3 ---
+\subsubsection{2.3 — Épica Horarios}\label{subsubsec:epica-hor}
 
-Cuarta épica. Permite consultar horarios de clases mediante una base de datos relacional con grupos, tramos horarios y aulas.
+Consultas de horario por curso/grupo o por asignatura, con extracción automática del PDF oficial de horarios de la ETSII.
 
 \begin{table}[hbtp]
 \centering
@@ -167,20 +220,19 @@ Cuarta épica. Permite consultar horarios de clases mediante una base de datos r
 \begin{tabular}{|l|l|p{7.5cm}|c|}
 \hline
 \textbf{ID} & \textbf{Tarea} & \textbf{Descripción y entregables} & \textbf{Est.} \\ \hline
-5.1 & Esquema horarios & Tablas \texttt{grupos\_clase}, \texttt{horarios} y \texttt{aulas} con claves foráneas y validación de solapes horarios. \textit{Entregable: script SQL.} & M \\ \hline
-5.2 & Carga del curso & Cargar 1 curso ($\approx$4 grupos $\times$ 9 asignaturas) con validaciones de consistencia temporal. \textit{Entregable: datos cargados.} & S \\ \hline
-5.3 & Intents y acciones & Consultas por asignatura, grupo y curso; formateo en tabla legible. \textit{Entregable: intents NLU y acciones Python.} & L \\ \hline
-5.4 & Export CSV (opcional) & Exportar CSV del horario personal del alumno, si entra en alcance. \textit{Entregable: funcionalidad de exportación.} & L \\ \hline
-5.5 & Testing de la épica & Golden set $\geq$30 casos; pruebas de rendimiento y de formato de salida. \textit{Entregable: suite de tests.} & M \\ \hline
+2.3.1 & Esquema horarios & Tablas \texttt{grupos\_clase}, \texttt{horarios}, \texttt{aulas} con cuatrimestre como dimensión. \textit{Entregable: script SQL.} & M \\ \hline
+2.3.2 & Extractor PDF ETSII & Parser con \texttt{pdfplumber} de la cuadrícula oficial; reconoce códigos \texttt{xGy-Cz} y separa teoría de laboratorio. \textit{Entregable: \texttt{admin/horarios\_extractores/}.} & L \\ \hline
+2.3.3 & NLU y acciones & Intents \texttt{consulta\_horario} (curso+grupo) y \texttt{consulta\_horario\_asignatura}; herencia de slot para seguimiento. \textit{Entregable: \texttt{actions/horarios/}.} & L \\ \hline
+2.3.4 & Testing de la épica & Suite con 45 casos (horario semanal, por día, con/sin cuatrimestre, con typos). \textit{Entregable: informe de pruebas.} & M \\ \hline
 \end{tabular}
-\caption{Diccionario EDT — PT5: Épica 4 — Horarios.}
-\label{tab:dict-pt5}
+\caption{Diccionario EDT — 2.3: Épica Horarios.}
+\label{tab:dict-2-3}
 \end{table}
 
-% --- PT6 ---
-\subsection{PT6 — Épica 5: RAG Trámites}\label{subsec:pt6}
+% --- 2.4 ---
+\subsubsection{2.4 — Pipeline RAG}\label{subsubsec:rag}
 
-Quinta épica. Permite consultar información sobre trámites administrativos (matrícula, becas, certificados, convalidaciones) mediante RAG sobre páginas oficiales y documentos institucionales.
+Infraestructura transversal de \textit{Retrieval Augmented Generation} sobre los planes docentes de las asignaturas, utilizada por las épicas de asignaturas y profesores.
 
 \begin{table}[hbtp]
 \centering
@@ -188,19 +240,19 @@ Quinta épica. Permite consultar información sobre trámites administrativos (m
 \begin{tabular}{|l|l|p{7.5cm}|c|}
 \hline
 \textbf{ID} & \textbf{Tarea} & \textbf{Descripción y entregables} & \textbf{Est.} \\ \hline
-6.1 & Mapa de páginas & Identificar páginas oficiales y documentos relevantes; registrar fecha de vigencia de cada fuente. \textit{Entregable: mapa de fuentes.} & M \\ \hline
-6.2 & Extracción/curación + chunking & Extraer contenido de webs y PDFs, normalizar, chunking con metacampos (tema, fecha, URL de origen). \textit{Entregable: pipeline de extracción.} & L \\ \hline
-6.3 & Embeddings + acción RAG & Cargar embeddings; acción que siempre muestre fuente y fecha, y gestione discrepancias entre fuentes. \textit{Entregable: acción RAG de trámites.} & L \\ \hline
-6.4 & Testing de la épica & Golden set $\geq$40 casos, pruebas de no-regresión y verificación de enlaces; $\geq$90\% de precisión factual. \textit{Entregable: suite de tests.} & M \\ \hline
+2.4.1 & Extracción y \textit{chunking} & Parseo de planes docentes (HTML/PDF), \textit{chunking} semántico con metadatos (asignatura, sección, año). \textit{Entregable: pipeline.} & M \\ \hline
+2.4.2 & Embeddings y \texttt{pgvector} & Generación con \texttt{text-embedding-004} y almacenamiento en pgvector con índices HNSW; función SQL \texttt{buscar\_plan\_docente()}. \textit{Entregable: pipeline de vectorización.} & M \\ \hline
+2.4.3 & Action RAG & Acción que combina retrieval semántico con re-ranking por sección y umbral de similitud; respuesta con citas. \textit{Entregable: módulo RAG en \texttt{actions/}.} & L \\ \hline
+2.4.4 & Anti-alucinación & Prompts reforzados que prohíben inventar nombres, emails o aulas no presentes en los chunks. \textit{Entregable: prompts revisados.} & M \\ \hline
 \end{tabular}
-\caption{Diccionario EDT — PT6: Épica 5 — RAG Trámites.}
-\label{tab:dict-pt6}
+\caption{Diccionario EDT — 2.4: Pipeline RAG.}
+\label{tab:dict-2-4}
 \end{table}
 
-% --- PT7 ---
-\subsection{PT7 — Épica 6: Frontend + Piloto + Entrega}\label{subsec:pt7}
+% --- 2.5 ---
+\subsubsection{2.5 — Panel admin y frontend}\label{subsubsec:admin-frontend}
 
-Sexta épica. Abarca el desarrollo de la interfaz web, la ejecución de un piloto con usuarios reales y la finalización de la documentación para la entrega.
+Interfaces visibles del producto: el widget de chat para el alumno y el panel de administración para mantener los datos curados.
 
 \begin{table}[hbtp]
 \centering
@@ -208,12 +260,98 @@ Sexta épica. Abarca el desarrollo de la interfaz web, la ejecución de un pilot
 \begin{tabular}{|l|l|p{7.5cm}|c|}
 \hline
 \textbf{ID} & \textbf{Tarea} & \textbf{Descripción y entregables} & \textbf{Est.} \\ \hline
-7.1 & UI del widget web & Chat web conectado a Rasa mediante API REST; renderizado de respuestas enriquecidas (Markdown, tablas); accesibilidad básica (WCAG). \textit{Entregable: widget JS embebible.} & S \\ \hline
-7.2 & Piloto y ajustes & Piloto con 5--10 estudiantes, recogida de feedback y ajustes de UX y flujos conversacionales; corrección de regresiones. \textit{Entregable: informe del piloto.} & M \\ \hline
-7.3 & Memoria y defensa & Redacción final de la memoria (metodología, arquitectura, evaluación), elaboración de diapositivas y ensayo de defensa con métricas. \textit{Entregable: memoria final, presentación.} & L \\ \hline
+2.5.1 & Widget de chat & SPA en JavaScript vanilla, embebible mediante \texttt{<script>}, con renderizado Markdown y botones rápidos. \textit{Entregable: \texttt{frontend/}.} & M \\ \hline
+2.5.2 & API admin (Flask) & Endpoints REST para CRUD de centros, titulaciones, asignaturas, profesores y planes docentes. \textit{Entregable: \texttt{admin/}.} & L \\ \hline
+2.5.3 & SPA admin & Interfaz web con navegación jerárquica Centro $\rightarrow$ Titulación $\rightarrow$ Asignatura. \textit{Entregable: \texttt{frontend/admin.*}.} & M \\ \hline
+2.5.4 & Integración de scrapers & Scrapers de Sevius y us.es expuestos en el panel con flujo \textit{preview $\rightarrow$ insert}. \textit{Entregable: rutas \texttt{/sync}.} & M \\ \hline
 \end{tabular}
-\caption{Diccionario EDT — PT7: Épica 6 — Frontend + Piloto + Entrega.}
-\label{tab:dict-pt7}
+\caption{Diccionario EDT — 2.5: Panel admin y frontend.}
+\label{tab:dict-2-5}
+\end{table}
+
+% =====================================================
+% --- FASE 3: CIERRE -----------------------------------
+% =====================================================
+\subsection{Fase 3 — Cierre}\label{subsec:fase-cierre}
+
+Fase final del proyecto: validación funcional exhaustiva, despliegue en producción, ejecución del piloto con usuarios reales y entrega de la documentación académica.
+
+% --- 3.1 ---
+\subsubsection{3.1 — Validación y testing}\label{subsubsec:testing}
+
+Suite de pruebas multinivel siguiendo el modelo de calidad ISO/IEC 25010 y la metodología \textit{Behavior-Driven Development}.
+
+\begin{table}[hbtp]
+\centering
+\small
+\begin{tabular}{|l|l|p{7.5cm}|c|}
+\hline
+\textbf{ID} & \textbf{Tarea} & \textbf{Descripción y entregables} & \textbf{Est.} \\ \hline
+3.1.1 & Plan de aceptación & Diseño del plan de pruebas según ISO 25010 + BDD: positivos, negativos, edge, robustez. \textit{Entregable: \texttt{plans/aceptacion\_prototipo.md}.} & M \\ \hline
+3.1.2 & Suite E2E & 159~casos sobre el stack completo (NLU + actions + SQL + RAG + LLM). \textit{Entregable: 94{,}3\,\% PASS.} & L \\ \hline
+3.1.3 & RAG retrieval + profundidad & Capa baseline (50~preguntas) y profundidad (74~preguntas reales sobre 19~asignaturas). \textit{Entregables: 94{,}0\,\% y 91{,}9\,\%.} & M \\ \hline
+3.1.4 & NLU + Policy & Validación con \texttt{rasa test core} sobre 44~stories. \textit{Entregable: 100\,\% accuracy de acciones.} & S \\ \hline
+3.1.5 & Métricas no funcionales & Latencia p50/p95 y coste por turno con extrapolación a 700 alumnos. \textit{Entregable: \texttt{coste\_latencia.md}.} & M \\ \hline
+\end{tabular}
+\caption{Diccionario EDT — 3.1: Validación y testing.}
+\label{tab:dict-3-1}
+\end{table}
+
+% --- 3.2 ---
+\subsubsection{3.2 — Piloto con usuarios}\label{subsubsec:piloto}
+
+Despliegue del prototipo y validación con conversaciones reales de alumnos de la ETSII.
+
+\begin{table}[hbtp]
+\centering
+\small
+\begin{tabular}{|l|l|p{7.5cm}|c|}
+\hline
+\textbf{ID} & \textbf{Tarea} & \textbf{Descripción y entregables} & \textbf{Est.} \\ \hline
+3.2.1 & Captura de tráfico real & Registro de las conversaciones piloto en \texttt{conversation\_log}. \textit{Entregable: 59~sesiones / 203~turnos.} & S \\ \hline
+3.2.2 & Auditoría manual & Replay turno a turno desde el panel admin; marcado de sesiones validadas. \textit{Entregable: 58/59 sesiones validadas (98{,}3\,\%).} & M \\ \hline
+3.2.3 & Iteración correctiva & Fixes detectados durante la auditoría (alias compactado, anti-alucinación, fecha actual en prompt, seguimiento cross-intent). \textit{Entregable: registro de decisiones D-064..D-069.} & M \\ \hline
+\end{tabular}
+\caption{Diccionario EDT — 3.2: Piloto con usuarios.}
+\label{tab:dict-3-2}
+\end{table}
+
+% --- 3.3 ---
+\subsubsection{3.3 — Despliegue en producción}\label{subsubsec:despliegue}
+
+Puesta en funcionamiento del sistema en una infraestructura accesible públicamente y configuración del pipeline de despliegue continuo.
+
+\begin{table}[hbtp]
+\centering
+\small
+\begin{tabular}{|l|l|p{7.5cm}|c|}
+\hline
+\textbf{ID} & \textbf{Tarea} & \textbf{Descripción y entregables} & \textbf{Est.} \\ \hline
+3.3.1 & Provisión del droplet & Aprovisionamiento del servidor en DigitalOcean (Ubuntu 24.04 LTS), \textit{firewall} y dominio. \textit{Entregable: servidor accesible.} & S \\ \hline
+3.3.2 & Containerización & \texttt{docker-compose} con cuatro servicios (\texttt{nginx}, \texttt{rasa}, \texttt{actions}, \texttt{admin}) e imagen Rasa custom con spaCy. \textit{Entregable: \texttt{docker/}.} & M \\ \hline
+3.3.3 & Pipeline CI/CD & \textit{Workflow} de GitHub Actions que despliega vía SSH al droplet en cada \textit{merge} a \texttt{main}. \textit{Entregable: \texttt{deploy.yml}.} & S \\ \hline
+\end{tabular}
+\caption{Diccionario EDT — 3.3: Despliegue en producción.}
+\label{tab:dict-3-3}
+\end{table}
+
+% --- 3.4 ---
+\subsubsection{3.4 — Memoria y defensa}\label{subsubsec:memoria}
+
+Documentación académica final del proyecto y preparación del acto de defensa.
+
+\begin{table}[hbtp]
+\centering
+\small
+\begin{tabular}{|l|l|p{7.5cm}|c|}
+\hline
+\textbf{ID} & \textbf{Tarea} & \textbf{Descripción y entregables} & \textbf{Est.} \\ \hline
+3.4.1 & Redacción de la memoria & Capítulos de introducción, marco, metodología, arquitectura, planificación, pruebas y conclusiones. \textit{Entregable: memoria.} & L \\ \hline
+3.4.2 & Diagramas técnicos & Diagrama de componentes y de despliegue en notación UML2 (PlantUML). \textit{Entregable: \texttt{img/diagrama\_*.png}.} & S \\ \hline
+3.4.3 & Defensa & Diapositivas, ensayo y demo en vivo del prototipo desplegado. \textit{Entregable: presentación.} & M \\ \hline
+\end{tabular}
+\caption{Diccionario EDT — 3.4: Memoria y defensa.}
+\label{tab:dict-3-4}
 \end{table}
 
 % =====================================================
@@ -222,25 +360,32 @@ Sexta épica. Abarca el desarrollo de la interfaz web, la ejecución de un pilot
 
 \section{Resumen cuantitativo de la EDT}\label{sec:resumen-edt}
 
-La Tabla~\ref{tab:resumen-edt} resume los paquetes de trabajo, el número de tareas y la distribución de esfuerzo estimada.
+La Tabla~\ref{tab:resumen-edt} resume los paquetes de trabajo por fase y la distribución del esfuerzo estimado.
 
 \begin{table}[hbtp]
 \centering
 \begin{tabular}{|l|l|c|c|c|c|}
 \hline
-\textbf{ID} & \textbf{Paquete de trabajo} & \textbf{Tareas} & \textbf{S} & \textbf{M} & \textbf{L} \\ \hline
-PT0 & Gestión del proyecto & 3 & 0 & 1 & 2 \\ \hline
-PT1 & Investigación y preparación & 3 & 0 & 2 & 1 \\ \hline
-PT2 & Épica 1: Asignaturas v1 & 8 & 2 & 4 & 2 \\ \hline
-PT3 & Épica 2: Profesores & 5 & 1 & 2 & 2 \\ \hline
-PT4 & Épica 3: RAG Asignaturas v2 & 5 & 0 & 3 & 2 \\ \hline
-PT5 & Épica 4: Horarios & 5 & 1 & 2 & 2 \\ \hline
-PT6 & Épica 5: RAG Trámites & 4 & 0 & 2 & 2 \\ \hline
-PT7 & Épica 6: Frontend + Piloto & 3 & 1 & 1 & 1 \\ \hline
+\textbf{Fase} & \textbf{Paquete de trabajo} & \textbf{Tareas} & \textbf{S} & \textbf{M} & \textbf{L} \\ \hline
+\multirow{3}{*}{1. Inicio}
+  & 1.1 Gestión del proyecto         & 3 & 0 & 2 & 1 \\ \cline{2-6}
+  & 1.2 Investigación tecnológica    & 4 & 1 & 2 & 1 \\ \cline{2-6}
+  & 1.3 Diseño de la arquitectura    & 3 & 1 & 2 & 0 \\ \hline
+\multirow{5}{*}{2. Desarrollo}
+  & 2.1 Épica Asignaturas            & 5 & 0 & 4 & 1 \\ \cline{2-6}
+  & 2.2 Épica Profesores             & 4 & 1 & 1 & 2 \\ \cline{2-6}
+  & 2.3 Épica Horarios               & 4 & 0 & 2 & 2 \\ \cline{2-6}
+  & 2.4 Pipeline RAG                 & 4 & 0 & 3 & 1 \\ \cline{2-6}
+  & 2.5 Panel admin y frontend       & 4 & 0 & 3 & 1 \\ \hline
+\multirow{4}{*}{3. Cierre}
+  & 3.1 Validación y testing         & 5 & 1 & 3 & 1 \\ \cline{2-6}
+  & 3.2 Piloto con usuarios          & 3 & 1 & 2 & 0 \\ \cline{2-6}
+  & 3.3 Despliegue en producción     & 3 & 2 & 1 & 0 \\ \cline{2-6}
+  & 3.4 Memoria y defensa            & 3 & 1 & 1 & 1 \\ \hline
 \hline
-\multicolumn{2}{|l|}{\textbf{Total}} & \textbf{36} & \textbf{5} & \textbf{17} & \textbf{14} \\ \hline
+\multicolumn{2}{|l|}{\textbf{Total}} & \textbf{45} & \textbf{8} & \textbf{26} & \textbf{11} \\ \hline
 \end{tabular}
-\caption{Resumen cuantitativo de la EDT por paquete de trabajo.}
+\caption{Resumen cuantitativo de la EDT por fase y paquete de trabajo.}
 \label{tab:resumen-edt}
 \end{table}
 
@@ -250,30 +395,29 @@ PT7 & Épica 6: Frontend + Piloto & 3 & 1 & 1 & 1 \\ \hline
 
 \section{Backlog del producto}\label{sec:backlog}
 
-El backlog del producto se deriva directamente de la EDT y organiza las épicas de desarrollo por prioridad. Cada épica se implementa de forma secuencial, de modo que las funcionalidades se entregan de forma incremental siguiendo el marco SCRUM adaptado descrito en el Capítulo~\ref{cap:metodologia}.
+El backlog del producto se deriva de los paquetes de la fase de Desarrollo y los organiza según su prioridad de implementación. Cada épica se desarrolla de forma incremental siguiendo el marco SCRUM adaptado descrito en el Capítulo~\ref{cap:metodologia}, de modo que las funcionalidades se entregan en \textit{releases} sucesivas validables por separado.
 
 La priorización responde a dos criterios:
 
 \begin{enumerate}
-    \item \textbf{Valor para el usuario}: Las épicas que cubren las consultas más frecuentes de los estudiantes (asignaturas, profesorado) se implementan primero.
-    \item \textbf{Dependencia técnica}: Las épicas que requieren infraestructura previa (como RAG, que depende de la base de datos vectorial) se planifican después de que dicha infraestructura esté operativa.
+    \item \textbf{Valor para el usuario}: Las épicas que cubren las consultas más frecuentes de los estudiantes (asignaturas, profesorado, horarios) se implementan primero.
+    \item \textbf{Dependencia técnica}: La infraestructura transversal (pipeline RAG, panel admin) se desarrolla en paralelo a las épicas que la consumen, pero su \textit{release} depende de tener al menos una épica funcional sobre la que probarla.
 \end{enumerate}
 
-La Tabla~\ref{tab:backlog-prioridad} muestra el orden de prioridad de las épicas.
+La Tabla~\ref{tab:backlog-prioridad} muestra el orden de prioridad de las épicas dentro de la fase de Desarrollo.
 
 \begin{table}[hbtp]
 \centering
-\begin{tabular}{|c|l|l|c|}
+\begin{tabular}{|c|l|l|}
 \hline
-\textbf{Prioridad} & \textbf{Épica} & \textbf{Dependencia} & \textbf{Sprints est.} \\ \hline
-1 & Asignaturas v1 (BD estructurada) & --- & S1--S8 \\ \hline
-2 & Profesores (contacto, tutorías) & Épica 1 (esquema BD) & S9--S12 \\ \hline
-3 & RAG Asignaturas v2 (proyectos docentes) & Épica 1 (inventario fuentes) & S12--S14 \\ \hline
-4 & Horarios (BD relacional) & Épica 2 (profesores) & S15--S16 \\ \hline
-5 & RAG Trámites & Épica 3 (pipeline RAG) & S17--S19 \\ \hline
-6 & Frontend + Piloto + Entrega & Todas las anteriores & S19--S21 \\ \hline
+\textbf{Prioridad} & \textbf{Épica / paquete} & \textbf{Dependencia} \\ \hline
+1 & 2.1 Asignaturas (BD relacional + Text-to-SQL) & --- \\ \hline
+2 & 2.2 Profesores (BD + RAG plan docente)        & 2.1 (esquema BD compartido) \\ \hline
+3 & 2.4 Pipeline RAG (transversal)                & 2.1 (inventario de fuentes) \\ \hline
+4 & 2.3 Horarios (BD + extractor PDF)             & 2.1 (esquema BD) \\ \hline
+5 & 2.5 Panel admin y frontend                    & Todas las anteriores \\ \hline
 \end{tabular}
-\caption{Priorización del backlog por épicas.}
+\caption{Priorización del backlog dentro de la fase de Desarrollo.}
 \label{tab:backlog-prioridad}
 \end{table}
 
@@ -283,7 +427,7 @@ La Tabla~\ref{tab:backlog-prioridad} muestra el orden de prioridad de las épica
 
 \section{Planificación de sprints}\label{sec:sprints}
 
-El proyecto se organiza en sprints de \textbf{3--4 semanas de duración}, siguiendo una adaptación de SCRUM para un proyecto individual (véase Capítulo~\ref{cap:metodologia}). Cada sprint tiene un objetivo definido y produce un incremento funcional del sistema.
+El proyecto se organiza en sprints de \textbf{3--4 semanas de duración}, siguiendo una adaptación de SCRUM para un proyecto individual (véase Capítulo~\ref{cap:metodologia}). Cada sprint cierra con un incremento funcional del sistema y un breve registro de decisiones técnicas.
 
 % TODO: Completar con los sprints reales ejecutados y sus resultados
 

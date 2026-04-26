@@ -54,67 +54,14 @@ La capa de datos se implementa sobre \textbf{Supabase}, una plataforma que propo
 
 El diagrama de componentes muestra los módulos principales del sistema, sus responsabilidades y las interfaces a través de las cuales se comunican. La Figura~\ref{fig:componentes} representa esta vista.
 
-\begin{figure}[hbtp]
+\begin{landscape}
+\begin{figure}[p]
 \centering
-\resizebox{\textwidth}{!}{%
-\begin{tikzpicture}[
-    component/.style={rectangle, draw=black, fill=#1, minimum width=3.2cm, minimum height=1.2cm, text width=3cm, align=center, font=\footnotesize\sffamily, rounded corners=2pt},
-    component/.default={blue!8},
-    layer/.style={rectangle, draw=#1, fill=#1!5, dashed, rounded corners=4pt, inner sep=10pt},
-    layer/.default={gray!60},
-    arrow/.style={-{Stealth[length=2.5mm]}, thick, #1},
-    arrow/.default={black!70},
-    label/.style={font=\small\sffamily\bfseries, #1},
-    label/.default={black}
-]
-
-% === CAPA DE PRESENTACIÓN ===
-\node[layer=green!50!black, minimum width=4.5cm, minimum height=2.8cm] (pres) at (0, 0) {};
-\node[label=green!50!black, anchor=north west] at ([xshift=3pt, yshift=-3pt] pres.north west) {Presentación};
-\node[component=green!12] (widget) at (0, -0.3) {Chat Widget\\(JS/HTML/CSS)};
-
-% === CAPA DE PROCESAMIENTO ===
-\node[layer=blue!50!black, minimum width=14cm, minimum height=5.5cm] (proc) at (0, -5) {};
-\node[label=blue!50!black, anchor=north west] at ([xshift=3pt, yshift=-3pt] proc.north west) {Procesamiento Conversacional};
-
-\node[component=blue!12] (nlu) at (-4.5, -3.5) {Rasa NLU\\(Pipeline NLP)};
-\node[component=blue!12] (core) at (-4.5, -5.3) {Rasa Core\\(Políticas diálogo)};
-\node[component=orange!12] (actions) at (0, -4.4) {Action Server\\(Rasa SDK)};
-\node[component=orange!12] (txtsql) at (0, -6.2) {Text-to-SQL\\Engine};
-\node[component=yellow!15] (gemini) at (4.5, -3.5) {Gemini API\\(LLM + Embeddings)};
-\node[component=yellow!15] (ollama) at (4.5, -5.3) {Ollama\\(LLM local)};
-\node[component=cyan!12] (rag) at (4.5, -6.8) {RAG Pipeline\\(búsqueda semántica)};
-
-% === CAPA DE DATOS ===
-\node[layer=red!40!black, minimum width=14cm, minimum height=2.5cm] (data) at (0, -9.5) {};
-\node[label=red!40!black, anchor=north west] at ([xshift=3pt, yshift=-3pt] data.north west) {Capa de Datos};
-
-\node[component=red!10] (pg) at (-4, -9.5) {PostgreSQL\\(Supabase)};
-\node[component=red!10] (pgvec) at (0, -9.5) {pgvector\\(embeddings)};
-\node[component=red!10] (docs) at (4, -9.5) {Proyectos\\Docentes (PDF)};
-
-% === FLECHAS ===
-% Presentación → Procesamiento
-\draw[arrow] (widget.south) -- node[right, font=\scriptsize, text=black!60] {REST API} (nlu.north);
-
-% Dentro de procesamiento
-\draw[arrow] (nlu.south) -- node[right, font=\scriptsize, text=black!60] {intents, entities} (core.north);
-\draw[arrow] (core.east) -- node[above, font=\scriptsize, text=black!60] {webhook} (actions.west);
-\draw[arrow] (actions.south) -- (txtsql.north);
-\draw[arrow] (actions.east) -- (gemini.west);
-\draw[arrow] (actions.east) -- (ollama.west);
-\draw[arrow] (gemini.south) -- (rag.north);
-
-% Procesamiento → Datos
-\draw[arrow] (txtsql.south) -- (pg.north);
-\draw[arrow] (rag.south) -- (pgvec.north);
-\draw[arrow] (docs.north) -- node[right, font=\scriptsize, text=black!60] {vectorización} (rag.south west);
-
-\end{tikzpicture}
-}%
-\caption{Diagrama de componentes del sistema LinceUS Assistant.}
+\includegraphics[width=0.95\linewidth,keepaspectratio]{img/diagrama_componentes.png}
+\caption{Diagrama de componentes del sistema Linceus.}
 \label{fig:componentes}
 \end{figure}
+\end{landscape}
 
 A continuación se describe la responsabilidad de cada componente y las interfaces entre ellos:
 
@@ -136,63 +83,10 @@ A continuación se describe la responsabilidad de cada componente y las interfac
 
 El diagrama de despliegue describe la distribución física de los componentes del sistema en nodos de ejecución y las conexiones de red entre ellos. La Figura~\ref{fig:despliegue} muestra esta configuración.
 
-\begin{figure}[hbtp]
+\begin{figure}[p]
 \centering
-\resizebox{\textwidth}{!}{%
-\begin{tikzpicture}[
-    node/.style={rectangle, draw=black!70, fill=#1, minimum width=4.5cm, minimum height=1cm, text width=4.2cm, align=center, font=\footnotesize\sffamily, rounded corners=2pt},
-    node/.default={white},
-    host/.style={rectangle, draw=#1, fill=#1!5, rounded corners=4pt, inner sep=12pt, dashed},
-    host/.default={gray!60},
-    hlabel/.style={font=\small\sffamily\bfseries, #1},
-    hlabel/.default={black},
-    conn/.style={-{Stealth[length=2.5mm]}, thick, #1},
-    conn/.default={black!60},
-    biconn/.style={{Stealth[length=2.5mm]}-{Stealth[length=2.5mm]}, thick, #1},
-    biconn/.default={black!60}
-]
-
-% === NODO: NAVEGADOR ===
-\node[host=green!50!black, minimum width=5cm, minimum height=2.5cm] (browser) at (-6, 0) {};
-\node[hlabel=green!50!black, anchor=north west] at ([xshift=3pt, yshift=-3pt] browser.north west) {Navegador web};
-\node[node=green!10] (wid) at (-6, -0.4) {chatbot-widget.js\\pagina-principal.html};
-
-% === NODO: MÁQUINA LOCAL ===
-\node[host=blue!50!black, minimum width=11.5cm, minimum height=6cm] (local) at (0, -5.5) {};
-\node[hlabel=blue!50!black, anchor=north west] at ([xshift=3pt, yshift=-3pt] local.north west) {Máquina local (desarrollo)};
-
-\node[node=blue!10] (rasa) at (-3, -3.8) {Rasa Server\\localhost:5005};
-\node[node=blue!10] (actserv) at (-3, -5.5) {Action Server\\localhost:5055};
-\node[node=orange!10] (ollamanode) at (3, -3.8) {Ollama (opcional)\\localhost:11434};
-\node[node=blue!10] (ragpipe) at (3, -5.5) {RAG Pipeline\\(proceso batch)};
-\node[node=gray!10] (model) at (0, -7.2) {Modelo Rasa\\(.tar.gz)};
-
-% === NODO: SUPABASE CLOUD ===
-\node[host=red!40!black, minimum width=5.5cm, minimum height=3.5cm] (supa) at (-5.5, -11.5) {};
-\node[hlabel=red!40!black, anchor=north west] at ([xshift=3pt, yshift=-3pt] supa.north west) {Supabase Cloud (AWS eu-west-3)};
-\node[node=red!10] (pgnode) at (-5.5, -11) {PostgreSQL 15\\+ pgvector 0.5};
-\node[node=red!10] (apirest) at (-5.5, -12.5) {API REST\\Pooler :6543};
-
-% === NODO: GOOGLE CLOUD ===
-\node[host=yellow!60!black, minimum width=5.5cm, minimum height=3.5cm] (gcloud) at (5, -11.5) {};
-\node[hlabel=yellow!60!black, anchor=north west] at ([xshift=3pt, yshift=-3pt] gcloud.north west) {Google Cloud};
-\node[node=yellow!10] (gemnode) at (5, -11) {Gemini API\\gemma-3-27b-it};
-\node[node=yellow!10] (embnode) at (5, -12.5) {Embedding API\\gemini-embedding-001};
-
-% === CONEXIONES ===
-\draw[conn] (wid.south) -- node[right, font=\scriptsize, text=black!50] {HTTP POST} ([yshift=5pt] rasa.north);
-\draw[conn] (rasa.south) -- node[right, font=\scriptsize, text=black!50] {webhook} (actserv.north);
-\draw[biconn, dashed] (actserv.east) -- node[above, font=\scriptsize, text=black!50] {HTTP} (ollamanode.south west);
-\draw[conn] (rasa.south east) -- node[right, font=\scriptsize, text=black!50] {} (model.north);
-
-\draw[conn] (actserv.south) -- node[left, font=\scriptsize, text=black!50] {psycopg2 / SQL} (apirest.north);
-\draw[conn] (ragpipe.south) -- node[right, font=\scriptsize, text=black!50] {embeddings} (pgnode.north east);
-\draw[conn] (actserv.south east) -- node[right, font=\scriptsize, text=black!50, pos=0.4] {HTTPS} (gemnode.north west);
-\draw[conn] (ragpipe.south east) -- node[right, font=\scriptsize, text=black!50] {} (embnode.north);
-
-\end{tikzpicture}
-}%
-\caption{Diagrama de despliegue del sistema LinceUS Assistant.}
+\includegraphics[width=0.85\linewidth,keepaspectratio]{img/diagrama_despliegue.png}
+\caption{Diagrama de despliegue del sistema Linceus en DigitalOcean (Ubuntu 24.04 LTS) con el pipeline de despliegue automatizado vía GitHub Actions.}
 \label{fig:despliegue}
 \end{figure}
 

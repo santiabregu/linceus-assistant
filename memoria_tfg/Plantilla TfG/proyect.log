@@ -1,13 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.2.12)  25 MAR 2026 18:00
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.2.12)  26 APR 2026 20:18
 entering extended mode
  restricted \write18 enabled.
- file:line:error style messages enabled.
  %&-line parsing enabled.
-**"c:/Users/santi/Desktop/cuarto/TFG/linceus-assistant/memoria_tfg/Plantilla Tf
-G/proyect.tex"
-
-(c:/Users/santi/Desktop/cuarto/TFG/linceus-assistant/memoria_tfg/Plantilla TfG/
-proyect.tex
+**./proyect.tex
+(proyect.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
 (pclass.cls
@@ -710,8 +706,27 @@ File: tikzlibraryfit.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 z/libraries\tikzlibrarycalc.code.tex
 File: tikzlibrarycalc.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 )
+(C:\Program Files\MiKTeX\tex/latex/pdflscape\pdflscape.sty
+Package: pdflscape 2022-10-27 v0.13 Display of landscape pages in PDF
+
+(C:\Program Files\MiKTeX\tex/latex/pdflscape\pdflscape-nometadata.sty
+Package: pdflscape-nometadata 2022-10-28 v0.13 Display of landscape pages in PD
+F (HO)
+
+(C:\Users\santi\AppData\Local\Programs\MiKTeX\tex/latex/graphics\lscape.sty
+Package: lscape 2020/05/28 v3.02 Landscape Pages (DPC)
+)
+Package pdflscape Info: Auto-detected driver: pdftex on input line 81.
+))
+(C:\Program Files\MiKTeX\tex/latex/multirow\multirow.sty
+Package: multirow 2024/11/12 v2.9 Span multiple rows of a table
+\multirow@colwidth=\skip77
+\multirow@cntb=\count342
+\multirow@dima=\skip78
+\bigstrutjot=\dimen294
+)
 LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 2
-1.
+9.
 
 (C:\Program Files\MiKTeX\tex/latex/psnfss\ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
@@ -719,27 +734,27 @@ File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 (C:\Users\santi\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
 tex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count342
+\l__color_backend_stack_int=\count343
 ) (proyect.aux
 Package babel Info: 'spanish' activates 'spanish' shorthands.
 (babel)             Reported on input line 9.
 )
 \openout1 = `proyect.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -779,16 +794,16 @@ LaTeX Font Info:    ... okay on input line 21.
 (C:\Users\santi\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
 ii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count343
-\scratchdimen=\dimen294
+\scratchcounter=\count344
+\scratchdimen=\dimen295
 \scratchbox=\box72
-\nofMPsegments=\count344
-\nofMParguments=\count345
+\nofMPsegments=\count345
+\nofMParguments=\count346
 \everyMPshowfont=\toks47
-\MPscratchCnt=\count346
-\MPscratchDim=\dimen295
-\MPnumerator=\count347
-\makeMPintoPDFobject=\count348
+\MPscratchCnt=\count347
+\MPscratchDim=\dimen296
+\MPnumerator=\count348
+\makeMPintoPDFobject=\count349
 \everyMPtoPDFconversion=\toks48
 )
 (C:\Users\santi\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
@@ -801,8 +816,8 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 fg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
-\c@lstlisting=\count349
-\c@maskedRefs=\count350
+\c@lstlisting=\count350
+\c@maskedRefs=\count351
  (spanish.apc
 File: spanish.apc 2013/07/21 v6.03 apacite language file
 LaTeX Info: Redefining \BPBI on input line 138.
@@ -811,10 +826,10 @@ LaTeX Info: Redefining \BHBI on input line 139.
 <img/us.jpg, id=4, 36.135pt x 36.135pt>
 File: img/us.jpg Graphic file (type jpg)
 <use img/us.jpg>
-Package pdftex.def Info: img/us.jpg  used on input line 31.
+Package pdftex.def Info: img/us.jpg  used on input line 39.
 (pdftex.def)             Requested size: 90.33722pt x 90.33722pt.
 LaTeX Font Info:    Trying to load font information for OT1+phv on input line 3
-1.
+9.
  (C:\Program Files\MiKTeX\tex/latex/psnfss\ot1phv.fd
 File: ot1phv.fd 2020/03/25 scalable font definitions for OT1/phv.
 )
@@ -850,7 +865,7 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 
 [2]
 LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 1
-54.
+61.
  (C:\Program Files\MiKTeX\tex/latex/psnfss\ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 ))
@@ -930,44 +945,154 @@ Cap\'{\i }tulo 4.
 
 ]
 Cap\'{\i }tulo 5.
-[20
 
-] [21]
-Underfull \hbox (badness 3364) in paragraph at lines 130--130
-[]\OT1/ptm/m/n/10 Definir in-tents pa-ra ``Co-rreo de...'', ``Des-pa-cho
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 151--151
-[]\OT1/ptm/m/n/10 Generaci[]on de em-bed-dings con Ge-mi-ni
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 151--151
-\OT1/ptm/m/n/10 (\OT1/pcr/m/n/10 gemini-embedding-001\OT1/ptm/m/n/10 , 2000 di-
-men-sio-
- []
-
-
-Underfull \hbox (badness 1924) in paragraph at lines 151--151
-\OT1/ptm/m/n/10 nes) y al-ma-ce-na-mien-to en pg-vec-tor con []^^Pndi-ces
- []
-
-
-Underfull \hbox (badness 1609) in paragraph at lines 193--193
-[]\OT1/ptm/m/n/10 Cargar em-bed-dings; ac-ci[]on que siem-pre mues-tre
- []
-
-[22] [23] [24]
-Overfull \hbox (25.44528pt too wide) in paragraph at lines 266--276
+Overfull \hbox (2.0086pt too wide) in paragraph at lines 86--87
  [][] 
  []
 
-) [25] [26
+LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <10> not available
+(Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 118.
+
+Overfull \hbox (8.81276pt too wide) in paragraph at lines 133--141
+ [][] 
+ []
+
+[20
+
+] [21]
+Underfull \hbox (badness 10000) in paragraph at lines 182--182
+[]\OT1/ptm/m/n/10 Tablas \OT1/pcr/m/n/10 asignaturas\OT1/ptm/m/n/10 , \OT1/pcr/
+m/n/10 titulaciones\OT1/ptm/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 183--183
+\OT1/pcr/m/n/10 consulta[]asignaturas[]listado\OT1/ptm/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 183--183
+\OT1/pcr/m/n/10 consulta[]asignaturas[]conteo\OT1/ptm/m/n/10 ) y en-ti-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 203--203
+[]\OT1/ptm/m/n/10 Tablas \OT1/pcr/m/n/10 profesores\OT1/ptm/m/n/10 , \OT1/pcr/m
+/n/10 departamentos\OT1/ptm/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 6428) in paragraph at lines 203--203
+\OT1/pcr/m/n/10 profesor[]asignatura \OT1/ptm/m/n/10 con FK ha-cia asig-
+ []
+
+
+Underfull \hbox (badness 2591) in paragraph at lines 223--223
+\OT1/ptm/m/n/10 cua-tri-mes-tre co-mo di-men-si[]on. \OT1/ptm/m/it/10 En-tre-ga
+-ble: script
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 224--224
+[]\OT1/ptm/m/n/10 Parser con \OT1/pcr/m/n/10 pdfplumber \OT1/ptm/m/n/10 de la c
+uadr[]^^Pcu-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 224--224
+\OT1/ptm/m/n/10 la ofi-cial; re-co-no-ce c[]odi-gos \OT1/pcr/m/n/10 xGy-Cz \OT1
+/ptm/m/n/10 y
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 224--224
+\OT1/ptm/m/n/10 se-pa-ra teor[]^^Pa de la-bo-ra-to-rio. \OT1/ptm/m/it/10 En-tre
+-ga-ble:
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 225--225
+[]\OT1/ptm/m/n/10 Intents \OT1/pcr/m/n/10 consulta[]horario \OT1/ptm/m/n/10 (cu
+r-so+grupo)
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 225--225
+\OT1/ptm/m/n/10 y \OT1/pcr/m/n/10 consulta[]horario[]asignatura\OT1/ptm/m/n/10 
+; he-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 225--225
+\OT1/ptm/m/n/10 ren-cia de slot pa-ra se-gui-mien-to. \OT1/ptm/m/it/10 En-tre-g
+a-ble:
+ []
+
+[22] [23]
+Underfull \hbox (badness 1406) in paragraph at lines 245--245
+[]\OT1/ptm/m/n/10 Acci[]on que com-bi-na re-trie-val sem[]anti-co con re-
+ []
+
+
+Underfull \hbox (badness 3713) in paragraph at lines 263--263
+[]\OT1/ptm/m/n/10 SPA en Ja-vaS-cript va-ni-lla, em-be-bi-ble me-dian-te
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 265--265
+[]\OT1/ptm/m/n/10 Interfaz web con na-ve-ga-ci[]on jer[]arqui-ca Cen-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 265--265
+\OT1/ptm/m/n/10 tro $\OMS/cmsy/m/n/10 !$ \OT1/ptm/m/n/10 Ti-tu-la-ci[]on $\OMS/
+cmsy/m/n/10 !$ \OT1/ptm/m/n/10 Asig-na-tu-ra. \OT1/ptm/m/it/10 En-tre-ga-ble:
+ []
+
+
+Underfull \hbox (badness 1394) in paragraph at lines 292--292
+\OT1/ptm/m/n/10 gun-tas reales so-bre 19 asig-na-tu-ras). \OT1/ptm/m/it/10 En-t
+re-ga-bles:
+ []
+
+[24]
+Underfull \hbox (badness 10000) in paragraph at lines 311--311
+[]\OT1/ptm/m/n/10 Registro de las con-ver-sa-cio-nes pi-lo-to en
+ []
+
+
+Underfull \hbox (badness 8000) in paragraph at lines 311--311
+\OT1/pcr/m/n/10 conversation[]log\OT1/ptm/m/n/10 . \OT1/ptm/m/it/10 En-tre-ga-b
+le: 59 se-sio-nes
+ []
+
+
+Underfull \hbox (badness 2961) in paragraph at lines 330--330
+[]\OT1/ptm/m/n/10 Aprovisionamiento del ser-vi-dor en Di-gi-ta-lO-cean
+ []
+
+
+Underfull \hbox (badness 2351) in paragraph at lines 332--332
+\OT1/ptm/m/n/10 al dro-plet en ca-da \OT1/ptm/m/it/10 mer-ge \OT1/ptm/m/n/10 a 
+\OT1/pcr/m/n/10 main\OT1/ptm/m/n/10 . \OT1/ptm/m/it/10 En-tre-ga-ble:
+ []
+
+[25]
+Underfull \hbox (badness 10000) in paragraph at lines 350--350
+[]\OT1/ptm/m/n/10 Diagrama de com-po-nen-tes y de des-plie-gue
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 350--350
+\OT1/ptm/m/n/10 en no-ta-ci[]on UML2 (Plan-tUML). \OT1/ptm/m/it/10 En-tre-ga-bl
+e:
+ []
+
+[26]) [27] [28
 
 ] (Capitulos/arquitectura_diseno.tex
 Cap\'{\i }tulo 6.
-[27
+[29
 
 ]
 Overfull \hbox (11.36755pt too wide) in paragraph at lines 35--36
@@ -989,14 +1114,30 @@ Overfull \hbox (74.59674pt too wide) in paragraph at lines 46--47
 []docente[]global()\OT1/ptm/m/n/10.95 ),
  []
 
-[28] [29] [30] [31] [32] [33] [34]
-Overfull \hbox (21.24202pt too wide) in paragraph at lines 374--375
+[30]
+<img/diagrama_componentes.png, id=134, 1708.3825pt x 832.10875pt>
+File: img/diagrama_componentes.png Graphic file (type png)
+<use img/diagrama_componentes.png>
+Package pdftex.def Info: img/diagrama_componentes.png  used on input line 60.
+(pdftex.def)             Requested size: 667.64177pt x 325.18135pt.
+ [31 <./img/diagrama_componentes.png (PNG copy)>]
+<img/diagrama_despliegue.png, id=138, 1285.80376pt x 1042.89626pt>
+File: img/diagrama_despliegue.png Graphic file (type png)
+<use img/diagrama_despliegue.png>
+Package pdftex.def Info: img/diagrama_despliegue.png  used on input line 88.
+(pdftex.def)             Requested size: 362.77525pt x 294.23682pt.
+ [32
+
+
+] [33] [34] [35]
+Overfull \hbox (21.24202pt too wide) in paragraph at lines 268--269
 []\OT1/ptm/b/n/10.95 Decisi[]on: \OT1/ptm/m/n/10.95 Se al-ma-ce-na un \OT1/ptm/
 b/n/10.95 hash SHA-256 \OT1/ptm/m/n/10.95 de ca-da PDF pro-ce-sa-do en la ta-bl
 a \OT1/pcr/m/n/10.95 planes[]docentes\OT1/ptm/m/n/10.95 .
  []
 
-[35]) (Capitulos/marco_tecnologico.tex [36]
+[36]) (Capitulos/marco_tecnologico.tex [37] [38 <./img/diagrama_despliegue.png 
+(PNG copy)>]
 Cap\'{\i }tulo 7.
 
 Overfull \hbox (80.70044pt too wide) in paragraph at lines 26--27
@@ -1005,9 +1146,9 @@ Overfull \hbox (80.70044pt too wide) in paragraph at lines 26--27
 0.95 , \OT1/pcr/m/n/10.95 buscar[]asignatura\OT1/ptm/m/n/10.95 ) 
  []
 
-[37
+[39
 
-] [38] [39] [40] [41]) (Capitulos/estructura_proyecto.tex [42]
+] [40] [41] [42] [43]) (Capitulos/estructura_proyecto.tex [44]
 Cap\'{\i }tulo 8.
 
 Overfull \hbox (0.58757pt too wide) in paragraph at lines 5--6
@@ -1015,7 +1156,7 @@ Overfull \hbox (0.58757pt too wide) in paragraph at lines 5--6
 -po-si-to-rio Lin-ceUS As-sis-tant, de-ta-llan-do el prop[]osi-
  []
 
-[43
+[45
 
 ]
 Overfull \hbox (61.52663pt too wide) in paragraph at lines 71--72
@@ -1024,16 +1165,16 @@ Overfull \hbox (61.52663pt too wide) in paragraph at lines 71--72
 as\OT1/ptm/m/n/10.95 ,
  []
 
-[44] [45]
+[46] [47]
 Overfull \hbox (2.52565pt too wide) in paragraph at lines 122--123
 []\OT1/pcr/m/n/10.95 pagina-principal.html \OT1/ptm/m/n/10.95 y \OT1/pcr/m/n/10
 .95 pagina-principal.css\OT1/ptm/m/n/10.95 : Pro-to-ti-po de la p[]agi-na prin-
 
  []
 
-[46]) (Capitulos/estructura_bd.tex [47]
+[48]) (Capitulos/estructura_bd.tex [49]
 Cap\'{\i }tulo 9.
-[48
+[50
 
 ]
 Underfull \hbox (badness 10000) in paragraph at lines 124--124
@@ -1045,12 +1186,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 148--148
 []\OT1/ptm/m/n/10.95 Referencia a DE-PAR-TA-MEN-TOS
  []
 
-[49] [50]
+[51] [52]
 Underfull \hbox (badness 6910) in paragraph at lines 209--209
 []\OT1/ptm/m/n/10.95 pendiente, pro-ce-san-do, com-ple-ta-do,
  []
 
-[51]
+[53]
 Underfull \hbox (badness 10000) in paragraph at lines 225--225
 []\OT1/ptm/m/n/10.95 Referencia a PLA-
  []
@@ -1065,7 +1206,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 267--267
 []\OT1/ptm/m/n/10.95 Referencia a CA-TE-GO-
  []
 
-[52] [53] [54]) [55] (proyect.bbl) [56
+[54] [55] [56]) [57] (proyect.bbl) [58
 
 
 
@@ -1076,13 +1217,13 @@ L3 programming layer <2025-12-24>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 20084 strings out of 467871
- 387614 string characters out of 5418376
- 825059 words of memory out of 5000000
- 48518 multiletter control sequences out of 15000+600000
- 676613 words of font info for 132 fonts, out of 8000000 for 9000
+ 19968 strings out of 467871
+ 385353 string characters out of 5418376
+ 821330 words of memory out of 5000000
+ 48389 multiletter control sequences out of 15000+600000
+ 675090 words of font info for 131 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,12n,104p,999b,1038s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,12n,104p,921b,830s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/
 cmmi10.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
 fonts/cm/cmmi8.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/pu
@@ -1091,16 +1232,17 @@ type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/santi/AppData/Local/Programs/MiKT
 eX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users/santi/AppData/Local/Progr
 ams/MiKTeX/fonts/type1/urw/courier/ucrb8a.pfb><C:/Users/santi/AppData/Local/Pro
 grams/MiKTeX/fonts/type1/urw/courier/ucrr8a.pfb><C:/Users/santi/AppData/Local/P
-rograms/MiKTeX/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Users/santi/AppData/Loca
-l/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvr8a.pfb><C:/Users/santi/AppData/L
-ocal/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/santi/AppData/L
-ocal/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/santi/AppData/L
-ocal/Programs/MiKTeX/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/santi/AppData/
-Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/santi/AppData/
-Local/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on proyect.pdf (63 pages, 394527 bytes).
+rograms/MiKTeX/fonts/type1/urw/courier/ucrro8a.pfb><C:/Users/santi/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Users/santi/AppData/L
+ocal/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvr8a.pfb><C:/Users/santi/AppDat
+a/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/santi/AppDat
+a/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/santi/AppDat
+a/Local/Programs/MiKTeX/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/santi/AppDa
+ta/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/santi/AppDa
+ta/Local/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
+Output written on proyect.pdf (65 pages, 571436 bytes).
 PDF statistics:
- 280 PDF objects out of 1000 (max. 8388607)
+ 293 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 18 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 28 words of extra memory for PDF output out of 10000 (max. 10000000)
 

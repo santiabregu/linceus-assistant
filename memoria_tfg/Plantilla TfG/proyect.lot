@@ -8,32 +8,36 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {5.1}{\ignorespaces Diccionario EDT — PT0: Gestión del proyecto.}}{21}{}%
-\contentsline {table}{\numberline {5.2}{\ignorespaces Diccionario EDT — PT1: Investigación y preparación.}}{21}{}%
-\contentsline {table}{\numberline {5.3}{\ignorespaces Diccionario EDT — PT2: Épica 1 — Asignaturas v1.}}{22}{}%
-\contentsline {table}{\numberline {5.4}{\ignorespaces Diccionario EDT — PT3: Épica 2 — Profesores.}}{23}{}%
-\contentsline {table}{\numberline {5.5}{\ignorespaces Diccionario EDT — PT4: Épica 3 — RAG Asignaturas v2.}}{23}{}%
-\contentsline {table}{\numberline {5.6}{\ignorespaces Diccionario EDT — PT5: Épica 4 — Horarios.}}{23}{}%
-\contentsline {table}{\numberline {5.7}{\ignorespaces Diccionario EDT — PT6: Épica 5 — RAG Trámites.}}{24}{}%
-\contentsline {table}{\numberline {5.8}{\ignorespaces Diccionario EDT — PT7: Épica 6 — Frontend + Piloto + Entrega.}}{24}{}%
-\contentsline {table}{\numberline {5.9}{\ignorespaces Resumen cuantitativo de la EDT por paquete de trabajo.}}{25}{}%
-\contentsline {table}{\numberline {5.10}{\ignorespaces Priorización del backlog por épicas.}}{25}{}%
+\contentsline {table}{\numberline {5.1}{\ignorespaces Diccionario EDT — 1.1: Gestión del proyecto.}}{21}{}%
+\contentsline {table}{\numberline {5.2}{\ignorespaces Diccionario EDT — 1.2: Investigación tecnológica.}}{22}{}%
+\contentsline {table}{\numberline {5.3}{\ignorespaces Diccionario EDT — 1.3: Diseño de la arquitectura.}}{22}{}%
+\contentsline {table}{\numberline {5.4}{\ignorespaces Diccionario EDT — 2.1: Épica Asignaturas.}}{23}{}%
+\contentsline {table}{\numberline {5.5}{\ignorespaces Diccionario EDT — 2.2: Épica Profesores.}}{23}{}%
+\contentsline {table}{\numberline {5.6}{\ignorespaces Diccionario EDT — 2.3: Épica Horarios.}}{24}{}%
+\contentsline {table}{\numberline {5.7}{\ignorespaces Diccionario EDT — 2.4: Pipeline RAG.}}{24}{}%
+\contentsline {table}{\numberline {5.8}{\ignorespaces Diccionario EDT — 2.5: Panel admin y frontend.}}{25}{}%
+\contentsline {table}{\numberline {5.9}{\ignorespaces Diccionario EDT — 3.1: Validación y testing.}}{25}{}%
+\contentsline {table}{\numberline {5.10}{\ignorespaces Diccionario EDT — 3.2: Piloto con usuarios.}}{25}{}%
+\contentsline {table}{\numberline {5.11}{\ignorespaces Diccionario EDT — 3.3: Despliegue en producción.}}{26}{}%
+\contentsline {table}{\numberline {5.12}{\ignorespaces Diccionario EDT — 3.4: Memoria y defensa.}}{26}{}%
+\contentsline {table}{\numberline {5.13}{\ignorespaces Resumen cuantitativo de la EDT por fase y paquete de trabajo.}}{27}{}%
+\contentsline {table}{\numberline {5.14}{\ignorespaces Priorización del backlog dentro de la fase de Desarrollo.}}{27}{}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {6.1}{\ignorespaces Protocolos y puertos de comunicación entre nodos del sistema.}}{31}{}%
+\contentsline {table}{\numberline {6.1}{\ignorespaces Protocolos y puertos de comunicación entre nodos del sistema.}}{33}{}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {7.1}{\ignorespaces Stack tecnológico completo del proyecto LinceUS Assistant.}}{42}{}%
+\contentsline {table}{\numberline {7.1}{\ignorespaces Stack tecnológico completo del proyecto LinceUS Assistant.}}{44}{}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {9.1}{\ignorespaces Estructura de la tabla UNIVERSIDADES}}{49}{}%
-\contentsline {table}{\numberline {9.2}{\ignorespaces Estructura de la tabla CENTROS}}{49}{}%
-\contentsline {table}{\numberline {9.3}{\ignorespaces Estructura de la tabla DEPARTAMENTOS}}{50}{}%
-\contentsline {table}{\numberline {9.4}{\ignorespaces Estructura de la tabla TITULACIONES}}{50}{}%
-\contentsline {table}{\numberline {9.5}{\ignorespaces Estructura de la tabla ASIGNATURAS}}{50}{}%
-\contentsline {table}{\numberline {9.6}{\ignorespaces Estructura de la tabla PROFESORES}}{51}{}%
-\contentsline {table}{\numberline {9.7}{\ignorespaces Estructura de la tabla TUTORIAS}}{51}{}%
-\contentsline {table}{\numberline {9.8}{\ignorespaces Estructura de la tabla HORARIOS}}{52}{}%
-\contentsline {table}{\numberline {9.9}{\ignorespaces Estructura de la tabla PLANES\_DOCENTES}}{52}{}%
-\contentsline {table}{\numberline {9.10}{\ignorespaces Estructura de la tabla PLANES\_DOCENTES\_CHUNKS}}{53}{}%
-\contentsline {table}{\numberline {9.11}{\ignorespaces Estructura de la tabla CATEGORIAS\_TRAMITES}}{53}{}%
-\contentsline {table}{\numberline {9.12}{\ignorespaces Estructura de la tabla TRAMITES}}{53}{}%
+\contentsline {table}{\numberline {9.1}{\ignorespaces Estructura de la tabla UNIVERSIDADES}}{51}{}%
+\contentsline {table}{\numberline {9.2}{\ignorespaces Estructura de la tabla CENTROS}}{51}{}%
+\contentsline {table}{\numberline {9.3}{\ignorespaces Estructura de la tabla DEPARTAMENTOS}}{52}{}%
+\contentsline {table}{\numberline {9.4}{\ignorespaces Estructura de la tabla TITULACIONES}}{52}{}%
+\contentsline {table}{\numberline {9.5}{\ignorespaces Estructura de la tabla ASIGNATURAS}}{52}{}%
+\contentsline {table}{\numberline {9.6}{\ignorespaces Estructura de la tabla PROFESORES}}{53}{}%
+\contentsline {table}{\numberline {9.7}{\ignorespaces Estructura de la tabla TUTORIAS}}{53}{}%
+\contentsline {table}{\numberline {9.8}{\ignorespaces Estructura de la tabla HORARIOS}}{54}{}%
+\contentsline {table}{\numberline {9.9}{\ignorespaces Estructura de la tabla PLANES\_DOCENTES}}{54}{}%
+\contentsline {table}{\numberline {9.10}{\ignorespaces Estructura de la tabla PLANES\_DOCENTES\_CHUNKS}}{55}{}%
+\contentsline {table}{\numberline {9.11}{\ignorespaces Estructura de la tabla CATEGORIAS\_TRAMITES}}{55}{}%
+\contentsline {table}{\numberline {9.12}{\ignorespaces Estructura de la tabla TRAMITES}}{55}{}%
 \contentsfinish 

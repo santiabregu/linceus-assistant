@@ -4,10 +4,10 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Estructura de Descomposición del Trabajo (EDT) — nivel de paquetes de trabajo.}}{20}{}%
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Estructura de Descomposición del Trabajo (EDT) — fases y paquetes de trabajo.}}{21}{}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {6.1}{\ignorespaces Diagrama de componentes del sistema LinceUS Assistant.}}{29}{}%
-\contentsline {figure}{\numberline {6.2}{\ignorespaces Diagrama de despliegue del sistema LinceUS Assistant.}}{31}{}%
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Diagrama de componentes del sistema Linceus.}}{31}{}%
+\contentsline {figure}{\numberline {6.2}{\ignorespaces Diagrama de despliegue del sistema Linceus en DigitalOcean (Ubuntu 24.04 LTS) con el pipeline de despliegue automatizado vía GitHub Actions.}}{38}{}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

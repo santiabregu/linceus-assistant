@@ -6,48 +6,74 @@ skinparam nodeStyle rectangle
 
 title Deployment Diagram - Linceus Assistant
 
+' ─── Cliente ─────────────────────────────────────────────────────────────────
 node "User Machine" as client <<device>> {
   node "Web Browser" as browser <<execution environment>> {
-    artifact "Chatbot Widget" as chatwidget
+    artifact "Chatbot Widget\n(HTML / JS)" as chatwidget
+    artifact "Admin SPA\n(HTML / JS)" as adminspa
   }
 }
 
-node "Local Server (Docker)" as server <<device>> {
-  node "Nginx Container\n(Port 80)" as nginx_container <<Docker container>> {
-    artifact "Nginx Web Server" as nginx_art
-    artifact "Frontend (HTML/JS/CSS)" as frontend_art
+' ─── Servidor de producción ──────────────────────────────────────────────────
+node "DigitalOcean Droplet\n(Ubuntu 24.04 LTS)" as droplet <<execution environment>> {
+
+  node "Nginx Container\n(port 80)" as nginx_container <<Docker container>> {
+    artifact "Nginx" as nginx_art
+    artifact "Static Frontend" as frontend_art
   }
 
-  node "Rasa Container\n(Port 5005)" as rasa_container <<Docker container>> {
-    artifact "Rasa Core" as rasa_art
-    artifact "NLU Model" as nlu_model
+  node "Rasa Container\n(port 5005)" as rasa_container <<Docker container>> <<custom image>> {
+    artifact "Rasa Core 3.6.21" as rasa_art
+    artifact "spaCy +\nes_core_news_md" as spacy_art
+    artifact "NLU Model\n(.tar.gz)" as nlu_model
     artifact "Dialog Policies" as policies
   }
 
-  node "Action Server Container\n(Port 5055)" as action_container <<Docker container>> {
-    artifact "Rasa SDK Server" as sdk_art
+  node "Action Server Container\n(port 5055)" as action_container <<Docker container>> {
+    artifact "Rasa SDK" as sdk_art
     artifact "Action Modules" as action_modules
+    artifact "RAG Retriever" as rag_art
+  }
+
+  node "Admin Container\n(port 5050)" as admin_container <<Docker container>> {
+    artifact "Flask Admin API" as admin_art
+    artifact "Sevius / us.es\nScrapers" as scrapers_art
   }
 }
 
+' ─── Servicios externos ──────────────────────────────────────────────────────
 cloud "Supabase (Cloud)" as supabase <<external service>> {
-  node "PostgreSQL\n(Port 6543)" as pg <<database server>> {
-    database "Academic\nDatabase" as db
+  node "PostgreSQL 15\n(port 6543)" as pg <<database server>> {
+    database "Relational\nschema" as db_rel
+    database "pgvector\nschema" as db_vec
   }
 }
 
 cloud "Google Cloud" as gcloud <<external service>> {
   node "Gemini API" as gemini <<API service>> {
-    artifact "Gemini LLM\nModel" as gemini_model
+    artifact "Gemma-3-27b-it" as gemini_llm
+    artifact "text-embedding-004" as gemini_emb
   }
 }
 
-' Communications
-browser -down-> nginx_container : "HTTP (Port 80)"
-nginx_container -down-> rasa_container : "HTTP REST\n/webhooks/rest/webhook"
-rasa_container -down-> action_container : "HTTP\n(Port 5055)"
-action_container -right-> supabase : "PostgreSQL\n(Port 6543,\nconnection pooler)"
-action_container -right-> gcloud : "HTTPS\n(REST API)"
+' ─── Pipeline CI/CD ──────────────────────────────────────────────────────────
+cloud "GitHub" as github <<external service>> {
+  node "GitHub Actions" as gha <<CI/CD>> {
+    artifact "deploy.yml" as deploy_wf
+  }
+}
 
+' ─── Comunicaciones runtime ──────────────────────────────────────────────────
+browser --> nginx_container : <<HTTPS>>
+nginx_container --> rasa_container : <<HTTP>>\n/webhooks/rest
+nginx_container --> admin_container : <<HTTP>>\n/api/admin
+rasa_container --> action_container : <<HTTP>>
+action_container --> supabase : <<TCP/TLS>>
+action_container --> gcloud : <<HTTPS>>
+admin_container --> supabase : <<TCP/TLS>>
+admin_container --> gcloud : <<HTTPS>>
+
+' ─── Pipeline de despliegue ──────────────────────────────────────────────────
+gha ..> droplet : <<deploy>>\nSSH
 
 @enduml
