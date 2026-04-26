@@ -17,7 +17,9 @@ services:
 
   # ─── Rasa Server (NLU + diálogo) ────────────────────────────────────────────
   rasa:
-    image: rasa/rasa:3.6.21
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.rasa
     ports:
       - "5005:5005"
     volumes:
