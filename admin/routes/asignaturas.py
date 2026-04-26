@@ -27,6 +27,23 @@ def get_asignaturas():
     return jsonify(query(sql, params))
 
 
+@bp.route("/asignaturas/<asignatura_id>/profesores")
+def get_profesores_de_asignatura(asignatura_id):
+    """Profesores que imparten la asignatura según profesor_asignatura."""
+    rows = query("""
+        SELECT p.id, p.nombre, p.apellidos, p.nombre_completo, p.email,
+               p.despacho, p.categoria_academica, p.enlace_perfil,
+               d.siglas AS departamento_siglas, d.nombre AS departamento_nombre,
+               pa.curso_academico, pa.grupo, pa.es_coordinador, pa.tipo_docencia
+        FROM profesor_asignatura pa
+        JOIN profesores p ON p.id = pa.profesor_id
+        LEFT JOIN departamentos d ON d.id = p.departamento_id
+        WHERE pa.asignatura_id = %s AND p.activo = true
+        ORDER BY pa.curso_academico DESC, p.apellidos, p.nombre
+    """, (asignatura_id,))
+    return jsonify(rows)
+
+
 @bp.route("/asignaturas/<asignatura_id>")
 def get_asignatura_detail(asignatura_id):
     row = query_one("""

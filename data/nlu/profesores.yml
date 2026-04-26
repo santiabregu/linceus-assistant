@@ -63,6 +63,96 @@ nlu:
     - listado de profesores del departamento de [MA1](nombre_departamento)
     - dame los profesores del departamento [LSI](nombre_departamento)
     - que profesores tiene el departamento de [DTE](nombre_departamento)
+    # ─── Profesores de una asignatura (via profesor_asignatura + RAG fallback) ───
+    - quien da [Fundamentos de Programacion](nombre_asignatura)
+    - quien imparte [Sistemas Operativos](nombre_asignatura)
+    - quien es el coordinador de [Redes](nombre_asignatura)
+    - quienes son los profesores de [IS2](nombre_asignatura)
+    - profesores de [IS2](nombre_asignatura)
+    - profesores de [Redes](nombre_asignatura)
+    - profesores de [FP](nombre_asignatura)
+    - profesores de [ADDA](nombre_asignatura)
+    - profesores de [Calculo](nombre_asignatura)
+    - profesores de [Bases de Datos](nombre_asignatura)
+    - profesores de [Estadistica](nombre_asignatura)
+    - profesores de [Sistemas Operativos](nombre_asignatura)
+    - profesores de [Fundamentos de Programacion](nombre_asignatura)
+    - profesores de [Diseno y Pruebas](nombre_asignatura)
+    - profesores de [dp1](nombre_asignatura)
+    - profesores de [dp2](nombre_asignatura)
+    - profesores de [PSG](nombre_asignatura)
+    - profesores de [Logica](nombre_asignatura)
+    - el profesorado de [ADDA](nombre_asignatura)
+    - los profesores de [EGC](nombre_asignatura)
+    - cuales son todos los profesores de [EGC](nombre_asignatura)
+    - cuales son los profesores de [DP1](nombre_asignatura)
+    - cuáles son todos los profesores de [ADDA](nombre_asignatura)
+    - dame todos los profesores de [FP](nombre_asignatura)
+    - dame la lista de profesores de [Redes](nombre_asignatura)
+    - listado de profesores de [IS2](nombre_asignatura)
+    - quiero saber los profesores de [Bases de Datos](nombre_asignatura)
+    - qué profesores tiene [Calculo](nombre_asignatura)
+    - quiénes dan clase en [Estadistica](nombre_asignatura)
+    - quien da clase en el grupo 2 de [Proceso Software](nombre_asignatura)
+    - profesorado de [Proceso Software y Gestion](nombre_asignatura)
+    - quien imparte [Proceso Software](nombre_asignatura) en el grupo 1
+    - quien da [PSG](nombre_asignatura) en el grupo 2
+    # ─── Tutorías por asignatura (devuelve profesores + aviso de contacto) ───
+    - tutorías de [EGC](nombre_asignatura)
+    - tutorias de [FP](nombre_asignatura)
+    - tutorías de [Diseno y Pruebas](nombre_asignatura)
+    - ¿cuándo son las tutorías de [ADDA](nombre_asignatura)?
+    - ¿a qué hora son las tutorías de [IS2](nombre_asignatura)?
+    - ¿dónde son las tutorías de [Redes](nombre_asignatura)?
+    - horario de tutorías de [Bases de Datos](nombre_asignatura)
+    - horario de tutorías de [Estadistica](nombre_asignatura)
+    - tutoría de [Calculo](nombre_asignatura)
+    - tutorías de la asignatura [FP](nombre_asignatura)
+    - quiero ir a tutoría de [DP1](nombre_asignatura)
+    - ¿a qué hora puedo ir a tutoría de [PSG](nombre_asignatura)?
+    - tutorias de [AE](nombre_asignatura)
+    - tutorías de [administracion de empresas](nombre_asignatura)
+    - ¿a qué hora son las tutorías de la asignatura [administracion de empresas](nombre_asignatura)?
+    - tutorías de la asignatura [Algebra](nombre_asignatura)
+    - cuándo tiene tutorías la asignatura [IISSI2](nombre_asignatura)
+    - ¿dónde se hacen las tutorías de [Logica Informatica](nombre_asignatura)?
+    - cuando son las tutorias de [Inteligencia Artificial](nombre_asignatura)
+    - tuturias de la asignatura [Cripto](nombre_asignatura)
+    - turtorias de [SO](nombre_asignatura)
+    - horario de tutorías de la asignatura [Procesos Software](nombre_asignatura)
+    - dame las tutorías de [Estructura de Computadores](nombre_asignatura)
+    - tutorías [Matematica Discreta](nombre_asignatura)
+    - cual es el horario de tutorías de [TFG](nombre_asignatura)
+    # ─── Coordinador y suplentes (solo plan docente, se resuelven via RAG) ───
+    - quien coordina [FP](nombre_asignatura)
+    - quien coordina [DP1](nombre_asignatura)
+    - quién coordina [ADDA](nombre_asignatura)
+    - coordinador de [Redes](nombre_asignatura)
+    - coordinadora de [Estadistica](nombre_asignatura)
+    - quien es el coordinador de [IS2](nombre_asignatura)
+    - quién es la coordinadora de [Calculo](nombre_asignatura)
+    - dime el coordinador de [EGC](nombre_asignatura)
+    - quien coordina la asignatura [Logica](nombre_asignatura)
+    - y quién coordina
+    - y el coordinador
+    - y la coordinadora
+    - quien es el coordinador de esa asignatura
+    - suplentes de [FP](nombre_asignatura)
+    - suplente de [ADDA](nombre_asignatura)
+    - quien es el suplente de [Redes](nombre_asignatura)
+    - quienes son los suplentes de [DP1](nombre_asignatura)
+    - dime los suplentes de [IS2](nombre_asignatura)
+    - hay suplentes en [Calculo](nombre_asignatura)
+    - y los suplentes
+    - y el suplente
+    # ─── Follow-ups sobre profesorado (dependen de ultimo_nombre_asignatura) ───
+    - y quién da clase
+    - y quién la imparte
+    - quién da esa asignatura
+    - quién es el profesor
+    - quiénes son los profesores
+    - y los profesores
+    - y el profesorado
     - ¿y su correo?
     - ¿y su despacho?
     - ¿y las tutorías?
@@ -101,3 +191,47 @@ nlu:
     - y [Alejandro Garcia Fernandez](nombre_profesor)?
     - dame el contacto
     - y su contacto?
+    # ─── Casos reales observados en conversation_log (2026-04) ──────────
+    # Tutorías por profesor con typos ("Titorias"), uso de "profesorado"
+    # en vez de "profesores", y variantes largas con "Cuáles son todos".
+    # Referencia a profesor con nombre completo o en mayúsculas.
+    - Titorias del [parejo](nombre_profesor)
+    - Tutorias de [jose parejo](nombre_profesor)
+    - tutorias del [parejo](nombre_profesor)
+    - Tutorías del profesor [parejo](nombre_profesor)
+    - Cuál es el horario de tutorías de [José Antonio Parejo](nombre_profesor)?
+    - A que hora son las tutorias de la asignatura [administracion de empresas](nombre_asignatura)?
+    - profesorado de [egc](nombre_asignatura)
+    - profesorado de [adda](nombre_asignatura)
+    - el profesorado de [algebra](nombre_asignatura)?
+    - profesores de [egc](nombre_asignatura)
+    - Que profesores dan [DP](nombre_asignatura)?
+    - Que profesores imparten [ISPP](nombre_asignatura)?
+    - Cuáles son los profesores de [EGC](nombre_asignatura)
+    - Cuáles son todos los profesores de [EGC](nombre_asignatura)?
+    - quienes son los profesores de [egc](nombre_asignatura)
+    - quienes son los profesores de [pgpi](nombre_asignatura)
+    - quienes son los profesores del grupo 3 de [dp2](nombre_asignatura)
+    - quienes son los profesores de esa asignatura
+    - dame el correo de [ANDRES ARMARIO SAMPALO](nombre_profesor)
+    - dame el correo de [parejo](nombre_profesor)
+    - Cuál es la despacho de [Joaquín peña](nombre_profesor)
+    - en que despacho esta [ruiz cortes](nombre_profesor)
+    - [José María ucha](nombre_profesor) dime su despacho
+    - [Joaquín peña siles](nombre_profesor)
+    - [José Antonio Parejo Maestre](nombre_profesor)
+    - dame info sobre [carlos muller](nombre_profesor)
+    - quien es [adrian romero flores](nombre_profesor)
+    - que asignatura da el profesor [adrian romero flores](nombre_profesor)
+    - Sabes quién es [Alfonso bengoa](nombre_profesor)?
+    - Y [bedilia](nombre_profesor)?
+    - Pruebalo con [jose](nombre_profesor)
+    # ─── Cat 1: typos en "docentes" / "coordinador" / "profesores" ──────
+    # Post-eval: P-WA03 (docenttes), P-WA04 (kien coordnia), P-PA03 (grupo).
+    - docentes del grupo 1 de [DP1](nombre_asignatura)
+    - docentes de [Redes](nombre_asignatura)
+    - kien coordina [DP1](nombre_asignatura)
+    - kien coordnia [Redes](nombre_asignatura)
+    - quien coordnia [PSG1](nombre_asignatura)
+    - profesres de [ADDA](nombre_asignatura)
+    - profesoes de [PSG2](nombre_asignatura)

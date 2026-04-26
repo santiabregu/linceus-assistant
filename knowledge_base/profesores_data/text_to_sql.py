@@ -7,16 +7,24 @@ import re
 import json
 import sys
 import os
+import unicodedata
 from typing import Dict, Any, List, Optional, Tuple
+
+
+def _sin_tildes_lower(texto: str) -> str:
+    """Normaliza igual que `nombre_normalizado` en BD: minúsculas y sin tildes."""
+    if not texto:
+        return ""
+    nfkd = unicodedata.normalize("NFKD", texto)
+    sin_tildes = "".join(c for c in nfkd if not unicodedata.combining(c))
+    return sin_tildes.lower().strip()
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 from actions.shared.gemini_client import llamar_gemini as llamar_llm
 from actions.shared.db import db_client
 
 
-# ============================================================================
-# SCHEMA DE LA BASE DE DATOS (para el prompt del LLM)
-# ============================================================================
+# ── Schema de la BD (para el prompt del LLM) ──
 
 PROFESORES_SCHEMA = """
 CREATE TABLE profesores (
@@ -73,14 +81,23 @@ CREATE TABLE profesor_asignatura (
 
 CREATE TABLE asignaturas (
     id UUID PRIMARY KEY,
+    titulacion_id UUID,                    -- FK a titulaciones
     nombre VARCHAR(200),
     nombre_normalizado VARCHAR(200),
     codigo VARCHAR(20),
     activa BOOLEAN DEFAULT true
 );
 
+CREATE TABLE titulaciones (
+    id UUID PRIMARY KEY,
+    codigo VARCHAR(20),                    -- Ej: 'GII-IS', 'GII-TI', 'GII-IC'
+    nombre VARCHAR(200),
+    activa BOOLEAN DEFAULT true
+);
+
 -- Valores de ejemplo:
 -- departamentos.siglas: 'LSI', 'CCIA', 'DTE', 'MA1'
+-- titulaciones.codigo: 'GII-IS', 'GII-TI', 'GII-IC'
 -- dia_semana: 1 (Lunes), 2 (Martes), 3 (Miércoles), 4 (Jueves), 5 (Viernes)
 -- categoria_academica: 'Catedrático de Universidad', 'Profesor Titular de Universidad', 'Contratado Doctor', 'Profesor Ayudante Doctor', 'Asociado'
 """
@@ -110,9 +127,7 @@ COLUMNAS_PERMITIDAS_PROFESOR = {
 }
 
 
-# ============================================================================
-# GENERACIÓN DE SQL
-# ============================================================================
+# ── Generación de SQL ──
 
 def generar_sql_profesor(
     pregunta: str,
@@ -120,9 +135,15 @@ def generar_sql_profesor(
     nombre_asignatura: str = None,
     nombre_departamento: str = None,
     historial: str = "",
+    contexto_titulacion: str = None,
 ) -> Dict[str, Any]:
     """
     Genera una query SQL para consultas sobre profesores.
+
+    `contexto_titulacion` es el código de la titulación activa (p.ej. 'GII-IS').
+    Cuando se pasa, el LLM añade filtro por titulación a los JOINs con
+    `asignaturas` para evitar ambigüedad cuando un mismo nombre existe en
+    varias titulaciones (p.ej. 'Estadística' en IS y en TI).
 
     Returns:
         Dict con 'sql', 'parametros', 'explicacion', 'valido'
@@ -135,9 +156,36 @@ def generar_sql_profesor(
     if nombre_profesor:
         entidades += f'PROFESOR MENCIONADO: "{nombre_profesor}"\n'
     if nombre_asignatura:
-        entidades += f'ASIGNATURA MENCIONADA: "{nombre_asignatura}"\n'
+        asig_norm = _sin_tildes_lower(nombre_asignatura)
+        entidades += (
+            f'ASIGNATURA MENCIONADA (nombre completo ya resuelto desde alias/sigla): '
+            f'"{nombre_asignatura}"\n'
+            f'  ⚠ OBLIGATORIO: en el WHERE usa exactamente '
+            f"`a.nombre_normalizado ILIKE '%{asig_norm}%'` "
+            f"(string ya en minúsculas y SIN tildes, copia literal). "
+            f"NO uses la sigla, abreviatura o forma corta que aparezca en la "
+            f"PREGUNTA del usuario (p.ej. 'PSG1', 'IA', 'BD'); el alias ya está "
+            f"resuelto al nombre completo. La columna `nombre_normalizado` "
+            f"contiene el nombre completo en minúsculas y sin tildes, así que "
+            f"NO añadas tildes al string.\n"
+        )
     if nombre_departamento:
         entidades += f'DEPARTAMENTO MENCIONADO: "{nombre_departamento}"\n'
+    if contexto_titulacion:
+        entidades += f'TITULACIÓN ACTIVA: "{contexto_titulacion}"\n'
+
+    instruccion_titulacion = ""
+    if contexto_titulacion:
+        instruccion_titulacion = (
+            f"\n11. FILTRAR POR TITULACIÓN: cuando se hace JOIN con `asignaturas`, "
+            f"añade también JOIN con `titulaciones` y filtra por "
+            f"`t_tit.codigo = '{contexto_titulacion}'` (usa alias t_tit para titulaciones). "
+            f"Evita ambigüedad entre asignaturas homónimas de distintas titulaciones.\n"
+            f"   Ejemplo: FROM profesor_asignatura pa "
+            f"JOIN asignaturas a ON pa.asignatura_id = a.id "
+            f"JOIN titulaciones t_tit ON a.titulacion_id = t_tit.id "
+            f"WHERE a.nombre_normalizado ILIKE %s AND t_tit.codigo = '{contexto_titulacion}'"
+        )
 
     prompt = f"""Eres un experto en SQL. Genera una query SELECT para responder una pregunta sobre profesores universitarios.
 
@@ -155,11 +203,11 @@ INSTRUCCIONES:
 3. Para buscar por asignatura usa JOIN con profesor_asignatura y asignaturas, buscando por nombre_normalizado ILIKE %s
 4. Si piden tutorías, haz JOIN con tutorias WHERE activa = true
 5. Siempre incluye WHERE p.activo = true para profesores
-6. Usa alias: p para profesores, d para departamentos, t para tutorias, pa para profesor_asignatura, a para asignaturas
+6. Usa alias: p para profesores, d para departamentos, t para tutorias, pa para profesor_asignatura, a para asignaturas, t_tit para titulaciones
 7. Si piden profesores de un departamento, filtra por d.siglas = %s
 8. Si no se menciona un profesor concreto pero sí una asignatura, busca todos los profesores de esa asignatura
 9. Devuelve siempre: p.id, p.nombre, p.apellidos, p.email, p.telefono, p.despacho, p.categoria_academica, d.siglas AS departamento
-10. Si piden tutorías incluye también: t.dia_semana, t.hora_inicio, t.hora_fin, t.ubicacion, t.modalidad
+10. Si piden tutorías incluye también: t.dia_semana, t.hora_inicio, t.hora_fin, t.ubicacion, t.modalidad{instruccion_titulacion}
 
 RESPONDE SOLO CON JSON VÁLIDO:
 {{
@@ -196,13 +244,17 @@ JSON:"""
         print(f"Error generando SQL profesor: {e}")
 
     # Fallback según entidades disponibles
-    return _fallback_sql(nombre_profesor, nombre_asignatura, nombre_departamento)
+    return _fallback_sql(
+        nombre_profesor, nombre_asignatura, nombre_departamento,
+        contexto_titulacion=contexto_titulacion,
+    )
 
 
 def _fallback_sql(
     nombre_profesor: str = None,
     nombre_asignatura: str = None,
     nombre_departamento: str = None,
+    contexto_titulacion: str = None,
 ) -> Dict[str, Any]:
     """Query fallback segura cuando el LLM falla."""
 
@@ -227,17 +279,35 @@ def _fallback_sql(
         }
 
     if nombre_asignatura:
+        if contexto_titulacion:
+            sql = """SELECT p.id, p.nombre, p.apellidos, p.email, p.telefono,
+                            p.despacho, p.categoria_academica, d.siglas AS departamento,
+                            pa.es_coordinador, pa.tipo_docencia, pa.grupo
+                     FROM profesor_asignatura pa
+                     JOIN profesores p ON pa.profesor_id = p.id
+                     LEFT JOIN departamentos d ON p.departamento_id = d.id
+                     JOIN asignaturas a ON pa.asignatura_id = a.id
+                     JOIN titulaciones t_tit ON a.titulacion_id = t_tit.id
+                     WHERE p.activo = true
+                       AND a.nombre_normalizado ILIKE %s
+                       AND t_tit.codigo = %s"""
+            params = [f'%{nombre_asignatura.lower()}%', contexto_titulacion]
+            explicacion = 'fallback - profesores por asignatura + titulación'
+        else:
+            sql = """SELECT p.id, p.nombre, p.apellidos, p.email, p.telefono,
+                            p.despacho, p.categoria_academica, d.siglas AS departamento,
+                            pa.es_coordinador, pa.tipo_docencia, pa.grupo
+                     FROM profesor_asignatura pa
+                     JOIN profesores p ON pa.profesor_id = p.id
+                     LEFT JOIN departamentos d ON p.departamento_id = d.id
+                     JOIN asignaturas a ON pa.asignatura_id = a.id
+                     WHERE p.activo = true AND a.nombre_normalizado ILIKE %s"""
+            params = [f'%{nombre_asignatura.lower()}%']
+            explicacion = 'fallback - profesores por asignatura'
         return {
-            'sql': """SELECT p.id, p.nombre, p.apellidos, p.email, p.telefono,
-                             p.despacho, p.categoria_academica, d.siglas AS departamento,
-                             pa.es_coordinador, pa.tipo_docencia, pa.grupo
-                      FROM profesor_asignatura pa
-                      JOIN profesores p ON pa.profesor_id = p.id
-                      LEFT JOIN departamentos d ON p.departamento_id = d.id
-                      JOIN asignaturas a ON pa.asignatura_id = a.id
-                      WHERE p.activo = true AND a.nombre_normalizado ILIKE %s""",
-            'parametros': [f'%{nombre_asignatura.lower()}%'],
-            'explicacion': 'fallback - profesores por asignatura',
+            'sql': sql,
+            'parametros': params,
+            'explicacion': explicacion,
             'valido': True,
         }
 
@@ -268,9 +338,7 @@ def _fallback_sql(
     }
 
 
-# ============================================================================
-# VALIDACIÓN DE SEGURIDAD SQL
-# ============================================================================
+# ── Validación de seguridad SQL ──
 
 def validar_sql(sql: str) -> Optional[str]:
     """Valida que la SQL generada sea segura."""
@@ -311,9 +379,7 @@ def validar_sql(sql: str) -> Optional[str]:
     return sql
 
 
-# ============================================================================
-# EJECUCIÓN SEGURA DE QUERIES
-# ============================================================================
+# ── Ejecución segura de queries ──
 
 def ejecutar_query(sql: str, parametros: List = None) -> Tuple[bool, Any]:
     """Ejecuta una query SQL de forma segura."""
@@ -362,9 +428,7 @@ def ejecutar_query(sql: str, parametros: List = None) -> Tuple[bool, Any]:
         return False, str(e)
 
 
-# ============================================================================
-# FORMATEO Y RESPUESTA NATURAL
-# ============================================================================
+# ── Formateo y respuesta natural ──
 
 DIAS_NOMBRE = {1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes"}
 
@@ -425,15 +489,52 @@ def formatear_datos_para_prompt(datos: List[Dict]) -> str:
     return "\n\n---\n\n".join(lineas)
 
 
-def generar_respuesta_natural(pregunta: str, datos: List[Dict]) -> str:
-    """Genera respuesta natural usando el LLM."""
+def generar_respuesta_natural(
+    pregunta: str,
+    datos: List[Dict],
+    tutorias_no_disponibles: bool = False,
+    nombre_asignatura_resuelto: str = None,
+) -> str:
+    """Genera respuesta natural usando el LLM.
+
+    Si `tutorias_no_disponibles` es True, el prompt instruye al LLM para
+    redirigir al usuario al email del profesor en vez de intentar responder
+    sobre horarios de tutorías (la tabla `tutorias` está vacía, no los
+    tenemos).
+
+    Si `nombre_asignatura_resuelto` se pasa, el prompt indica al LLM que la
+    sigla/alias usado por el usuario ya se resolvió a esa asignatura, para
+    evitar que la regla anti-alucinación rechace los datos por no contener
+    literalmente la sigla (ej. el usuario pregunta por "PSG1" y los datos
+    son de "Proceso Software y Gestión I").
+    """
     datos_texto = formatear_datos_para_prompt(datos)
+
+    nota_tutorias = ""
+    if tutorias_no_disponibles:
+        nota_tutorias = (
+            "\n- IMPORTANTE: Actualmente no tenemos registradas las tutorías de los "
+            "profesores en nuestra base de datos. Si el usuario pregunta por horario "
+            "o lugar de tutorías, indícalo claramente y sugiere contactar al profesor "
+            "por email para preguntarle directamente (destaca el email). "
+            "No inventes horarios ni ubicaciones de tutorías."
+        )
+
+    nota_asignatura = ""
+    if nombre_asignatura_resuelto:
+        nota_asignatura = (
+            f"\nCONTEXTO DE ASIGNATURA: La sigla/alias usado por el usuario en su "
+            f"pregunta ya ha sido resuelto a la asignatura "
+            f"\"{nombre_asignatura_resuelto}\". Trata ambas formas como equivalentes: "
+            f"los DATOS DE PROFESORES corresponden a esa asignatura, aunque su nombre "
+            f"completo no aparezca literal en la pregunta."
+        )
 
     prompt = f"""Eres Linceus, un asistente universitario de la ETSII (Universidad de Sevilla).
 Responde a la pregunta del usuario usando SOLO los datos proporcionados.
 
 PREGUNTA DEL USUARIO: "{pregunta}"
-
+{nota_asignatura}
 DATOS DE PROFESORES:
 {datos_texto}
 
@@ -441,14 +542,23 @@ REGLAS:
 - Responde de forma natural, cercana y concisa
 - Presenta la información de forma organizada y legible
 - Usa markdown para formatear (negritas, listas)
-- No inventes datos que no estén proporcionados
+- **PROHIBIDO INVENTAR DATOS.** Esta regla es absoluta y prevalece sobre todas las demás:
+    - No inventes nombres de profesores, emails, despachos, teléfonos ni grupos
+    - Si los DATOS DE PROFESORES están vacíos o no contienen lo que pregunta el usuario,
+      di explícitamente que no tienes esa información y NO completes la respuesta con
+      datos plausibles
+    - Si el usuario pregunta por un grupo concreto (p.ej. "grupo 2") y los datos no
+      indican grupo para cada profesor, NO asignes profesores a ese grupo: di que
+      no consta la división por grupo en los datos disponibles
+    - Si hay un nombre cercano pero no idéntico al pedido, dilo como sugerencia
+      ("¿quizás te refieres a X?"), no lo afirmes como respuesta
 - Si no hay resultados, dilo amablemente y sugiere buscar de otra forma
 - No repitas la pregunta del usuario
 - No digas "según los datos" ni menciones la base de datos
 - No saludes (nada de "¡Hola!", "Buenos días", etc.) — ve directo a la respuesta
 - Si preguntan por email, despacho o tutorías, destaca esa información
 - Si hay varios profesores, organízalos bien
-- Si los datos incluyen tutorías, preséntalas agrupadas por día
+- Si los datos incluyen tutorías, preséntalas agrupadas por día{nota_tutorias}
 
 Respuesta:"""
 

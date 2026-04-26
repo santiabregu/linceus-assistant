@@ -262,6 +262,13 @@ def insertar_en_bd(
         conn.commit()
 
         # 2) grupos_clase + 3) horarios
+        # Modelo: un "Grupo 1" de teoría es UNA sola fila en grupos_clase
+        # (existe la UNIQUE (asignatura_id, codigo, curso_academico, tipo)).
+        # El cuatrimestre vive a nivel de `horarios`, porque lo que cambia
+        # entre C1 y C2 es el horario semanal del alumno, no la entidad
+        # "grupo de teoría". Asignaturas anuales (duracion='A') generan
+        # filas en `horarios` con cuatri=1 y cuatri=2 colgando del mismo
+        # `grupo_clase`. Ver D-066.
         cur.execute("""
             SELECT gc.id, gc.asignatura_id, gc.codigo
             FROM grupos_clase gc
@@ -293,22 +300,39 @@ def insertar_en_bd(
                         gc_id = str(uuid.uuid4())
                         cur.execute("""
                             INSERT INTO grupos_clase
-                                (id, asignatura_id, codigo, nombre, tipo, curso_academico, activo)
+                                (id, asignatura_id, codigo, nombre, tipo,
+                                 curso_academico, activo)
                             VALUES (%s, %s, %s, %s, 'teoria', %s, true)
                         """, (gc_id, asig_id, gc_codigo, f"Grupo {g.grupo}",
                               extraccion.curso_academico))
                         mapa_gc[gc_key] = gc_id
                         nuevos_grupos += 1
 
-                    aula_id = mapa_aulas.get(e.aula_codigo) if e.aula_codigo else None
-                    hid = str(uuid.uuid4())
-                    cur.execute("""
-                        INSERT INTO horarios
-                            (id, grupo_id, aula_id, dia_semana, hora_inicio, hora_fin, activo)
-                        VALUES (%s, %s, %s, %s, %s, %s, true)
-                    """, (hid, mapa_gc[gc_key], aula_id,
-                          e.dia_semana, e.hora_inicio, e.hora_fin))
-                    nuevos_horarios += 1
+                    # Una fila en `horarios` por cada aula del slot:
+                    # la principal (`aula_codigo`) + cada lab/aula adicional
+                    # (`labs`). El schema admite varias filas con mismo
+                    # (grupo, día, hora, cuatri) y distinta aula.
+                    codigos_aulas = []
+                    if e.aula_codigo:
+                        codigos_aulas.append(e.aula_codigo)
+                    for lab in e.labs:
+                        if lab and lab not in codigos_aulas:
+                            codigos_aulas.append(lab)
+                    if not codigos_aulas:
+                        codigos_aulas = [None]  # slot sin aula registrada
+
+                    for codigo_aula in codigos_aulas:
+                        aula_id = mapa_aulas.get(codigo_aula) if codigo_aula else None
+                        hid = str(uuid.uuid4())
+                        cur.execute("""
+                            INSERT INTO horarios
+                                (id, grupo_id, aula_id, dia_semana,
+                                 hora_inicio, hora_fin, cuatrimestre, activo)
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, true)
+                        """, (hid, mapa_gc[gc_key], aula_id,
+                              e.dia_semana, e.hora_inicio, e.hora_fin,
+                              str(e.cuatrimestre)))
+                        nuevos_horarios += 1
         conn.commit()
         cur.close()
 

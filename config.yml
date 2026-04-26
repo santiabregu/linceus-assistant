@@ -11,47 +11,62 @@ assistant_id: 20250810-180416-resolving-cottage
 language: es
 
 pipeline:
-  # Step 1: Tokenization - Breaking text into words/tokens
-  - name: WhitespaceTokenizer
-    intent_tokenization_flag: true
-    intent_split_symbol: "+"
-      
-  # Step 2: Pattern Recognition - For course codes, emails, etc.
+  # Step 0: Embeddings pre-entrenados de espanol (D-059).
+  # DIET aprende mucho mejor con ~600-800 ejemplos cuando recibe
+  # embeddings de spaCy: "dificil", "mejor", "peor" llegan con su
+  # vector semantico en vez de que el modelo los infiera desde cero.
+  - name: SpacyNLP
+    model: es_core_news_md
+  - name: SpacyTokenizer
+
+  # Step 1: Pattern Recognition - For course codes, emails, etc.
   - name: RegexFeaturizer
-  
-  # Step 3: Linguistic Features - Grammar and syntax understanding
+
+  # Step 2: Linguistic Features - Grammar and syntax understanding
   - name: LexicalSyntacticFeaturizer
-  
-  # Step 4: Word-level features - Understanding word meanings
+
+  # Step 3: Word-level features - Understanding word meanings
   - name: CountVectorsFeaturizer
     analyzer: word
     min_ngram: 1
     max_ngram: 2
-    
-  # Step 5: Character-level features - Handling typos and variations
+
+  # Step 4: Character-level features - Handling typos and variations
+  # min_ngram=2 (antes 1): los ngrams de 1 caracter aniaden ruido.
   - name: CountVectorsFeaturizer
     analyzer: char_wb
-    min_ngram: 1
+    min_ngram: 2
     max_ngram: 4
-    
+
+  # Step 5: Features densas desde spaCy (complementa a CountVectors).
+  - name: SpacyFeaturizer
+
   # Step 6: Main Intent Classifier - The brain that decides what users want
   - name: DIETClassifier
     epochs: 150
     constrain_similarities: true
     dropout_rate: 0.2
-    
+    # Se mantiene el split_symbol "+" del tokenizer para multi-intent,
+    # pero sin intent_tokenization_flag que es de WhitespaceTokenizer.
+    intent_classification: true
+    entity_recognition: true
+
   # Step 7: Entity Synonym Mapping - Handles different names for same thing
   - name: EntitySynonymMapper
-  
+
   # Step 8: Response Selection - For FAQ-style responses
   - name: ResponseSelector
     epochs: 150
     constrain_similarities: true
-    
-  # Step 9: Fallback Detection - When confidence is too low
+
+  # Step 9: Fallback Detection (D-059)
+  # threshold subido 0.7 -> 0.8: frases dudosas caen a fallback
+  # ambiguity_threshold bajado 0.15 -> 0.10: mas sensible a empates
+  # entre dos intents (caso "asignatura mas dificil" competia entre
+  # preguntar_hay_mas y consulta_asignaturas_listado).
   - name: FallbackClassifier
-    threshold: 0.7
-    ambiguity_threshold: 0.15
+    threshold: 0.8
+    ambiguity_threshold: 0.10
 
 # # No configuration for the NLU pipeline was provided. The following default pipeline was used to train your model.
 # # If you'd like to customize it, uncomment and adjust the pipeline.

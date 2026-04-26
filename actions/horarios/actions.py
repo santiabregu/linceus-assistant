@@ -23,7 +23,7 @@ from rasa_sdk.events import SlotSet
 from ..shared.config import BotConfig, ALIAS_ASIGNATURAS
 from ..shared.db import db_client
 from ..shared.gemini_client import llamar_gemini as llamar_llm
-from ..asignaturas.actions import comprobar_titulacion, _contar_turnos_desde_slot
+from ..shared.follow_up import comprobar_titulacion, _contar_turnos_desde_slot
 
 # ─── Constantes ──────────────────────────────────────────────────────────────
 
@@ -35,7 +35,8 @@ NOMBRES_TITULACION = {
     "GII-TI": "Tecnologías Informáticas",
 }
 
-DIAS_NOMBRE = {1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes"}
+DIAS_NOMBRE = {1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes",
+               6: "Sábado", 7: "Domingo"}
 
 DIAS_SEMANA = {
     "lunes": 1, "martes": 2, "miercoles": 3, "miércoles": 3,
@@ -54,7 +55,10 @@ def _normalizar(texto: str) -> str:
 def _detectar_curso(texto: str) -> Optional[int]:
     texto_lower = texto.lower()
     patrones = [
+        # Ordinales tipográficos: 2º, 2ª, 2°
         (r"\b(\d)[ºª°]\b", lambda m: int(m.group(1))),
+        # Aproximaciones sin tecla de ordinal: 2o, 2a (en teclados sin "º")
+        (r"\b(\d)[oa]\b", lambda m: int(m.group(1))),
         (r"\bcurso\s+(\d)\b", lambda m: int(m.group(1))),
         (r"\bprimero\b", lambda m: 1),
         (r"\bsegundo\b", lambda m: 2),
@@ -82,6 +86,30 @@ def _detectar_grupo(texto: str) -> Optional[int]:
     m = re.search(r"\bg(\d+)\b", texto_lower)
     if m:
         return int(m.group(1))
+    return None
+
+
+# Convención ETSII: aulas con código que empieza por 'A' son teoría;
+# las demás (F, B, G, H, I, ...) son laboratorio.
+def _es_aula_teoria(codigo: str) -> bool:
+    return bool(codigo) and codigo.startswith("A")
+
+
+def _detectar_filtro_aula(texto: str) -> Optional[str]:
+    """Detecta si la pregunta pide solo lab o solo teoría.
+
+    Devuelve 'lab', 'teoria' o None (sin filtro). No se usa "prácticas"
+    porque colisiona con la asignatura "Prácticas Externas" y con la
+    expresión genérica "clases teórico-prácticas" del plan docente.
+    """
+    if not texto:
+        return None
+    t = unicodedata.normalize("NFKD", texto.lower())
+    t = "".join(c for c in t if not unicodedata.combining(c))
+    if re.search(r"\blab(oratorio)?s?\b", t):
+        return "lab"
+    if re.search(r"\bteori[ck]?as?\b", t):
+        return "teoria"
     return None
 
 
@@ -121,6 +149,24 @@ def _detectar_cuatrimestre(texto: str) -> Optional[int]:
     return None
 
 
+def _cuatrimestre_actual_por_fecha() -> Optional[int]:
+    """Mapeo del calendario académico US Sevilla:
+       - septiembre..enero → C1
+       - febrero..julio    → C2
+       - agosto            → None (sin docencia, mostrar todo)
+
+    Cuando el usuario no especifica cuatrimestre, el bot asume el activo
+    según `now()`. Ver D-066 / D-067.
+    """
+    from datetime import datetime
+    mes = datetime.now().month
+    if mes in (9, 10, 11, 12, 1):
+        return 1
+    if mes in (2, 3, 4, 5, 6, 7):
+        return 2
+    return None  # agosto
+
+
 # ─── Queries a la BD ─────────────────────────────────────────────────────────
 
 def _query_horario(titulacion: str, curso: int, grupo: int,
@@ -143,7 +189,8 @@ def _query_horario(titulacion: str, curso: int, grupo: int,
                 h.hora_fin,
                 a.nombre AS asignatura,
                 COALESCE(au.codigo, '') AS aula,
-                a.duracion
+                a.duracion,
+                h.cuatrimestre
             FROM horarios h
             JOIN grupos_clase gc ON h.grupo_id = gc.id
             JOIN asignaturas a ON gc.asignatura_id = a.id
@@ -161,11 +208,19 @@ def _query_horario(titulacion: str, curso: int, grupo: int,
             params.append(dia)
 
         if cuatrimestre:
-            sql += " AND a.duracion IN (%s, 'A')"
-            params.append(f"C{cuatrimestre}")
+            # Filtro directo por cuatrimestre del horario (D-066). Antes se
+            # filtraba por `a.duracion`, lo que rompía con anuales (siempre
+            # pasaban) y con horarios donde la asignatura cambiaba de
+            # día/hora entre C1 y C2.
+            sql += " AND h.cuatrimestre = %s"
+            params.append(str(cuatrimestre))
 
-        sql += " GROUP BY h.dia_semana, h.hora_inicio, h.hora_fin, a.nombre, au.codigo, a.duracion"
-        sql += " ORDER BY h.dia_semana, h.hora_inicio, a.nombre"
+        # Incluimos h.cuatrimestre en el GROUP BY: sin él, anuales como FP
+        # con la misma franja en C1 y C2 (mié 10:40) se colapsarían en una
+        # fila aunque sean dos sesiones distintas.
+        sql += (" GROUP BY h.dia_semana, h.hora_inicio, h.hora_fin, "
+                "a.nombre, au.codigo, a.duracion, h.cuatrimestre")
+        sql += " ORDER BY h.cuatrimestre, h.dia_semana, h.hora_inicio, a.nombre"
 
         cur.execute(sql, params)
         resultados = cur.fetchall()
@@ -180,7 +235,8 @@ def _query_horario(titulacion: str, curso: int, grupo: int,
 
 
 def _query_asignatura(titulacion: str, alias_asig: str,
-                      grupo: Optional[int] = None) -> list:
+                      grupo: Optional[int] = None,
+                      cuatrimestre: Optional[int] = None) -> list:
     """
     Busca horarios de una asignatura específica por su alias.
     Retorna [(dia_semana, hora_inicio, hora_fin, asignatura, aula, grupo_codigo, curso)]
@@ -203,7 +259,8 @@ def _query_asignatura(titulacion: str, alias_asig: str,
                 a.nombre AS asignatura,
                 COALESCE(au.codigo, '') AS aula,
                 gc.codigo AS grupo,
-                a.curso
+                a.curso,
+                h.cuatrimestre
             FROM horarios h
             JOIN grupos_clase gc ON h.grupo_id = gc.id
             JOIN asignaturas a ON gc.asignatura_id = a.id
@@ -219,8 +276,15 @@ def _query_asignatura(titulacion: str, alias_asig: str,
             sql += " AND gc.codigo = %s"
             params.append(str(grupo))
 
-        sql += " GROUP BY h.dia_semana, h.hora_inicio, h.hora_fin, a.nombre, au.codigo, gc.codigo, a.curso"
-        sql += " ORDER BY gc.codigo, h.dia_semana, h.hora_inicio"
+        if cuatrimestre:
+            sql += " AND h.cuatrimestre = %s"
+            params.append(str(cuatrimestre))
+
+        # h.cuatrimestre en GROUP BY para no colapsar anuales que se imparten
+        # en la misma franja en C1 y C2 (D-066).
+        sql += (" GROUP BY h.dia_semana, h.hora_inicio, h.hora_fin, "
+                "a.nombre, au.codigo, gc.codigo, a.curso, h.cuatrimestre")
+        sql += " ORDER BY gc.codigo, h.cuatrimestre, h.dia_semana, h.hora_inicio"
 
         cur.execute(sql, params)
         resultados = cur.fetchall()
@@ -333,47 +397,140 @@ def _respuesta_faltan_datos(titulacion: str, curso: Optional[int] = None,
 
 def _datos_horario_a_texto(resultados: list, titulacion: str,
                             curso: int, grupo: int,
-                            dia_filtro: Optional[int] = None) -> str:
-    """Convierte resultados de query de horario en texto plano para el LLM."""
+                            dia_filtro: Optional[int] = None,
+                            cuatrimestre: Optional[int] = None,
+                            cuatri_explicito: bool = True,
+                            filtro_aula: Optional[str] = None) -> str:
+    """Convierte resultados de query de horario en texto plano para el LLM.
+
+    Si `cuatrimestre` está fijado y `cuatri_explicito=False`, añade un aviso
+    al header indicando que se asumió por la fecha actual (D-067).
+    """
     nombre = NOMBRES_TITULACION.get(titulacion, titulacion)
-    lineas = [f"Horario de {curso}º de {nombre}, Grupo {grupo}:"]
+    header = f"Horario de {curso}º de {nombre}, Grupo {grupo}"
+    if cuatrimestre:
+        header += f" — Cuatrimestre {cuatrimestre}"
+        if not cuatri_explicito:
+            header += " (cuatrimestre activo según fecha actual)"
+    header += ":"
+    lineas = [header]
 
     if not resultados:
         return "No hay horarios registrados para esta combinación."
 
+    # Agrupamos por slot (dia, hora, asig, cuatri) porque tras D-068 cada
+    # aula del slot es una fila distinta en `horarios` (teoría + labs).
+    slots = {}  # (dia, h_ini, h_fin, asig, h_cuatri) -> {aulas_teoria, aulas_lab}
+    for dia, h_ini, h_fin, asig, aula, duracion, h_cuatri in resultados:
+        key = (dia, h_ini, h_fin, asig, h_cuatri)
+        if key not in slots:
+            slots[key] = {"teoria": [], "lab": []}
+        if aula:
+            categoria = "teoria" if _es_aula_teoria(aula) else "lab"
+            if aula not in slots[key][categoria]:
+                slots[key][categoria].append(aula)
+
     por_dia = {}
-    for dia, h_ini, h_fin, asig, aula, duracion in resultados:
+    for (dia, h_ini, h_fin, asig, h_cuatri), aulas in slots.items():
+        # Si el usuario pidió solo lab/teoría y este slot no tiene ese tipo,
+        # lo omitimos del resultado.
+        if filtro_aula == "lab" and not aulas["lab"]:
+            continue
+        if filtro_aula == "teoria" and not aulas["teoria"]:
+            continue
         if dia not in por_dia:
             por_dia[dia] = []
-        aula_txt = f" en aula {aula}" if aula else ""
-        por_dia[dia].append(f"{str(h_ini)[:5]}-{str(h_fin)[:5]}: {asig}{aula_txt}")
+        partes_aula = []
+        if filtro_aula in (None, "teoria") and aulas["teoria"]:
+            partes_aula.append("teoría: " + ", ".join(sorted(aulas["teoria"])))
+        if filtro_aula in (None, "lab") and aulas["lab"]:
+            partes_aula.append("lab: " + ", ".join(sorted(aulas["lab"])))
+        aula_txt = f" ({'; '.join(partes_aula)})" if partes_aula else ""
+        cuatri_txt = f" [C{h_cuatri}]" if (not cuatrimestre and h_cuatri) else ""
+        por_dia[dia].append(
+            (h_ini, f"{str(h_ini)[:5]}-{str(h_fin)[:5]}: {asig}{aula_txt}{cuatri_txt}")
+        )
 
     dias_mostrar = [dia_filtro] if dia_filtro else sorted(por_dia.keys())
     for dia in dias_mostrar:
         if dia not in por_dia:
             continue
         lineas.append(f"\n{DIAS_NOMBRE.get(dia, dia)}:")
-        for entrada in por_dia[dia]:
+        for _, entrada in sorted(por_dia[dia], key=lambda x: x[0]):
             lineas.append(f"  - {entrada}")
+
+    if len(lineas) == 1:  # solo header, todos los slots filtrados
+        if filtro_aula == "lab":
+            return "No hay sesiones de laboratorio registradas para esta combinación."
+        if filtro_aula == "teoria":
+            return "No hay sesiones de teoría registradas para esta combinación."
 
     return "\n".join(lineas)
 
 
 def _datos_asignatura_a_texto(resultados: list, alias: str,
-                               titulacion: str) -> str:
-    """Convierte resultados de búsqueda por asignatura en texto plano para el LLM."""
+                               titulacion: str,
+                               filtro_aula: Optional[str] = None) -> str:
+    """Convierte resultados de búsqueda por asignatura en texto plano para el LLM.
+
+    Tras D-068 cada aula del slot es una fila distinta en `horarios`. Aquí
+    agrupamos por (curso, grupo, día, hora, cuatri) y unimos las aulas
+    separando teoría (códigos que empiezan por 'A') de lab (resto). Si
+    `filtro_aula` viene informado, omite los slots que no tienen ese tipo
+    y oculta las aulas del tipo opuesto.
+    """
     nombre_tit = NOMBRES_TITULACION.get(titulacion, titulacion)
 
     if not resultados:
         return f"No se encontró {alias.upper()} en los horarios de {nombre_tit}."
 
     nombre_asig = resultados[0][3]
-    lineas = [f"Horarios de {nombre_asig} en {nombre_tit}:"]
 
-    for dia, h_ini, h_fin, asig, aula, grupo_cod, curso in resultados:
+    # Agrupar por (curso, grupo, día, h_ini, h_fin, cuatri) → aulas
+    slots = {}
+    for dia, h_ini, h_fin, asig, aula, grupo_cod, curso, h_cuatri in resultados:
+        key = (curso, grupo_cod, dia, h_ini, h_fin, h_cuatri)
+        if key not in slots:
+            slots[key] = {"teoria": [], "lab": []}
+        if aula:
+            categoria = "teoria" if _es_aula_teoria(aula) else "lab"
+            if aula not in slots[key][categoria]:
+                slots[key][categoria].append(aula)
+
+    encabezado = f"Horarios de {nombre_asig} en {nombre_tit}"
+    if filtro_aula == "lab":
+        encabezado += " (solo laboratorio)"
+    elif filtro_aula == "teoria":
+        encabezado += " (solo teoría)"
+    lineas = [encabezado + ":"]
+
+    # Orden estable: curso, grupo, cuatri, día, hora.
+    for key in sorted(slots.keys(),
+                      key=lambda k: (k[0], k[1], k[5] or "", k[2], k[3])):
+        curso, grupo_cod, dia, h_ini, h_fin, h_cuatri = key
+        aulas = slots[key]
+        if filtro_aula == "lab" and not aulas["lab"]:
+            continue
+        if filtro_aula == "teoria" and not aulas["teoria"]:
+            continue
+        partes_aula = []
+        if filtro_aula in (None, "teoria") and aulas["teoria"]:
+            partes_aula.append("teoría: " + ", ".join(sorted(aulas["teoria"])))
+        if filtro_aula in (None, "lab") and aulas["lab"]:
+            partes_aula.append("lab: " + ", ".join(sorted(aulas["lab"])))
+        aula_txt = f" ({'; '.join(partes_aula)})" if partes_aula else ""
+        cuatri_txt = f" [C{h_cuatri}]" if h_cuatri else ""
         dia_txt = DIAS_NOMBRE.get(dia, str(dia))
-        aula_txt = f", aula {aula}" if aula else ""
-        lineas.append(f"  - Curso {curso} Grupo {grupo_cod}: {dia_txt} {str(h_ini)[:5]}-{str(h_fin)[:5]}{aula_txt}")
+        lineas.append(
+            f"  - Curso {curso} Grupo {grupo_cod}{cuatri_txt}: "
+            f"{dia_txt} {str(h_ini)[:5]}-{str(h_fin)[:5]}{aula_txt}"
+        )
+
+    if len(lineas) == 1:  # solo header
+        if filtro_aula == "lab":
+            return f"No hay sesiones de laboratorio de {nombre_asig} registradas."
+        if filtro_aula == "teoria":
+            return f"No hay sesiones de teoría de {nombre_asig} registradas."
 
     return "\n".join(lineas)
 
@@ -385,8 +542,15 @@ def _generar_respuesta_horario(pregunta: str, datos_texto: str) -> str:
     Usa el LLM para generar una respuesta natural a partir de los datos de horario.
     Mismo patrón que generar_respuesta_natural en asignaturas.
     """
+    from datetime import datetime
+    ahora = datetime.now()
+    dia_actual = DIAS_NOMBRE.get(ahora.isoweekday(), "?")
+    fecha_actual = ahora.strftime("%Y-%m-%d")
+
     prompt = f"""Eres Linceus, un asistente universitario de la ETSII (Universidad de Sevilla).
 Responde a la pregunta del usuario usando SOLO los datos proporcionados.
+
+FECHA ACTUAL: {dia_actual}, {fecha_actual}.
 
 PREGUNTA DEL USUARIO: "{pregunta}"
 
@@ -398,7 +562,13 @@ REGLAS:
 - Presenta los horarios de forma organizada y legible, agrupados por día
 - Incluye siempre el aula cuando esté disponible
 - Usa markdown para formatear (negritas, listas)
-- No inventes datos que no estén proporcionados
+- **PROHIBIDO INVENTAR DATOS.** Si los datos no contienen aulas, asignaturas o
+  franjas horarias para lo que el usuario pide, NO las completes con valores
+  plausibles. Di que no hay horarios registrados para esa combinación.
+- Si la pregunta usa referencias temporales relativas ("hoy", "mañana", "esta
+  tarde", "ahora"), interprétalas SIEMPRE respecto a la FECHA ACTUAL indicada
+  arriba. No inventes ni asumas otro día. Si la fecha actual cae en sábado o
+  domingo, no hay clases.
 - Si no hay resultados, dilo amablemente
 - No repitas la pregunta del usuario
 - No digas "según los datos" ni menciones la base de datos
@@ -456,6 +626,14 @@ class ActionConsultaHorario(Action):
         dia = _detectar_dia(mensaje)
         cuatrimestre = _detectar_cuatrimestre(mensaje)
 
+        # Si el usuario no especifica cuatrimestre, asumimos el activo según
+        # `now()` (D-066, D-067). Si ambos cuatrimestres son interesantes
+        # (agosto, sin docencia), `cuatri_actual` queda en None y la query
+        # devuelve todo.
+        cuatri_explicito = cuatrimestre is not None
+        if not cuatri_explicito:
+            cuatrimestre = _cuatrimestre_actual_por_fecha()
+
         # Si el usuario se refiere a grupos por letra del DNI (ej. "letra T"),
         # no podemos mapearlo automaticamente: los grupos por letra cambian por
         # titulacion y curso. Mejor pedir el numero de grupo directamente.
@@ -470,7 +648,9 @@ class ActionConsultaHorario(Action):
 
         print(f"\n{'='*60}")
         print(f"📅 CONSULTA HORARIO PERSONAL: {mensaje}")
-        print(f"   Titulación: {titulacion} | Curso: {curso} | Grupo: {grupo} | Día: {dia} | Cuatri: {cuatrimestre}")
+        cuatri_origen = "explícito" if cuatri_explicito else ("auto" if cuatrimestre else "ninguno")
+        print(f"   Titulación: {titulacion} | Curso: {curso} | Grupo: {grupo} | "
+              f"Día: {dia} | Cuatri: {cuatrimestre} ({cuatri_origen})")
         print(f"{'='*60}")
 
         # Nota: las preguntas "horario de ASIGNATURA" las clasifica el NLU
@@ -499,6 +679,24 @@ class ActionConsultaHorario(Action):
                 except (TypeError, ValueError):
                     pass
 
+        # ── Seguimiento cross-intent (H-S01): turno elíptico tipo
+        # "y qué horario tiene" tras una asignatura. Solo delegamos cuando el
+        # mensaje NO aporta ninguna pista de horario por curso+grupo (ni
+        # curso, ni grupo, ni día, ni cuatrimestre). Si el usuario dice
+        # "grupo 1" o "los lunes", la pregunta es genérica y solo le falta el
+        # curso: ahí pedimos curso, no heredamos asignatura.
+        sin_pistas_horario = not (curso or grupo or dia or cuatri_explicito)
+        if sin_pistas_horario:
+            ultima_asig = tracker.get_slot("ultimo_nombre_asignatura")
+            if ultima_asig and _contar_turnos_desde_slot(
+                tracker, "ultimo_nombre_asignatura") <= 3:
+                from ..asignaturas.actions import ActionConsultaHorarioAsignatura
+                print(f"   → H-S01: delegando a horario_asignatura "
+                      f"(asignatura heredada: '{ultima_asig}')")
+                return ActionConsultaHorarioAsignatura().run(
+                    dispatcher, tracker, domain
+                )
+
         # ── Se requiere curso y grupo ──
         if not curso or not grupo:
             dispatcher.utter_message(
@@ -507,8 +705,11 @@ class ActionConsultaHorario(Action):
             return []
 
         resultados = _query_horario(titulacion, curso, grupo, dia, cuatrimestre)
+        filtro_aula = _detectar_filtro_aula(mensaje)
         datos_texto = _datos_horario_a_texto(
-            resultados, titulacion, curso, grupo, dia
+            resultados, titulacion, curso, grupo, dia,
+            cuatrimestre=cuatrimestre, cuatri_explicito=cuatri_explicito,
+            filtro_aula=filtro_aula,
         )
         respuesta = _generar_respuesta_horario(mensaje, datos_texto)
         dispatcher.utter_message(text=respuesta)

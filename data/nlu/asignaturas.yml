@@ -126,25 +126,6 @@ nlu:
     - bibliografia recomendada de [IS2](nombre_asignatura)
     - que libros recomienda [Bases de Datos](nombre_asignatura)
     - lecturas de [Calculo](nombre_asignatura)
-    - quien da [Fundamentos de Programacion](nombre_asignatura)
-    - quien imparte [Sistemas Operativos](nombre_asignatura)
-    - quien es el coordinador de [Redes](nombre_asignatura)
-    - quienes son los profesores de [IS2](nombre_asignatura)
-    - profesores de [IS2](nombre_asignatura)
-    - profesores de [Redes](nombre_asignatura)
-    - profesores de [FP](nombre_asignatura)
-    - profesores de [ADDA](nombre_asignatura)
-    - profesores de [Calculo](nombre_asignatura)
-    - profesores de [Bases de Datos](nombre_asignatura)
-    - profesores de [Estadistica](nombre_asignatura)
-    - profesores de [Sistemas Operativos](nombre_asignatura)
-    - profesores de [Fundamentos de Programacion](nombre_asignatura)
-    - profesores de [Diseno y Pruebas](nombre_asignatura)
-    - profesores de [dp1](nombre_asignatura)
-    - profesores de [dp2](nombre_asignatura)
-    - profesores de [PSG](nombre_asignatura)
-    - profesores de [Logica](nombre_asignatura)
-    - el profesorado de [ADDA](nombre_asignatura)
     - que se estudia en [Fundamentos de Programacion](nombre_asignatura)
     - temario de [Redes](nombre_asignatura)
     - cuales son los temas de [Bases de Datos](nombre_asignatura)
@@ -182,13 +163,6 @@ nlu:
     - cuantos creditos tiene [Biologia](nombre_asignatura)
     - [Quimica Organica](nombre_asignatura) es obligatoria?
     - hablame de [Historia del Arte](nombre_asignatura)
-    - y quién da clase
-    - y quién la imparte
-    - quién da esa asignatura
-    - quién es el profesor
-    - quiénes son los profesores
-    - y los profesores
-    - y el profesorado
     - cómo se evalúa
     - y cómo se evalúa
     - cómo se aprueba
@@ -257,16 +231,12 @@ nlu:
     - [Calculo](nombre_asignatura) tiene 46 horas de teoria?
     - es verdad que [IS2](nombre_asignatura) tiene 36 horas?
     - [Fundamentos de Programacion](nombre_asignatura) son 12 creditos?
-    - quien da clase en el grupo 2 de [Proceso Software](nombre_asignatura)
-    - profesorado de [Proceso Software y Gestion](nombre_asignatura)
-    - quien imparte [Proceso Software](nombre_asignatura) en el grupo 1
     - como se evalua [Proceso Software](nombre_asignatura) grupo 3
     - evaluacion de [Proceso Software y Gestion](nombre_asignatura)
     - como se saca la nota en [Proceso Software](nombre_asignatura)
     - temario de [Proceso Software](nombre_asignatura)
     - bloques de [Proceso Software y Gestion](nombre_asignatura) grupo 1
     - que se estudia en [PSG1](nombre_asignatura)
-    - quien da [PSG](nombre_asignatura) en el grupo 2
     - el grupo 4 de [PSG1](nombre_asignatura) es en ingles?
     - el grupo 5 de [Redes](nombre_asignatura) es en ingles?
     - el grupo 4 de [Circuitos](nombre_asignatura) se da en ingles?
@@ -277,6 +247,53 @@ nlu:
     - [Estadistica](nombre_asignatura) grupo 5 en que idioma se da?
     - en que planta esta la aula A1.10
     - La aula A1.10 donde esta
+    # ─── Casos reales observados en conversation_log (2026-04) ──────────
+    # Variantes de "cómo se evalúa" (acentos, typos, imperfecto, plural con
+    # dos asignaturas), preguntas ultracortas que son solo un alias, y
+    # parafraseos del tipo "háblame de X" / "qué se hace en X".
+    - Cómo se evalúa [DP1](nombre_asignatura)
+    - cómo se evaluaba [DP1](nombre_asignatura)
+    - Cómo se evaluaba [DP1](nombre_asignatura)?
+    - Cómo se evaluaban [DP1](nombre_asignatura) y [PSG2](nombre_asignatura)?
+    - Cómo se evalúa [DP2](nombre_asignatura)?
+    - Como se evalua [dp](nombre_asignatura)
+    - Como se evalua [dp](nombre_asignatura)?
+    - como se evalua [dp](nombre_asignatura)?
+    - como se evalua [algebra](nombre_asignatura)
+    - Como se evalua [fp](nombre_asignatura)
+    - como se evalua [ispp](nombre_asignatura)
+    - Dime la evaluacion de [ispp](nombre_asignatura)
+    - dime como se evalua [algebr](nombre_asignatura)
+    - Cuantos creditos tiene [algebra](nombre_asignatura)
+    - Pero qué se hace en [dp1](nombre_asignatura)?
+    - Pero qué tecnología usa? Dame ejemplos
+    - No, me refería a [dp1](nombre_asignatura), si se usa spring boot o qué se usa
+    - Que dificultad tiene [DP](nombre_asignatura) respecto a [MSN](nombre_asignatura)?
+    - Que evaluación tenia [DP](nombre_asignatura) antes de que se partiera la asignatura?
+    - Cuantas convocatorias puedo ir a [FP](nombre_asignatura)?
+    - Háblame de [DP2](nombre_asignatura)
+    - Háblame de [IISSI1](nombre_asignatura)
+    - Háblame de [IISSI2](nombre_asignatura)
+    - Háblame de [ISSI2](nombre_asignatura)
+    - Me gustaría saber sobre qué va la asignatura de [ISSI-2](nombre_asignatura)
+    - Quiero saber sobre qué va la asignatura [IISSI2](nombre_asignatura)
+    # Alias sueltos como mensaje (follow-up implícito con ultimo_nombre_asignatura).
+    - [PD](nombre_asignatura)?
+    - [adda](nombre_asignatura)
+    - [fp](nombre_asignatura)
+    - [matematicas 1](nombre_asignatura)
+    - [Diseño y Pruebas I](nombre_asignatura)
+    - Y de [Estadística](nombre_asignatura)?
+    # ─── Cat 1: "qué es X" debe ir a ficha (post-eval E-P09) ─────────────
+    - qué es [DP1](nombre_asignatura)
+    - qué es [FP](nombre_asignatura)
+    - qué es [PSG2](nombre_asignatura)
+    - qué es [Redes](nombre_asignatura)
+    # ─── Cat 1: "qué asignatura es <código>" (post-eval E-P12) ──────────
+    - qué asignatura es la [2050010](nombre_asignatura)
+    - qué asignatura es [2050035](nombre_asignatura)
+    - qué es la asignatura [2050006](nombre_asignatura)
+    - información sobre el código [2060001](nombre_asignatura)
 
 # =============================================================================
 # INTENT 1.b: HORARIO DE ASIGNATURA - Pregunta por horario/aula/dia de una
@@ -382,6 +399,34 @@ nlu:
     - qué horario tiene esa
     - y los horarios
     - en qué días se imparte esa
+    # ─── Casos reales observados en conversation_log (2026-04) ──────────
+    # Preguntas por aula/laboratorio/hora con asignatura explícita, incluyendo
+    # referencia temporal ("próximo lunes") y grupo alfabético.
+    - A qué hora tengo [SI](nombre_asignatura)
+    - A que hora es [FP](nombre_asignatura) el próximo lunes
+    - a qué hora era mi laboratorio de [DP1](nombre_asignatura)
+    - cuándo tenemos laboratorio de [SO](nombre_asignatura) los del grupo b?
+    - Donde es mi laboratorio de [matemática discreta](nombre_asignatura) de primero
+    - Donde son las practicas de [Adda](nombre_asignatura)
+    - En q aula se imparte [ispp](nombre_asignatura)
+    - En qué laboratorio son las practicas de [FP](nombre_asignatura)?
+    - Dime cuál es la clase de laboratorio de [TIS](nombre_asignatura)
+    - Dime el horario de [SI](nombre_asignatura) GRUPO 3
+    - Dime horario de [SI](nombre_asignatura) para la letra T del dni
+    # ─── Cat 1: "cuándo tenemos X" (post-eval HA-P07) ────────────────────
+    - cuándo tenemos [Bases de Datos](nombre_asignatura)
+    - cuándo tenemos [Lógica](nombre_asignatura) este año
+    - cuándo tenemos [SO](nombre_asignatura)
+    # ─── Cat 1: "laboratorio de X" / "lab de X" (post-eval HA-P10, HA-W06)
+    - laboratorio de [Cálculo](nombre_asignatura)
+    - laboratorio de [Estadística](nombre_asignatura) grupo 2
+    - laboratorio de [Algebra](nombre_asignatura) grupo 1
+    - lab de [DP1](nombre_asignatura) grupo 3
+    - labs de [Redes](nombre_asignatura)
+    # ─── Cat 1: día con typo no debe robar la entidad (post-eval HA-W04)
+    - qué aula es [SO](nombre_asignatura) los marrtes
+    - donde tenemos [DP1](nombre_asignatura) los miercoles
+    - [FP](nombre_asignatura) los lunees
 
 # =============================================================================
 # INTENT 2: LISTADO - Pide una LISTA de asignaturas con filtros
@@ -486,6 +531,15 @@ nlu:
     - ensenname todas las asignaturas
     - dame todas las asignaturas del grado
     - quiero todas las asignaturas
+    # ─── Casos reales observados en conversation_log (2026-04) ──────────
+    - Dame las optativas de cuarto
+    - Cuales son las asignaturas de 1º?
+    - Cuáles son las asignaturas del grado desglosadas por curso académico?
+    # ─── Cat 1: "qué optativas hay" como query corta (post-eval L-P03) ──
+    - qué optativas tiene la carrera
+    - lista de optativas del grado
+    - muéstrame las optativas
+    - qué optativas se pueden elegir
 
 # =============================================================================
 # INTENT 3: CONTEO - Pregunta por CANTIDAD de asignaturas

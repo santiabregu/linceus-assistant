@@ -140,3 +140,17 @@ nlu:
     - y esa asignatura que horario tiene
     - y cuando es esa
     - y en que aula es esa
+    # ─── Casos reales observados en conversation_log (2026-04) ──────────
+    # Horario personal: sin asignatura concreta, solo curso/grupo/día.
+    - Horario de 3º grupo 2
+    - horario de 3º 2 grupo
+    - horario curso 4 grupo 1
+    - dame el horario del gruo 1
+    - grupo 1 horario
+    - grupo 2
+    - cual es mi horario
+    - que horario semanal tengo si soy del grupo 1
+    - Que horario tiene?
+    - Y si estoy en el grupo 15?
+    - Pertenecía al grupo 2 no?
+    - Horarios de las asignaturas del segundo cuatrimestre de formación básica

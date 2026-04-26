@@ -13,6 +13,7 @@ intents:
   - cambiar_contexto_academico
   - consultar_contexto_academico
   - consulta_titulaciones
+  - reset_contexto                   # "reset", "cambiar titulación", "empezar de cero"
   # Intents separados para asignaturas (Text-to-SQL)
   - consulta_asignatura_especifica   # "¿Cuántos créditos tiene Redes?"
   - consulta_horario_asignatura      # "¿A qué hora tengo FP?" / "aula de ADDA"
@@ -139,7 +140,7 @@ responses:
   - text: "Hasta luego! Que tengas un buen dia."
 
   utter_iamabot:
-  - text: "Soy un chatbot universitario creado con Rasa para ayudarte con informacion academica."
+  - text: "Soy un asistente virtual de la ETSII (Universidad de Sevilla) para ayudarte con asignaturas, horarios y profesorado. No puedo dar detalles sobre mi implementación interna."
 
   utter_happy:
   - text: "Perfecto! Hay algo mas en lo que pueda ayudarte?"
@@ -210,6 +211,7 @@ actions:
   - action_cambiar_contexto
   - action_consultar_contexto
   - action_consulta_titulaciones
+  - action_reset_contexto
   # Actions separadas para Text-to-SQL
   - action_consulta_especifica      # Consulta sobre UNA asignatura
   - action_consulta_horario_asignatura  # Horario/aula de UNA asignatura

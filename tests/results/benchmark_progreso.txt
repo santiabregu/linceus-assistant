@@ -1,0 +1,1 @@
+[DONE] 151 turnos en 36 min. JSONL: C:\Users\santi\Desktop\cuarto\TFG\linceus-assistant\tests\results\benchmark_turnos.jsonl

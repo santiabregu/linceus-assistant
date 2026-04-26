@@ -202,6 +202,68 @@ def obtener_perfil_profesor(slug: str) -> dict:
     return perfil
 
 
+def obtener_docencia(slug: str) -> list[dict]:
+    """
+    Scrapea la sección "Docencia > Asignaturas que imparte" del perfil us.es.
+
+    Estructura HTML esperada:
+      <h3 class="field-group-toggler">Asignaturas que imparte</h3>
+      <div class="field-group-wrapper">
+        <ul class="links field__items">
+          <li><a href="/estudiar/.../grado-en-xxx-YYYY/CODIGO">Nombre</a></li>
+          ...
+        </ul>
+      </div>
+
+    Returns: [{"codigo": "2050001", "nombre": "...", "titulacion_slug": "grado-en-..."}, ...]
+    Devuelve lista vacía si el perfil no tiene sección Docencia.
+    """
+    url = f"{BASE}/trabaja-en-la-us/directorio/{slug}"
+    soup = _get_soup(url)
+
+    h3 = soup.find(
+        "h3",
+        class_="field-group-toggler",
+        string=lambda s: s and "Asignaturas que imparte" in s,
+    )
+    if not h3:
+        return []
+
+    container = h3.find_parent("div", class_="panel-title")
+    if not container:
+        return []
+
+    resultados: list[dict] = []
+    vistos: set[str] = set()
+
+    for a in container.find_all("a", href=True):
+        href = a["href"]
+        # Formato esperado:
+        # /estudiar/que-estudiar/oferta-de-grados/<slug-titulacion>/<codigo>
+        m = re.match(
+            r"^/estudiar/que-estudiar/oferta-de-grados/([^/]+)/(\d{6,8})/?$",
+            href,
+        )
+        if not m:
+            continue
+        titulacion_slug = m.group(1)
+        codigo = m.group(2)
+        # Evita duplicados exactos (mismo código listado dos veces en la ficha).
+        clave = f"{codigo}|{titulacion_slug}"
+        if clave in vistos:
+            continue
+        vistos.add(clave)
+
+        nombre = " ".join(a.get_text(strip=True).split())
+        resultados.append({
+            "codigo": codigo,
+            "nombre": nombre,
+            "titulacion_slug": titulacion_slug,
+        })
+
+    return resultados
+
+
 def _extraer_tras_etiqueta(texto: str, etiqueta: str) -> str | None:
     """
     Busca 'Etiqueta\\n<valor>' en el texto y devuelve el valor (primera linea no vacia).

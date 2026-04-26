@@ -26,10 +26,6 @@ from ..shared.config import BotConfig, ALIAS_ASIGNATURAS
 from ..shared.db import db_client
 
 
-# ============================================================================
-# UTILIDADES
-# ============================================================================
-
 def _detectar_grupo(texto: str) -> Optional[str]:
     """
     Detecta si el usuario menciona un grupo específico en su mensaje.
@@ -99,23 +95,18 @@ def obtener_historial_reciente(tracker, max_turnos: int = 2) -> str:
     return "\n".join(lineas)
 
 
-def _contar_turnos_desde_slot(tracker, slot_name: str) -> int:
-    """
-    Cuenta turnos de usuario desde la última vez que se seteó el slot.
-    Usado para determinar si el slot es reciente (seguimiento) o stale.
-    """
-    turnos = 0
-    for event in reversed(tracker.events):
-        if event.get("event") == "user":
-            turnos += 1
-        if event.get("event") == "slot" and event.get("name") == slot_name:
-            return turnos
-    return 999
+from ..shared.follow_up import (  # noqa: E402,F401
+    _contar_turnos_desde_slot,
+    comprobar_titulacion,
+)
+
+
+TITULACIONES_BOT = ("GII-IS", "GII-TI", "GII-IC")
 
 
 def _cargar_titulaciones_desde_bd() -> List[Dict]:
     """
-    Obtiene todas las titulaciones activas de la BD.
+    Obtiene las titulaciones activas cubiertas por el chatbot.
     Devuelve lista de dicts con 'codigo' y 'nombre'.
     Devuelve lista vacía si hay error de conexión.
     """
@@ -125,7 +116,9 @@ def _cargar_titulaciones_desde_bd() -> List[Dict]:
             return []
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT codigo, nombre FROM titulaciones WHERE activa = true ORDER BY nombre"
+            "SELECT codigo, nombre FROM titulaciones "
+            "WHERE activa = true AND codigo = ANY(%s) ORDER BY nombre",
+            (list(TITULACIONES_BOT),),
         )
         filas = cursor.fetchall()
         cursor.close()
@@ -150,28 +143,6 @@ def _construir_botones_titulaciones() -> List[Dict[str, str]]:
         {"title": "Tecnologías Informáticas (GII-TI)", "payload": "GII-TI"},
         {"title": "Ingeniería de Computadores (GII-IC)", "payload": "GII-IC"},
     ]
-
-
-def comprobar_titulacion(
-    tracker, dispatcher
-) -> Tuple[Optional[str], List]:
-    """
-    Comprueba si el usuario ya eligió titulación.
-    Si no, pide que la elija con botones.
-
-    Devuelve (codigo_titulacion, eventos_rasa).
-    """
-    titulacion = tracker.get_slot("contexto_titulacion")
-
-    if not titulacion:
-        botones = _construir_botones_titulaciones()
-        dispatcher.utter_message(
-            text="Antes de consultar asignaturas, necesito saber tu titulación:",
-            buttons=botones
-        )
-        return None, []
-
-    return titulacion, []
 
 
 def _extraer_multiples_nombres(pregunta: str, titulacion: str) -> List[str]:
@@ -259,9 +230,7 @@ def extraer_nombre_asignatura(tracker, titulacion_detectada_en_mensaje: bool = F
     return mejor
 
 
-# ============================================================================
-# RAG: BÚSQUEDA EN PLANES DOCENTES
-# ============================================================================
+# ── RAG: búsqueda en planes docentes ──
 
 def _resolver_nombre_desde_texto(pregunta: str, titulacion: str) -> Optional[str]:
     """
@@ -450,8 +419,21 @@ def resolver_asignatura(
     if not exito or not resultados:
         return None, nombre_asignatura
 
-    # 8. Si hay múltiples resultados, reordenar por fuzzy match
+    # 8. Si hay múltiples resultados, reordenar por fuzzy match.
     if len(resultados) > 1:
+        # 8a. Match exacto contra el nombre que estamos resolviendo: si una de
+        # las filas se llama EXACTAMENTE como `nombre_asignatura` (post-alias /
+        # post-seguimiento), devolverla sin pasar por fuzzy. Evita que en el
+        # seguimiento "Administración de Empresas" se reordene a "Ampliación
+        # de Administración de Empresas" porque el ILIKE %nombre% trae ambas.
+        # Aplica a cualquier asignatura cuyo nombre sea prefijo de otra (AE/AAE,
+        # IA/AIA, BD/CBD, IS/ISPP…).
+        objetivo = normalizar_texto(nombre_asignatura)
+        for r in resultados:
+            if normalizar_texto(r.get('nombre', '')) == objetivo:
+                print(f"   → Match exacto: '{r.get('nombre')}' (sin reordenar fuzzy)")
+                return r, nombre_asignatura
+
         from rapidfuzz import fuzz
         pregunta_norm = normalizar_texto(pregunta)
         resultados.sort(
@@ -493,7 +475,10 @@ INFORMACIÓN DEL PLAN DOCENTE:
 
 REGLAS:
 - Responde de forma natural, cercana y concisa
-- Usa solo la información proporcionada, no inventes datos
+- **PROHIBIDO INVENTAR DATOS.** Si la información proporcionada no contiene
+  un dato concreto que el usuario pide (nombre de profesor, email, créditos,
+  cuatrimestre…), NO lo completes con un valor plausible. Di explícitamente
+  que ese dato no consta.
 - Puedes usar markdown para formatear (negritas, listas)
 - No menciones que consultaste un "plan docente" ni "chunks"
 - No saludes (nada de "¡Hola!", "Hola!", "Buenos días", etc.) — ve directo a la respuesta
@@ -513,30 +498,34 @@ Respuesta:"""
     return respuesta.strip() if respuesta else None
 
 
-# ============================================================================
-# HELPER: RESPUESTA DE HORARIO DE ASIGNATURA
-# ============================================================================
-# La detección de intent vive en el NLU (intent `consulta_horario_asignatura`);
-# este helper solo formula la respuesta a partir de una asignatura ya resuelta
-# y un grupo opcional. Lo usan `ActionConsultaHorarioAsignatura` y
-# potencialmente futuros Actions que necesiten formatear un horario puntual.
+# ── Helper: respuesta de horario de asignatura ──
+# La detección de intent vive en el NLU (`consulta_horario_asignatura`).
+# Este helper solo formula la respuesta a partir de una asignatura resuelta.
 
 
 def _responder_horario_asignatura(
     pregunta: str, asignatura: dict, titulacion: str,
     grupo: Optional[str] = None,
+    cuatrimestre: Optional[int] = None,
+    cuatri_explicito: bool = True,
 ) -> Optional[str]:
     """
     Consulta la tabla horarios para una asignatura y genera respuesta con LLM.
     Retorna la respuesta o None si no hay datos.
+
+    `cuatrimestre` filtra los horarios devueltos. Si `cuatri_explicito=False`,
+    el aviso correspondiente se incluye en el texto enviado al LLM.
     """
     from ..horarios.actions import (
         _query_asignatura as query_horario_asig,
         _query_grupos_de_asignatura,
         _datos_asignatura_a_texto,
+        _detectar_filtro_aula,
         _generar_respuesta_horario,
         ALIAS_ASIGNATURAS,
     )
+
+    filtro_aula = _detectar_filtro_aula(pregunta)
 
     nombre = asignatura.get('nombre', '')
     nombre_norm = normalizar_texto(nombre)
@@ -557,7 +546,9 @@ def _responder_horario_asignatura(
             grupo_int = int(m.group(1))
 
     if alias_encontrado:
-        resultados = query_horario_asig(titulacion, alias_encontrado, grupo_int)
+        resultados = query_horario_asig(
+            titulacion, alias_encontrado, grupo_int, cuatrimestre=cuatrimestre,
+        )
         if not resultados and grupo_int:
             # ¿Existe la asignatura pero no ese grupo?
             nombre_real, grupos = _query_grupos_de_asignatura(titulacion, alias_encontrado)
@@ -567,7 +558,9 @@ def _responder_horario_asignatura(
                 lista_grupos = ", ".join(grupos)
                 return (f"**{nombre_real}** en {nombre_tit} no tiene grupo {grupo_int}. "
                         f"Grupos disponibles: {lista_grupos}.")
-        datos_texto = _datos_asignatura_a_texto(resultados, alias_encontrado, titulacion)
+        datos_texto = _datos_asignatura_a_texto(
+            resultados, alias_encontrado, titulacion, filtro_aula=filtro_aula,
+        )
     else:
         # Fallback: buscar directamente por nombre en la tabla horarios
         from ..shared.db import db_client
@@ -576,10 +569,12 @@ def _responder_horario_asignatura(
             return None
         try:
             cur = conn.cursor()
+            # h.cuatrimestre se selecciona para que `_datos_asignatura_a_texto`
+            # pueda etiquetar cada fila con C1/C2 (D-066, D-067).
             sql = """
                 SELECT h.dia_semana, h.hora_inicio, h.hora_fin,
                        a.nombre, COALESCE(au.codigo, '') AS aula,
-                       gc.codigo AS grupo, a.curso
+                       gc.codigo AS grupo, a.curso, h.cuatrimestre
                 FROM horarios h
                 JOIN grupos_clase gc ON h.grupo_id = gc.id
                 JOIN asignaturas a ON gc.asignatura_id = a.id
@@ -593,6 +588,9 @@ def _responder_horario_asignatura(
             if grupo_int:
                 sql += " AND gc.codigo = %s"
                 params.append(str(grupo_int))
+            if cuatrimestre:
+                sql += " AND h.cuatrimestre = %s"
+                params.append(str(cuatrimestre))
             sql += " ORDER BY gc.codigo, h.dia_semana, h.hora_inicio"
             cur.execute(sql, params)
             resultados = cur.fetchall()
@@ -623,17 +621,29 @@ def _responder_horario_asignatura(
             lista_grupos = ", ".join(grupos_disponibles)
             return (f"**{nombre}** en {nombre_tit} no tiene grupo {grupo_int}. "
                     f"Grupos disponibles: {lista_grupos}.")
-        datos_texto = _datos_asignatura_a_texto(resultados, nombre, titulacion)
+        datos_texto = _datos_asignatura_a_texto(
+            resultados, nombre, titulacion, filtro_aula=filtro_aula,
+        )
 
     if not resultados:
         return None
 
+    # Anteponer cabecera de cuatrimestre al texto de datos para que el LLM
+    # la incorpore a la respuesta. Solo cuando hay filtro activo.
+    if cuatrimestre:
+        if cuatri_explicito:
+            cabecera = f"(Cuatrimestre {cuatrimestre})\n"
+        else:
+            cabecera = (
+                f"(Cuatrimestre {cuatrimestre} — el activo según la fecha actual; "
+                f"si quieres el otro cuatrimestre, indícalo en la pregunta)\n"
+            )
+        datos_texto = cabecera + datos_texto
+
     return _generar_respuesta_horario(pregunta, datos_texto)
 
 
-# ============================================================================
-# ACTION: CONSULTA ESPECÍFICA
-# ============================================================================
+# ── Action: consulta específica ──
 
 class ActionConsultaEspecifica(Action):
     """
@@ -884,9 +894,7 @@ class ActionConsultaEspecifica(Action):
         ]
 
 
-# ============================================================================
-# ACTION: LISTADO DE ASIGNATURAS
-# ============================================================================
+# ── Action: listado de asignaturas ──
 
 class ActionConsultaListado(Action):
     """
@@ -950,11 +958,15 @@ class ActionConsultaListado(Action):
         hay_mas = len(resultados) > MAX_MOSTRAR
         datos_a_mostrar = resultados[:MAX_MOSTRAR] if hay_mas else resultados
 
-        # Generar respuesta natural con Ollama
+        # Generar respuesta natural con Ollama. Pasamos `total_resultados`
+        # para que el prompt avise al LLM de que está viendo una muestra y
+        # no afirme propiedades sobre el conjunto completo (p.ej. "todas
+        # son de 1º") cuando solo ve los primeros 8 ordenados por curso.
         respuesta = generar_respuesta_natural(
             pregunta=pregunta,
             datos=datos_a_mostrar,
-            tipo='listado'
+            tipo='listado',
+            total_resultados=len(resultados),
         )
 
         dispatcher.utter_message(
@@ -972,9 +984,7 @@ class ActionConsultaListado(Action):
         return eventos_contexto
 
 
-# ============================================================================
-# ACTION: CONTEO DE ASIGNATURAS
-# ============================================================================
+# ── Action: conteo de asignaturas ──
 
 class ActionConsultaConteo(Action):
     """
@@ -1085,9 +1095,7 @@ class ActionConsultaConteo(Action):
         return eventos_contexto
 
 
-# ============================================================================
-# ACTION: MOSTRAR TODAS (PAGINACIÓN)
-# ============================================================================
+# ── Action: mostrar todas (paginación) ──
 
 class ActionMostrarTodasAsignaturas(Action):
     """
@@ -1126,9 +1134,7 @@ class ActionMostrarTodasAsignaturas(Action):
         return [SlotSet("ultimos_resultados_asignaturas", None)]
 
 
-# ============================================================================
-# ACTION: HORARIO/AULA DE UNA ASIGNATURA
-# ============================================================================
+# ── Action: horario/aula de una asignatura ──
 
 class ActionConsultaHorarioAsignatura(Action):
     """
@@ -1211,8 +1217,19 @@ class ActionConsultaHorarioAsignatura(Action):
                 )
             return eventos_contexto
 
+        # Filtro de cuatrimestre: explícito si lo menciona la pregunta,
+        # automático según fecha actual si no (D-066, D-067).
+        from ..horarios.actions import (
+            _detectar_cuatrimestre, _cuatrimestre_actual_por_fecha,
+        )
+        cuatrimestre = _detectar_cuatrimestre(pregunta)
+        cuatri_explicito = cuatrimestre is not None
+        if not cuatri_explicito:
+            cuatrimestre = _cuatrimestre_actual_por_fecha()
+
         respuesta = _responder_horario_asignatura(
-            pregunta, asignatura, contexto_titulacion, grupo_detectado
+            pregunta, asignatura, contexto_titulacion, grupo_detectado,
+            cuatrimestre=cuatrimestre, cuatri_explicito=cuatri_explicito,
         )
 
         if respuesta:

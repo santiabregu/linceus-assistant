@@ -149,6 +149,48 @@ class ActionConsultarContexto(Action):
         return []
 
 
+class ActionResetContexto(Action):
+    """
+    Reset suave del contexto: limpia slots de seguimiento y vuelve a mostrar
+    los botones de elección de titulación. Disparado por `reset_contexto`
+    ("reset", "cambiar titulación", "empezar de cero", etc.).
+
+    Mantiene la sesión de Rasa pero deja el bot como recién iniciado: el
+    siguiente click selecciona la titulación nueva sin ningún slot de la
+    conversación previa interfiriendo.
+    """
+
+    SLOTS_A_LIMPIAR = (
+        "contexto_titulacion",
+        "ultimo_codigo_consultado",
+        "ultimo_nombre_asignatura",
+        "ultimos_resultados_asignaturas",
+        "asignaturas_memoria",
+        "ultima_action_ejecutada",
+        "ultimo_curso_consultado",
+        "ultimo_grupo_consultado",
+        "ultimo_profesor_consultado",
+        "ultima_sugerencia",
+    )
+
+    def name(self) -> Text:
+        return "action_reset_contexto"
+
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        # Importación local para evitar el ciclo asignaturas↔contexto.
+        from ..asignaturas.actions import _construir_botones_titulaciones
+
+        botones = _construir_botones_titulaciones()
+        dispatcher.utter_message(
+            text=("Empezamos de cero. Elige la titulación que quieres "
+                  "consultar:"),
+            buttons=botones,
+        )
+        return [SlotSet(slot, None) for slot in self.SLOTS_A_LIMPIAR]
+
+
 class ActionConsultaTitulaciones(Action):
     """
     Consulta las titulaciones disponibles en la base de datos.

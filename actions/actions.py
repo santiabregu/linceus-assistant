@@ -10,6 +10,7 @@ from .contexto import (
     ActionCambiarContexto,
     ActionConsultarContexto,
     ActionConsultaTitulaciones,
+    ActionResetContexto,
 )
 
 from .horarios import (
@@ -44,6 +45,7 @@ __all__ = [
     'ActionCambiarContexto',
     'ActionConsultarContexto',
     'ActionConsultaTitulaciones',
+    'ActionResetContexto',
     'ActionConsultaHorario',
     # 'ActionMultiIntent',  # desactivado temporalmente
     'ActionConsultaProfesor',

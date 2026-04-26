@@ -276,12 +276,276 @@ Se evaluaron tres alternativas:
 
 **Archivos:** `rag/buscar.py` (eliminada `_seccion_preferida`; `RERANK_WEIGHTS` rebalanceado)
 
+### D-060: Poblar `profesor_asignatura` desde us.es (docencia estructurada)
+
+**Problema:** La tabla `profesor_asignatura` estaba vacía y el chatbot no podía responder preguntas como "¿A qué hora son las tutorías de Administración de Empresas?" — requieren saber qué profesores imparten una asignatura para cruzar con la tabla `tutorias`. Las alternativas eran:
+- Seguir tirando del RAG runtime para cada turno (3-4 llamadas LLM por consulta, alucinaciones conocidas P3 del piloto, latencia alta).
+- Poblar `profesor_asignatura` offline con datos deterministas y hacer JOIN en SQL en runtime (1 query).
+
+**Decisión:** Poblar offline desde `www.us.es/trabaja-en-la-us/directorio/<slug>`. Cada perfil PDI tiene una sección "Asignaturas que imparte" con una lista `<li><a href="/estudiar/.../grado-en-xxx/CODIGO">nombre</a></li>`. El **código** es el mismo `asignaturas.codigo` que tenemos en BD, así que el match es exacto — no fuzzy. El href indica también la titulación, así que se puede filtrar por grado.
+
+**Sub-problema descubierto:** Los profes existentes (importados en S6 con scrapers por departamento: LSI, DTE, CCIA, MA1) tienen `enlace_perfil` apuntando a `departamento.us.es/lsi/profesor/...`, `cs.us.es/perfiles/...` o `investigacion.us.es/sisius/...` — **ninguno** apunta al directorio PDI de us.es. El scrape de docencia necesita el slug us.es. 0/95 profes ETSII tenían enlace us.es.
+
+**Solución en dos pasos:**
+
+1. **`POST /api/admin/centros/<id>/refresh_enlaces_us`**: para cada profe del centro sin enlace us.es, busca en el directorio PDI por `nombre_completo` y guarda el slug si encuentra exactamente 1 coincidencia fiable.
+2. **`POST /api/admin/titulaciones/<id>/sync_docencia`**: para cada profe con enlace us.es, scrapea "Asignaturas que imparte" y hace upsert en `profesor_asignatura` solo para las asignaturas que pertenecen a la titulación elegida (filtro por `codigo`).
+
+**Detalles de implementación:**
+
+- **No usamos el filtro `centro_nombre` de la API us.es** aunque está disponible: ensucia el resultado incluyendo entradas placeholder como "PERSONAL DE ADMINISTRACIÓN Y SERVICIOS" como coincidencia. Se filtran por lista negra de slugs y se confía en la búsqueda por nombre.
+- **UNIQUE constraint `(profesor_id, asignatura_id, curso_academico, grupo)`** ya existía en `profesor_asignatura`. us.es no da grupo, así que insertamos con `grupo = NULL`. En Postgres `NULL ≠ NULL` en UNIQUE, así que un `INSERT` ciego generaría duplicados; por eso se comprueba con `SELECT ... WHERE grupo IS NULL` antes de insertar.
+- **Flujo síncrono con spinner** (coherente con D-042). ~95 perfiles × 0.3s pausa ≈ 30s por sync. Sin colas ni polling.
+- **Botones UI**:
+  - "Refrescar enlaces us.es" en la vista Profesores → Centro (junto a "Enriquecer desde us.es").
+  - "Cargar docencia" en la vista Asignaturas → Titulación (junto a "Vectorizar planes docentes" y "Enriquecer datos").
+
+**Alternativas descartadas:**
+- **Pipeline RAG runtime** ([`_resolver_profesor_via_rag` en `actions/profesores/actions.py`](../../../actions/profesores/actions.py)): funciona pero trae alucinaciones (autores de bibliografía clasificados como profesorado, int. 24 del piloto) y añade 3-4 llamadas LLM por turno.
+- **Añadir docencia al `enrich_profesores` existente** (D-043): mezcla datos estables (email, despacho, categoría) con datos de ciclo anual (docencia). Refrescar docencia cada curso obligaría a re-scrapear todo. Separar permite pipelines independientes.
+- **Un único endpoint combinado "refresh + sync"**: por si el `refresh_enlaces` falla, no perdemos la oportunidad de sincronizar los que sí tienen enlace.
+
+**Escalabilidad:** Añadir una titulación nueva es automático — el endpoint `sync_docencia` solo necesita `titulacion_id` y opera contra el mapa `{codigo → asignatura_id}` de esa titulación. No hay código específico por grado.
+
+**Archivos:**
+- `admin/us_directorio_scraper.py` (nueva función `obtener_docencia(slug)`)
+- `admin/routes/profesores.py` (2 endpoints nuevos: `refresh_enlaces_us`, `sync_docencia`)
+- `frontend/admin.js` (2 modales: `abrirRefreshEnlaces`, `abrirCargarDocencia` + 2 botones en vistas existentes)
+
+### D-061: Tutorías fuera del scope del TFG — redirección al email del profesor
+
+**Problema:** La tabla `tutorias` está vacía. Preguntas como "a qué hora son las tutorías de DP1" ejecutaban una SQL generada por LLM con JOIN sobre `tutorias`, devolvían 0 filas y el bot respondía *"No encontré profesores asignados a Diseño y Pruebas I. Es posible que aún no se hayan cargado las asignaciones."* — mensaje engañoso porque los profesores SÍ están en `profesor_asignatura` (cargados por D-060); lo que falta son los horarios de tutorías.
+
+**Por qué no se carga `tutorias`:** el directorio PDI de us.es **no contiene** horarios de tutorías. Las fuentes son las webs departamentales (LSI, DTE, CCIA, MA1), cada una con formato distinto — 4 scrapers específicos que dependen del HTML de cada depto. Mantener esa infraestructura solo para tutorías queda fuera del scope de cierre del TFG.
+
+**Decisión:** Cuando la SQL devuelve 0 filas y hay contexto (asignatura o profesor), reintentar con un **fallback sin JOIN sobre `tutorias`**. Si ese segundo intento devuelve profesores, significa que existen datos básicos pero no tutorías. En ese caso el LLM de respuesta recibe un flag `tutorias_no_disponibles=True` que lo instruye a:
+- No inventar horarios ni ubicaciones de tutorías.
+- Indicar claramente que no se dispone del dato.
+- Sugerir contactar al profesor por email (destacándolo).
+
+**Justificación:**
+- **Honestidad sobre inventar**: preferible "no lo sé, escríbele a X" que una respuesta fabricada.
+- **Cero deuda técnica adicional** — los scrapers departamentales se dejan como están en `knowledge_base/profesores_data/` sin integrarlos al flujo admin.
+- **Escalable**: si en el futuro se puebla `tutorias` (manual o via scraper), el flag se desactivará automáticamente al no dispararse el fallback.
+- **Defendible**: el bot ofrece el camino real para obtener el dato (el email del profesor, ya enriquecido por D-043).
+
+**Alternativas descartadas:**
+- **Scrapear las 4 webs departamentales de ETSII**: coste alto (4 scrapers con código distinto), baja robustez, solo aporta tutorías que el profesor ya publica en su email de firma.
+- **Responder con un mensaje hardcodeado "no tenemos tutorías"**: peor UX, el LLM ya tiene instrucciones claras vía prompt y adapta el fraseado al contexto de la pregunta.
+- **Detectar "tutorías" por keywords en el Action**: no escala y hereda los problemas de la detección textual rígida que hemos ido eliminando en esta iteración.
+
+**Archivos:** `actions/profesores/actions.py` (fallback SQL sin tutorías + flag al LLM), `knowledge_base/profesores_data/text_to_sql.py` (parámetro `tutorias_no_disponibles` en `generar_respuesta_natural`).
+
+### D-062: "Profesores de X" al intent `consulta_profesor` — pipeline SQL → RAG como red de seguridad
+
+**Problema:** Las preguntas "profesores de DP1", "el profesorado de EGC", "quién da FP", etc., estaban entrenadas en el intent `consulta_asignatura_especifica` y por tanto entraban por `ActionConsultaEspecifica`, que para esas preguntas dispara directamente RAG sobre el plan docente. Esto provocaba:
+- Información inventada (autores de bibliografía interpretados como profesorado — int. 24 del piloto y reciente confirmación con "los profesores de egc" → Kästner/Saake).
+- Cero uso de la tabla `profesor_asignatura` que acabábamos de poblar en D-060.
+- Respuestas inconsistentes entre "horario de DP1" (via `profesor_asignatura`) y "profesores de DP1" (via plan docente RAG).
+
+**Decisión:** Mover al intent `consulta_profesor` **todos los ejemplos** de NLU que pidan profesores/docencia de una asignatura, incluyendo:
+- Ejemplos con entidad explícita: "profesores de X", "el profesorado de X", "quién da X", "quién imparte X", "quién coordina X", variantes largas, variantes con grupo.
+- Follow-ups sin entidad: "y el profesorado", "y quién la imparte", "quién da esa asignatura" — antes eran follow-ups de `consulta_asignatura_especifica` y disparaban RAG. Ahora son follow-ups de `consulta_profesor` y el Action los resuelve contra `profesor_asignatura` usando el slot `ultimo_nombre_asignatura`.
+
+**Pipeline resultante en `ActionConsultaProfesor`**:
+
+1. **Routing inicial** — `_clasificar_necesita_rag` decide si la pregunta va directa al RAG. Dispara RAG si:
+   - La pregunta menciona términos que corresponden a datos no modelados en la tabla: `coordinador`, `coordinadora`, `coordina`, `suplente`, `suplentes`. Es un **mapeo determinista término→fuente**, no heurística de intención: estos roles no existen en el schema relacional.
+   - Hay nombre de profesor de 1 palabra ≤8 caracteres (ambigüedad típica de nombre de pila que el plan docente desambigua).
+2. **SQL principal** — text-to-SQL con JOIN `profesor_asignatura + tutorias + profesores`.
+3. **SQL sin tutorías** — si devuelve 0 (tabla `tutorias` vacía o sin match), reintenta sin ese JOIN. Si encuentra profesores, marca `tutorias_no_disponibles=True` y el LLM redirige al email (D-061).
+4. **RAG del plan docente como red de seguridad** — último recurso, solo si la asignatura no está cargada en `profesor_asignatura`. Extrae nombres del PDF y hace match contra tabla `profesores`.
+
+El RAG ya no es el flujo principal — es el fallback. Coincide con el criterio establecido: **usar datos estructurados siempre que existan, reservar RAG para lo que no se puede modelar en tablas**.
+
+**Nota sobre el cortocircuito de palabras:** se consideró un clasificador LLM semántico para cubrir paráfrasis ("responsable de X", "quién lleva X") pero se descartó por simplicidad: añadía latencia y no cubría casos reales observados. Si aparecen paráfrasis recurrentes se extiende la lista de términos o se introduce el clasificador entonces.
+
+**Justificación:** Separación limpia de intents por semántica de la pregunta: "información sobre la asignatura X" → ficha/plan docente; "profesores de la asignatura X" → tabla relacional. El argumento para memoria TFG es defendible: *"la tabla `profesor_asignatura` es fuente primaria (datos us.es oficiales). El pipeline RAG actúa como fallback cuando la asignatura no está cargada; desambigua profesores con nombres parciales ('Belén que da FP') y cubre asignaturas cuya docencia no aparece en el directorio PDI"*.
+
+**Alternativas descartadas:**
+- **Dejar el intent mezclado y delegar desde `ActionConsultaEspecifica`**: introduce un router implícito en medio del Action (más complejidad lógica, más difícil de seguir).
+- **Exclusivamente SQL sin RAG**: pierde cobertura cuando `profesor_asignatura` no se ha cargado para una asignatura (caso que se da con asignaturas sin docencia declarada en us.es).
+
+**Archivos:**
+- `data/nlu/asignaturas.yml` (~40 ejemplos eliminados)
+- `data/nlu/profesores.yml` (mismos ~40 ejemplos añadidos + nuevos follow-ups)
+- `actions/profesores/actions.py` (RAG como tercer fallback tras SQL + SQL-sin-tutorías)
+
+### D-063: Filtro por titulación uniforme en los 3 módulos
+
+**Problema:** Los módulos `asignaturas` y `horarios` (a) llamaban a `comprobar_titulacion` al inicio de cada Action para pedir la titulación con botones si el usuario no la había elegido, y (b) inyectaban `titulacion_id` en cada SQL generada. `ActionConsultaProfesor` hacía las dos cosas a medias:
+- Leía el slot pero no cortaba si era `None` — el Action corría igual.
+- El text-to-SQL no filtraba por titulación — el prompt ni siquiera exponía la columna `asignaturas.titulacion_id`.
+
+Con un solo grado cargado en `profesor_asignatura` el bug no se veía, pero al cargar GII-TI o GII-IC, "profesores de Estadística" podría mezclar profes de varias titulaciones.
+
+**Decisión:** Dos cambios simultáneos para dejar los 3 módulos coherentes:
+
+1. **Chequeo de titulación** — `comprobar_titulacion(tracker, dispatcher)` al inicio de `ActionConsultaProfesor`. Mismo patrón que los otros Actions.
+2. **Filtro de titulación en SQL** — vía prompt, no vía post-proceso:
+   - El schema del prompt ahora expone `asignaturas.titulacion_id` y añade la tabla `titulaciones`.
+   - Nueva instrucción (solo se añade si llega `contexto_titulacion`): "cuando hagas JOIN con `asignaturas`, haz también JOIN con `titulaciones` filtrando por `t_tit.codigo = '<código>'`". El código va literal en el prompt porque es controlado por nosotros y así simplifica los parámetros.
+   - El fallback SQL (`_fallback_sql` para "profesores por asignatura") también acepta `contexto_titulacion` y añade el JOIN con `titulaciones` cuando se le pasa.
+   - El Action propaga `titulacion` a `generar_sql_profesor` y al `_fallback_sql` "sin tutorías".
+
+**Justificación:** Inyectar el filtro vía prompt (no post-proceso como en `asignaturas`) es más simple aquí: sola llamada, el LLM entiende el schema, y la instrucción es determinista cuando temperature=0. No necesitamos el regex magic de `_inyectar_filtro_titulacion` porque no tenemos queries heredadas que adaptar.
+
+**Alternativas descartadas:**
+- **Post-proceso tipo `_inyectar_filtro_titulacion`**: demasiado invasivo para un prompt que ya se genera con instrucciones específicas.
+- **Dejar solo el chequeo y el filtro como pendiente**: tras analizarlo resultó ser ~15 líneas, no un proyecto.
+
+**Archivos:** `actions/profesores/actions.py` (~6 líneas), `knowledge_base/profesores_data/text_to_sql.py` (schema + instrucción condicional + rama de fallback).
+
+### D-066: Cuatrimestre como dimensión de horarios (perdida en S6)
+
+**Problema:** Detectado durante la fase de pruebas de aceptación (sesión 2026-04-25). El extractor de horarios ETSII (`admin/horarios_extractores/etsii.py`) parsea correctamente el cuatrimestre del PDF — los códigos de tabla son `xGy-Cz` con `z = 1|2` — y crea objetos `EntradaHorario(cuatrimestre=…)` (`base.py:33,236`). Sin embargo, al insertar en BD, la tabla `horarios` **no tenía columna `cuatrimestre`** y el campo se descartaba al persistir. El campo `grupos_clase.cuatrimestre` existía pero nunca fue concebido como dimensión de horario semanal — quedaba sin poblar (0/267) y resultaba irrelevante.
+
+**Síntoma observado en datos:** 9+ asignaturas con tres filas de `horarios` para el mismo grupo/día/hora (Fundamentos de Programación grupo 1 miércoles 10:40 → 3 filas). Esas filas son la misma asignatura impartida en distintas instancias temporales (C1, C2 y/o la versión "anual" `duracion='A'`) que al perder el cuatrimestre se mezclan. El bot devolvía el horario incorrecto durante el 50% del año.
+
+Este bug es residual de S6 (D-005), donde se diseñó la primera versión del extractor de horarios. La separación por cuatrimestre nunca llegó al schema porque las primeras consultas de prueba eran por asignatura cuatrimestral pura ("¿cuándo es Cálculo?") y no por horario semanal del alumno ("¿qué tengo el lunes?").
+
+**Decisión:** Hacer del cuatrimestre dimensión de primera clase, **a nivel de `horarios`**:
+
+1. **Migración SQL** (ejecutada manualmente en Supabase 2026-04-25):
+   ```sql
+   ALTER TABLE horarios ADD COLUMN cuatrimestre varchar(2);
+   ```
+2. **Modelo**: un mismo grupo de teoría es **una sola fila** en `grupos_clase` (la UNIQUE constraint `(asignatura_id, codigo, curso_academico, tipo)` ya lo imponía). Lo que cambia entre C1 y C2 no es el "grupo" como entidad — el alumno sigue cursando el grupo 1 de FP todo el año — sino su **horario semanal**. Por tanto el cuatrimestre vive en `horarios`. Una asignatura anual (`duracion='A'`) genera filas en `horarios` con `cuatrimestre='1'` y otras con `cuatrimestre='2'`, todas colgando del mismo `grupos_clase`.
+3. **Extractor** (`admin/horarios_extractores/base.py`):
+   - El cache `mapa_gc` mantiene la clave `(asignatura_id, codigo)` (sin cuatrimestre).
+   - El INSERT a `horarios` añade el campo `cuatrimestre`, leído de `EntradaHorario.cuatrimestre` que ya se parseaba correctamente.
+4. **Runtime** (pendiente, ver D-067): la query de horarios filtra por cuatrimestre o lo muestra como columna explícita en la respuesta. Sin esto el fix de ingesta no resuelve la experiencia del usuario.
+
+Se descartó la alternativa de duplicar `grupos_clase` por cuatrimestre (clave `(asig, codigo, cuatri)`) porque exigía relajar la UNIQUE constraint y multiplicaba filas que no aportan información nueva — el grupo de teoría "1" de FP es la misma entidad de gestión académica todo el curso.
+
+**Justificación:**
+
+- **Coste mínimo en ingesta:** una columna nullable en `horarios` y dos campos extra en los INSERT. Sin coste en queries existentes.
+- **Resuelve la causa raíz:** la información ya se extrae correctamente del PDF; el problema era de persistencia, no de parsing. El fix mantiene el extractor 95% intacto.
+- **Argumentable en la memoria:** el descubrimiento del bug **es** el caso de uso de las pruebas de aceptación — sirve como ejemplo concreto de por qué tener una suite estructurada importa, y se referenciará en el capítulo de pruebas.
+
+**Alternativas descartadas:**
+
+- **Tratar las asignaturas anuales (`duracion='A'`) como caso especial sin cuatrimestre:** no funciona porque incluso esas tienen horarios distintos en C1 vs C2 (p. ej. FP cambia de día/hora entre cuatrimestres). El cuatrimestre es siempre relevante a nivel de instancia de horario.
+- **Inferir el cuatrimestre en runtime desde la fecha del sistema:** falla durante exámenes (febrero-marzo) y vacaciones, donde "el horario actual" no aplica. Mejor persistir el dato y dejar que la action decida cómo mostrarlo.
+- **Borrar y re-scrapear todo:** sí se hace, pero como **consecuencia** del fix, no como alternativa. Se borran los 753 horarios actuales y se vuelven a importar con el extractor corregido. Validación: comprobar que las 9 asignaturas con duplicados ya no los tienen.
+
+**Archivos:**
+- Migración SQL ejecutada manualmente.
+- `admin/horarios_extractores/base.py` (3 ediciones: clave de `mapa_gc`, INSERT a `grupos_clase`, INSERT a `horarios`).
+- `actions/horarios/...` (pendiente, D-067).
+
+### D-064: RAG de profesores como vectorial puro — sin double-check en BD
+
+**Problema:** El pipeline establecido en D-062 tenía dos piezas que no envejecieron bien tras el despliegue:
+
+1. **Clasificador LLM `_clasificar_necesita_rag`**: decidía en runtime si entrar al flujo RAG. Coste de latencia (una llamada extra por turno) y falsos negativos cuando el nombre del profesor era ambiguo sin ser corto.
+2. **RAG "por keyword + cross-check en BD"** (antiguo `_resolver_profesor_via_rag`): usaba `_buscar_por_keywords` (no vectorial, no usa embeddings, no se beneficia del reranking D-058.b), y después cruzaba el texto recuperado contra la tabla `profesores` filtrando candidatos cuyo `nombre_normalizado` apareciera literalmente en los chunks. Resultado típico en producción (log de ejemplo):
+
+   ```
+   ⚠ RAG: ningún profesor de BD aparece en los chunks
+   ⚠ RAG no dio resultados, cayendo a text-to-SQL
+   ```
+
+   El cruce descartaba respuestas válidas cuando el chunk contenía el nombre pero en otro formato (acentos, orden, abreviaturas).
+
+**Decisión:** Simplificar el flujo RAG del Action de profesores a **búsqueda vectorial pura con reranking** (reutilizando `buscar_en_plan_docente`, mismo patrón que `ActionConsultaEspecifica`), y **eliminar el cross-check contra la tabla `profesores`**. El LLM de respuesta renderiza directamente desde los chunks.
+
+**Estructura resultante del `run()`**:
+
+1. **Atajo determinista** — si la pregunta menciona `coordinador`/`coordinadora`/`coordina`/`coordinan`/`suplente`/`suplentes` **y** la asignatura quedó resuelta aguas arriba → va directo al flujo RAG vectorial. No pasa por SQL. El mapeo término→fuente es el mismo de D-062 pero ahora es el único disparador explícito de RAG.
+2. **Flujo SQL normal** (text-to-SQL + fallback por apellido + fallback sin JOIN tutorías) para el resto de preguntas. Sin cambios respecto a D-060/D-061/D-063.
+3. **RAG vectorial como red de seguridad** — si la SQL devuelve cero filas y tenemos `codigo_asignatura`, dispara `buscar_en_plan_docente` y responde con un prompt específico para chunks (mismo estilo que `_generar_respuesta_rag` del módulo asignaturas).
+
+Se elimina del Action:
+- `_clasificar_necesita_rag` (clasificador LLM).
+- La versión antigua de `_resolver_profesor_via_rag` basada en `_buscar_por_keywords` + consulta SQL contra `profesores` + filtrado por aparición textual.
+
+Se añaden tres helpers mínimos en `actions/profesores/actions.py`:
+- `_pregunta_menciona_rol_rag(pregunta)` — chequeo de keywords determinista.
+- `_rag_chunks_plan_docente(pregunta, codigo, nombre)` — envoltorio de `buscar_en_plan_docente` con logs.
+- `_generar_respuesta_rag(pregunta, chunks, nombre)` — prompt espejo del de asignaturas (reglas, formato, aviso sobre `[bibliografia]`).
+
+**Justificación:**
+
+- **Evitar el LLM classifier**: el atajo por keywords ya cubría el 100% de los casos en que "coordinador/suplente" es disparador real; el clasificador añadía latencia (+1 turno al LLM) sin mejorar cobertura.
+- **Vectorial > keyword**: la búsqueda vectorial con reranking por sección (D-058.b) está mejor probada, produce logs consistentes con el resto del sistema ("Rerank (profesorado)"), y aprovecha los embeddings ya pagados durante la ingesta.
+- **No cruzar con BD**: filtrar los chunks por "tiene que aparecer un nombre que también esté en `profesores`" era defensivo pero introducía falsos negativos. El prompt del LLM ya incluye la regla de D-058.b ("los nombres en `[bibliografia]` son AUTORES, no profesores"); el filtrado duro extra era redundante y más frágil que la instrucción semántica. Si el usuario quiere datos de contacto del profesor (email, despacho, tutorías), formula una segunda pregunta y entra por el flujo SQL normal — que sigue siendo el primario.
+- **Alineación con `ActionConsultaEspecifica`**: ambas acciones ahora usan la misma función de búsqueda y el mismo patrón de render desde chunks. Menos superficie divergente que mantener.
+
+**Alternativas descartadas:**
+
+- **Mantener el clasificador LLM, solo cambiar keyword→vectorial**: no justificaba la latencia extra una vez que el atajo por keywords cubre los casos reales observados.
+- **Devolver chunks como dicts con forma de profesor y reutilizar `generar_respuesta_natural`**: pintar "pseudo-rows" (solo `nombre`/`apellidos` sin email/despacho) confundía al formateador, que asumía campos de BD. Más limpio usar un prompt específico de chunks.
+- **Hacer el RAG vectorial también el flujo principal (no solo fallback)**: el feedback del usuario fue explícito sobre preservar el pipeline SQL existente. La tabla `profesor_asignatura` poblada en D-060 sigue siendo la fuente primaria.
+
+**Relación con decisiones previas:**
+
+- Reemplaza la implementación de D-062 para el flujo RAG sin alterar su tesis (SQL primario, RAG como red de seguridad).
+- Preserva D-061 (redirección al email cuando no hay tutorías) y D-063 (filtro por titulación en el SQL).
+- Consolida D-058.b (sección como señal de reranking, no de filtrado) como el único mecanismo que protege del problema "bibliografía interpretada como profesorado".
+
+**Archivos:**
+- `actions/profesores/actions.py` (-169 / +94 líneas: eliminación del clasificador LLM y del cross-check; adición de los tres helpers vectoriales).
+
+**Problema:** Durante la validación del piloto aparecieron varias mal-clasificaciones aunque los intents estaban bien definidos:
+- "Cual es la asignatura mas dificil?" → clasificado como `preguntar_hay_mas` (por la palabra "más").
+- "Cuantos años dura la totulacion?" → clasificado como `consulta_asignaturas_listado` (el bot devuelve 46 asignaturas cuando la pregunta es una sola cifra).
+- "Cuáles son todos los profesores de EGC?" → clasificado como `consulta_horario`.
+Todos son casos donde la confianza del intent ganador era media y el margen sobre el segundo era estrecho. El pipeline las aceptaba en vez de dejarlas caer al fallback.
+
+**Decisión:** Tres ajustes al pipeline de [`config.yml`](../../../config.yml):
+
+1. **Añadir `SpacyNLP` + `SpacyTokenizer` + `SpacyFeaturizer`** usando `es_core_news_md`. Hasta ahora el DIETClassifier aprendía desde cero con bag-of-words (`CountVectorsFeaturizer`) sobre ~600-800 ejemplos. Con embeddings pre-entrenados, palabras con carga semántica como "mejor", "peor", "difícil", "fácil", "recomiendas" llegan al clasificador con su vector — empareja mejor preguntas subjetivas con `out_of_scope` y discrimina mejor los intents cercanos.
+2. **`FallbackClassifier.threshold` subido de 0.7 → 0.8**. Casos con confianza entre 0.7 y 0.8 ya no se aceptan — caen al fallback y el usuario recibe el mensaje "puedo ayudarte con asignaturas/horarios/profesores".
+3. **`FallbackClassifier.ambiguity_threshold` bajado de 0.15 → 0.10**. Más sensible a empates: si el top-1 y top-2 tienen una diferencia <0.10, se considera ambiguo → fallback. Cubre el caso "mas dificil" (compite entre `preguntar_hay_mas` y `consulta_asignaturas_listado` con margen pequeño).
+
+Cambio cosmético adicional: `CountVectorsFeaturizer (char_wb)` con `min_ngram: 2` (antes 1). Los n-gramas de 1 carácter aportan ruido con poco valor discriminante.
+
+**Justificación:** `spaCy es_core_news_md` ya está instalado en el contenedor de actions y es gratuito. Los umbrales de fallback los trae Rasa por defecto en 0.3/0.1 y los teníamos artificialmente altos; ajustarlos es una configuración de producto (cuánto preferimos un "no entiendo" sobre una respuesta mal clasificada). Para Linceus, preferimos fallar explícitamente antes que inventar.
+
+**Alternativas descartadas:**
+- **Subir `epochs` del DIETClassifier** (150 → 250): sin efecto apreciable con este tamaño de dataset, solo alarga el entrenamiento.
+- **`use_masked_language_model: true`**: útil con ≥1000 ejemplos; en nuestro rango marginal.
+- **Reentrenar desde `rasa/LaBSE`** (Transformer multilingüe): gran salto de calidad pero requiere GPU y 10× más tiempo de entrenamiento. No justificable para el cierre.
+
+**Archivos:** `config.yml` (pipeline NLU)
+
 ### D-058: Ejemplos cortos `curso N grupo M` al intent `consulta_horario`
 
 **Problema:** Cuando el bot pide "dime curso y grupo" y el usuario responde literalmente "curso 3 grupo 3", Rasa no tenía ningún ejemplo corto con ese patrón sin la palabra "horario". El mensaje caía en `consulta_asignatura_especifica` por similitud con otros ejemplos sueltos.
 **Decisión:** Añadir ~22 ejemplos cortos al intent `consulta_horario` cubriendo "curso N grupo M", "Nº grupo M", "primero/segundo/tercero/cuarto grupo M" y variantes con "soy de" / "del curso N". Sin ellos el split de D-053 es incompleto: horarios personales mal clasificados acababan en el flujo de ficha.
 **Justificación:** Es el input más natural del usuario tras una pregunta aclaratoria del bot. Cero coste, soluciona un fallo observado en la validación manual de D-053.
 **Archivos:** `data/nlu/horarios.yml`
+
+### D-069: Limpieza de horarios espurios — el scraper colapsa franjas de varios grupos en uno
+
+**Problema:** Detectado durante validación manual del 2026-04-26. Al consultar "horario curso 4 grupo 1" en GII-IS, el bot devolvía para **Ingeniería del Software y Práctica Profesional (ISPP)** cuatro sesiones el jueves (10:40, 12:40, 15:30, 17:40), todas en H1.10. Lo correcto según el PDF oficial es solo dos: 10:40-12:30 y 12:40-14:30. Las otras dos pertenecen a los grupos 2 y 3, no al 1.
+
+Causa raíz: el scraper de horarios (de iteraciones previas a S7) crea un único `grupo_clase` (código "1") para asignaturas obligatorias y le asigna **todas las celdas que ve en la cuadrícula del PDF** que comparten aula, aunque correspondan a grupos distintos. Cuando el PDF reutiliza la misma aula para los 3 grupos consecutivos (caso típico de obligatorias en H1.10), las 6 sesiones reales (2 × 3 grupos) acaban como 6 sesiones del grupo 1 en BD.
+
+**Auditoría 2026-04-26 (4º GII-IS):** de las 4 obligatorias del curso, 3 tienen un solo `grupo_clase` cuando el plan tiene 3 grupos:
+- **EGC** (Evolución y Gestión de la Configuración): 3 filas martes 15:30-17:20 con aulas distintas (H1.10, F1.30, F1.31). **No es duplicación** — es 1 teoría + 2 labs en paralelo, el agregador ya lo trata bien (`_datos_horario_a_texto` con buckets `teoria`/`lab`). **No requiere fix.**
+- **PGPI** (Planificación y Gestión de Proyectos Informáticos): 3 filas jueves 15:30-17:20 con aulas distintas (H1.10, I2.33, I2.35). Mismo patrón teoría + 2 labs. **No requiere fix.**
+- **ISPP** (Ingeniería del Software y Práctica Profesional): 4 filas jueves con franjas DISTINTAS (10:40, 12:40, 15:30, 17:40), todas en H1.10. **Único caso real de colapso multi-grupo.**
+
+**Decisión (parche puntual):** borrar manualmente las 2 filas espurias del grupo 1 de ISPP (15:30-17:20 y 17:40-19:30 jueves) que en realidad son sesiones de los grupos 2 y 3. El grupo 1 queda correcto con sus 2 sesiones reales (10:40 y 12:40). Los grupos 2 y 3 quedan **ausentes** en BD hasta el re-scrape — preferimos vacío explícito a datos inventados (el bot responderá "no encontré horarios para grupo 2 de ISPP" en vez de mentir).
+
+```sql
+DELETE FROM horarios WHERE id IN (
+  '8d7316a9-77c4-4b52-b42b-50d574d7b694',  -- jue 15:30-17:20 H1.10 ISPP grupo 1 (espuria)
+  '08dccb76-205a-4e76-8542-c6eaab5e1d9b'   -- jue 17:40-19:30 H1.10 ISPP grupo 1 (espuria)
+);
+```
+
+**Justificación:** sin acceso al PDF oficial en esta sesión no podemos crear los `grupos_clase` 2 y 3 con sus franjas reales sin riesgo de inventarlas. Borrar lo claramente espurio (confirmado contra el plan docente por el usuario) deja la BD honesta. La asimetría "grupo 1 OK, grupos 2/3 ausentes" es preferible a "grupo 1 con datos de 2 y 3 mezclados".
+
+**Pendiente como trabajo futuro:**
+1. Re-scrape de ISPP con un parser que distinga grupos por columnas/marcas del PDF (no por aula).
+2. Auditoría análoga en cursos 2º y 3º — el patrón de colapso puede afectar a otras obligatorias compartidas de aula. Query útil: `SELECT a.nombre, a.curso, gc.codigo, COUNT(*) AS sesiones FROM horarios h JOIN grupos_clase gc … GROUP BY 1,2,3 HAVING COUNT(*) > 4` para detectar candidatos.
+3. **No es bug del bot** ni del agregador `_datos_horario_a_texto`: la SQL y la deduplicación funcionan bien. El bug vive en la capa de ingesta del scraper.
+
+**Archivos:** ninguno de código. Solo BD: `horarios` (2 filas borradas con UUIDs anotados arriba).
 
 ---
 

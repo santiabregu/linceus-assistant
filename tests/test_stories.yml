@@ -253,3 +253,246 @@ stories:
       gracias, adiós
     intent: goodbye
   - action: utter_goodbye
+
+# =============================================================================
+# ÉPICA HORARIOS: consulta_horario (personal) vs consulta_horario_asignatura
+# =============================================================================
+# Ver D-053 (split de intents ficha/horario) y D-058 (ejemplos cortos
+# "curso N grupo M" tras pregunta aclaratoria del bot).
+
+- story: test horario personal con curso y grupo en la pregunta
+  steps:
+  - user: |
+      horario del lunes curso 3 grupo 2
+    intent: consulta_horario
+  - action: action_consulta_horario
+
+- story: test horario personal corto tras aclaración
+  steps:
+  - user: |
+      mi horario
+    intent: consulta_horario
+  - action: action_consulta_horario
+  - user: |
+      curso 3 grupo 2
+    intent: consulta_horario
+  - action: action_consulta_horario
+
+- story: test horario personal seguimiento a otro día
+  steps:
+  - user: |
+      horario del lunes curso 2 grupo 1
+    intent: consulta_horario
+  - action: action_consulta_horario
+  - user: |
+      y el martes?
+    intent: consulta_horario
+  - action: action_consulta_horario
+
+- story: test horario de una asignatura por nombre completo
+  steps:
+  - user: |
+      horario de Fundamentos de Programación
+    intent: consulta_horario_asignatura
+  - action: action_consulta_horario_asignatura
+
+- story: test horario de asignatura por alias
+  steps:
+  - user: |
+      horario de DP1
+    intent: consulta_horario_asignatura
+  - action: action_consulta_horario_asignatura
+
+- story: test horario de asignatura con grupo explícito
+  steps:
+  - user: |
+      horario de DP1 grupo 2
+    intent: consulta_horario_asignatura
+  - action: action_consulta_horario_asignatura
+
+- story: test horario personal luego asignatura
+  steps:
+  - user: |
+      horario del miércoles curso 3 grupo 1
+    intent: consulta_horario
+  - action: action_consulta_horario
+  - user: |
+      y cuándo es Redes?
+    intent: consulta_horario_asignatura
+  - action: action_consulta_horario_asignatura
+
+- story: test flujo completo titulación + horario personal
+  steps:
+  - user: |
+      hola
+    intent: greet
+  - action: utter_greet
+  - user: |
+      ingeniería del software
+    intent: cambiar_contexto_academico
+  - action: action_cambiar_contexto
+  - user: |
+      horario del jueves curso 3 grupo 2
+    intent: consulta_horario
+  - action: action_consulta_horario
+
+- story: test cambio de titulación entre dos horarios
+  steps:
+  - user: |
+      horario del lunes curso 2 grupo 1
+    intent: consulta_horario
+  - action: action_consulta_horario
+  - user: |
+      cambiar a computadores
+    intent: cambiar_contexto_academico
+  - action: action_cambiar_contexto
+  - user: |
+      horario del lunes curso 2 grupo 1
+    intent: consulta_horario
+  - action: action_consulta_horario
+
+- story: test asignatura específica luego horario de la misma
+  steps:
+  - user: |
+      cuántos créditos tiene DP1?
+    intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+  - user: |
+      y el horario?
+    intent: consulta_horario_asignatura
+  - action: action_consulta_horario_asignatura
+
+# =============================================================================
+# ÉPICA PROFESORES: consulta_profesor (SQL primario + atajo RAG + tutorías)
+# =============================================================================
+# Ver D-062 (intent único para profesores), D-064 (RAG vectorial puro), y
+# detección fuzzy de "tutorías" → aviso de contactar por email (D-061).
+
+- story: test email de un profesor concreto
+  steps:
+  - user: |
+      email de Parejo
+    intent: consulta_profesor
+  - action: action_consulta_profesor
+
+- story: test despacho de un profesor
+  steps:
+  - user: |
+      dónde está el despacho de Ruiz Cortés?
+    intent: consulta_profesor
+  - action: action_consulta_profesor
+
+- story: test profesores de una asignatura por alias
+  steps:
+  - user: |
+      profesores de DP1
+    intent: consulta_profesor
+  - action: action_consulta_profesor
+
+- story: test profesores de una asignatura por nombre
+  steps:
+  - user: |
+      quienes dan Fundamentos de Programación
+    intent: consulta_profesor
+  - action: action_consulta_profesor
+
+- story: test coordinador de asignatura (atajo RAG)
+  steps:
+  - user: |
+      quién coordina EGC?
+    intent: consulta_profesor
+  - action: action_consulta_profesor
+
+- story: test suplente de asignatura (atajo RAG)
+  steps:
+  - user: |
+      suplente de Redes
+    intent: consulta_profesor
+  - action: action_consulta_profesor
+
+- story: test tutorías de un profesor
+  steps:
+  - user: |
+      tutorías de Parejo
+    intent: consulta_profesor
+  - action: action_consulta_profesor
+
+- story: test tutorías por asignatura
+  steps:
+  - user: |
+      tutorías de EGC
+    intent: consulta_profesor
+  - action: action_consulta_profesor
+
+- story: test tutorías con typo (fuzzy match)
+  steps:
+  - user: |
+      tutuorías de DP1
+    intent: consulta_profesor
+  - action: action_consulta_profesor
+
+- story: test profesores de un departamento
+  steps:
+  - user: |
+      qué profesores hay en el departamento de LSI?
+    intent: consulta_profesor
+  - action: action_consulta_profesor
+
+- story: test follow-up coordinador tras listar profesores
+  steps:
+  - user: |
+      profesores de DP1
+    intent: consulta_profesor
+  - action: action_consulta_profesor
+  - user: |
+      y quién coordina?
+    intent: consulta_profesor
+  - action: action_consulta_profesor
+
+- story: test follow-up email tras nombrar profesor
+  steps:
+  - user: |
+      quién es Parejo?
+    intent: consulta_profesor
+  - action: action_consulta_profesor
+  - user: |
+      y su correo?
+    intent: consulta_profesor
+  - action: action_consulta_profesor
+
+- story: test cross-domain asignatura específica luego profesorado
+  steps:
+  - user: |
+      háblame de Estadística
+    intent: consulta_asignatura_especifica
+  - action: action_consulta_especifica
+  - user: |
+      y quién la imparte?
+    intent: consulta_profesor
+  - action: action_consulta_profesor
+
+- story: test flujo completo titulación + profesores + coordinador
+  steps:
+  - user: |
+      hola
+    intent: greet
+  - action: utter_greet
+  - user: |
+      ingeniería del software
+    intent: cambiar_contexto_academico
+  - action: action_cambiar_contexto
+  - user: |
+      profesores de DP1
+    intent: consulta_profesor
+  - action: action_consulta_profesor
+  - user: |
+      y el coordinador?
+    intent: consulta_profesor
+  - action: action_consulta_profesor
+
+- story: test profesor con contexto de asignatura
+  steps:
+  - user: |
+      email de Belén que da FP
+    intent: consulta_profesor
+  - action: action_consulta_profesor
