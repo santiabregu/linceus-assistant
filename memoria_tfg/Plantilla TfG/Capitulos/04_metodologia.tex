@@ -62,11 +62,9 @@ Los mensajes de commit siguen el estándar \textbf{Conventional Commits}~\cite{c
 \label{sec:estandares}
 % =====================================================
 
-El código Python del proyecto se ajusta a la guía de estilo \textbf{PEP~8}~\cite{pep8}, verificada automáticamente mediante dos herramientas complementarias: \textbf{pylint}~\cite{pylint} y \textbf{flake8}~\cite{flake8}.
+El código Python del proyecto se ajusta a la guía de estilo \textbf{PEP~8}~\cite{pep8}, verificada automáticamente mediante dos herramientas complementarias: \textbf{pylint}~\cite{pylint} y \textbf{flake8}~\cite{flake8}. Pylint cubre el análisis semántico —detección de errores reales, variables no definidas, llamadas incorrectas— mientras que flake8 se centra en la conformidad de estilo: espacios sobrantes, imports no utilizados, longitud de línea e indentación. Ambas herramientas se configuran con un límite de 120 caracteres por línea, valor que equilibra legibilidad y practicidad para un proyecto con prompts al LLM y consultas SQL que no admiten partición arbitraria.
 
-Pylint se configura en \texttt{.pylintrc} con una longitud máxima de línea de 120 caracteres y supresión de los errores de importación propios del entorno Rasa (paquetes como \texttt{rasa\_sdk} o \texttt{rapidfuzz} residen en el entorno virtualizado y no son accesibles desde el intérprete de análisis estático). Se ejecuta sobre \texttt{actions/} y \texttt{admin/} con el flag \texttt{--errors-only} para detectar errores reales antes de integrar cambios en la rama principal.
-
-Flake8 amplía la cobertura de estilo con verificaciones que pylint no contempla: espacios en blanco sobrantes, imports no utilizados, f-strings sin marcadores de sustitución, longitud de línea e indentación de continuación. Se ejecuta con \texttt{--max-line-length=120} sobre los directorios \texttt{actions/}, \texttt{admin/} y \texttt{rag/}. Las líneas que superan el límite por contener cadenas de texto largas no partibles (prompts al LLM, URLs de constantes, sentencias SQL) se suprimen con la directiva \texttt{\# noqa: E501}; los imports que son re-exportaciones intencionadas en ficheros \texttt{\_\_init\_\_.py} se suprimen con \texttt{\# noqa: F401}; y las instrucciones dobles en una sola línea que forman un par semántico indivisible (\texttt{conds.append}~/~\texttt{params.append}) se suprimen con \texttt{\# noqa: E702}. Los imports posteriores a \texttt{sys.path.insert} —necesarios para que los scripts del pipeline RAG y el módulo de profesores sean ejecutables de forma autónoma fuera del paquete— se suprimen con \texttt{\# noqa: E402}. El resto del código cumple PEP~8 sin supresiones.
+En los casos en que una desviación de estilo es intencionada —un import que actúa como re-exportación pública, una línea larga que contiene una cadena de texto no partible, o un par de instrucciones que forman una unidad semántica indivisible— se documenta explícitamente con una directiva de supresión en la propia línea. Esto hace que las excepciones sean visibles y razonadas, en lugar de silenciosas.
 
 Para el código JavaScript del widget de chat (\texttt{frontend/}), se aplica \textbf{ESLint 8}~\cite{eslint} con la configuración \texttt{eslint:recommended}, extendida con reglas de estilo básicas (comillas simples, punto y coma obligatorio). La configuración se almacena en \texttt{.eslintrc.json} en la raíz del repositorio y se ejecuta con \texttt{npm run lint}, que lanza \texttt{eslint frontend/} sobre los tres ficheros del directorio (\texttt{chatbot-widget.js}, \texttt{admin.js}, \texttt{login.js}).
 
@@ -79,7 +77,7 @@ El seguimiento del proyecto se articula en torno a la \textbf{Bitácora de Reuni
 
 Complementariamente, las decisiones técnicas no triviales tomadas durante el desarrollo se documentan en los registros de decisiones de sprint (\texttt{docs/sprints/SN/Registro\_decisiones.md}), que mantienen trazabilidad entre el código y el razonamiento que lo originó.
 
-El tiempo dedicado al proyecto no se mide con herramientas de \textit{time tracking} formales, sino que se estima a partir de la frecuencia de commits y del contenido de los registros de sprint.
+El tiempo dedicado al proyecto se registra con \textbf{Clockify}, donde cada entrada recibe el nombre \texttt{SX -- descripción de la tarea} (siendo \texttt{X} el número de sprint), lo que permite agrupar el esfuerzo por sprint y correlacionarlo con el backlog sin necesidad de herramientas adicionales.
 
 % =====================================================
 \section{Versionado del sistema}

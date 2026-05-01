@@ -10,16 +10,24 @@
 \contentsline {figure}{\numberline {6.2}{\ignorespaces Panel de administración: gestión de asignaturas.}}{51}{}%
 \contentsline {figure}{\numberline {6.3}{\ignorespaces Panel de administración: auditoría de conversaciones.}}{51}{}%
 \contentsline {figure}{\numberline {6.4}{\ignorespaces Panel de administración: gestión de horarios.}}{51}{}%
-\contentsline {figure}{\numberline {6.5}{\ignorespaces Panel de administración: gestión de profesorado.}}{51}{}%
+\contentsline {figure}{\numberline {6.5}{\ignorespaces Panel de administración: gestión de profesorado.}}{52}{}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {7.1}{\ignorespaces Diagrama de componentes del sistema Linceus.}}{55}{}%
-\contentsline {figure}{\numberline {7.2}{\ignorespaces Diagrama de despliegue del sistema Linceus en DigitalOcean (Ubuntu 24.04 LTS) con el pipeline de despliegue automatizado vía GitHub Actions.}}{62}{}%
-\addvspace {10\p@ }
-\addvspace {10\p@ }
+\contentsline {figure}{\numberline {7.1}{\ignorespaces Diagrama de componentes del sistema Linceus.}}{56}{}%
+\contentsline {figure}{\numberline {7.2}{\ignorespaces Diagrama de despliegue del sistema Linceus en DigitalOcean (Ubuntu 24.04 LTS) con el pipeline de despliegue automatizado vía GitHub Actions.}}{63}{}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {13.1}{\ignorespaces Página principal del prototipo con el \textit {widget} de chat cerrado.}}{92}{}%
+\contentsline {figure}{\numberline {13.2}{\ignorespaces \textit {Widget} desplegado con mensaje de bienvenida y selector de titulación.}}{92}{}%
+\contentsline {figure}{\numberline {13.3}{\ignorespaces Ejemplo de sesión con seguimiento conversacional y cambio de contexto.}}{94}{}%
+\contentsline {figure}{\numberline {13.4}{\ignorespaces Panel de administración: vista de centros y titulaciones.}}{94}{}%
+\contentsline {figure}{\numberline {13.5}{\ignorespaces Panel de administración: gestión del profesorado.}}{95}{}%
+\contentsline {figure}{\numberline {13.6}{\ignorespaces Panel de administración: vista de horarios.}}{95}{}%
+\contentsline {figure}{\numberline {13.7}{\ignorespaces Panel de administración: registro de conversaciones anonimizadas.}}{96}{}%
+\contentsline {figure}{\numberline {13.8}{\ignorespaces Panel de administración: estadísticas de uso del sistema.}}{96}{}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
