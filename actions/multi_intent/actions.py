@@ -10,32 +10,29 @@ esta action:
 4. Pasa todo al LLM para generar una respuesta única
 """
 
-import re
-from typing import Any, Text, Dict, List, Optional
+from typing import Any, Text, Dict, List
 
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import SlotSet
 
-from ..shared.config import BotConfig, ALIAS_ASIGNATURAS
+from ..shared.config import BotConfig
 from ..shared.gemini_client import llamar_gemini as llamar_llm
-from ..shared.db import db_client
 
 # Importar lógica de cada dominio (funciones, no actions)
 from ..contexto.actions import ActionCambiarContexto
 from ..asignaturas.actions import (
-    comprobar_titulacion, resolver_asignatura, generar_respuesta_natural,
+    comprobar_titulacion, resolver_asignatura,
 )
 from ..asignaturas.text_to_sql import (
     generar_sql_listado, generar_sql_conteo,
     ejecutar_query, ejecutar_count,
-    _inyectar_filtro_titulacion,
 )
 from ..horarios.actions import (
     _detectar_curso, _detectar_grupo, _detectar_dia, _detectar_cuatrimestre,
     _query_horario,
     _datos_horario_a_texto,
-    _respuesta_faltan_datos, NOMBRES_TITULACION, PDF_HORARIOS_URL,
+    _respuesta_faltan_datos,
 )
 
 

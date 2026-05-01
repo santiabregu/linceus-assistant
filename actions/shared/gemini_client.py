@@ -196,7 +196,6 @@ if __name__ == "__main__":
 
     # 3. Test de velocidad
     print("\n⚡ Test 2: Velocidad (debería ser <3s)")
-    import time
     inicio = time.time()
     respuesta = llamar_gemini(
         prompt="Di 'OK'",

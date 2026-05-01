@@ -1,0 +1,68 @@
+% !TEX root = ../proyect.tex
+
+\section{Soluciones existentes}\label{sec:soluciones-existentes}
+
+Antes de justificar la propuesta de Linceus Assistant conviene revisar qué sistemas similares se han desplegado ya en el ámbito universitario, tanto dentro del Sistema Universitario Español como en el contexto internacional. La revisión que sigue se centra en asistentes conversacionales orientados a estudiantes que cubren consultas académicas, administrativas y de orientación, descartando otras categorías colindantes como los \textit{chatbots} de atención a profesorado, los sistemas tutoriales adaptativos o los asistentes de evaluación docente, que persiguen objetivos distintos. La selección no pretende ser exhaustiva pero sí representativa: se han incluido los sistemas con mayor presencia institucional, los que comparten la naturaleza académica con el caso de uso del proyecto, y los que aportan elementos diferenciales técnicos o funcionales relevantes para la comparación.
+
+\subsection{Asistentes en universidades españolas}\label{subsec:soluciones-espana}
+
+El despliegue de asistentes conversacionales en universidades españolas se ha intensificado en los últimos años, en buena parte gracias a la actividad comercial de proveedores especializados en el sector. La empresa alicantina 1MillionBot~\cite{millionbotPlatform} concentra una parte significativa del mercado nacional, con presencia documentada en más de treinta universidades de España y Latinoamérica.
+
+\textbf{CATi (Universidad de Sevilla)}~\cite{usCati,torrejuanaCati} es el asistente más cercano al ámbito de este proyecto. Está integrado en el Centro de Atención a Estudiantes de la propia Universidad de Sevilla y resuelve consultas sobre acceso, admisión, matrícula, becas, plazos y titulaciones, con una cobertura declarada de aproximadamente 160 preguntas frecuentes y disponibilidad permanente. En su periodo de prueba inicial (enero de 2022) atendió alrededor de siete mil consultas procedentes de cuarenta países distintos, con una tasa de acierto declarada del 98\,\% sobre lenguaje conversacional abierto. Ahora bien, una interacción real con CATi en abril de 2026 muestra una limitación operativa relevante: cuando el alumno introduce una consulta concreta como ``soy de ingeniería del software'', el sistema responde con un \textbf{menú cerrado de opciones} (preguntas predefinidas sobre automatrícula, plazos y procedimientos). Es decir, la primera capa de NLU clasifica el dominio, pero el flujo posterior se resuelve por selección guiada y no por recuperación abierta de información, lo que limita la capacidad de respuesta a preguntas no anticipadas en el guion.
+
+\textbf{Lola (Universidad de Murcia)}~\cite{umuLola,millionbotLola} fue uno de los primeros chatbots universitarios desplegados en España (julio de 2018). Construido sobre la plataforma DialogFlow de Google e integrado por 1MillionBot, está orientado a estudiantes de nuevo ingreso del Distrito Único de la Región de Murcia y cubre dudas sobre pruebas de acceso, admisión y matrícula. Los datos publicados por la propia universidad reportan 4.609 alumnos atendidos, 13.184 conversaciones y una tasa de respuestas acertadas del 91,67\,\% en sus primeros meses de funcionamiento.
+
+\textbf{Alhe (Universidad de Granada)}~\cite{ugrAlhe,millionbotUgr} es un proyecto más reciente, enmarcado en el Servicio Automatizado de Atención e Información de la UGR, también construido sobre la plataforma de 1MillionBot. Cubre oferta educativa, acceso, admisión, trámites académicos y servicios al estudiantado (becas, movilidad, comedores, salas de estudio, deportes, actividades culturales). Durante su primer año de operación atendió más de 38.708 consultas con una tasa de acierto superior al 91\,\%.
+
+\textbf{LUCA (Universidad de Cádiz)}~\cite{ucaLuca} es el asistente conversacional inteligente desplegado por el Área de Sistemas de Información de la UCA. Funciona durante 24 horas, 365 días al año, y se ofrece como punto de entrada inmediato a la información dirigida a futuros estudiantes universitarios.
+
+\textbf{Isidra y AIex (Universidad de Alcalá)} representan dos generaciones distintas. \textbf{Isidra}~\cite{uahIsidra} es el asistente institucional de la UAH, basado igualmente en aprendizaje automático, que durante sus cinco primeros días de actividad mantuvo más de 6.341 conversaciones con 4.812 personas distintas y una precisión declarada superior al 90\,\%. \textbf{AIex}~\cite{uahAiex}, presentado en abril de 2026, es un asistente desarrollado por estudiantes de la propia UAH como proyecto académico para atender consultas durante la feria AULA 2026; ilustra que la línea de chatbot universitario también ha penetrado el ámbito formativo, no solo el institucional.
+
+\subsection{Plataformas internacionales}\label{subsec:soluciones-internacional}
+
+Más allá del Sistema Universitario Español, el ecosistema internacional ofrece dos referencias relevantes por su distinto enfoque.
+
+\textbf{UniBuddy}~\cite{unibuddy,unibuddyAssistant} opera en más de 600 instituciones a nivel global y combina una plataforma de mensajería persona a persona con un asistente conversacional de IA llamado Unibuddy Assistant. Su orientación principal no es la consulta académica del estudiante matriculado, sino la captación y conversión de candidatos durante el proceso de admisión: el sistema sirve para resolver preguntas factuales sobre la institución, sintetizar conversaciones mediante GPT y emparejar al candidato con embajadores de la universidad. Los análisis de conversaciones se generan con tecnología de OpenAI.
+
+\textbf{Hubert}~\cite{hubert} adopta un enfoque distinto y se especializa en la recogida de \textit{feedback} estudiantil sobre asignaturas y profesorado. En lugar de un formulario clásico, el alumno mantiene una conversación con el bot, que formula entre cuatro y cinco preguntas abiertas y agrupa las respuestas para que el docente las revise. Aunque su dominio queda fuera del caso de uso del prototipo Linceus, ilustra la utilidad de los modelos conversacionales para tareas de evaluación cualitativa que tradicionalmente sufren bajas tasas de respuesta.
+
+\subsection{Trabajos académicos comparables}\label{subsec:soluciones-academicos}
+
+La literatura científica sobre chatbots universitarios proporciona también un marco comparativo cuantitativo. Cuatro publicaciones se han tomado como referencia en el Capítulo~\ref{cap:pruebas} por reportar métricas comparables con las obtenidas por Linceus. \textbf{AdmitBot}~\cite{gupta2019admitbot} es un sistema de orientación para procesos de admisión universitaria que reporta una precisión de \textit{intent} del 82\,\%. \textbf{EDUBOT/LiSA}~\cite{colace2018edubot}, desarrollado en el Politecnico, proporciona soporte de \textit{e-learning} con una tasa de respuestas correctas en torno al 78\,\%. El sistema descrito por \textbf{Ranoliya et al.}~\cite{ranoliya2017chatbot} cubre preguntas frecuentes universitarias con una exactitud del 85\,\% sobre cien consultas. Por último, el trabajo de \textbf{Dibya y Sahoo}~\cite{dibya2021chatbot} implementa un chatbot universitario basado en IA y NLP con una precisión declarada del 84\,\%.
+
+\subsection{Comparativa y diferenciación}\label{subsec:soluciones-comparativa}
+
+La Tabla~\ref{tab:soluciones-comparativa} resume las principales soluciones identificadas frente a los criterios diferenciales del proyecto Linceus Assistant.
+
+\begin{table}[hbtp]
+\centering
+\small
+\caption{Comparativa de soluciones existentes frente a Linceus Assistant.}\label{tab:soluciones-comparativa}
+\begin{tabular}{p{2.4cm}p{2.4cm}p{2.4cm}p{2.0cm}p{2.6cm}}
+\hline
+\textbf{Sistema} & \textbf{Dominio} & \textbf{Tecnología} & \textbf{Acceso} & \textbf{Diferenciación} \\
+\hline
+CATi (US)~\cite{usCati} & Acceso, admisión, matrícula, becas & 1MillionBot (NLP propietario) & Web institucional & Menús guiados; cobertura de FAQ ($\sim$160 preguntas) \\
+Lola (UMU)~\cite{umuLola} & Acceso y matrícula nuevo ingreso & DialogFlow + 1MillionBot & Web y app DURM & Pionero (2018); 91,67\,\% acierto \\
+Alhe (UGR)~\cite{ugrAlhe} & Oferta educativa y servicios & 1MillionBot & Web y Telegram & 91\,\% acierto en primer año \\
+LUCA (UCA)~\cite{ucaLuca} & Información a futuro estudiante & 1MillionBot & Web institucional & Disponibilidad 24/7 \\
+Isidra (UAH)~\cite{uahIsidra} & Información institucional & 1MillionBot & Web institucional & $>$90\,\% precisión declarada \\
+UniBuddy~\cite{unibuddy} & Captación y admisión & GPT (OpenAI) & SaaS multi-canal & Mensajería P2P + IA \\
+Hubert~\cite{hubert} & \textit{Feedback} de cursos & NLP propietario & Web y enlaces & Encuesta conversacional \\
+AdmitBot~\cite{gupta2019admitbot} & Admisión universitaria (académico) & NLU clásico & Prototipo & 82\,\% \textit{intent accuracy} \\
+\textbf{Linceus} & Asignaturas, horarios y profesorado ETSII & Rasa 3.6 + Gemini + RAG (\textit{pgvector}) & Web (\textit{widget}) & RAG sobre planes docentes; código abierto; validación cuantitativa \\
+\hline
+\end{tabular}
+\end{table}
+
+A la vista de la comparativa pueden destacarse cuatro ejes diferenciales del proyecto Linceus Assistant frente al panorama existente.
+
+El primero es el \textbf{tipo de información cubierta}. Los asistentes institucionales españoles (CATi, Lola, Alhe, LUCA, Isidra) se concentran fundamentalmente en el ciclo de captación, acceso y matrícula, es decir, en información de tipo administrativo dirigida a estudiantes potenciales o de nuevo ingreso. Linceus Assistant, en cambio, atiende al estudiante ya matriculado en su día a día académico: consulta de asignaturas con su plan docente, horarios por curso y grupo, e información de contacto del profesorado. Es un dominio menos atendido por las soluciones comerciales y, por tanto, con un nicho funcional propio.
+
+El segundo es el \textbf{modelo conversacional}. La interacción real con CATi expuesta al inicio de esta sección demuestra que la mayoría de los asistentes universitarios españoles desplegados a fecha de hoy combinan una primera capa NLU con un \textit{flujo guiado por menús} en los turnos posteriores. Esta arquitectura limita la cobertura efectiva al conjunto cerrado de preguntas predefinidas. Linceus Assistant adopta un planteamiento distinto: emplea un módulo de recuperación aumentada por generación (RAG) sobre los documentos oficiales, lo que le permite responder a preguntas no anticipadas en el guion siempre que la información figure en el corpus indexado. La validación recogida en el Capítulo~\ref{cap:pruebas} muestra que el sistema responde correctamente al 91,9\,\% de un conjunto de 74 preguntas reales extraídas de los planes docentes oficiales, lo que excede el rango habitual de \textit{exact-match} reportado para sistemas RAG de dominio cerrado en la literatura.
+
+El tercero es el \textbf{modelo de licencia y despliegue}. Las soluciones comerciales identificadas (1MillionBot, UniBuddy, Hubert) son productos cerrados ofrecidos como servicio (SaaS). Linceus Assistant es un sistema desarrollado en el ámbito académico, abierto en su código y desplegable en la infraestructura de la propia universidad mediante Docker Compose. Esta diferencia tiene consecuencias en términos de control sobre los datos, ausencia de coste de licencia y posibilidad de adaptación funcional sin dependencia de proveedor.
+
+El cuarto es la \textbf{validación cuantitativa}. Las cifras publicadas por las soluciones comerciales españolas suelen consistir en una tasa de acierto agregada (entre el 91\,\% y el 98\,\%), sin desagregar por tipo de consulta ni acompañar de la metodología empleada para el cómputo. Linceus Assistant aporta un esquema de validación en cinco capas independientes (E2E, RAG \textit{baseline}, RAG de profundidad, NLU y \textit{policy}, tráfico real post-despliegue) cuya metodología y resultados se documentan exhaustivamente en el Capítulo~\ref{cap:pruebas}, con trazabilidad completa frente a umbrales académicos publicados.
+
+En conjunto, el panorama revisado muestra que existe espacio para una propuesta como la presente: enfocada al estudiante matriculado, abierta en su tecnología, basada en RAG sobre documentación oficial real y validada con un esquema cuantitativo reproducible.

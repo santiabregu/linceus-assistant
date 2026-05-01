@@ -12,7 +12,7 @@ from rasa_sdk.events import SlotSet
 
 from ..shared.gemini_client import llamar_gemini
 from ..shared.db import db_client
-from ..shared.config import BotConfig, ALIAS_ASIGNATURAS
+from ..shared.config import ALIAS_ASIGNATURAS
 from ..shared.follow_up import _contar_turnos_desde_slot, comprobar_titulacion
 
 
@@ -45,8 +45,6 @@ def _ultimos_intercambios(tracker, n: int = 3) -> list:
             pares.append({"user": user_msg, "bot": event.get("text") or ""})
             user_msg = None
     return pares[-n:] if n else pares
-
-
 
 
 # Actions disponibles que el fallback puede invocar
@@ -106,8 +104,9 @@ Responde SOLO con un JSON valido (sin markdown, sin ```):
 }}"""
 
 
-def _ejecutar_consulta_asignatura(nombre_asignatura: str, pregunta: str,
-                                   tracker: Tracker) -> Optional[str]:
+def _ejecutar_consulta_asignatura(
+        nombre_asignatura: str, pregunta: str,
+        tracker: Tracker) -> Optional[str]:
     """Busca info de una asignatura en BD + RAG y genera respuesta."""
     titulacion = tracker.get_slot("contexto_titulacion")
 
@@ -137,8 +136,8 @@ def _ejecutar_consulta_asignatura(nombre_asignatura: str, pregunta: str,
 
         codigo, nombre, creditos, tipologia, curso, duracion = row
         info_basica = (f"Asignatura: {nombre} ({codigo}), "
-                      f"{creditos} creditos, {tipologia}, "
-                      f"curso {curso}, {duracion}")
+                       f"{creditos} creditos, {tipologia}, "
+                       f"curso {curso}, {duracion}")
 
         # Intentar RAG para mas detalle
         rag_contexto = ""
@@ -171,9 +170,10 @@ No saludes. Ve directo a la respuesta. Maximo 3-4 frases."""
         conn.close()
 
 
-def _ejecutar_consulta_horario(nombre_asignatura: str = None, curso: str = None,
-                                grupo: str = None, pregunta: str = "",
-                                tracker: Tracker = None) -> Optional[str]:
+def _ejecutar_consulta_horario(
+        nombre_asignatura: str = None, curso: str = None,
+        grupo: str = None, pregunta: str = "",
+        tracker: Tracker = None) -> Optional[str]:
     """Busca horarios en BD y genera respuesta."""
     titulacion = tracker.get_slot("contexto_titulacion")
 

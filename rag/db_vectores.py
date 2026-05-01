@@ -6,13 +6,12 @@ Inserta/borra planes docentes y sus chunks vectorizados en Supabase.
 import hashlib
 import json
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
-from datetime import datetime
+from typing import Dict, List, Optional
 
 # Reutilizar la conexión del proyecto
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from actions.shared.db import db_client
+from actions.shared.db import db_client  # noqa: E402
 
 
 def calcular_hash_pdf(ruta_pdf: Path) -> str:
@@ -66,10 +65,10 @@ def obtener_plan_existente(
     try:
         cur = conn.cursor()
         cur.execute(
-            """SELECT id, hash_documento, estado_rag 
-               FROM planes_docentes 
-               WHERE asignatura_id = %s 
-                 AND curso_academico = %s 
+            """SELECT id, hash_documento, estado_rag
+               FROM planes_docentes
+               WHERE asignatura_id = %s
+                 AND curso_academico = %s
                  AND grupo = %s""",
             (asignatura_id, curso_academico, grupo)
         )
@@ -105,7 +104,7 @@ def crear_plan_docente(
     try:
         cur = conn.cursor()
         cur.execute(
-            """INSERT INTO planes_docentes 
+            """INSERT INTO planes_docentes
                (asignatura_id, curso_academico, grupo, hash_documento,
                 coordinador_nombre, url_documento, estado_rag)
                VALUES (%s, %s, %s, %s, %s, %s, 'procesando')
@@ -192,7 +191,7 @@ def insertar_chunks(
                 metadata_completa["subseccion"] = chunk["subseccion"]
 
             cur.execute(
-                """INSERT INTO planes_docentes_chunks 
+                """INSERT INTO planes_docentes_chunks
                    (plan_docente_id, contenido, embedding, seccion, subseccion,
                     orden_chunk, metadata)
                    VALUES (%s, %s, %s::vector, %s, %s, %s, %s)""",
@@ -238,7 +237,7 @@ def actualizar_estado_plan(
     try:
         cur = conn.cursor()
         cur.execute(
-            """UPDATE planes_docentes 
+            """UPDATE planes_docentes
                SET estado_rag = %s,
                    error_procesamiento = %s,
                    fecha_procesamiento = NOW(),
@@ -262,7 +261,7 @@ def actualizar_hash_plan(plan_docente_id: str, nuevo_hash: str) -> None:
     try:
         cur = conn.cursor()
         cur.execute(
-            """UPDATE planes_docentes 
+            """UPDATE planes_docentes
                SET hash_documento = %s, updated_at = NOW()
                WHERE id = %s""",
             (nuevo_hash, plan_docente_id)
@@ -310,8 +309,8 @@ def obtener_estadisticas() -> Dict:
 
         # Conteo por estado
         cur.execute("""
-            SELECT estado_rag, COUNT(*) 
-            FROM planes_docentes 
+            SELECT estado_rag, COUNT(*)
+            FROM planes_docentes
             GROUP BY estado_rag
         """)
         estados = {row[0]: row[1] for row in cur.fetchall()}

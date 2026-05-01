@@ -6,7 +6,10 @@
       "WebFetch(domain:www.ma1.us.es)",
       "WebFetch(domain:www.dte.us.es)",
       "WebFetch(domain:departamento.us.es)",
-      "Bash(python profesores/scraper_ccia.py)"
+      "Bash(python profesores/scraper_ccia.py)",
+      "PowerShell(initexmf --admin --update-fndb)",
+      "PowerShell(initexmf --update-fndb 2>&1)",
+      "PowerShell(Stop-Process -Force -ErrorAction SilentlyContinue)"
     ]
   }
 }

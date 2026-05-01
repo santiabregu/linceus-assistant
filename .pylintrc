@@ -1,0 +1,15 @@
+[MASTER]
+ignored-modules=rasa_sdk,rasa_sdk.executor,rasa_sdk.events,rapidfuzz,google.generativeai,supabase,postgrest,pdfplumber
+
+[MESSAGES CONTROL]
+disable=
+    import-error,
+    C0114,
+    C0115,
+    C0116
+
+[FORMAT]
+max-line-length=120
+
+[BASIC]
+good-names=i,j,k,e,f,db,id,n,x,_

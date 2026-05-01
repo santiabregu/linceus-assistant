@@ -96,7 +96,11 @@
 
 %%%%%%%%%%%%%%%%%%%%% BIBLIOGRAF{\'I}A%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\usepackage{apacite}
+% NOTA: apacite desactivado. Este paquete redefine \cite y crea macros
+% internas (\@year@, \@author@) que chocan con hyperref y con cualquier
+% bibstyle distinto de apacite. Se sustituye por el estilo numerico ieeetr
+% configurado en proyect.tex, que produce citas tipo [1], [2], etc.
+%\usepackage{apacite}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CABECERAS DE P{\'A}GINAS %%%%%%%%%%%%%%%%%%%
 \usepackage{fancyhdr}

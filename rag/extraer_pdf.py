@@ -6,7 +6,7 @@ Usa pdfplumber para obtener texto limpio página a página.
 import re
 import pdfplumber
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import List, Dict
 
 
 # Cabecera repetida en todas las páginas del proyecto docente (SEVIUS)

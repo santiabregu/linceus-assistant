@@ -13,20 +13,20 @@ class BotConfig:
     Configuración del contexto académico del bot.
     Los valores por defecto se leen de variables de entorno.
     """
-    
+
     # Valores por defecto (hardcoded como fallback)
     DEFAULTS = {
         'universidad': 'US',
-        'centro': 'ETSII', 
+        'centro': 'ETSII',
         'titulacion': 'GII-IS',
     }
-    
+
     # Nombres legibles para mostrar al usuario
     NOMBRES_CENTROS = {
         'ETSII': 'E.T.S. de Ingeniería Informática',
         # Añadir más centros según se necesiten
     }
-    
+
     NOMBRES_TITULACIONES = {
         'GII-IS': 'Grado en Ingeniería Informática - Ingeniería del Software',
         'GII-TI': 'Grado en Ingeniería Informática - Tecnologías Informáticas',
@@ -34,31 +34,31 @@ class BotConfig:
         'GII-SI': 'Grado en Ingeniería Informática - Sistemas de Información',
         # Añadir más titulaciones según se necesiten
     }
-    
+
     @classmethod
     def get_default_universidad(cls) -> str:
         return os.getenv('DEFAULT_UNIVERSIDAD_CODIGO', cls.DEFAULTS['universidad'])
-    
+
     @classmethod
     def get_default_centro(cls) -> str:
         return os.getenv('DEFAULT_CENTRO_CODIGO', cls.DEFAULTS['centro'])
-    
+
     @classmethod
     def get_default_titulacion(cls) -> str:
         return os.getenv('DEFAULT_TITULACION_CODIGO', cls.DEFAULTS['titulacion'])
-    
+
     @classmethod
     def get_nombre_centro(cls, codigo: str) -> str:
         return cls.NOMBRES_CENTROS.get(codigo, codigo)
-    
+
     @classmethod
     def get_nombre_titulacion(cls, codigo: str) -> str:
         return cls.NOMBRES_TITULACIONES.get(codigo, codigo)
-    
+
     # ─────────────────────────────────────────────────────────────────────────────
     # Helpers para Actions (reciben el tracker de Rasa)
     # ─────────────────────────────────────────────────────────────────────────────
-    
+
     @classmethod
     def get_titulacion_activa(cls, tracker) -> Optional[str]:
         """
@@ -66,7 +66,7 @@ class BotConfig:
         Devuelve None si el usuario no ha elegido titulación.
         """
         return tracker.get_slot("contexto_titulacion") or None
-    
+
     @classmethod
     def get_centro_activo(cls, tracker) -> str:
         """
@@ -74,7 +74,7 @@ class BotConfig:
         Lee del slot si el usuario lo cambió, si no usa el default.
         """
         return tracker.get_slot("contexto_centro") or cls.get_default_centro()
-    
+
     @classmethod
     def get_contexto_actual(cls, centro_override: str = None, titulacion_override: str = None) -> dict:
         """
@@ -83,7 +83,7 @@ class BotConfig:
         """
         centro = centro_override or cls.get_default_centro()
         titulacion = titulacion_override
-        
+
         return {
             'universidad': cls.get_default_universidad(),
             'centro_codigo': centro,

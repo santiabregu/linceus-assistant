@@ -107,7 +107,7 @@ def llamar_ollama(
         return None
 
     except requests.exceptions.ConnectionError:
-        print(f"❌ No se pudo conectar a Ollama. ¿Está corriendo? Ejecuta: ollama serve")
+        print("❌ No se pudo conectar a Ollama. ¿Está corriendo? Ejecuta: ollama serve")
         return None
 
     except Exception as e:
@@ -140,7 +140,7 @@ def verificar_ollama_activo() -> bool:
 
         return False
 
-    except:
+    except Exception:
         print("❌ Ollama no está corriendo. Ejecuta: ollama serve")
         return False
 
@@ -164,7 +164,7 @@ def precargar_modelo(modelo: str = OLLAMA_MODEL):
     if respuesta:
         print(f"✅ Modelo {modelo} pre-cargado y listo")
     else:
-        print(f"⚠️ No se pudo pre-cargar el modelo")
+        print("⚠️ No se pudo pre-cargar el modelo")
 
 
 # Test del módulo

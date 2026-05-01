@@ -1,7 +1,227 @@
-\chapter{Pruebas}\label{pruebas}
+% !TEX root = ../proyect.tex
 
+\chapter{Pruebas y Validación}\label{cap:pruebas}
 
+Este capítulo recoge la estrategia de pruebas seguida durante el desarrollo de Linceus Assistant y los resultados obtenidos en la fase de validación previa al cierre del prototipo. La evaluación de un sistema conversacional basado en modelos de lenguaje plantea retos que no se resuelven con una única batería de pruebas: el comportamiento del bot depende del clasificador NLU, de las acciones que consultan la base de datos, del módulo de recuperación semántica y del modelo generativo que produce la respuesta final, de modo que un fallo puede originarse en cualquiera de esas capas. Por ese motivo, la validación se ha organizado en cinco capas independientes que aíslan riesgos distintos y, en conjunto, ofrecen una imagen razonablemente completa del estado del sistema.
 
-	
+El alcance de las pruebas cubre las tres épicas funcionales que conforman el prototipo (asignaturas, horarios y profesorado), el flujo transversal de cambio de titulación, la gestión de seguimiento conversacional y la respuesta del bot ante consultas fuera de ámbito o intentos de manipulación del prompt. Quedan fuera de este capítulo las pruebas de las importaciones del panel de administración (sincronización con Sevius, vectorización de documentos y carga de horarios), que se enmarcan como trabajo de la siguiente fase, y la validación subjetiva mediante encuesta SUS, que requiere una segunda iteración con usuarios reales.
 
+\section{Estrategia general}\label{sec:pruebas-estrategia}
 
+\subsection{Marco metodológico}\label{subsec:pruebas-marco}
+
+El plan de pruebas toma como referencia el modelo de calidad de producto software definido en la norma \textbf{ISO/IEC 25010:2023}~\cite{iso25010}, que recoge entre las actividades del ciclo de vida del software la identificación de criterios de aceptación. De las ocho características recogidas en el modelo se cubren cuatro de manera explícita: \textit{adecuación funcional} (corrección y completitud), \textit{capacidad de interacción} (protección frente a errores del usuario), \textit{fiabilidad} (tolerancia a fallos) y \textit{seguridad} (en lo relativo a la integridad de las importaciones, descritas en su propio plan). Las cuatro características restantes (rendimiento, compatibilidad, mantenibilidad y flexibilidad) se discuten cualitativamente en otros capítulos de esta memoria y no forman parte del cómputo de la suite.
+
+La redacción de cada caso sigue la plantilla \textit{Given--When--Then} propia de \textbf{Behavior-Driven Development}~\cite{north2006bdd}. Esta plantilla traslada cada escenario al lenguaje natural del dominio y permite traducirlo de forma mecánica a un caso ejecutable por el \textit{runner}: las precondiciones se materializan en \textit{slots} de Rasa, la acción del usuario se corresponde con la consulta enviada al endpoint y el resultado esperado se descompone en el \textit{intent} clasificado y en condiciones sobre el texto de la respuesta. Esta correspondencia, además de facilitar la revisión por parte del tribunal, agiliza la incorporación de nuevos casos a medida que aparecen errores en producción.
+
+Sobre esta base, los escenarios se agrupan en tres categorías ampliamente aceptadas en la literatura sobre evaluación de chatbots~\cite{xoriantChatbot,testio}: \textit{positivos}, en los que el bot debe responder correctamente al camino feliz; \textit{negativos}, en los que la información solicitada no existe en la base de datos y el bot debe declararlo sin alucinar; y \textit{escenarios de robustez}, que comprenden errores tipográficos, intentos de \textit{jailbreak}, consultas fuera de dominio, reutilización de \textit{slots} entre turnos y cambios de titulación durante la conversación. Dentro de la categoría de positivos se introduce además una subdivisión propia entre consultas \textit{bien escritas} y consultas \textit{con errores tipográficos}, dado que la robustez frente al ruido textual es un criterio diferenciador en el caso de uso real (alumnos escribiendo desde el móvil con teclado predictivo).
+
+\subsection{Política de exclusión por trabajo futuro}\label{subsec:pruebas-trabajo-futuro}
+
+Durante la ejecución de la suite se han identificado varios casos cuya causa raíz no es un defecto puntual, sino una limitación de diseño asumida y documentada. Entre ellas destacan el atajo de coordinador y suplente resuelto exclusivamente por recuperación semántica (decisión D-064), el emparejamiento profesor--asignatura--grupo cuando la tabla intermedia no almacena el grupo, la distinción entre aulas de teoría y de laboratorio cuando la convención por letra inicial del aula falla, y la corrección difusa de erratas severas en nombres propios. Estos casos se han marcado como \textit{trabajo futuro} y se excluyen del denominador del porcentaje de éxito, siguiendo una práctica habitual en evaluación de prototipos de investigación. La tabla detallada de exclusiones figura en el repositorio del proyecto, en \texttt{tests/results/testing\_general.md}, y se referencia individualmente en cada apartado de este capítulo.
+
+\subsection{Ejecución y registro}\label{subsec:pruebas-ejecucion}
+
+La suite end-to-end se ejecuta mediante el \textit{script} \texttt{tests/run\_test\_plan.py} con el modificador \texttt{--manual-review}, que captura el \textit{intent} clasificado y la respuesta textual emitida por el bot pero deja la celda de veredicto vacía para revisión humana. La razón de evitar un veredicto automático es la alta variabilidad léxica de las respuestas generadas por el modelo: una misma consulta puede producir formulaciones distintas que igualmente cumplen el criterio de aceptación, lo que hace inviable una comparación de cadenas. El \textit{runner} introduce una espera de cinco segundos entre casos para no exceder la cuota gratuita de la API de Gemini, y los resultados se vuelcan en formato Markdown y JSON, sobrescribiendo los anteriores; la trazabilidad histórica se conserva mediante el control de versiones del repositorio.
+
+\section{Ejecución funcional extremo a extremo}\label{sec:pruebas-e2e}
+
+\subsection{Alcance}\label{subsec:e2e-alcance}
+
+La capa de aceptación funcional extremo a extremo es la prueba de mayor cobertura del proyecto, ya que ejercita el sistema con el \textit{stack} completo en marcha: clasificador NLU, acciones personalizadas en Python, motor de Rasa, base de datos Supabase con extensión \texttt{pgvector}, módulo de recuperación semántica y modelo Gemini para la generación de la respuesta final. Su propósito es comprobar que las piezas funcionan acopladas correctamente bajo condiciones equivalentes a las de producción, no validar cada componente por separado.
+
+La suite se compone de \textbf{159 casos} contables distribuidos en diez categorías que reflejan los flujos conversacionales del prototipo. La Tabla~\ref{tab:e2e-categorias} resume los resultados por categoría tras la última iteración de re-ejecución, fechada el 26 de abril de 2026.
+
+\begin{table}[hbtp]
+\centering
+\caption{Resultados por categoría de la suite E2E (revisión manual, 26/04/2026).}\label{tab:e2e-categorias}
+\begin{tabular}{lrrrrrr}
+\hline
+\textbf{Categoría} & \textbf{PASS} & \textbf{FAIL} & \textbf{PEND} & \textbf{Vacío} & \textbf{Total} & \textbf{\%} \\
+\hline
+\texttt{cambiar\_contexto} & 12 & 1 & 0 & 0 & 13 & 92,3 \\
+\texttt{conteo} & 10 & 0 & 0 & 0 & 10 & 100 \\
+\texttt{cross\_dominio} & 1 & 0 & 0 & 0 & 1 & 100 \\
+\texttt{especifica} & 22 & 0 & 0 & 0 & 22 & 100 \\
+\texttt{fuera\_ambito} & 8 & 0 & 0 & 0 & 8 & 100 \\
+\texttt{horario} & 26 & 0 & 1 & 0 & 27 & 96,3 \\
+\texttt{horario\_asignatura} & 18 & 0 & 0 & 0 & 18 & 100 \\
+\texttt{listado} & 15 & 0 & 0 & 0 & 15 & 100 \\
+\texttt{profesor} & 37 & 1 & 4 & 1 & 43 & 86,0 \\
+\texttt{seguimiento\_cross\_intent} & 1 & 0 & 0 & 0 & 1 & 100 \\
+\hline
+\textbf{TOTAL} & \textbf{150} & \textbf{2} & \textbf{5} & \textbf{1} & \textbf{159} & \textbf{94,3} \\
+\hline
+\end{tabular}
+\end{table}
+
+El cómputo arroja un \textbf{94,3\,\%} de éxito, calculado sobre los 150 casos válidos frente a los 159 contables, con 13 casos adicionales excluidos por la política descrita en el Apartado~\ref{subsec:pruebas-trabajo-futuro}. Las categorías deterministas (conteo, listado, fuera de ámbito, especificación de asignaturas) alcanzan el 100\,\% gracias a que dependen únicamente de SQL y del clasificador. La categoría \texttt{profesor}, en cambio, presenta el porcentaje más bajo (86,0\,\%) porque concentra los casos con dependencia múltiple entre tablas (profesor, asignatura y grupo) y los flujos resueltos por recuperación semántica que no enriquecen su salida con datos estructurados.
+
+\subsection{Lectura frente a la literatura}\label{subsec:e2e-literatura}
+
+El valor obtenido se sitúa por encima del umbral de \textit{production-ready} señalado por Braun et al.~\cite{braun2017evaluating} (igual o superior al 90\,\%) y queda dentro de la franja superior del \textit{benchmark} BANKING77 reportado por Casanueva et al.~\cite{casanueva2020efficient} (entre el 87\,\% y el 93\,\%). En relación con los chatbots universitarios publicados en la última década, la cifra supera con claridad los resultados comunicados por AdmitBot (82\,\%)~\cite{gupta2019admitbot}, EDUBOT (alrededor del 78\,\%)~\cite{colace2018edubot}, Ranoliya (85\,\%)~\cite{ranoliya2017chatbot} y el sistema de Dibya y Sahoo (84\,\%)~\cite{dibya2021chatbot}.
+
+\section{Recuperación aumentada por generación}\label{sec:pruebas-rag}
+
+El módulo RAG es el componente más sensible del sistema y, por tanto, ha sido evaluado en dos capas separadas: una capa \textit{baseline}, que mide la capacidad de recuperación del sistema sobre un banco de preguntas genéricas, y una capa \textit{de profundidad}, que comprueba la fidelidad de la respuesta frente a los planes docentes oficiales.
+
+\subsection{Capa baseline}\label{subsec:rag-baseline}
+
+La capa baseline está formada por un banco de \textbf{50 preguntas genéricas} sobre asignaturas (créditos, curso, cuatrimestre, optatividad, equivalencias y conteos). Cada pregunta se reformula en dos o tres variantes y se ejecuta manualmente con replay del bot para aislar el efecto de la recuperación semántica de las distintas acciones SQL. Sobre esta capa se obtiene un \textbf{94,0\,\%} de éxito (47 de 50), con tres errores aislados: una pregunta cuyo alias en la base de datos no coincidía con el nombre coloquial empleado en la consulta (E-T02), un caso de enrutado erróneo a la acción de cambio de contexto (E-T04) y una confusión entre el flujo de conteo y el de listado (C-P05). Los tres han sido recogidos en el cuaderno de fallos para su posterior corrección.
+
+\subsection{Capa de profundidad}\label{subsec:rag-profundidad}
+
+La capa de profundidad evalúa el rendimiento del sistema sobre \textbf{74 preguntas reales} extraídas de los planes docentes oficiales de \textbf{19 asignaturas} repartidas en \textbf{cinco grupos} de la titulación de Ingeniería del Software. Las preguntas no son genéricas: exigen al RAG recuperar información concreta de secciones específicas del plan (profesorado por grupo, bloques temáticos con sus horas, criterios y fórmulas de evaluación, composición de tribunales, idioma de impartición y contenidos de bloques). La cobertura por curso se recoge en la Tabla~\ref{tab:rag-cobertura}.
+
+\begin{table}[hbtp]
+\centering
+\caption{Cobertura de la capa de profundidad RAG por curso.}\label{tab:rag-cobertura}
+\begin{tabular}{lrr}
+\hline
+\textbf{Curso / tipo} & \textbf{Asignaturas} & \textbf{Preguntas} \\
+\hline
+1.\textsuperscript{o} (formación básica) & 5 & 25 \\
+2.\textsuperscript{o} (obligatoria) & 3 & 15 \\
+3.\textsuperscript{o} (obligatoria) & 4 & 16 \\
+4.\textsuperscript{o} (obligatoria) & 2 & 6 \\
+4.\textsuperscript{o} (optativa) & 5 & 12 \\
+\hline
+\textbf{Total} & \textbf{19} & \textbf{74} \\
+\hline
+\end{tabular}
+\end{table}
+
+El veredicto se emite con un código de tres niveles: \textit{OK} cuando la respuesta es correcta y completa, \textit{PARCIAL} cuando es correcta pero le falta algún detalle del plan docente, y \textit{FAIL} cuando es incorrecta o vacía. Los resultados son 68 OK, 5 PARCIAL y 1 FAIL, lo que da un \textbf{91,9\,\%} de respuestas correctas y completas en lectura estricta y un 98,6\,\% si se admite la categoría parcial. La cifra entra en la franja alta del modelo RAGAS de Es et al.~\cite{es2024ragas} (faithfulness igual o superior a 0,85) y supera el rango de exact-match esperado para sistemas RAG de dominio cerrado descrito por Lewis et al.~\cite{lewis2020retrieval} (entre el 75\,\% y el 88\,\%).
+
+\section{Clasificación NLU y política de diálogo}\label{sec:pruebas-nlu}
+
+La capa de NLU y política de diálogo evalúa los componentes deterministas de Rasa Core: clasificación de \textit{intent} y selección de la acción siguiente dado el historial de \textit{slots}. La prueba se ejecuta con la orden \texttt{rasa test core --fail-on-prediction-errors} sobre 44 \textit{stories} que cubren los caminos felices de las tres épicas, los \textit{stories} de seguimiento conversacional y los \textit{stories} de \textit{fallback}. La Tabla~\ref{tab:nlu-resultados} recoge las métricas agregadas.
+
+\begin{table}[hbtp]
+\centering
+\caption{Resultados de la capa NLU y Policy.}\label{tab:nlu-resultados}
+\begin{tabular}{lc}
+\hline
+\textbf{Métrica} & \textbf{Valor} \\
+\hline
+Conversaciones correctas & 44 / 44 \\
+Acciones predichas correctamente & 158 / 158 \\
+\textit{Accuracy} (conversación) & 1{,}000 \\
+\textit{Accuracy} (acción) & 1{,}000 \\
+Precisión / \textit{recall} / F1 (\textit{weighted}) & 1{,}00 / 1{,}00 / 1{,}00 \\
+\textit{Stories} fallidas & 0 \\
+\hline
+\end{tabular}
+\end{table}
+
+La cifra se interpreta con la cautela apropiada: el conjunto de \textit{stories} se ha construido a partir del uso real esperado del bot en el prototipo, no a partir de un \textit{benchmark} adversarial, por lo que el 100\,\% certifica que NLU y política no son cuello de botella en el resto de capas, pero no garantiza idéntico desempeño bajo distribuciones de tráfico distintas. Como prueba complementaria de no regresión se verificó que tras el reentreno con 117 ejemplos NLU adicionales extraídos de la tabla \texttt{conversation\_log} (modelo \texttt{linceus\_v4\_7\_9.tar.gz}, 24 de abril de 2026) la política aprendida mantenía las 158 de 158 acciones correctas que arrojaba la corrida previa, lo que descarta una degradación inducida por la ampliación del corpus.
+
+Frente al ámbito académico, este resultado supera el umbral de despliegue de Rasa establecido en el modelo DIET por Bocklisch et al.~\cite{bocklisch2020diet} (igual o superior al 85\,\% de F1 de \textit{intent}) y se sitúa por encima del estado del arte reportado en CLINC150~\cite{casanueva2020efficient}.
+
+\section{Reproducción de tráfico real tras el despliegue}\label{sec:pruebas-trafico}
+
+La capa de tráfico real es la única en la que la distribución de las consultas no está controlada por el evaluador. Tras el despliegue del prototipo en la infraestructura de DigitalOcean, el bot se puso a disposición de un grupo de alumnos de la ETSII a través del \textit{widget} integrado en la interfaz web del proyecto. Las conversaciones generadas en ese piloto se almacenan automáticamente en la tabla \texttt{conversation\_log} de la base de datos, junto con el \textit{intent} clasificado, los \textit{slots} activos y la respuesta del bot turno a turno.
+
+\subsection{Metodología de revisión}\label{subsec:trafico-metodologia}
+
+La validación del piloto se ha realizado revisando manualmente cada una de las 59 sesiones desde el panel de administración, replicando turno a turno el intercambio entre el alumno y el bot. Una sesión se marca como válida cuando todas las consultas relevantes se resuelven con datos correctos verificados contra los planes docentes, los horarios oficiales o el directorio de profesores; cuando el bot responde \textit{no encontrado} en aquellos casos en que la información no estaba presente en la base de datos sin inventar contenido; o cuando una pregunta cae claramente fuera del alcance del prototipo y el flujo de \textit{out\_of\_scope} la redirige correctamente.
+
+\subsection{Resultados}\label{subsec:trafico-resultados}
+
+La Tabla~\ref{tab:trafico-resultados} resume los datos agregados de la auditoría.
+
+\begin{table}[hbtp]
+\centering
+\caption{Resultados de la reproducción de tráfico real.}\label{tab:trafico-resultados}
+\begin{tabular}{lr}
+\hline
+\textbf{Métrica} & \textbf{Valor} \\
+\hline
+Sesiones de usuarios reales & 59 \\
+Sesiones validadas manualmente & 58 \\
+Sesiones excluidas (trabajo futuro) & 1 \\
+\textbf{\% de éxito} & \textbf{98,3} \\
+Total de turnos auditados & 203 \\
+Turnos validados & 201 \\
+Ventana de captura & 01/04/2026 -- 25/04/2026 \\
+\hline
+\end{tabular}
+\end{table}
+
+La sesión excluida corresponde a una pregunta en la que el alumno describe un tema técnico (electrónica de sistemas embebidos) y solicita saber en qué titulaciones se cursa. El comportamiento esperado consistiría en una recuperación semántica seguida de un cruce con la tabla de titulaciones; el bot, en cambio, responde con un listado de asignaturas afines al tema sin completar el segundo paso. El caso queda documentado como X-P06 dentro del catálogo de trabajo futuro y motiva la incorporación de un nuevo flujo de \textit{consulta\_titulacion\_por\_tema} en la fase siguiente.
+
+La cifra de 98,3\,\% supera el mínimo aceptable señalado por Casas et al.~\cite{casas2020trends} (igual o superior al 70\,\%) y la franja \textit{satisfactorio} de Følstad y Brandtzaeg~\cite{folstad2020users} (entre el 80\,\% y el 85\,\%). Conviene notar, además, que esta capa es la más realista de las cinco evaluadas, dado que la distribución de las consultas no ha sido diseñada por el equipo de pruebas: refleja el tipo de uso espontáneo que cabe esperar de un alumno consultando el bot desde el móvil entre clases.
+
+\section{Métricas no funcionales: latencia y coste}\label{sec:pruebas-no-funcional}
+
+Una validación funcional positiva no garantiza por sí sola que el sistema sea desplegable a la población completa de la facultad. Por ello, sobre la misma suite de la Sección~\ref{sec:pruebas-e2e} se han medido dos métricas no funcionales adicionales: la latencia extremo a extremo del bot y el coste por turno asociado a las llamadas al modelo Gemini. La medición se realiza durante una corrida con el modificador \texttt{--delay 10} sobre 151 turnos, capturando 216 llamadas al modelo. El consumo de \textit{tokens} de entrada se obtiene del campo \texttt{usage\_metadata} del SDK; el consumo de salida se estima mediante la heurística estándar de cuatro caracteres por \textit{token} en español, dado que el SDK de Google no expone \texttt{candidates\_token\_count} para la familia Gemma~3.
+
+\subsection{Latencia}\label{subsec:no-funcional-latencia}
+
+Los percentiles de latencia se recogen en la Tabla~\ref{tab:latencia}. La mediana de 3,4 segundos es comparable a la observada en sistemas comerciales de chat asistido en horas de tráfico moderado. El percentil 95 de 10,5 segundos refleja la cola larga propia de las consultas que requieren recuperación semántica seguida de dos llamadas al modelo (\textit{Text-to-SQL} y renderizado), concentradas mayoritariamente en la categoría \texttt{profesor}.
+
+\begin{table}[hbtp]
+\centering
+\caption{Latencia extremo a extremo (segundos).}\label{tab:latencia}
+\begin{tabular}{lr}
+\hline
+\textbf{Estadístico} & \textbf{Valor (s)} \\
+\hline
+Mediana (p50) & 3{,}4 \\
+Media & 4{,}3 \\
+Percentil 90 & 9{,}2 \\
+Percentil 95 & 10{,}5 \\
+Máximo observado & 14{,}1 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Coste por turno}\label{subsec:no-funcional-coste}
+
+El coste se calcula aplicando las tarifas públicas equivalentes a Gemini Flash Lite (0,075~USD por millón de \textit{tokens} de entrada y 0,30~USD por millón de \textit{tokens} de salida) y un tipo de cambio de 0,92~EUR/USD. Sobre 216 llamadas medidas, el coste medio por turno se sitúa en \textbf{0,012~céntimos de euro}, con un coste mediano de 0,008 céntimos y un percentil 95 de 0,036 céntimos. El turno más caro de la suite alcanzó 0,064 céntimos.
+
+Para extrapolar este coste al despliegue completo del prototipo en la ETSII (con una población estimada de 700 alumnos del Grado en Ingeniería Informática) se han considerado tres escenarios de intensidad de uso, recogidos en la Tabla~\ref{tab:coste-extrapolado}. En el escenario más conservador, propio de un periodo lectivo normal, el coste anual queda por debajo de 9~euros; en el escenario pico, propio de los periodos de matrícula y exámenes, ronda los 50~euros anuales. En cualquiera de los tres casos, la cifra queda dos órdenes de magnitud por debajo de cualquier suscripción comercial equivalente, lo que respalda la viabilidad económica del despliegue.
+
+\begin{table}[hbtp]
+\centering
+\caption{Extrapolación del coste anual a 700 alumnos según intensidad de uso.}\label{tab:coste-extrapolado}
+\begin{tabular}{lrrrr}
+\hline
+\textbf{Escenario} & \textbf{Turnos/alumno/mes} & \textbf{Turnos/mes} & \textbf{Coste/mes} & \textbf{Coste/año} \\
+\hline
+Conservador (lectivo) & 8 & 5\,600 & 0,67~EUR & 8,06~EUR \\
+Realista (uso medio) & 20 & 14\,000 & 1,68~EUR & 20,16~EUR \\
+Pico (exámenes) & 50 & 35\,000 & 4,20~EUR & 50,40~EUR \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Visión integrada y discusión}\label{sec:pruebas-discusion}
+
+La Tabla~\ref{tab:visiongeneral} agrega los resultados de las cinco capas funcionales junto con su umbral académico de referencia. Las cinco superan dicho umbral, lo cual permite afirmar que el sistema no presenta un único punto de fallo concentrado y que los errores residuales son conocidos, aislados y gestionables como trabajo futuro.
+
+\begin{table}[hbtp]
+\centering
+\caption{Visión integrada de las cinco capas de validación funcional.}\label{tab:visiongeneral}
+\begin{tabular}{lrrrll}
+\hline
+\textbf{Capa} & \textbf{N} & \textbf{PASS} & \textbf{\%} & \textbf{Umbral} & \textbf{Veredicto} \\
+\hline
+E2E (\S\ref{sec:pruebas-e2e}) & 159 & 150 & 94,3 & $\geq$ 90\,\% \cite{braun2017evaluating} & Supera \\
+RAG \textit{baseline} (\S\ref{subsec:rag-baseline}) & 50 & 47 & 94,0 & $\geq$ 85\,\% \cite{lewis2020retrieval} & Supera \\
+RAG profundidad (\S\ref{subsec:rag-profundidad}) & 74 & 68 & 91,9 & $\geq$ 85\,\% \cite{es2024ragas} & Supera \\
+NLU + Policy (\S\ref{sec:pruebas-nlu}) & 158 & 158 & 100 & $\geq$ 85\,\% \cite{bocklisch2020diet} & Supera \\
+Tráfico real (\S\ref{sec:pruebas-trafico}) & 59 & 58 & 98,3 & $\geq$ 70\,\% \cite{casas2020trends} & Supera \\
+\hline
+\end{tabular}
+\end{table}
+
+La comparación con chatbots universitarios publicados refuerza esta lectura. Los cuatro sistemas tomados como referencia (AdmitBot, EDUBOT, Ranoliya y Dibya--Sahoo) reportan cifras de exactitud comprendidas entre el 78\,\% y el 85\,\%; Linceus Assistant supera con holgura ese rango en las tres capas comparables (94,3\,\% en E2E, 91,9\,\% en RAG de profundidad y 98,3\,\% en tráfico real). La distancia es, en cualquier caso, prudente: la metodología de evaluación, el corpus utilizado y la naturaleza del dominio difieren entre proyectos y no permiten una comparación estrictamente cuantitativa.
+
+\subsection{Cumplimiento del criterio de cierre}\label{subsec:pruebas-cierre}
+
+Se considera que la fase de validación del prototipo queda cerrada en el momento en que se cumplen, de manera simultánea, los siguientes criterios: las cinco capas funcionales superan su umbral académico de referencia, la metodología empleada está documentada y respaldada por bibliografía, los fallos residuales han sido identificados, categorizados y justificados, y se demuestra mediante medición directa que el coste y la latencia son compatibles con un despliegue real. Todos los criterios anteriores se cumplen a fecha de 26 de abril de 2026.
+
+\subsection{Limitaciones y trabajo futuro}\label{subsec:pruebas-limitaciones}
+
+La validación realizada no agota la evaluación posible del sistema. Quedan fuera de su alcance la medición de la experiencia subjetiva del usuario mediante una escala estandarizada como SUS, la evaluación de la disponibilidad sostenida del servicio en producción mediante un acuerdo de nivel de servicio, y la suite automática para los \textit{endpoints} del panel de administración. Estos tres frentes se abordarán en una segunda iteración, junto con un conjunto de palancas técnicas identificadas durante la ejecución de las pruebas: la elección de modelo Gemini en función del tipo de llamada (clasificación, \textit{Text-to-SQL} o renderizado natural), la sustitución de heurísticas por expresiones regulares por clasificadores ligeros basados en LLM, la introducción de una memoria caché de respuestas para las consultas más frecuentes, la instrumentación de métricas de monitorización en producción y la persistencia de la última intención específica como \textit{slot} consultable para resolver el seguimiento conversacional entre sub-\textit{intents}.

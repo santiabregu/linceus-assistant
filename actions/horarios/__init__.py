@@ -1,1 +1,1 @@
-from .actions import ActionConsultaHorario
+from .actions import ActionConsultaHorario  # noqa: F401

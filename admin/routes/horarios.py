@@ -90,13 +90,13 @@ def get_horarios():
     """
     params, conds = [], []
     if grupo_id:
-        conds.append("h.grupo_id = %s"); params.append(grupo_id)
+        conds.append("h.grupo_id = %s"); params.append(grupo_id)  # noqa: E702
     if asignatura_id:
-        conds.append("g.asignatura_id = %s"); params.append(asignatura_id)
+        conds.append("g.asignatura_id = %s"); params.append(asignatura_id)  # noqa: E702
     if titulacion_id:
-        conds.append("a.titulacion_id = %s"); params.append(titulacion_id)
+        conds.append("a.titulacion_id = %s"); params.append(titulacion_id)  # noqa: E702
     if centro_id:
-        conds.append("t.centro_id = %s"); params.append(centro_id)
+        conds.append("t.centro_id = %s"); params.append(centro_id)  # noqa: E702
     if conds:
         sql += " WHERE " + " AND ".join(conds)
     sql += " ORDER BY a.curso, g.codigo, h.dia_semana, h.hora_inicio"
@@ -116,7 +116,7 @@ def get_grupos():
     """
     params = []
     if asignatura_id:
-        sql += " WHERE g.asignatura_id = %s"; params.append(asignatura_id)
+        sql += " WHERE g.asignatura_id = %s"; params.append(asignatura_id)  # noqa: E702
     sql += " ORDER BY a.nombre, g.codigo"
     return jsonify(query(sql, params))
 

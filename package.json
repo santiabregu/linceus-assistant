@@ -1,0 +1,21 @@
+{
+  "name": "linceus-assistant",
+  "version": "1.0.0",
+  "description": "**LinceUS** es un asistente virtual inteligente para la **Universidad de Sevilla**, diseñado para responder preguntas y guiar a los estudiantes en trámites, servicios y vida académica.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint frontend/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^8.57.1"
+  }
+}

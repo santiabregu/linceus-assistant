@@ -20,13 +20,12 @@ Uso:
     python -m rag.pipeline --stats           # Mostrar estadísticas
 """
 
-import os
 import re
 import sys
 import time
 import argparse
 from pathlib import Path
-from typing import List, Dict, Tuple, Optional
+from typing import List, Dict, Optional
 
 # Forzar UTF-8 en consola Windows (evita UnicodeEncodeError con emojis)
 if sys.platform == "win32":
@@ -37,10 +36,10 @@ if sys.platform == "win32":
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from rag.extraer_pdf import extraer_texto_completo, extraer_metadata_basica
-from rag.chunking import procesar_documento
-from rag.embeddings import generar_embeddings_batch, verificar_embeddings
-from rag.db_vectores import (
+from rag.extraer_pdf import extraer_texto_completo, extraer_metadata_basica  # noqa: E402
+from rag.chunking import procesar_documento  # noqa: E402
+from rag.embeddings import generar_embeddings_batch, verificar_embeddings  # noqa: E402
+from rag.db_vectores import (  # noqa: E402
     calcular_hash_pdf,
     obtener_asignatura_id,
     obtener_plan_existente,
@@ -285,9 +284,9 @@ def ejecutar_pipeline(
     if filtro_asignatura:
         print(f"   Filtro: asignatura {filtro_asignatura}")
     if forzar:
-        print(f"   ⚠ Forzando re-procesamiento")
+        print("   ⚠ Forzando re-procesamiento")
     if solo_errores:
-        print(f"   🔁 Solo re-procesando planes con errores")
+        print("   🔁 Solo re-procesando planes con errores")
     print("=" * 70)
 
     # 1. Verificar embeddings (solo si no es dry-run)

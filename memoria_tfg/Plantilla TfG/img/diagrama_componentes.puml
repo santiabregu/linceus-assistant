@@ -8,70 +8,84 @@ skinparam linetype ortho
 
 title Component Diagram - Linceus Assistant
 
+' ─── Capa de presentación ────────────────────────────────────────────────────
 package "Presentation Layer" {
   [Chatbot Widget] as widget
-  note right of widget
-    Web interface (HTML/JS)
-    for user interaction
-  end note
+  [Admin SPA] as adminui
 }
 
-package "NLU Layer" {
+' ─── Capa NLU / diálogo ──────────────────────────────────────────────────────
+package "Conversational Layer (Rasa)" {
   [NLU Pipeline] as nlu
   [Dialog Manager] as dialog
 
   nlu -[hidden]right- dialog
-
-  note bottom of nlu
-    Tokenization, intent
-    classification & entity
-    extraction (spaCy + DIET)
-  end note
-
-  note bottom of dialog
-    Dialog policies:
-    MemoizationPolicy,
-    RulePolicy, TEDPolicy
-  end note
 }
 
-package "Business Logic Layer" {
-  [Action Server] as actions
+' ─── Capa de lógica de negocio ───────────────────────────────────────────────
+package "Business Logic Layer (Action Server)" {
+  [Action Dispatcher] as actions
 
-  component "Action Modules" as modules {
+  package "Domain Modules" as modules {
     [Subjects] as mod_asig
     [Schedules] as mod_hor
     [Professors] as mod_prof
     [Context] as mod_ctx
+    [Fallback] as mod_fb
     [Multi-Intent] as mod_multi
   }
 
-  actions ..> modules : delegates
+  [Shared Helpers] as shared
+  [Text-to-SQL] as t2sql
+
+  actions ..> modules : <<delegates>>
+  modules ..> shared : <<uses>>
+  modules ..> t2sql : <<uses>>
 }
 
-package "Data Layer" {
-  [Database Client] as dbclient
-  note right of dbclient
-    ORM for PostgreSQL
-    queries
-  end note
-}
-
+' ─── Capa de IA ──────────────────────────────────────────────────────────────
 package "AI Layer" {
-  [LLM Client] as llm
-  note right of llm
-    Response generation
-    with RAG (Retrieval
-    Augmented Generation)
-  end note
+  [Embedding Retriever] as retriever
+  [LLM Renderer] as llm
 }
 
-' Relations between components
-widget ..> nlu : "user\nmessages"
-nlu ..> dialog : "intents &\nentities"
-dialog ..> actions : "custom\nactions"
-actions ..> dbclient : "data\nqueries"
-actions ..> llm : "response\ngeneration"
+' ─── Capa de datos ───────────────────────────────────────────────────────────
+package "Data Layer" {
+  [Relational DB Client] as dbclient
+  [Vector DB Client\n(pgvector)] as vecclient
+}
 
+' ─── Capa de administración ──────────────────────────────────────────────────
+package "Admin Layer (Flask)" {
+  [Admin REST API] as adminapi
+
+  package "Admin Modules" as adminmod {
+    [Catalog CRUD] as adm_crud
+    [Sevius Scraper] as adm_sevius
+    [us.es Scraper] as adm_uses
+    [PDF Horarios Parser] as adm_horarios
+    [RAG Vectorizer] as adm_vec
+  }
+
+  adminapi ..> adminmod : <<delegates>>
+}
+
+' ─── Interfaces / relaciones entre capas ─────────────────────────────────────
+widget ..> nlu : <<HTTP>>
+adminui ..> adminapi : <<HTTP>>
+
+nlu ..> dialog : intents
+dialog ..> actions : <<HTTP>>
+
+actions ..> dbclient
+retriever ..> vecclient
+modules ..> retriever : <<uses>>
+modules ..> llm : <<uses>>
+
+adm_vec ..> vecclient
+adm_crud ..> dbclient
+adm_sevius ..> adm_crud
+adm_uses ..> adm_crud
+adm_horarios ..> dbclient
 
 @enduml

@@ -17,8 +17,8 @@ from typing import List, Dict, Optional
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from rag.embeddings import generar_embedding
-from actions.shared.db import db_client
+from rag.embeddings import generar_embedding  # noqa: E402
+from actions.shared.db import db_client  # noqa: E402
 
 CURSO_ACADEMICO = "2025-26"
 GRUPO_DEFAULT = "Grupo 1"
@@ -296,7 +296,7 @@ def _buscar_por_keywords(
         # Construir condición ILIKE para cada keyword (OR entre ellas)
         if keywords:
             ilike_parts = " OR ".join(
-                f"c.contenido ILIKE %s" for _ in keywords
+                "c.contenido ILIKE %s" for _ in keywords
             )
             keyword_params = [f"%{kw}%" for kw in keywords]
             where_keywords = f"AND ({ilike_parts})"

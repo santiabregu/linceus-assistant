@@ -11,7 +11,6 @@ Fuentes:
 
 import re
 import time
-import urllib.parse
 import requests
 from bs4 import BeautifulSoup
 

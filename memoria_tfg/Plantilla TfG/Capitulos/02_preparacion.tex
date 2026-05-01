@@ -359,44 +359,7 @@ Si el sistema no logra proporcionar una respuesta satisfactoria, se activa un me
     \item Escenario negativo: El usuario introduce \textit{``Horario de 9º de Informática''} y el asistente aclara que no existe tal curso.
 \end{itemize}
 
-\subsection{Consulta sobre documentación necesaria para trámites}
-
-\subsubsection{Consultar documentación para matrícula}
-
-\begin{itemize}
-    \item Escenario positivo: El usuario pregunta \textit{``¿Qué necesito para matricularme en primero de carrera?''} y el asistente lista DNI, resguardo de pago, etc.
-    \item Escenario negativo: El usuario introduce \textit{``Necesito pasaporte para matrícula de nacional español''} y el asistente aclara que ese requisito no aplica.
-\end{itemize}
-
-\subsubsection{Consultar documentación para becas}
-
-\begin{itemize}
-    \item Escenario positivo: El usuario pregunta \textit{``¿Qué documentos hacen falta para la beca general?''} y el asistente devuelve la lista oficial (DNI, renta familiar, matrícula).
-    \item Escenario negativo: El usuario consulta \textit{``Puedo solicitar beca solo con una carta de recomendación''} y el asistente indica que no es suficiente.
-\end{itemize}
-
-\subsubsection{Consultar documentación para certificados académicos}
-
-\begin{itemize}
-    \item Escenario positivo: El usuario pide \textit{``Documentación necesaria para solicitar certificado de notas''} y el asistente responde con los requisitos (DNI, impreso de solicitud, pago de tasas).
-    \item Escenario negativo: El usuario pregunta \textit{``Puedo pedir certificado de notas sin identificarme''} y el asistente informa que no es posible.
-\end{itemize}
-
-\subsubsection{Consultar documentación para convalidaciones/traslados}
-
-\begin{itemize}
-    \item Escenario positivo: El usuario solicita \textit{``Requisitos para traslado de expediente''} y el asistente muestra la normativa aplicable.
-    \item Escenario negativo: El usuario introduce \textit{``Convalidar asignaturas sin entregar plan de estudios''} y el asistente explica que falta documentación esencial.
-\end{itemize}
-
-\subsubsection{Comparar trámites similares (opcional)}
-
-\begin{itemize}
-    \item Escenario positivo: El usuario consulta \textit{``Diferencia entre certificado simple y compulsado''} y el asistente explica la distinción.
-    \item Escenario negativo: El usuario pide \textit{``Compulsar sin documento original''} y el asistente indica que no se puede realizar.
-\end{itemize}
-
-\subsection{Consulta sobre datos de contacto y tutorías del profesorado}
+\subsection{Consulta sobre datos de contacto del profesorado}
 
 \subsubsection{Consultar despacho de un profesor}
 
@@ -412,11 +375,11 @@ Si el sistema no logra proporcionar una respuesta satisfactoria, se activa un me
     \item Escenario negativo: El usuario solicita \textit{``Correo personal de la profesora Ana López''} y el asistente aclara que solo puede dar la dirección oficial.
 \end{itemize}
 
-\subsubsection{Consultar horario de tutorías}
+\subsubsection{Consultar tutorías de un profesor}
 
 \begin{itemize}
-    \item Escenario positivo: El usuario pregunta \textit{``Horario de tutorías de Miguel García''} y el asistente devuelve día y hora.
-    \item Escenario negativo: El usuario consulta fuera de rango (\textit{``Tutorías a medianoche''}) y el asistente indica que no existen en ese horario.
+    \item Escenario positivo: El usuario pregunta \textit{``Tutorías de la profesora Bernárdez''} y el asistente, al no disponer de horarios estructurados de tutoría en la base de datos, redirige al correo institucional del profesor para que el alumno solicite cita directamente.
+    \item Escenario negativo: El usuario pide tutorías de un profesor inexistente y el asistente indica que no lo encuentra.
 \end{itemize}
 
 \subsubsection{Búsqueda por asignatura}

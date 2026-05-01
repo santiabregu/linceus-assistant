@@ -62,3 +62,7 @@ pip-delete-this-directory.txt
 # Modelos archivados (solo mantener el activo en models/)
 models_archive/
 old/
+
+# ESLint
+node_modules/
+package-lock.json

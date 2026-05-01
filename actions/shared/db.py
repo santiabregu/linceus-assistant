@@ -11,17 +11,17 @@ load_dotenv()
 
 class DatabaseConnection:
     """Gestiona la conexión a la base de datos PostgreSQL"""
-    
+
     def __init__(self):
         self.host = os.getenv("DB_HOST")
         self.port = os.getenv("DB_PORT")
         self.database = os.getenv("DB_DATABASE")
         self.user = os.getenv("DB_USER")
         self.password = os.getenv("DB_PASSWORD")
-        
+
         if not all([self.host, self.port, self.database, self.user, self.password]):
             raise ValueError("Todas las variables de BD deben estar configuradas en .env")
-    
+
     def get_connection(self):
         """Obtiene una conexión a la base de datos"""
         try:
@@ -36,7 +36,7 @@ class DatabaseConnection:
         except Exception as e:
             print(f"Error conectando con la base de datos: {e}")
             return None
-    
+
     def test_connection(self):
         """Prueba la conexión con la base de datos"""
         conn = self.get_connection()

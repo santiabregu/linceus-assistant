@@ -6,7 +6,7 @@ Este capítulo describe el diseño y la estructura de la base de datos de LinceU
 
 \section{Diseño conceptual}\label{sec:diseno-conceptual}
 
-El diseño de la base de datos se ha estructurado siguiendo el modelo relacional, organizando la información en entidades que representan los elementos principales del dominio universitario: universidades, centros, titulaciones, asignaturas, profesores, horarios y trámites administrativos.
+El diseño de la base de datos se ha estructurado siguiendo el modelo relacional, organizando la información en entidades que representan los elementos principales del dominio universitario: universidades, centros, titulaciones, asignaturas, profesores y horarios.
 
 \subsection{Principios de diseño}
 
@@ -147,26 +147,6 @@ orcid & varchar & Identificador ORCID \\ \hline
 activo & boolean & Indica si está en activo \\ \hline
 }
 
-\subsection{Tutorías}
-
-Las tutorías representan los horarios de atención a estudiantes por parte de los profesores.
-
-\cuadro{|l|l|p{6cm}|}{Estructura de la tabla TUTORIAS}{tab:tutorias}{
-\textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} \\ \hline
-id & uuid & Identificador único (PK) \\ \hline
-profesor\_id & uuid & Referencia a PROFESORES (FK) \\ \hline
-dia\_semana & int & Día de la semana (1=lunes, 5=viernes) \\ \hline
-hora\_inicio & time & Hora de inicio de la tutoría \\ \hline
-hora\_fin & time & Hora de fin de la tutoría \\ \hline
-ubicacion & varchar & Lugar donde se realiza \\ \hline
-modalidad & varchar & presencial, online o mixta \\ \hline
-enlace\_online & varchar & URL para tutorías online \\ \hline
-curso\_academico & varchar & Curso académico (e.g., "2025-26") \\ \hline
-cuatrimestre & varchar & C1, C2 o A (anual) \\ \hline
-notas & text & Observaciones adicionales \\ \hline
-activa & boolean & Indica si está vigente \\ \hline
-}
-
 \subsection{Horarios}
 
 Los horarios relacionan grupos de clase con aulas, profesores y franjas horarias.
@@ -233,39 +213,6 @@ ORDER BY distance
 LIMIT 5;
 \end{verbatim}
 
-\section{Tablas de trámites administrativos}\label{sec:tramites}
-
-\subsection{Categorías de trámites}
-
-\cuadro{|l|l|p{6cm}|}{Estructura de la tabla CATEGORIAS\_TRAMITES}{tab:categorias-tramites}{
-\textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} \\ \hline
-id & uuid & Identificador único (PK) \\ \hline
-codigo & varchar & Código de la categoría (e.g., "matricula") \\ \hline
-nombre & varchar & Nombre de la categoría \\ \hline
-descripcion & text & Descripción detallada \\ \hline
-icono & varchar & Nombre del icono a mostrar \\ \hline
-orden & int & Orden de presentación \\ \hline
-activa & boolean & Indica si está activa \\ \hline
-}
-
-\subsection{Trámites}
-
-\cuadro{|l|l|p{6cm}|}{Estructura de la tabla TRAMITES}{tab:tramites}{
-\textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} \\ \hline
-id & uuid & Identificador único (PK) \\ \hline
-categoria\_id & uuid & Referencia a CATEGORIAS\_TRAMITES (FK) \\ \hline
-universidad\_id & uuid & Referencia a UNIVERSIDADES (FK) \\ \hline
-codigo & varchar & Código del trámite \\ \hline
-nombre & varchar & Nombre del trámite \\ \hline
-descripcion & text & Descripción detallada \\ \hline
-url\_oficial & varchar & URL oficial del trámite \\ \hline
-url\_formulario & varchar & URL del formulario si existe \\ \hline
-palabras\_clave & text[] & Palabras clave para búsqueda \\ \hline
-estado\_rag & varchar & Estado del procesamiento RAG \\ \hline
-fecha\_procesamiento & timestamptz & Fecha de procesamiento \\ \hline
-activo & boolean & Indica si está vigente \\ \hline
-}
-
 \section{Relaciones entre entidades}\label{sec:relaciones}
 
 Las principales relaciones del modelo son:
@@ -276,7 +223,7 @@ Las principales relaciones del modelo son:
     \item Una \textbf{titulación} contiene múltiples \textbf{asignaturas}
     \item Una \textbf{asignatura} es impartida por un \textbf{departamento} y tiene múltiples \textbf{planes docentes} y \textbf{grupos de clase}
     \item Un \textbf{departamento} agrupa a múltiples \textbf{profesores}
-    \item Un \textbf{profesor} imparte múltiples \textbf{asignaturas}, ofrece \textbf{tutorías} y está asignado a \textbf{horarios}
+    \item Un \textbf{profesor} imparte múltiples \textbf{asignaturas} y está asignado a \textbf{horarios}
     \item Un \textbf{grupo de clase} tiene un conjunto de \textbf{horarios} asociados
     \item Un \textbf{horario} relaciona un \textbf{grupo}, un \textbf{aula} y un \textbf{profesor}
 \end{itemize}
@@ -321,7 +268,7 @@ Para el desarrollo y pruebas del sistema se han creado datos de prueba que inclu
     \item Conjunto representativo de asignaturas de cada titulación
     \item Profesores del Departamento de Lenguajes y Sistemas Informáticos
     \item Horarios del curso 2025-2026
-    \item Planes docentes y trámites administrativos más consultados
+    \item Planes docentes oficiales de las asignaturas vectorizados en el corpus RAG
 \end{itemize}
 
 Los datos de prueba permiten validar el funcionamiento del sistema sin necesidad de tener acceso a datos reales completos.

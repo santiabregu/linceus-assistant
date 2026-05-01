@@ -6,7 +6,7 @@ Este proyecto tiene como finalidad el diseño y desarrollo de un chatbot intelig
 \section{Contexto}
 \label{sec:contexto}
 
-En la actualidad, el alumnado de la Universidad de Sevilla se enfrenta a una notable dispersión informativa. La información académica y administrativa se encuentra repartida entre múltiples plataformas y páginas web, cada una gestionada de forma independiente por distintas facultades, servicios y departamentos. Esta fragmentación dificulta el acceso eficiente a datos esenciales como horarios, contacto con profesorado, requisitos para trámites o metodologías de asignaturas.
+En la actualidad, el alumnado de la Universidad de Sevilla se enfrenta a una notable dispersión informativa. La información académica se encuentra repartida entre múltiples plataformas y páginas web, cada una gestionada de forma independiente por distintas facultades, servicios y departamentos. Esta fragmentación dificulta el acceso eficiente a datos esenciales como horarios, contacto con profesorado o información de las asignaturas.
 
 Además, muchos contenidos relevantes no se presentan de forma unificada ni están estructurados para su consulta directa, sino que requieren navegar por documentos PDF (como proyectos docentes), correos informativos, páginas institucionales específicas u otros portales como Sevius. Esta situación resulta especialmente compleja para estudiantes de nuevo ingreso o internacionales, que no siempre conocen el funcionamiento interno del entorno universitario y, en muchos casos, deben enfrentarse también a la barrera del idioma, lo que dificulta aún más la comprensión de la información disponible.
 
@@ -15,7 +15,7 @@ La ausencia de un punto de acceso único, interactivo y orientado al usuario fin
 \section{Motivación}
 \label{sec:motivacion}
 
-La motivación principal de este proyecto surge de la necesidad de centralizar el acceso a información académica dispersa y mejorar la experiencia del estudiante en su interacción con los sistemas universitarios. Los estudiantes, especialmente aquellos de nuevo ingreso o de programas de intercambio, se enfrentan con frecuencia a dificultades para localizar información básica como horarios de clase, datos de contacto del profesorado o documentación necesaria para realizar trámites administrativos.
+La motivación principal de este proyecto surge de la necesidad de centralizar el acceso a información académica dispersa y mejorar la experiencia del estudiante en su interacción con los sistemas universitarios. Los estudiantes, especialmente aquellos de nuevo ingreso o de programas de intercambio, se enfrentan con frecuencia a dificultades para localizar información básica como horarios de clase, datos de contacto del profesorado o detalles del plan docente de cada asignatura.
 
 Esta problemática no solo genera frustración y pérdida de tiempo, sino que también puede afectar negativamente al rendimiento académico y a la integración del estudiante en la comunidad universitaria. La dispersión de la información en múltiples fuentes web, documentos PDF y portales específicos dificulta la autonomía informativa del alumnado, que debe dedicar un esfuerzo significativo a buscar respuestas que deberían estar disponibles de forma inmediata.
 
@@ -37,10 +37,10 @@ Los objetivos técnicos específicos del proyecto incluyen:
 \begin{itemize}
     \item Implementar un sistema conversacional basado en Rasa que permita gestionar flujos de diálogo complejos y contextuales.
     \item Integrar la API de Gemini para la detección de intenciones y generación de respuestas enriquecidas mediante lenguaje natural.
-    \item Diseñar y desarrollar una base de datos híbrida en Supabase que combine información estructurada (horarios, profesorado, trámites) con embeddings vectoriales para búsquedas semánticas.
+    \item Diseñar y desarrollar una base de datos híbrida en Supabase que combine información estructurada (asignaturas, horarios y profesorado) con embeddings vectoriales para búsquedas semánticas sobre los planes docentes.
     \item Desarrollar acciones personalizadas en Python que permitan consultar datos estructurados y realizar búsquedas por similitud en documentación académica.
-    \item Implementar un frontend web en React que ofrezca una interfaz intuitiva y accesible para la interacción con el chatbot.
-    \item Garantizar el cumplimiento de normativas de privacidad (RGPD) mediante despliegue local y control de acceso a datos sensibles.
+    \item Implementar un \textit{widget} web ligero (HTML, CSS y JavaScript) que ofrezca una interfaz intuitiva y accesible para la interacción con el chatbot, junto con un panel de administración que garantice la mantenibilidad del sistema.
+    \item Garantizar el cumplimiento de la normativa de protección de datos mediante el uso exclusivo de información de carácter público y el anonimato de las sesiones de usuario.
 \end{itemize}
 
 \subsection{Objetivos académicos y personales}
@@ -56,6 +56,8 @@ Desde el punto de vista académico y personal, este proyecto permite:
     \item Contribuir a la mejora de los servicios universitarios mediante una solución tecnológica innovadora y accesible.
     \item Demostrar la capacidad de diseñar, implementar y documentar un sistema completo de forma autónoma.
 \end{itemize}
+
+\input{Capitulos/soluciones_existentes}
 
 \section{Estructura de la memoria}
 \label{sec:estructura-memoria}
