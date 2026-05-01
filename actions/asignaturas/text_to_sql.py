@@ -38,14 +38,14 @@ CREATE TABLE asignaturas (
 
 # Columnas permitidas para SELECT (seguridad)
 COLUMNAS_PERMITIDAS = {
-    'codigo', 'nombre', 'curso', 'creditos', 'duracion', 
+    'codigo', 'nombre', 'curso', 'creditos', 'duracion',
     'tipologia', 'es_formacion_basica', 'es_optativa', 'titulacion_id'
 }
 
 # Columnas permitidas para filtrar en WHERE
 COLUMNAS_FILTRABLES = {
-    'codigo', 'nombre', 'curso', 'creditos', 'duracion', 
-    'tipologia', 'es_formacion_basica', 'es_optativa', 
+    'codigo', 'nombre', 'curso', 'creditos', 'duracion',
+    'tipologia', 'es_formacion_basica', 'es_optativa',
     'titulacion_id', 'activa', 'nombre_normalizado'
 }
 
@@ -81,6 +81,7 @@ def _inyectar_filtro_titulacion(sql: str, codigo_titulacion: str) -> str:
         return sql[:insert_pos] + f"titulacion_id = {subquery} AND " + sql[insert_pos:]
 
     return sql
+
 
 # Mapeo de sinónimos para valores (normalización)
 SINONIMOS_VALORES = {
@@ -122,7 +123,7 @@ SINONIMOS_VALORES = {
 }
 
 # Importar diccionario unificado de alias desde config central
-from ..shared.config import ALIAS_ASIGNATURAS
+from ..shared.config import ALIAS_ASIGNATURAS  # noqa: E402
 
 
 def _parece_acronimo(texto: str) -> bool:
@@ -274,7 +275,7 @@ def _clasificar_necesita_rag(pregunta: str, historial: str = "") -> bool:
 
     prompt = f"""Eres un clasificador. Decide si la siguiente pregunta requiere consultar el plan docente de una asignatura universitaria.
 
-El plan docente contiene: profesorado, temario, evaluación, criterios de calificación, bibliografía, metodología, objetivos, competencias, actividades, horarios, idioma de impartición, tribunales de evaluación, horas de clase.
+El plan docente contiene: profesorado, temario, evaluación, criterios de calificación, bibliografía, metodología, objetivos, competencias, actividades, horarios, idioma de impartición, tribunales de evaluación, horas de clase.  # noqa: E501
 
 La ficha básica (NO requiere plan docente) solo tiene: nombre, código, créditos, curso, cuatrimestre, tipo (obligatoria/optativa/troncal).
 {contexto}
@@ -303,16 +304,16 @@ Responde SOLO con: true o false"""
         if respuesta:
             respuesta_lower = respuesta.strip().lower()
             if 'true' in respuesta_lower:
-                print(f"   → Clasificador RAG: true (LLM)")
+                print("   → Clasificador RAG: true (LLM)")
                 return True
             if 'false' in respuesta_lower:
-                print(f"   → Clasificador RAG: false (LLM)")
+                print("   → Clasificador RAG: false (LLM)")
                 return False
     except Exception as e:
         print(f"   Error clasificando RAG: {e}")
 
     # Fallback a heurística
-    print(f"   → Clasificador RAG: fallback a heurística")
+    print("   → Clasificador RAG: fallback a heurística")
     return _necesita_rag_heuristica(pregunta)
 
 
@@ -326,26 +327,26 @@ def generar_sql_especifica(
 ) -> Dict[str, Any]:
     """
     Genera una query SQL para obtener información de UNA asignatura específica.
-    
+
     Args:
         pregunta: Pregunta del usuario en lenguaje natural
         nombre_asignatura: Nombre/código de la asignatura (si se extrajo)
         contexto_titulacion: ID de la titulación activa
         historial: Turnos previos de conversación para contexto
-    
+
     Returns:
         Dict con 'sql', 'parametros', 'atributo_solicitado', 'explicacion'
     """
-    
+
     contexto_conversacional = ""
     if historial:
-        contexto_conversacional = f"""\nCONTEXTO DE LA CONVERSACIÓN PREVIA (usa esto para entender referencias implícitas):
+        contexto_conversacional = f"""\nCONTEXTO DE LA CONVERSACIÓN PREVIA (usa esto para entender referencias implícitas):  # noqa: E501
 {historial}\n"""
 
     # Clasificar si necesita RAG antes de generar SQL
     necesita_rag = _clasificar_necesita_rag(pregunta, historial)
 
-    prompt = f"""Eres un experto en SQL. Tu tarea es generar una query SELECT para obtener información de UNA asignatura específica.
+    prompt = f"""Eres un experto en SQL. Tu tarea es generar una query SELECT para obtener información de UNA asignatura específica.  # noqa: E501
 
 SCHEMA DE LA TABLA:
 {ASIGNATURAS_SCHEMA}
@@ -399,7 +400,7 @@ JSON:"""
                     return data
     except Exception as e:
         print(f"Error generando SQL específica: {e}")
-    
+
     # Fallback: query segura predefinida
     nombre_buscar = _expandir_alias(nombre_asignatura, contexto_titulacion) if nombre_asignatura else nombre_asignatura
     sql_fallback = """SELECT codigo, nombre, curso, creditos, duracion, tipologia,
@@ -424,22 +425,25 @@ def generar_sql_listado(
 ) -> Dict[str, Any]:
     """
     Genera una query SQL para listar asignaturas con filtros.
-    
+
     Args:
         pregunta: Pregunta del usuario
         contexto_titulacion: UUID de la titulación activa
         historial: Turnos previos de conversación para contexto
-    
+
     Returns:
         Dict con 'sql', 'parametros', 'filtros_aplicados', 'explicacion'
     """
-    
+
     # Construir parte del WHERE para titulación (subquery por código)
-    where_titulacion = f" AND titulacion_id = {_subquery_titulacion(contexto_titulacion)}" if contexto_titulacion else ""
-    
+    where_titulacion = (
+        f" AND titulacion_id = {_subquery_titulacion(contexto_titulacion)}"
+        if contexto_titulacion else ""
+    )
+
     contexto_conversacional = ""
     if historial:
-        contexto_conversacional = f"""\nCONTEXTO DE LA CONVERSACIÓN PREVIA (si la pregunta actual es ambigua, usa el contexto para deducir filtros implícitos como curso, tipología, etc.):
+        contexto_conversacional = f"""\nCONTEXTO DE LA CONVERSACIÓN PREVIA (si la pregunta actual es ambigua, usa el contexto para deducir filtros implícitos como curso, tipología, etc.):  # noqa: E501
 {historial}\n"""
 
     prompt = f"""Genera SQL para listar asignaturas según esta pregunta: "{pregunta}"
@@ -464,16 +468,16 @@ MAPEO:
 EJEMPLOS:
 
 "dame las asignaturas del primero"
-{{"sql": "SELECT codigo, nombre, curso, creditos, duracion, tipologia FROM asignaturas WHERE activa = true AND curso = 1{where_titulacion} ORDER BY nombre", "parametros": [], "filtros_aplicados": {{"curso": 1}}}}
+{{"sql": "SELECT codigo, nombre, curso, creditos, duracion, tipologia FROM asignaturas WHERE activa = true AND curso = 1{where_titulacion} ORDER BY nombre", "parametros": [], "filtros_aplicados": {{"curso": 1}}}}  # noqa: E501
 
 "asignaturas optativas de cuarto"
-{{"sql": "SELECT codigo, nombre, curso, creditos, duracion, tipologia FROM asignaturas WHERE activa = true AND curso = 4 AND tipologia = 'OPTATIVA'{where_titulacion} ORDER BY nombre", "parametros": [], "filtros_aplicados": {{"curso": 4, "tipologia": "OPTATIVA"}}}}
+{{"sql": "SELECT codigo, nombre, curso, creditos, duracion, tipologia FROM asignaturas WHERE activa = true AND curso = 4 AND tipologia = 'OPTATIVA'{where_titulacion} ORDER BY nombre", "parametros": [], "filtros_aplicados": {{"curso": 4, "tipologia": "OPTATIVA"}}}}  # noqa: E501
 
 GENERA SOLO EL JSON (sin explicaciones):"""
 
     try:
         respuesta = llamar_llm(
-            prompt, 
+            prompt,
             timeout=120,
             options={
                 "temperature": 0.0,      # Determinístico para SQL
@@ -484,11 +488,11 @@ GENERA SOLO EL JSON (sin explicaciones):"""
         )
         if respuesta:
             print(f"🔍 Respuesta cruda del LLM:\n{respuesta}\n")
-            
+
             # Buscar JSON desde primera { hasta última }
             inicio = respuesta.find('{')
             fin = respuesta.rfind('}')
-            
+
             if inicio != -1 and fin != -1 and fin > inicio:
                 json_str = respuesta[inicio:fin+1]
                 print(f"🔍 JSON extraído: {json_str}")
@@ -504,12 +508,12 @@ GENERA SOLO EL JSON (sin explicaciones):"""
         print(f"❌ Error parseando JSON: {e}")
     except Exception as e:
         print(f"Error generando SQL listado: {e}")
-    
+
     # Fallback: listar todas las asignaturas activas
     sql_base = "SELECT codigo, nombre, curso, creditos, duracion, tipologia FROM asignaturas WHERE activa = true"
     sql_base = _inyectar_filtro_titulacion(sql_base, contexto_titulacion)
     sql_base += " ORDER BY curso, nombre"
-    
+
     return {
         'sql': sql_base,
         'parametros': [],
@@ -526,19 +530,19 @@ def generar_sql_conteo(
 ) -> Dict[str, Any]:
     """
     Genera una query SQL COUNT para contar asignaturas.
-    
+
     Args:
         pregunta: Pregunta del usuario
         contexto_titulacion: ID de la titulación activa
         historial: Turnos previos de conversación para contexto
-    
+
     Returns:
         Dict con 'sql', 'parametros', 'filtros_aplicados', 'explicacion'
     """
-    
+
     contexto_conversacional = ""
     if historial:
-        contexto_conversacional = f"""\nCONTEXTO DE LA CONVERSACIÓN PREVIA (si la pregunta actual es ambigua, usa el contexto para deducir filtros implícitos):
+        contexto_conversacional = f"""\nCONTEXTO DE LA CONVERSACIÓN PREVIA (si la pregunta actual es ambigua, usa el contexto para deducir filtros implícitos):  # noqa: E501
 {historial}\n"""
 
     prompt = f"""Eres un experto en SQL. Tu tarea es generar una query COUNT para contar asignaturas.
@@ -555,7 +559,7 @@ EXTRAE LOS FILTROS DE LA PREGUNTA:
 - creditos: 6 o 12
 
 INSTRUCCIONES:
-1. Genera SELECT COUNT(*) 
+1. Genera SELECT COUNT(*)
 2. Añade filtros en WHERE según la pregunta
 3. Siempre incluye: WHERE activa = true
 
@@ -571,7 +575,7 @@ JSON:"""
 
     try:
         respuesta = llamar_llm(
-            prompt, 
+            prompt,
             timeout=120,
             options={
                 "temperature": 0.0,
@@ -584,7 +588,7 @@ JSON:"""
             # Buscar JSON desde primera { hasta última }
             inicio = respuesta.find('{')
             fin = respuesta.rfind('}')
-            
+
             if inicio != -1 and fin != -1 and fin > inicio:
                 json_str = respuesta[inicio:fin+1]
                 data = json.loads(json_str)
@@ -595,11 +599,11 @@ JSON:"""
                     return data
     except Exception as e:
         print(f"Error generando SQL conteo: {e}")
-    
+
     # Fallback
     sql_base = "SELECT COUNT(*) FROM asignaturas WHERE activa = true"
     sql_base = _inyectar_filtro_titulacion(sql_base, contexto_titulacion)
-    
+
     return {
         'sql': sql_base,
         'parametros': [],
@@ -614,52 +618,52 @@ JSON:"""
 def validar_sql(sql: str, tipo: str = 'select') -> Optional[str]:
     """
     Valida que la SQL generada sea segura.
-    
+
     Args:
         sql: Query SQL a validar
         tipo: 'select' o 'count'
-    
+
     Returns:
         SQL validada/limpiada o None si es inválida
     """
     if not sql:
         return None
-    
+
     sql_upper = sql.upper().strip()
-    
+
     # 1. Solo permitir SELECT (nunca INSERT, UPDATE, DELETE, DROP, etc.)
     palabras_prohibidas = [
-        'INSERT', 'UPDATE', 'DELETE', 'DROP', 'ALTER', 'CREATE', 
+        'INSERT', 'UPDATE', 'DELETE', 'DROP', 'ALTER', 'CREATE',
         'TRUNCATE', 'EXEC', 'EXECUTE', 'GRANT', 'REVOKE', '--', ';--',
         'UNION SELECT', 'OR 1=1', "OR '1'='1'", 'SLEEP(', 'BENCHMARK('
     ]
-    
+
     for palabra in palabras_prohibidas:
         if palabra in sql_upper:
             print(f"⚠️ SQL rechazada: contiene '{palabra}'")
             return None
-    
+
     # 2. Debe empezar con SELECT
     if not sql_upper.startswith('SELECT'):
-        print(f"⚠️ SQL rechazada: no empieza con SELECT")
+        print("⚠️ SQL rechazada: no empieza con SELECT")
         return None
-    
+
     # 3. Solo puede acceder a la tabla 'asignaturas'
     # Buscar nombres de tabla después de FROM o JOIN
     tablas_mencionadas = re.findall(r'FROM\s+(\w+)|JOIN\s+(\w+)', sql_upper)
     tablas_flat = [t for grupo in tablas_mencionadas for t in grupo if t]
-    
+
     tablas_permitidas = {'ASIGNATURAS', 'TITULACIONES'}
     for tabla in tablas_flat:
         if tabla not in tablas_permitidas:
             print(f"⚠️ SQL rechazada: tabla no permitida '{tabla}'")
             return None
-    
+
     # 4. Para COUNT, verificar que sea COUNT(*)
     if tipo == 'count' and 'COUNT(*)' not in sql_upper and 'COUNT(' not in sql_upper:
-        print(f"⚠️ SQL COUNT rechazada: no contiene COUNT")
+        print("⚠️ SQL COUNT rechazada: no contiene COUNT")
         return None
-    
+
     # 5. Verificar columnas en SELECT (excepto para COUNT(*))
     if tipo == 'select' and 'COUNT(*)' not in sql_upper:
         # Extraer columnas del SELECT
@@ -670,7 +674,7 @@ def validar_sql(sql: str, tipo: str = 'select') -> Optional[str]:
                 columnas = [c.strip().split('.')[-1] for c in columnas_str.split(',')]
                 columnas_upper = {c.upper() for c in columnas}
                 columnas_permitidas_upper = {c.upper() for c in COLUMNAS_PERMITIDAS}
-                
+
                 for col in columnas_upper:
                     # Ignorar alias (AS ...) y funciones
                     col_limpia = col.split(' AS ')[0].strip()
@@ -679,7 +683,7 @@ def validar_sql(sql: str, tipo: str = 'select') -> Optional[str]:
                         if not any(f in col_limpia for f in ['COUNT', 'SUM', 'AVG', 'MAX', 'MIN']):
                             print(f"⚠️ SQL rechazada: columna no permitida '{col_limpia}'")
                             return None
-    
+
     # 6. Limpiar placeholders: el LLM a veces genera '%s' en vez de %s
     #    psycopg2 gestiona el quoting, así que las comillas sobran
     sql = re.sub(r"'(%s)'", r'\1', sql)
@@ -693,38 +697,38 @@ def validar_sql(sql: str, tipo: str = 'select') -> Optional[str]:
 def ejecutar_query(sql: str, parametros: List = None) -> Tuple[bool, Any]:
     """
     Ejecuta una query SQL de forma segura.
-    
+
     Args:
         sql: Query SQL validada
         parametros: Lista de parámetros para la query
-    
+
     Returns:
         Tuple (exito: bool, resultados o mensaje_error)
     """
     if db_client is None:
         return False, "Base de datos no disponible"
-    
+
     conn = db_client.get_connection()
     if not conn:
         return False, "No se pudo conectar a la base de datos"
-    
+
     try:
         cursor = conn.cursor()
-        
+
         if parametros:
             cursor.execute(sql, parametros)
         else:
             cursor.execute(sql)
-        
+
         # Obtener nombres de columnas
         columnas = [desc[0] for desc in cursor.description] if cursor.description else []
-        
+
         # Obtener resultados
         filas = cursor.fetchall()
-        
+
         cursor.close()
         conn.close()
-        
+
         # Convertir a lista de diccionarios
         resultados = []
         for fila in filas:
@@ -733,9 +737,9 @@ def ejecutar_query(sql: str, parametros: List = None) -> Tuple[bool, Any]:
                 if i < len(columnas):
                     resultado[columnas[i]] = valor
             resultados.append(resultado)
-        
+
         return True, resultados
-        
+
     except Exception as e:
         print(f"❌ Error ejecutando query: {e}")
         if conn:
@@ -746,37 +750,37 @@ def ejecutar_query(sql: str, parametros: List = None) -> Tuple[bool, Any]:
 def ejecutar_count(sql: str, parametros: List = None) -> Tuple[bool, int]:
     """
     Ejecuta una query COUNT y devuelve el número.
-    
+
     Args:
         sql: Query COUNT validada
         parametros: Lista de parámetros
-    
+
     Returns:
         Tuple (exito: bool, count o -1)
     """
     if db_client is None:
         return False, -1
-    
+
     conn = db_client.get_connection()
     if not conn:
         return False, -1
-    
+
     try:
         cursor = conn.cursor()
-        
+
         if parametros:
             cursor.execute(sql, parametros)
         else:
             cursor.execute(sql)
-        
+
         resultado = cursor.fetchone()
         count = resultado[0] if resultado else 0
-        
+
         cursor.close()
         conn.close()
-        
+
         return True, count
-        
+
     except Exception as e:
         print(f"❌ Error ejecutando COUNT: {e}")
         if conn:
@@ -797,17 +801,17 @@ def formatear_datos_para_prompt(datos: Any, tipo: str) -> str:
     """
     Convierte los datos crudos de la BD en texto legible para el prompt.
     No genera la respuesta final — solo prepara los datos.
-    
+
     Args:
         datos: Resultado de la query (dict, list[dict], o int)
         tipo: 'especifica', 'listado', 'conteo'
-    
+
     Returns:
         Texto con los datos formateados
     """
     if tipo == 'conteo':
         return f"RESULTADO: {datos} asignaturas encontradas."
-    
+
     if tipo == 'especifica' and isinstance(datos, dict):
         lineas = []
         if datos.get('codigo'):
@@ -824,7 +828,7 @@ def formatear_datos_para_prompt(datos: Any, tipo: str) -> str:
         if datos.get('tipologia'):
             lineas.append(f"- Tipología: {datos['tipologia']}")
         return '\n'.join(lineas)
-    
+
     if tipo == 'listado' and isinstance(datos, list):
         lineas = [f"Se encontraron {len(datos)} asignaturas:"]
         for asig in datos:
@@ -835,7 +839,7 @@ def formatear_datos_para_prompt(datos: Any, tipo: str) -> str:
             duracion = DURACION_NOMBRES.get(asig.get('duracion', ''), '?')
             lineas.append(f"- {nombre} | {curso}º curso | {creditos} ECTS | {tipologia} | {duracion}")
         return '\n'.join(lineas)
-    
+
     # Fallback: serializar como JSON legible
     return json.dumps(datos, ensure_ascii=False, default=str, indent=2)
 
@@ -921,7 +925,7 @@ Respuesta:"""
             return respuesta.strip()
     except Exception as e:
         print(f"Error generando respuesta natural: {e}")
-    
+
     # Fallback si el LLM falla: respuesta básica legible
     return _fallback_respuesta(datos, tipo)
 
@@ -930,18 +934,21 @@ def _fallback_respuesta(datos: Any, tipo: str) -> str:
     """Genera una respuesta básica si Ollama no responde."""
     if tipo == 'conteo':
         return f"Hay **{datos}** asignaturas."
-    
+
     if tipo == 'especifica' and isinstance(datos, dict):
         nombre = datos.get('nombre', 'La asignatura')
         curso = datos.get('curso', '?')
         creditos = datos.get('creditos', '?')
         tipologia = datos.get('tipologia', '').lower()
         return f"**{nombre}** es una asignatura {tipologia} de {curso}º curso con {creditos} créditos ECTS."
-    
+
     if tipo == 'listado' and isinstance(datos, list):
         lineas = [f"Encontré **{len(datos)}** asignaturas:", ""]
         for asig in datos:
-            lineas.append(f"- **{asig.get('nombre', '?')}** ({asig.get('curso', '?')}º, {asig.get('creditos', '?')} ECTS)")
+            nombre = asig.get('nombre', '?')
+            curso = asig.get('curso', '?')
+            creditos = asig.get('creditos', '?')
+            lineas.append(f"- **{nombre}** ({curso}º, {creditos} ECTS)")
         return '\n'.join(lineas)
-    
+
     return "No pude generar una respuesta. ¿Puedes reformular tu pregunta?"

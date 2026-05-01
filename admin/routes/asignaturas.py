@@ -88,7 +88,7 @@ def sync_asignaturas():
             existentes.append({"codigo": asig["codigo"], "nombre": asig["nombre"]})
             continue
         row = execute_returning("""
-            INSERT INTO asignaturas (id, titulacion_id, codigo, nombre, nombre_normalizado, curso, creditos, duracion, tipologia, es_formacion_basica, es_optativa, activa)
+            INSERT INTO asignaturas (id, titulacion_id, codigo, nombre, nombre_normalizado, curso, creditos, duracion, tipologia, es_formacion_basica, es_optativa, activa)  # noqa: E501
             VALUES (gen_random_uuid(), %s, %s, %s, %s, 0, 0, 'Anual', '', false, false, true)
             RETURNING id, codigo, nombre
         """, (titulacion_id, asig["codigo"], asig["nombre"], normalizar(asig["nombre"])))

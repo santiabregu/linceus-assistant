@@ -87,7 +87,7 @@ class ActionResolverAfirmacion(Action):
             campo = sugerencia.get("campo") or "nombre_asignatura"
             valor = sugerencia["valor"]
 
-            from ..actions import __all__ as _  # lazy: garantiza registro
+            from ..actions import __all__ as _  # noqa: F401  # lazy: garantiza registro
             from .. import actions as acciones_pkg
 
             # Import mapeo: nombre Action → clase
@@ -176,7 +176,7 @@ class ActionPreguntarHayMas(Action):
         if ultima in ("consulta_especifica", "action_consulta_horario"):
             ultima_asig = tracker.get_slot("ultimo_nombre_asignatura")
             if ultima_asig and titulacion:
-                from ..horarios.actions import _query_asignatura, _query_grupos_de_asignatura
+                from ..horarios.actions import _query_grupos_de_asignatura
                 from ..shared.config import ALIAS_ASIGNATURAS
                 from ..asignaturas.actions import normalizar_texto as _norm
 

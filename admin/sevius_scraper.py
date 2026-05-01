@@ -13,7 +13,7 @@ import requests
 from bs4 import BeautifulSoup
 
 SEVIUS_URL = "https://sevius4.us.es/index.php?PyP=LISTA"
-SEVIUS_ASIG_URL = "https://sevius4.us.es/index.php?PyP=LISTA&codcentro={codcentro}&titulacion={titulacion}&asignatura={asignatura}"
+SEVIUS_ASIG_URL = "https://sevius4.us.es/index.php?PyP=LISTA&codcentro={codcentro}&titulacion={titulacion}&asignatura={asignatura}"  # noqa: E501
 TIMEOUT = 15
 
 

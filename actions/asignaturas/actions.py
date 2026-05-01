@@ -4,7 +4,6 @@ Arquitectura con 3 intents separados + Text-to-SQL dinámico.
 """
 
 from typing import Any, Text, Dict, List, Optional, Tuple
-import json
 import re
 import unicodedata
 from ..shared.gemini_client import llamar_gemini
@@ -389,7 +388,7 @@ def resolver_asignatura(
             print(f"   → Nombre resuelto por fuzzy BD: {nombre_asignatura}")
 
     if not nombre_asignatura:
-        print(f"   → Sin nombre candidato para resolver")
+        print("   → Sin nombre candidato para resolver")
         return None, None
 
     # 6. Buscar en BD con ILIKE flexible
@@ -674,7 +673,9 @@ class ActionConsultaEspecifica(Action):
         print(f"\n{'='*60}")
         print(f"🔍 CONSULTA ESPECÍFICA: {pregunta}")
         print(f"   Contexto: {contexto_titulacion}")
-        print(f"   Última asignatura: {tracker.get_slot('ultimo_nombre_asignatura')} ({tracker.get_slot('ultimo_codigo_consultado')})")
+        ult_asig = tracker.get_slot('ultimo_nombre_asignatura')
+        ult_cod = tracker.get_slot('ultimo_codigo_consultado')
+        print(f"   Última asignatura: {ult_asig} ({ult_cod})")
         print(f"{'='*60}")
 
         # ── Multi-asignatura: detectar si hay varias en la pregunta ──
@@ -729,10 +730,11 @@ class ActionConsultaEspecifica(Action):
                         text=respuesta,
                         json_message={"data": resultados_all[0] if len(resultados_all) == 1 else resultados_all},
                     )
-                    return eventos_contexto + [
-                        SlotSet("ultimo_nombre_asignatura", resultados_all[0].get('nombre') if len(resultados_all) == 1 else None)
-                    ]
-                dispatcher.utter_message(text="No pude identificar la asignatura en tu pregunta. ¿Puedes decirme el nombre?")
+                    nombre_slot = resultados_all[0].get('nombre') if len(resultados_all) == 1 else None
+                    return eventos_contexto + [SlotSet("ultimo_nombre_asignatura", nombre_slot)]
+                dispatcher.utter_message(
+                    text="No pude identificar la asignatura en tu pregunta. ¿Puedes decirme el nombre?"
+                )
                 return []
 
         # Horario/aula de asignatura → intent `consulta_horario_asignatura`
@@ -899,7 +901,7 @@ class ActionConsultaEspecifica(Action):
 class ActionConsultaListado(Action):
     """
     Maneja consultas que piden LISTAR asignaturas con filtros.
-    
+
     Ejemplos:
     - "Dame las optativas de cuarto"
     - "Asignaturas obligatorias de primero"
@@ -989,7 +991,7 @@ class ActionConsultaListado(Action):
 class ActionConsultaConteo(Action):
     """
     Maneja consultas que piden CONTAR asignaturas.
-    
+
     Ejemplos:
     - "¿Cuántas asignaturas hay en primero?"
     - "¿Cuántas optativas de cuarto?"
@@ -1245,4 +1247,3 @@ class ActionConsultaHorarioAsignatura(Action):
             SlotSet("ultimo_nombre_asignatura", asignatura.get('nombre')),
             SlotSet("ultima_action_ejecutada", "action_consulta_horario_asignatura"),
         ]
-

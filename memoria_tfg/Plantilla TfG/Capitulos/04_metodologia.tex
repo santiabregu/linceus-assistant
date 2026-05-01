@@ -1,21 +1,99 @@
 \chapter{Metodología}
 \label{cap:metodologia}
 
-% Descripción de la metodología de desarrollo empleada
+Este capítulo describe cómo se ha organizado y ejecutado el desarrollo de Linceus Assistant. Se cubren cinco aspectos: la metodología de desarrollo ágil empleada y su adaptación al contexto del proyecto, la gestión del código fuente, los estándares de codificación aplicados, la gestión del trabajo y las tareas, y el esquema de versionado del sistema.
 
-\section{SCRUM ajustado en la ejecución}
+% =====================================================
+\section{Metodología de desarrollo: Scrum adaptado}
 \label{sec:scrum}
+% =====================================================
 
-% Adaptación de SCRUM para un proyecto de TFG individual
-% - Sprints y planificación
-% - Revisiones y retrospectivas
-% - Backlog y gestión de tareas
+\subsection{Scrum: fundamentos}
 
-\section{Herramientas}
-\label{sec:herramientas}
+Scrum es un marco de trabajo ágil para el desarrollo iterativo e incremental de productos complejos~\cite{schwaber2020scrum}. Su unidad de trabajo es el \textbf{sprint}, una iteración de duración fija (típicamente de una a cuatro semanas) al final de la cual se obtiene un incremento del producto potencialmente entregable. Los roles clásicos son el \textit{Product Owner}, responsable de priorizar el \textit{product backlog}; el \textit{Scrum Master}, que facilita el proceso; y el \textit{Development Team}, que ejecuta el trabajo. Las ceremonias principales son la \textit{Sprint Planning} (planificación del sprint), la \textit{Daily Scrum} (sincronización diaria), la \textit{Sprint Review} (revisión del incremento) y la \textit{Sprint Retrospective} (mejora del proceso).
 
-% Herramientas de desarrollo, gestión y documentación utilizadas
-% - Control de versiones (Git, GitHub)
-% - Entornos de desarrollo
-% - Gestión de proyecto
-% - Documentación
+Una de las características definitorias de Scrum es su flexibilidad: la guía oficial no prescribe prácticas de ingeniería específicas, sino un conjunto mínimo de reglas que el equipo adapta a su contexto. Esto lo hace especialmente adecuado para proyectos de alcance variable como un TFG, donde los requisitos evolucionan con el conocimiento adquirido durante el desarrollo.
+
+\subsection{Adaptación al proyecto individual}
+
+Linceus Assistant es un proyecto desarrollado por una sola persona, lo que hace innecesarias varias ceremonias pensadas para coordinar equipos. A continuación se describen las adaptaciones realizadas respecto al Scrum estándar:
+
+\begin{itemize}
+    \item \textbf{Sin Daily Scrum.} La sincronización diaria carece de sentido en un equipo unipersonal. El seguimiento del progreso se realiza de forma continua a través del tablero de tareas y el registro de decisiones técnicas en \texttt{docs/sprints/}.
+
+    \item \textbf{Retrospectivas bajo demanda.} No se celebra una retrospectiva formal al cierre de cada sprint. En su lugar, se realiza una revisión del proceso únicamente cuando se detecta un problema recurrente o una desviación significativa respecto a la planificación. Este enfoque evita la sobrecarga documental sin perder la capacidad de mejora continua.
+
+    \item \textbf{Sprint Planning al final de la Review.} La planificación del sprint siguiente se integra en la sesión de revisión del sprint anterior. Una vez evaluado el incremento entregado y ajustado el backlog, se definen directamente los objetivos del próximo sprint. El flujo real es, por tanto: \textit{Review del sprint} $\rightarrow$ \textit{Actualización del backlog} $\rightarrow$ \textit{Definición de objetivos} $\rightarrow$ \textit{Descomposición en tareas}.
+
+    \item \textbf{Rol único con supervisión académica.} Al no haber equipo, los tres roles de Scrum (Product Owner, Scrum Master, Developer) los asume la misma persona. Las funciones propias del Product Owner —definir prioridades, validar el incremento y orientar el alcance del producto— se ejercen en colaboración con el tutor académico, cuyas aportaciones quedan recogidas en la Bitácora de Reuniones descrita en la Sección~\ref{sec:gestion-trabajo}.
+\end{itemize}
+
+\subsection{Sprints y duración}
+
+Los sprints tienen una duración de \textbf{3 a 4 semanas}, ajustada según la carga lectiva del cuatrimestre y la complejidad de la épica en curso. Cada sprint cierra con un incremento funcional verificable y un breve registro de decisiones técnicas (fichero \texttt{docs/sprints/sprint-N.md}) que documenta los cambios de diseño no triviales realizados durante la iteración.
+
+La correspondencia entre sprints y épicas del backlog se detalla en el Capítulo~\ref{cap:planificacion}.
+
+% =====================================================
+\section{Gestión del código fuente}
+\label{sec:git}
+% =====================================================
+
+El control de versiones del proyecto se gestiona con \textbf{Git}, y el repositorio remoto se aloja en \textbf{GitHub}. Esta combinación proporciona trazabilidad completa de los cambios, facilita la revisión del historial de decisiones técnicas y permite integrar el pipeline de despliegue continuo descrito en la Sección~\ref{subsubsec:despliegue}.
+
+\subsection{Política de ramas}
+
+El repositorio sigue una política de dos ramas principales:
+
+\begin{itemize}
+    \item \textbf{\texttt{main}}: rama de producción. Solo recibe merges procedentes de \texttt{testing} una vez que el incremento ha superado las pruebas de aceptación y el sistema está listo para desplegarse. Todo merge a \texttt{main} dispara automáticamente el pipeline de GitHub Actions que despliega la nueva versión en el servidor de DigitalOcean.
+
+    \item \textbf{\texttt{testing}}: rama de integración y validación. Recibe el trabajo de desarrollo, se usa para ejecutar las suites de pruebas y se mantiene como línea estable entre sprints.
+\end{itemize}
+
+El desarrollo de cada épica o tarea de cierta envergadura se realiza en una \textbf{rama de feature} con nombre descriptivo (por ejemplo, \texttt{feature/rag-pipeline} o \texttt{fix/horarios-slot}), que se integra en \texttt{testing} mediante un merge directo una vez finalizada y probada localmente.
+
+\subsection{Convenciones de commits}
+
+Los mensajes de commit siguen el estándar \textbf{Conventional Commits}~\cite{conventionalcommits}, con el formato \texttt{<tipo>(<ámbito>): <descripción>}. Los tipos empleados con mayor frecuencia son \texttt{feat} (nueva funcionalidad), \texttt{fix} (corrección de errores), \texttt{refactor} (reestructuración sin cambio de comportamiento), \texttt{test} (adición o modificación de pruebas) y \texttt{docs} (documentación). Los commits son frecuentes y de alcance reducido: cada commit representa un cambio coherente y compilable, lo que facilita la bisección del historial cuando aparecen regresiones.
+
+% =====================================================
+\section{Estándares de codificación}
+\label{sec:estandares}
+% =====================================================
+
+El código Python del proyecto se ajusta a la guía de estilo \textbf{PEP~8}~\cite{pep8}, verificada automáticamente mediante dos herramientas complementarias: \textbf{pylint}~\cite{pylint} y \textbf{flake8}~\cite{flake8}.
+
+Pylint se configura en \texttt{.pylintrc} con una longitud máxima de línea de 120 caracteres y supresión de los errores de importación propios del entorno Rasa (paquetes como \texttt{rasa\_sdk} o \texttt{rapidfuzz} residen en el entorno virtualizado y no son accesibles desde el intérprete de análisis estático). Se ejecuta sobre \texttt{actions/} y \texttt{admin/} con el flag \texttt{--errors-only} para detectar errores reales antes de integrar cambios en la rama principal.
+
+Flake8 amplía la cobertura de estilo con verificaciones que pylint no contempla: espacios en blanco sobrantes, imports no utilizados, f-strings sin marcadores de sustitución, longitud de línea e indentación de continuación. Se ejecuta con \texttt{--max-line-length=120} sobre los directorios \texttt{actions/}, \texttt{admin/} y \texttt{rag/}. Las líneas que superan el límite por contener cadenas de texto largas no partibles (prompts al LLM, URLs de constantes, sentencias SQL) se suprimen con la directiva \texttt{\# noqa: E501}; los imports que son re-exportaciones intencionadas en ficheros \texttt{\_\_init\_\_.py} se suprimen con \texttt{\# noqa: F401}; y las instrucciones dobles en una sola línea que forman un par semántico indivisible (\texttt{conds.append}~/~\texttt{params.append}) se suprimen con \texttt{\# noqa: E702}. Los imports posteriores a \texttt{sys.path.insert} —necesarios para que los scripts del pipeline RAG y el módulo de profesores sean ejecutables de forma autónoma fuera del paquete— se suprimen con \texttt{\# noqa: E402}. El resto del código cumple PEP~8 sin supresiones.
+
+Para el código JavaScript del widget de chat (\texttt{frontend/}), se aplica \textbf{ESLint 8}~\cite{eslint} con la configuración \texttt{eslint:recommended}, extendida con reglas de estilo básicas (comillas simples, punto y coma obligatorio). La configuración se almacena en \texttt{.eslintrc.json} en la raíz del repositorio y se ejecuta con \texttt{npm run lint}, que lanza \texttt{eslint frontend/} sobre los tres ficheros del directorio (\texttt{chatbot-widget.js}, \texttt{admin.js}, \texttt{login.js}).
+
+% =====================================================
+\section{Gestión del trabajo}
+\label{sec:gestion-trabajo}
+% =====================================================
+
+El seguimiento del proyecto se articula en torno a la \textbf{Bitácora de Reuniones}, un documento estructurado que recoge de forma acumulativa el desarrollo de cada reunión con el tutor y los objetivos acordados para el sprint siguiente. Tras cada reunión, la bitácora se actualiza a partir de la transcripción de la sesión, extrayendo los puntos más relevantes (decisiones tomadas, problemas detectados, cambios de prioridad) y registrando las tareas pendientes para el siguiente ciclo. Este documento actúa de facto como el \textit{product backlog} del proyecto: la lista de tareas pendientes refleja en todo momento el estado acordado con el tutor, sin necesidad de herramientas adicionales de gestión.
+
+Complementariamente, las decisiones técnicas no triviales tomadas durante el desarrollo se documentan en los registros de decisiones de sprint (\texttt{docs/sprints/SN/Registro\_decisiones.md}), que mantienen trazabilidad entre el código y el razonamiento que lo originó.
+
+El tiempo dedicado al proyecto no se mide con herramientas de \textit{time tracking} formales, sino que se estima a partir de la frecuencia de commits y del contenido de los registros de sprint.
+
+% =====================================================
+\section{Versionado del sistema}
+\label{sec:versionado}
+% =====================================================
+
+El sistema sigue un esquema de versionado semántico de tres niveles: \textbf{\texttt{vMAJOR.MINOR.PATCH}}, adaptado al ciclo de vida de un chatbot con modelo entrenado.
+
+\begin{itemize}
+    \item \textbf{\texttt{MAJOR}}: se incrementa en dos situaciones: al incorporar una \textbf{nueva épica funcional} (un nuevo dominio de capacidades), o al introducir un \textbf{cambio arquitectónico de envergadura dentro de una épica existente} que afecta a su lógica de forma global (por ejemplo, la migración completa a Text-to-SQL o la introducción del pipeline RAG). Ejemplos reales del proyecto: \texttt{v1.x.x} cubre asignaturas con NLU puro, \texttt{v2.x.x} introduce Text-to-SQL y RAG, \texttt{v3.x.x} añade horarios, \texttt{v4.x.x} añade profesorado, \texttt{v5.x.x} incorpora cambios transversales de infraestructura.
+
+    \item \textbf{\texttt{MINOR}}: se incrementa al añadir \textbf{nueva funcionalidad dentro de una épica existente}, como nuevos intents, nuevos filtros de búsqueda o mejoras significativas en la lógica de recuperación, sin alterar la arquitectura general.
+
+    \item \textbf{\texttt{PATCH}}: se incrementa en correcciones de errores, ajustes de prompts, mejoras de ejemplos NLU o pequeñas optimizaciones que no alteran el comportamiento funcional esperado.
+\end{itemize}
+
+El versionado está ligado al modelo Rasa: cada reentrenamiento que modifica los ficheros NLU, stories o reglas genera un nuevo artefacto de modelo (\texttt{models/linceus\_vX.Y.Z.tar.gz}) identificado con la versión del sistema. Esto garantiza que cada versión desplegada en producción es reproducible: el par \{tag de Git, artefacto de modelo\} define unívocamente el estado del sistema en ese punto. El historial completo de versiones se mantiene en \texttt{docs/tabla\_versiones.md}.

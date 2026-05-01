@@ -20,7 +20,7 @@ from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import SlotSet
 
-from ..shared.config import BotConfig, ALIAS_ASIGNATURAS
+from ..shared.config import ALIAS_ASIGNATURAS
 from ..shared.db import db_client
 from ..shared.gemini_client import llamar_gemini as llamar_llm
 from ..shared.follow_up import comprobar_titulacion, _contar_turnos_desde_slot
@@ -395,12 +395,13 @@ def _respuesta_faltan_datos(titulacion: str, curso: Optional[int] = None,
     return msg
 
 
-def _datos_horario_a_texto(resultados: list, titulacion: str,
-                            curso: int, grupo: int,
-                            dia_filtro: Optional[int] = None,
-                            cuatrimestre: Optional[int] = None,
-                            cuatri_explicito: bool = True,
-                            filtro_aula: Optional[str] = None) -> str:
+def _datos_horario_a_texto(
+        resultados: list, titulacion: str,
+        curso: int, grupo: int,
+        dia_filtro: Optional[int] = None,
+        cuatrimestre: Optional[int] = None,
+        cuatri_explicito: bool = True,
+        filtro_aula: Optional[str] = None) -> str:
     """Convierte resultados de query de horario en texto plano para el LLM.
 
     Si `cuatrimestre` está fijado y `cuatri_explicito=False`, añade un aviso
@@ -468,9 +469,10 @@ def _datos_horario_a_texto(resultados: list, titulacion: str,
     return "\n".join(lineas)
 
 
-def _datos_asignatura_a_texto(resultados: list, alias: str,
-                               titulacion: str,
-                               filtro_aula: Optional[str] = None) -> str:
+def _datos_asignatura_a_texto(
+        resultados: list, alias: str,
+        titulacion: str,
+        filtro_aula: Optional[str] = None) -> str:
     """Convierte resultados de búsqueda por asignatura en texto plano para el LLM.
 
     Tras D-068 cada aula del slot es una fila distinta en `horarios`. Aquí
@@ -574,7 +576,7 @@ REGLAS:
 - No digas "según los datos" ni menciones la base de datos
 - No saludes (nada de "¡Hola!", "Hola!", "Buenos días", etc.) — ve directo a la respuesta
 - Si hay muchas entradas, organízalas bien para que sea fácil de leer
-- IMPORTANTE: Tu respuesta debe tener como MÁXIMO 1500 caracteres. Si los datos son muy extensos, resume agrupando de forma compacta
+- IMPORTANTE: Tu respuesta debe tener como MÁXIMO 1500 caracteres. Si los datos son muy extensos, resume agrupando de forma compacta  # noqa: E501
 
 Respuesta:"""
 
@@ -662,8 +664,8 @@ class ActionConsultaHorario(Action):
         # Ej: tras "horario de 2 grupo 1" -> "y del grupo 2?".
         if not curso:
             ultimo_curso = tracker.get_slot("ultimo_curso_consultado")
-            if ultimo_curso and _contar_turnos_desde_slot(
-                tracker, "ultimo_curso_consultado") <= 3:
+            if (ultimo_curso and
+                    _contar_turnos_desde_slot(tracker, "ultimo_curso_consultado") <= 3):
                 try:
                     curso = int(ultimo_curso)
                     print(f"   → Seguimiento horario: heredando curso {curso}")
@@ -671,8 +673,8 @@ class ActionConsultaHorario(Action):
                     pass
         if not grupo:
             ultimo_grupo = tracker.get_slot("ultimo_grupo_consultado")
-            if ultimo_grupo and _contar_turnos_desde_slot(
-                tracker, "ultimo_grupo_consultado") <= 3:
+            if (ultimo_grupo and
+                    _contar_turnos_desde_slot(tracker, "ultimo_grupo_consultado") <= 3):
                 try:
                     grupo = int(ultimo_grupo)
                     print(f"   → Seguimiento horario: heredando grupo {grupo}")
@@ -688,8 +690,8 @@ class ActionConsultaHorario(Action):
         sin_pistas_horario = not (curso or grupo or dia or cuatri_explicito)
         if sin_pistas_horario:
             ultima_asig = tracker.get_slot("ultimo_nombre_asignatura")
-            if ultima_asig and _contar_turnos_desde_slot(
-                tracker, "ultimo_nombre_asignatura") <= 3:
+            if (ultima_asig and
+                    _contar_turnos_desde_slot(tracker, "ultimo_nombre_asignatura") <= 3):
                 from ..asignaturas.actions import ActionConsultaHorarioAsignatura
                 print(f"   → H-S01: delegando a horario_asignatura "
                       f"(asignatura heredada: '{ultima_asig}')")

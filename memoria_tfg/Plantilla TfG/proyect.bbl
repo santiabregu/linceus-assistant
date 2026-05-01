@@ -97,6 +97,38 @@ B.~R. Ranoliya, N.~Raghuwanshi, and S.~Singh, ``Chatbot for university related
 D.~K. Dibya and S.~Sahoo, ``Implementation of a chatbot system using {AI} and
   {NLP},'' in {\em IEEE ICCCNT}, 2021.
 
+\bibitem{schwaber2020scrum}
+K.~Schwaber and J.~Sutherland, ``The {S}crum guide: The definitive guide to
+  {S}crum: The rules of the game.''
+  \url{https://scrumguides.org/scrum-guide.html}, 2020.
+\newblock Consultado en abril de 2026.
+
+\bibitem{conventionalcommits}
+{Conventional Commits}, ``Conventional commits 1.0.0 -- a specification for
+  adding human and machine readable meaning to commit messages.''
+  \url{https://www.conventionalcommits.org/en/v1.0.0/}, 2019.
+\newblock Consultado en abril de 2026.
+
+\bibitem{pep8}
+G.~van Rossum, B.~Warsaw, and N.~Coghlan, ``{PEP 8} -- style guide for {P}ython
+  code.'' \url{https://peps.python.org/pep-0008/}, 2001.
+\newblock Consultado en abril de 2026.
+
+\bibitem{pylint}
+{PyCQA}, ``Pylint -- a static code analyser for {P}ython.''
+  \url{https://pylint.readthedocs.io/}, 2001.
+\newblock Consultado en abril de 2026.
+
+\bibitem{flake8}
+{PyCQA}, ``Flake8: Your tool for style guide enforcement.''
+  \url{https://flake8.pycqa.org/}, 2010.
+\newblock Consultado en mayo de 2026.
+
+\bibitem{eslint}
+{ESLint}, ``{ESLint}: Find and fix problems in your {J}ava{S}cript code.''
+  \url{https://eslint.org/}, 2013.
+\newblock Consultado en abril de 2026.
+
 \bibitem{segura2024guiatfg}
 S.~Segura and A.~Ruiz, ``Guia para proyectos fin de grado sobre desarrollo de
   software.'' \url{https://github.com/ssegura/Guia_TFG}, 2024.

@@ -11,7 +11,6 @@ Y estas funciones se encargan de:
 
 from __future__ import annotations
 
-import os
 import re
 import uuid
 import urllib.request
@@ -19,8 +18,6 @@ import unicodedata
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
-
-import psycopg2
 
 from admin.db import get_conn
 

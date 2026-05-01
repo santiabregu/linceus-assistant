@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.4.26)  26 APR 2026 22:45
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.4.26)  1 MAY 2026 21:03
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -851,11 +851,14 @@ LaTeX Font Info:    Trying to load font information for U+lasy on input line 12
 
 (C:\Users\santi\AppData\Local\Programs\MiKTeX\tex/latex/base\ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
-))
-[1
+) [1
 
 
-] (proyect.toc [2
+])
+[2
+
+
+] (proyect.toc [3
 
 ]
 
@@ -864,40 +867,40 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[3] [4] [5])
+[4] [5] [6])
 \tf@toc=\write4
 \openout4 = `proyect.toc'.
 
- [6] (proyect.lof)
+ [7] (proyect.lof)
 \tf@lof=\write5
 \openout5 = `proyect.lof'.
 
- [7
+ [8
 
-] (proyect.lot [8
+] (proyect.lot [9
 
 ])
 \tf@lot=\write6
 \openout6 = `proyect.lot'.
 
- [9] (proyect.lol)
+ [10] (proyect.lol)
 \tf@lol=\write7
 \openout7 = `proyect.lol'.
 
- [10
 
-]
 [11
+
+] [12
 
 
 ] (Capitulos/01_introduccion.tex
 Cap\'{\i }tulo 1.
-[12
+[13
 
 ]
 Package babel Info: 'spanish' activates 'spanish' shorthands.
 (babel)             Reported on input line 56.
- [13] (Capitulos/soluciones_existentes.tex [14]
+ [14] (Capitulos/soluciones_existentes.tex [15]
 Underfull \hbox (badness 10000) in paragraph at lines 45--45
 []\OT1/ptm/m/n/10 Acceso, ad-mi-
  []
@@ -1017,11 +1020,11 @@ Underfull \hbox (badness 8038) in paragraph at lines 53--54
 \OT1/ptm/m/n/10 do-cen-tes; c[]odi-go
  []
 
-[15] [16])) (Capitulos/02_preparacion.tex [17]
+[16] [17])) (Capitulos/02_preparacion.tex [18]
 Cap\'{\i }tulo 2.
-[18
+[19
 
-] [19]
+] [20]
 Overfull \hbox (30.81543pt too wide) in paragraph at lines 98--108
  [][] 
  []
@@ -1029,37 +1032,65 @@ Overfull \hbox (30.81543pt too wide) in paragraph at lines 98--108
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[20] [21]
+[21] [22]
 Overfull \hbox (87.74957pt too wide) in paragraph at lines 190--200
  [][] 
  []
 
-[22] [23]
+[23] [24]
 Overfull \hbox (71.82448pt too wide) in paragraph at lines 283--292
  [][] 
  []
 
-[24]
+[25]
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[25]
+[26]
 LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 3
 58.
  (C:\Program Files\MiKTeX\tex/latex/psnfss\ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
-) [26] [27])
-(Capitulos/03_conceptos.tex [28]
+) [27] [28])
+(Capitulos/03_conceptos.tex [29]
 Cap\'{\i }tulo 3.
-) [29
+) [30
 
-] [30
+] [31
 
 ] (Capitulos/04_metodologia.tex
 Cap\'{\i }tulo 4.
-) (Capitulos/05_planificacion.tex [31
+[32
 
-]
+] [33]
+Overfull \hbox (41.38383pt too wide) in paragraph at lines 80--81
+\OT1/ptm/m/n/10.95 cu-men-tan en los re-gis-tros de de-ci-sio-nes de sprint (\O
+T1/pcr/m/n/10.95 docs/sprints/SN/Registro[]decisiones.md\OT1/ptm/m/n/10.95 ),
+ []
+
+
+Overfull \hbox (11.45322pt too wide) in paragraph at lines 89--90
+[]\OT1/ptm/m/n/10.95 El sis-te-ma si-gue un es-que-ma de ver-sio-na-do sem[]ant
+i-co de tres ni-ve-les: \OT1/pcr/b/n/10.95 vMAJOR.MINOR.PATCH\OT1/ptm/m/n/10.95
+ ,
+ []
+
+[34]
+LaTeX Font Info:    Trying to load font information for OMS+ptm on input line 9
+9.
+ (C:\Program Files\MiKTeX\tex/latex/psnfss\omsptm.fd
+File: omsptm.fd 
+)
+LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10.95> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 99.
+)
+(Capitulos/05_planificacion.tex
+Overfull \hbox (15.70636pt too wide) in paragraph at lines 99--2
+\OT1/ptm/m/n/10.95 NLU, sto-ries o re-glas ge-ne-ra un nue-vo ar-te-fac-to de m
+o-de-lo (\OT1/pcr/m/n/10.95 models/linceus[]vX.Y.Z.tar.gz\OT1/ptm/m/n/10.95 )
+ []
+
+[35]
 Cap\'{\i }tulo 5.
 
 Overfull \hbox (2.0086pt too wide) in paragraph at lines 86--87
@@ -1073,9 +1104,9 @@ Overfull \hbox (8.81276pt too wide) in paragraph at lines 133--141
  [][] 
  []
 
-[32
+[36
 
-] [33]
+] [37]
 Underfull \hbox (badness 10000) in paragraph at lines 182--182
 []\OT1/ptm/m/n/10 Tablas \OT1/pcr/m/n/10 asignaturas\OT1/ptm/m/n/10 , \OT1/pcr/
 m/n/10 titulaciones\OT1/ptm/m/n/10 ,
@@ -1144,7 +1175,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 225--225
 a-ble:
  []
 
-[34] [35]
+[38] [39]
 Underfull \hbox (badness 1406) in paragraph at lines 245--245
 []\OT1/ptm/m/n/10 Acci[]on que com-bi-na re-trie-val sem[]anti-co con re-
  []
@@ -1171,7 +1202,7 @@ Underfull \hbox (badness 1394) in paragraph at lines 292--292
 re-ga-bles:
  []
 
-[36]
+[40]
 Underfull \hbox (badness 10000) in paragraph at lines 311--311
 []\OT1/ptm/m/n/10 Registro de las con-ver-sa-cio-nes pi-lo-to en
  []
@@ -1193,7 +1224,7 @@ Underfull \hbox (badness 2351) in paragraph at lines 332--332
 \OT1/pcr/m/n/10 main\OT1/ptm/m/n/10 . \OT1/ptm/m/it/10 En-tre-ga-ble:
  []
 
-[37]
+[41]
 Underfull \hbox (badness 10000) in paragraph at lines 350--350
 []\OT1/ptm/m/n/10 Diagrama de com-po-nen-tes y de des-plie-gue
  []
@@ -1204,11 +1235,11 @@ Underfull \hbox (badness 10000) in paragraph at lines 350--350
 e:
  []
 
-[38]) [39] [40
+[42]) [43] [44
 
 ] (Capitulos/requisitos.tex
 Cap\'{\i }tulo 6.
-[41
+[45
 
 ]
 Underfull \hbox (badness 1259) in paragraph at lines 38--38
@@ -1276,7 +1307,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 93--93
 \OT1/ptm/m/n/10 ni-da y so-por-tar la pre-gun-ta meta-conversacional
  []
 
-[42] [43]
+[46] [47]
 Underfull \hbox (badness 10000) in paragraph at lines 109--109
 []\OT1/ptm/m/n/10 RF-
  []
@@ -1316,7 +1347,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 139--139
 []\OT1/ptm/m/n/10 Profesor-
  []
 
-[44]
+[48]
 Overfull \hbox (0.9653pt too wide) in paragraph at lines 153--154
 []\OT1/ptm/m/n/10.95 La ope-ra-ci[]on del sis-te-ma en pro-duc-ci[]on re-gis-tr
 a dos en-ti-da-des. La ta-bla \OT1/pcr/m/n/10.95 conversation[]log
@@ -1367,7 +1398,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 177--177
 []\OT1/ptm/m/n/10 Registro en
  []
 
-[45] [46] [47]
+[49] [50] [51]
 Underfull \hbox (badness 5274) in paragraph at lines 236--236
 []\OT1/ptm/m/n/10 Soporte mul-ti-ling[]ue
  []
@@ -1382,9 +1413,9 @@ Underfull \hbox (badness 10000) in paragraph at lines 239--239
 []\OT1/ptm/m/n/10 Integraci[]on con
  []
 
-) (Capitulos/arquitectura_diseno.tex [48]
+) (Capitulos/arquitectura_diseno.tex [52]
 Cap\'{\i }tulo 7.
-[49
+[53
 
 ]
 Overfull \hbox (11.36755pt too wide) in paragraph at lines 35--36
@@ -1406,29 +1437,29 @@ Overfull \hbox (74.59674pt too wide) in paragraph at lines 46--47
 []docente[]global()\OT1/ptm/m/n/10.95 ),
  []
 
-[50]
-<img/diagrama_componentes.png, id=178, 1708.3825pt x 832.10875pt>
+[54]
+<img/diagrama_componentes.png, id=192, 1708.3825pt x 832.10875pt>
 File: img/diagrama_componentes.png Graphic file (type png)
 <use img/diagrama_componentes.png>
 Package pdftex.def Info: img/diagrama_componentes.png  used on input line 60.
 (pdftex.def)             Requested size: 667.64177pt x 325.18135pt.
- [51 <./img/diagrama_componentes.png (PNG copy)>]
-<img/diagrama_despliegue.png, id=182, 1285.80376pt x 1042.89626pt>
+ [55 <./img/diagrama_componentes.png (PNG copy)>]
+<img/diagrama_despliegue.png, id=196, 1285.80376pt x 1042.89626pt>
 File: img/diagrama_despliegue.png Graphic file (type png)
 <use img/diagrama_despliegue.png>
 Package pdftex.def Info: img/diagrama_despliegue.png  used on input line 88.
 (pdftex.def)             Requested size: 362.77525pt x 294.23682pt.
- [52
+ [56
 
 
-] [53] [54] [55]
+] [57] [58] [59]
 Overfull \hbox (21.24202pt too wide) in paragraph at lines 268--269
 []\OT1/ptm/b/n/10.95 Decisi[]on: \OT1/ptm/m/n/10.95 Se al-ma-ce-na un \OT1/ptm/
 b/n/10.95 hash SHA-256 \OT1/ptm/m/n/10.95 de ca-da PDF pro-ce-sa-do en la ta-bl
 a \OT1/pcr/m/n/10.95 planes[]docentes\OT1/ptm/m/n/10.95 .
  []
 
-[56]) (Capitulos/marco_tecnologico.tex [57] [58 <./img/diagrama_despliegue.png 
+[60]) (Capitulos/marco_tecnologico.tex [61] [62 <./img/diagrama_despliegue.png 
 (PNG copy)>]
 Cap\'{\i }tulo 8.
 
@@ -1438,9 +1469,9 @@ Overfull \hbox (80.70044pt too wide) in paragraph at lines 26--27
 0.95 , \OT1/pcr/m/n/10.95 buscar[]asignatura\OT1/ptm/m/n/10.95 ) 
  []
 
-[59
+[63
 
-] [60] [61] [62] [63]) (Capitulos/estructura_proyecto.tex [64]
+] [64] [65] [66] [67]) (Capitulos/estructura_proyecto.tex [68]
 Cap\'{\i }tulo 9.
 
 Overfull \hbox (0.58757pt too wide) in paragraph at lines 5--6
@@ -1448,7 +1479,7 @@ Overfull \hbox (0.58757pt too wide) in paragraph at lines 5--6
 -po-si-to-rio Lin-ceUS As-sis-tant, de-ta-llan-do el prop[]osi-
  []
 
-[65
+[69
 
 ]
 Overfull \hbox (61.52663pt too wide) in paragraph at lines 71--72
@@ -1457,16 +1488,16 @@ Overfull \hbox (61.52663pt too wide) in paragraph at lines 71--72
 as\OT1/ptm/m/n/10.95 ,
  []
 
-[66] [67]
+[70] [71]
 Overfull \hbox (2.52565pt too wide) in paragraph at lines 122--123
 []\OT1/pcr/m/n/10.95 pagina-principal.html \OT1/ptm/m/n/10.95 y \OT1/pcr/m/n/10
 .95 pagina-principal.css\OT1/ptm/m/n/10.95 : Pro-to-ti-po de la p[]agi-na prin-
 
  []
 
-[68]) (Capitulos/estructura_bd.tex [69]
+[72]) (Capitulos/estructura_bd.tex [73]
 Cap\'{\i }tulo 10.
-[70
+[74
 
 ]
 Underfull \hbox (badness 10000) in paragraph at lines 124--124
@@ -1478,7 +1509,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 148--148
 []\OT1/ptm/m/n/10.95 Referencia a DE-PAR-TA-MEN-TOS
  []
 
-[71] [72]
+[75] [76]
 Underfull \hbox (badness 6910) in paragraph at lines 189--189
 []\OT1/ptm/m/n/10.95 pendiente, pro-ce-san-do, com-ple-ta-do,
  []
@@ -1493,34 +1524,34 @@ Underfull \hbox (badness 10000) in paragraph at lines 205--205
 []\OT1/ptm/m/n/10.95 Secci[]on del do-cu-men-to (e.g.,
  []
 
-[73] [74] [75]) (Capitulos/implementacion.tex [76]
+[77] [78] [79]) (Capitulos/implementacion.tex [80]
 Cap\'{\i }tulo 11.
-) [77
+) [81
 
-] [78
+] [82
 
 ] (Capitulos/pruebas.tex
 Cap\'{\i }tulo 12.
-[79
+[83
 
-] [80] [81] [82] [83]
+] [84] [85] [86] [87]
 Overfull \hbox (2.55933pt too wide) in paragraph at lines 201--202
 []\OT1/ptm/m/n/10.95 La Ta-bla 12.7[] agre-ga los re-sul-ta-dos de las cin-co c
 a-pas fun-cio-na-les jun-to con su um-bral acad[]emi-
  []
 
-[84]) (Capitulos/manual.tex [85]
+[88]) (Capitulos/manual.tex [89]
 Cap\'{\i }tulo 13.
-[86
+[90
 
-] [87] [88]
+] [91] [92]
 Overfull \hbox (7.22081pt too wide) in paragraph at lines 133--134
 \OT1/pcr/m/n/10.95 requirements-actions.txt \OT1/ptm/m/n/10.95 o \OT1/pcr/m/n/1
 0.95 requirements-rasa.txt\OT1/ptm/m/n/10.95 ) re-quie-ren re-cons-truir la ima
 -
  []
 
-[89]
+[93]
 Overfull \hbox (16.27225pt too wide) in paragraph at lines 165--166
 []\OT1/ptm/m/n/10.95 Los fi-che-ros de con-fi-gu-ra-ci[]on prin-ci-pa-les (\OT1
 /pcr/m/n/10.95 config.yml\OT1/ptm/m/n/10.95 , \OT1/pcr/m/n/10.95 domain.yml\OT1
@@ -1533,7 +1564,7 @@ Overfull \hbox (49.23692pt too wide) in paragraph at lines 169--170
 rasa.txt -r requirements-actions.txt\OT1/ptm/m/n/10.95 ,
  []
 
-[90]
+[94]
 Underfull \hbox (badness 7047) in paragraph at lines 186--187
 []\OT1/ptm/m/n/10.95 Ejecuci[]on de \OT1/pcr/m/n/10.95 rasa test core \OT1/ptm/
 m/n/10.95 pa-ra la pol[]^^Pti-ca,
@@ -1560,7 +1591,7 @@ Overfull \hbox (1.34369pt too wide) in paragraph at lines 199--200
 i-fi-ca-do-res de los ca-sos de prue-ba si-guen un patr[]on
  []
 
-) (Capitulos/conclusiones.tex [91] [92]
+) (Capitulos/conclusiones.tex [95] [96]
 Cap\'{\i }tulo 14.
 
 Underfull \hbox (badness 1137) in paragraph at lines 27--27
@@ -1572,17 +1603,17 @@ Underfull \hbox (badness 2318) in paragraph at lines 29--30
 \OT1/ptm/m/n/10 pa RAG va-li-da-da al 91,9$ $% de pro-fun-di-dad
  []
 
-[93
+[97
 
-] [94] [95] [96]) (Capitulos/uso_ia.tex [97]
+] [98] [99] [100]) (Capitulos/uso_ia.tex [101]
 Cap\'{\i }tulo 15.
-) (Capitulos/video_presentacion.tex [98
+) (Capitulos/video_presentacion.tex [102
 
 ]
 Cap\'{\i }tulo 16.
-) [99
+) [103
 
-] (Capitulos/apendices.tex) [100
+] (Capitulos/apendices.tex) [104
 
 
 ] (proyect.bbl
@@ -1724,7 +1755,7 @@ Underfull \hbox (badness 3492) in paragraph at lines 63--67
 /m/n/10.95 https : / / elcomplutense . com /
  []
 
-[101
+[105
 
 
 ]
@@ -1740,32 +1771,49 @@ OT1/pcr/m/n/10.95 https : / / unibuddy . com /
  []
 
 LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <10.95> not available
-(Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 102.
+(Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 103.
 
-Underfull \hbox (badness 2478) in paragraph at lines 101--105
+Underfull \hbox (badness 6758) in paragraph at lines 107--111
+[]\OT1/ptm/m/it/10.95 Conventional Com-mits, ``Con-ven-tio-nal com-mits 1.0.0 -
+- a spe-ci-fi-ca-tion for ad-
+ []
+
+
+Underfull \hbox (badness 1762) in paragraph at lines 107--111
+\OT1/ptm/m/it/10.95 ding hu-man and ma-chi-ne reada-ble mea-ning to com-mit mes
+sages.''$\OT1/pcr/m/sl/10.95 https : / / www .
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 118--121
+[]\OT1/ptm/m/it/10.95 PyCQA, ``Py-lint -- a sta-tic co-de analy-ser for Python.
+''$\OT1/pcr/m/sl/10.95 https : / / pylint .
+ []
+
+
+Underfull \hbox (badness 2478) in paragraph at lines 133--137
 []\OT1/ptm/m/it/10.95 S. Se-gu-ra and A. Ruiz, ``Guia pa-ra pro-yec-tos fin de 
 gra-do so-bre de-sa-rro-llo de
  []
 
-)
 
 Package Fancyhdr Warning: \headheight is too small (13.59999pt): 
  Make it at least 14.20308pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[102] [103] (proyect.aux)
+[106]) [107] (proyect.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 19793 strings out of 467871
- 386517 string characters out of 5418376
- 820623 words of memory out of 5000000
- 48186 multiletter control sequences out of 15000+600000
- 677650 words of font info for 136 fonts, out of 8000000 for 9000
+ 19836 strings out of 467871
+ 387180 string characters out of 5418376
+ 819736 words of memory out of 5000000
+ 48225 multiletter control sequences out of 15000+600000
+ 678165 words of font info for 138 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,13n,104p,1469b,830s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/
@@ -1784,9 +1832,9 @@ a/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/santi/AppDat
 a/Local/Programs/MiKTeX/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/santi/AppDa
 ta/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/santi/AppDa
 ta/Local/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on proyect.pdf (104 pages, 702619 bytes).
+Output written on proyect.pdf (108 pages, 726227 bytes).
 PDF statistics:
- 418 PDF objects out of 1000 (max. 8388607)
+ 430 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  28 words of extra memory for PDF output out of 10000 (max. 10000000)
 

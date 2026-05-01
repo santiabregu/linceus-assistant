@@ -36,10 +36,9 @@ from ..shared.matching import clasificar_por_normalizado
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
-from knowledge_base.profesores_data.text_to_sql import (
+from knowledge_base.profesores_data.text_to_sql import (  # noqa: E402
     generar_sql_profesor,
     ejecutar_query,
-    formatear_datos_para_prompt,
     generar_respuesta_natural,
     _fallback_sql,
 )
@@ -330,7 +329,7 @@ REGLAS:
 - IMPORTANTE: Cada fragmento tiene una etiqueta de sección entre corchetes (ej. [profesorado], [bibliografia]).
   Los nombres en secciones [bibliografia] son AUTORES DE LIBROS, NO profesores de la asignatura.
   Solo menciona como profesores a personas de secciones [profesorado] o [coordinador].
-- IMPORTANTE: Tu respuesta debe tener como MÁXIMO 1500 caracteres. Si hay mucha información, resume lo más relevante{nota_tutorias}
+- IMPORTANTE: Tu respuesta debe tener como MÁXIMO 1500 caracteres. Si hay mucha información, resume lo más relevante{nota_tutorias}  # noqa: E501
 
 Respuesta:"""
 
@@ -493,7 +492,7 @@ class ActionConsultaProfesor(Action):
         # Esos roles no viven en `profesor_asignatura`; el plan docente es la
         # única fuente. Si además tenemos la asignatura resuelta, saltamos SQL.
         if codigo_asignatura and _pregunta_menciona_rol_rag(pregunta):
-            print(f"  → Atajo RAG: rol (coordinador/suplente) en pregunta")
+            print("  → Atajo RAG: rol (coordinador/suplente) en pregunta")
             chunks = _rag_chunks_plan_docente(
                 pregunta, codigo_asignatura, nombre_asignatura,
                 grupo=grupo_detectado,
@@ -506,7 +505,7 @@ class ActionConsultaProfesor(Action):
                     slots.append(SlotSet("ultimo_codigo_consultado", codigo_asignatura))
                     return slots
             # Si RAG no da resultados, caemos al flujo SQL normal como último recurso.
-            print(f"  ⚠ RAG vectorial sin respuesta, cayendo a text-to-SQL")
+            print("  ⚠ RAG vectorial sin respuesta, cayendo a text-to-SQL")
 
         # ── Atajo: pregunta por grupo + asignatura resuelta → RAG directo ──
         # La columna `profesor_asignatura.grupo` no está poblada, así que SQL
@@ -524,7 +523,7 @@ class ActionConsultaProfesor(Action):
                     slots.append(SlotSet("ultimo_nombre_asignatura", nombre_asignatura))
                     slots.append(SlotSet("ultimo_codigo_consultado", codigo_asignatura))
                     return slots
-            print(f"  ⚠ RAG por grupo sin respuesta, cayendo a text-to-SQL")
+            print("  ⚠ RAG por grupo sin respuesta, cayendo a text-to-SQL")
 
         # ── Detección de consulta de tutorías (fuzzy, tolera typos) ──
         # Si el usuario pregunta por tutorías, tratamos la consulta como
@@ -533,7 +532,7 @@ class ActionConsultaProfesor(Action):
         # directo para evitar que el LLM genere un JOIN con `tutorias`.
         consulta_tutorias = _pregunta_sobre_tutorias(pregunta)
         if consulta_tutorias:
-            print(f"  → Consulta de tutorías detectada: tratando como 'profesores de' + aviso")
+            print("  → Consulta de tutorías detectada: tratando como 'profesores de' + aviso")
 
         historial = _construir_historial(tracker)
 

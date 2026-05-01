@@ -1,1 +1,1 @@
-from .actions import ActionMultiIntent
+from .actions import ActionMultiIntent  # noqa: F401

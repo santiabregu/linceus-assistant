@@ -1,69 +1,69 @@
 \babel@toc {spanish}{}\relax 
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {1.1}{\ignorespaces Comparativa de soluciones existentes frente a Linceus Assistant.}}{16}{}%
+\contentsline {table}{\numberline {1.1}{\ignorespaces Comparativa de soluciones existentes frente a Linceus Assistant.}}{17}{}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {2.1}{\ignorespaces Comparación de frameworks conversacionales}}{21}{}%
-\contentsline {table}{\numberline {2.2}{\ignorespaces Comparación de bases de datos}}{22}{}%
-\contentsline {table}{\numberline {2.3}{\ignorespaces Comparación de APIs de LLM}}{25}{}%
-\contentsline {table}{\numberline {2.4}{\ignorespaces Componentes tecnológicos del sistema}}{26}{}%
-\addvspace {10\p@ }
-\addvspace {10\p@ }
-\addvspace {10\p@ }
-\contentsline {table}{\numberline {5.1}{\ignorespaces Diccionario EDT — 1.1: Gestión del proyecto.}}{33}{}%
-\contentsline {table}{\numberline {5.2}{\ignorespaces Diccionario EDT — 1.2: Investigación tecnológica.}}{34}{}%
-\contentsline {table}{\numberline {5.3}{\ignorespaces Diccionario EDT — 1.3: Diseño de la arquitectura.}}{34}{}%
-\contentsline {table}{\numberline {5.4}{\ignorespaces Diccionario EDT — 2.1: Épica Asignaturas.}}{35}{}%
-\contentsline {table}{\numberline {5.5}{\ignorespaces Diccionario EDT — 2.2: Épica Profesores.}}{35}{}%
-\contentsline {table}{\numberline {5.6}{\ignorespaces Diccionario EDT — 2.3: Épica Horarios.}}{36}{}%
-\contentsline {table}{\numberline {5.7}{\ignorespaces Diccionario EDT — 2.4: Pipeline RAG.}}{36}{}%
-\contentsline {table}{\numberline {5.8}{\ignorespaces Diccionario EDT — 2.5: Panel admin y frontend.}}{37}{}%
-\contentsline {table}{\numberline {5.9}{\ignorespaces Diccionario EDT — 3.1: Validación y testing.}}{37}{}%
-\contentsline {table}{\numberline {5.10}{\ignorespaces Diccionario EDT — 3.2: Piloto con usuarios.}}{37}{}%
-\contentsline {table}{\numberline {5.11}{\ignorespaces Diccionario EDT — 3.3: Despliegue en producción.}}{38}{}%
-\contentsline {table}{\numberline {5.12}{\ignorespaces Diccionario EDT — 3.4: Memoria y defensa.}}{38}{}%
-\contentsline {table}{\numberline {5.13}{\ignorespaces Resumen cuantitativo de la EDT por fase y paquete de trabajo.}}{39}{}%
-\contentsline {table}{\numberline {5.14}{\ignorespaces Priorización del backlog dentro de la fase de Desarrollo.}}{39}{}%
-\addvspace {10\p@ }
-\contentsline {table}{\numberline {6.1}{\ignorespaces Requisitos funcionales del dominio de asignaturas.}}{42}{}%
-\contentsline {table}{\numberline {6.2}{\ignorespaces Requisitos funcionales del dominio de horarios.}}{42}{}%
-\contentsline {table}{\numberline {6.3}{\ignorespaces Requisitos funcionales del dominio de profesorado.}}{43}{}%
-\contentsline {table}{\numberline {6.4}{\ignorespaces Requisitos funcionales transversales.}}{43}{}%
-\contentsline {table}{\numberline {6.5}{\ignorespaces Requisitos funcionales del panel de administración.}}{44}{}%
-\contentsline {table}{\numberline {6.6}{\ignorespaces Entidades de información del dominio académico.}}{45}{}%
-\contentsline {table}{\numberline {6.7}{\ignorespaces Requisitos no funcionales y evidencia.}}{46}{}%
-\contentsline {table}{\numberline {6.8}{\ignorespaces Evolución del alcance respecto a la propuesta inicial.}}{48}{}%
-\addvspace {10\p@ }
-\contentsline {table}{\numberline {7.1}{\ignorespaces Protocolos y puertos de comunicación entre nodos del sistema.}}{53}{}%
-\addvspace {10\p@ }
-\contentsline {table}{\numberline {8.1}{\ignorespaces Stack tecnológico completo del proyecto LinceUS Assistant.}}{64}{}%
+\contentsline {table}{\numberline {2.1}{\ignorespaces Comparación de frameworks conversacionales}}{22}{}%
+\contentsline {table}{\numberline {2.2}{\ignorespaces Comparación de bases de datos}}{23}{}%
+\contentsline {table}{\numberline {2.3}{\ignorespaces Comparación de APIs de LLM}}{26}{}%
+\contentsline {table}{\numberline {2.4}{\ignorespaces Componentes tecnológicos del sistema}}{27}{}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {10.1}{\ignorespaces Estructura de la tabla UNIVERSIDADES}}{71}{}%
-\contentsline {table}{\numberline {10.2}{\ignorespaces Estructura de la tabla CENTROS}}{71}{}%
-\contentsline {table}{\numberline {10.3}{\ignorespaces Estructura de la tabla DEPARTAMENTOS}}{72}{}%
-\contentsline {table}{\numberline {10.4}{\ignorespaces Estructura de la tabla TITULACIONES}}{72}{}%
-\contentsline {table}{\numberline {10.5}{\ignorespaces Estructura de la tabla ASIGNATURAS}}{72}{}%
-\contentsline {table}{\numberline {10.6}{\ignorespaces Estructura de la tabla PROFESORES}}{73}{}%
-\contentsline {table}{\numberline {10.7}{\ignorespaces Estructura de la tabla HORARIOS}}{73}{}%
-\contentsline {table}{\numberline {10.8}{\ignorespaces Estructura de la tabla PLANES\_DOCENTES}}{74}{}%
-\contentsline {table}{\numberline {10.9}{\ignorespaces Estructura de la tabla PLANES\_DOCENTES\_CHUNKS}}{74}{}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {5.1}{\ignorespaces Diccionario EDT — 1.1: Gestión del proyecto.}}{37}{}%
+\contentsline {table}{\numberline {5.2}{\ignorespaces Diccionario EDT — 1.2: Investigación tecnológica.}}{38}{}%
+\contentsline {table}{\numberline {5.3}{\ignorespaces Diccionario EDT — 1.3: Diseño de la arquitectura.}}{38}{}%
+\contentsline {table}{\numberline {5.4}{\ignorespaces Diccionario EDT — 2.1: Épica Asignaturas.}}{39}{}%
+\contentsline {table}{\numberline {5.5}{\ignorespaces Diccionario EDT — 2.2: Épica Profesores.}}{39}{}%
+\contentsline {table}{\numberline {5.6}{\ignorespaces Diccionario EDT — 2.3: Épica Horarios.}}{40}{}%
+\contentsline {table}{\numberline {5.7}{\ignorespaces Diccionario EDT — 2.4: Pipeline RAG.}}{40}{}%
+\contentsline {table}{\numberline {5.8}{\ignorespaces Diccionario EDT — 2.5: Panel admin y frontend.}}{41}{}%
+\contentsline {table}{\numberline {5.9}{\ignorespaces Diccionario EDT — 3.1: Validación y testing.}}{41}{}%
+\contentsline {table}{\numberline {5.10}{\ignorespaces Diccionario EDT — 3.2: Piloto con usuarios.}}{41}{}%
+\contentsline {table}{\numberline {5.11}{\ignorespaces Diccionario EDT — 3.3: Despliegue en producción.}}{42}{}%
+\contentsline {table}{\numberline {5.12}{\ignorespaces Diccionario EDT — 3.4: Memoria y defensa.}}{42}{}%
+\contentsline {table}{\numberline {5.13}{\ignorespaces Resumen cuantitativo de la EDT por fase y paquete de trabajo.}}{43}{}%
+\contentsline {table}{\numberline {5.14}{\ignorespaces Priorización del backlog dentro de la fase de Desarrollo.}}{43}{}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {6.1}{\ignorespaces Requisitos funcionales del dominio de asignaturas.}}{46}{}%
+\contentsline {table}{\numberline {6.2}{\ignorespaces Requisitos funcionales del dominio de horarios.}}{46}{}%
+\contentsline {table}{\numberline {6.3}{\ignorespaces Requisitos funcionales del dominio de profesorado.}}{47}{}%
+\contentsline {table}{\numberline {6.4}{\ignorespaces Requisitos funcionales transversales.}}{47}{}%
+\contentsline {table}{\numberline {6.5}{\ignorespaces Requisitos funcionales del panel de administración.}}{48}{}%
+\contentsline {table}{\numberline {6.6}{\ignorespaces Entidades de información del dominio académico.}}{49}{}%
+\contentsline {table}{\numberline {6.7}{\ignorespaces Requisitos no funcionales y evidencia.}}{50}{}%
+\contentsline {table}{\numberline {6.8}{\ignorespaces Evolución del alcance respecto a la propuesta inicial.}}{52}{}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {7.1}{\ignorespaces Protocolos y puertos de comunicación entre nodos del sistema.}}{57}{}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {8.1}{\ignorespaces Stack tecnológico completo del proyecto LinceUS Assistant.}}{68}{}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {12.1}{\ignorespaces Resultados por categoría de la suite E2E (revisión manual, 26/04/2026).}}{81}{}%
-\contentsline {table}{\numberline {12.2}{\ignorespaces Cobertura de la capa de profundidad RAG por curso.}}{82}{}%
-\contentsline {table}{\numberline {12.3}{\ignorespaces Resultados de la capa NLU y Policy.}}{82}{}%
-\contentsline {table}{\numberline {12.4}{\ignorespaces Resultados de la reproducción de tráfico real.}}{83}{}%
-\contentsline {table}{\numberline {12.5}{\ignorespaces Latencia extremo a extremo (segundos).}}{84}{}%
-\contentsline {table}{\numberline {12.6}{\ignorespaces Extrapolación del coste anual a 700 alumnos según intensidad de uso.}}{84}{}%
-\contentsline {table}{\numberline {12.7}{\ignorespaces Visión integrada de las cinco capas de validación funcional.}}{85}{}%
+\contentsline {table}{\numberline {10.1}{\ignorespaces Estructura de la tabla UNIVERSIDADES}}{75}{}%
+\contentsline {table}{\numberline {10.2}{\ignorespaces Estructura de la tabla CENTROS}}{75}{}%
+\contentsline {table}{\numberline {10.3}{\ignorespaces Estructura de la tabla DEPARTAMENTOS}}{76}{}%
+\contentsline {table}{\numberline {10.4}{\ignorespaces Estructura de la tabla TITULACIONES}}{76}{}%
+\contentsline {table}{\numberline {10.5}{\ignorespaces Estructura de la tabla ASIGNATURAS}}{76}{}%
+\contentsline {table}{\numberline {10.6}{\ignorespaces Estructura de la tabla PROFESORES}}{77}{}%
+\contentsline {table}{\numberline {10.7}{\ignorespaces Estructura de la tabla HORARIOS}}{77}{}%
+\contentsline {table}{\numberline {10.8}{\ignorespaces Estructura de la tabla PLANES\_DOCENTES}}{78}{}%
+\contentsline {table}{\numberline {10.9}{\ignorespaces Estructura de la tabla PLANES\_DOCENTES\_CHUNKS}}{78}{}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {13.1}{\ignorespaces Tipos de consulta soportados por el prototipo.}}{87}{}%
-\contentsline {table}{\numberline {13.2}{\ignorespaces Requisitos mínimos del entorno de despliegue.}}{88}{}%
-\contentsline {table}{\numberline {13.3}{\ignorespaces Contenedores del despliegue y responsabilidad de cada uno.}}{89}{}%
-\contentsline {table}{\numberline {13.4}{\ignorespaces Estructura del repositorio Linceus Assistant.}}{90}{}%
-\contentsline {table}{\numberline {13.5}{\ignorespaces Etapas del ciclo de incorporación de cambios.}}{91}{}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {14.1}{\ignorespaces Cruce entre objetivos técnicos y evidencia obtenida.}}{94}{}%
+\contentsline {table}{\numberline {12.1}{\ignorespaces Resultados por categoría de la suite E2E (revisión manual, 26/04/2026).}}{85}{}%
+\contentsline {table}{\numberline {12.2}{\ignorespaces Cobertura de la capa de profundidad RAG por curso.}}{86}{}%
+\contentsline {table}{\numberline {12.3}{\ignorespaces Resultados de la capa NLU y Policy.}}{86}{}%
+\contentsline {table}{\numberline {12.4}{\ignorespaces Resultados de la reproducción de tráfico real.}}{87}{}%
+\contentsline {table}{\numberline {12.5}{\ignorespaces Latencia extremo a extremo (segundos).}}{88}{}%
+\contentsline {table}{\numberline {12.6}{\ignorespaces Extrapolación del coste anual a 700 alumnos según intensidad de uso.}}{88}{}%
+\contentsline {table}{\numberline {12.7}{\ignorespaces Visión integrada de las cinco capas de validación funcional.}}{89}{}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {13.1}{\ignorespaces Tipos de consulta soportados por el prototipo.}}{91}{}%
+\contentsline {table}{\numberline {13.2}{\ignorespaces Requisitos mínimos del entorno de despliegue.}}{92}{}%
+\contentsline {table}{\numberline {13.3}{\ignorespaces Contenedores del despliegue y responsabilidad de cada uno.}}{93}{}%
+\contentsline {table}{\numberline {13.4}{\ignorespaces Estructura del repositorio Linceus Assistant.}}{94}{}%
+\contentsline {table}{\numberline {13.5}{\ignorespaces Etapas del ciclo de incorporación de cambios.}}{95}{}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {14.1}{\ignorespaces Cruce entre objetivos técnicos y evidencia obtenida.}}{98}{}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

@@ -1,1 +1,1 @@
-from .actions import ActionSmartFallback
+from .actions import ActionSmartFallback  # noqa: F401

@@ -1,7 +1,7 @@
 import re
 from pathlib import Path
 from flask import Blueprint, jsonify, request
-from admin.db import query, query_one
+from admin.db import query
 from admin.sevius_scraper import obtener_grupos_asignatura, descargar_proyecto_pdf
 
 bp = Blueprint("planes_docentes", __name__)
@@ -96,7 +96,7 @@ def vectorizar_asignaturas():
     asignatura_ids = data.get("asignatura_ids") or []
 
     if not titulacion_id or not codcentro or not codigo_tit or not asignatura_ids:
-        return jsonify({"error": "titulacion_id, codcentro, codigo_titulacion_sevius y asignatura_ids son obligatorios"}), 400
+        return jsonify({"error": "titulacion_id, codcentro, codigo_titulacion_sevius y asignatura_ids son obligatorios"}), 400  # noqa: E501
 
     # Importar aqui para que la ruta cargue aunque falten dependencias del RAG
     from rag.pipeline import procesar_pdf

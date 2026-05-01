@@ -108,7 +108,7 @@ def _parsear_celda(texto: str) -> list[tuple[str, Optional[str], list[str]]]:
     if not texto or not texto.strip():
         return []
 
-    lineas = [l.strip() for l in texto.strip().split("\n") if l.strip()]
+    lineas = [linea.strip() for linea in texto.strip().split("\n") if linea.strip()]
     if not lineas:
         return []
 
@@ -239,7 +239,7 @@ def parsear_pdf(pdf_path: Path, curso_academico: str) -> ExtraccionHorarios:
                                 hora_fin=hora_fin,
                                 asignatura_alias=asig,
                                 aula_codigo=aula if aula and es_aula_valida(aula) else None,
-                                labs=[l for l in labs if es_aula_valida(l)],
+                                labs=[lab for lab in labs if es_aula_valida(lab)],
                             ))
 
     extraccion = ExtraccionHorarios(
