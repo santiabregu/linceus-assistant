@@ -1,5 +1,40 @@
 \begin{thebibliography}{10}
 
+\bibitem{usWeb}
+{Universidad de Sevilla}, ``{U}niversidad de {S}evilla -- portal
+  institucional.'' \url{https://www.us.es}.
+\newblock Consultado en abril de 2026.
+
+\bibitem{etsiiWeb}
+{Universidad de Sevilla}, ``{E}scuela {T}\'ecnica {S}uperior de
+  {I}ngenier{\'\i}a {I}nform\'atica.'' \url{https://www.informatica.us.es}.
+\newblock Consultado en abril de 2026.
+
+\bibitem{sevius}
+{Universidad de Sevilla}, ``{Sevius} -- portal del personal de la {U}niversidad
+  de {S}evilla.'' \url{https://sevius.us.es}.
+\newblock Consultado en abril de 2026.
+
+\bibitem{sevius4}
+{Universidad de Sevilla}, ``{Sevius4} -- portal de docencia y planes de
+  estudio.'' \url{https://sevius4.us.es}.
+\newblock Consultado en abril de 2026.
+
+\bibitem{usSecretaria}
+{Universidad de Sevilla}, ``{Secretar\'\i}a {V}irtual de la {U}niversidad de
+  {S}evilla.'' \url{https://sevius.us.es/secretariavirtual}.
+\newblock Consultado en abril de 2026.
+
+\bibitem{usMatricula}
+{Universidad de Sevilla}, ``{P}ortal de matr{\'\i}cula y autom{\'a}trula de la
+  {U}niversidad de {S}evilla.'' \url{https://www.us.es/estudiar/matricula}.
+\newblock Consultado en abril de 2026.
+
+\bibitem{usPago}
+{Universidad de Sevilla}, ``{P}lataforma de pago de tasas acad{\'e}micas.''
+  \url{https://www.us.es/estudiar/matricula/precios-publicos-y-becas}.
+\newblock Consultado en abril de 2026.
+
 \bibitem{millionbotPlatform}
 {1MillionBot}, ``{1MillionBot}: {AI} for {U}niversities.''
   \url{https://1millionbot.com/en/universidades/}, 2026.
@@ -97,6 +132,54 @@ B.~R. Ranoliya, N.~Raghuwanshi, and S.~Singh, ``Chatbot for university related
 D.~K. Dibya and S.~Sahoo, ``Implementation of a chatbot system using {AI} and
   {NLP},'' in {\em IEEE ICCCNT}, 2021.
 
+\bibitem{bocklisch2017rasa}
+T.~Bocklisch, J.~Faulkner, N.~Pawlowski, and A.~Nichol, ``Rasa: Open source
+  language understanding and dialogue management,'' in {\em NIPS 2017
+  Conversational AI Workshop}, 2017.
+
+\bibitem{botpressdocs}
+{Botpress Inc.}, ``Botpress documentation,'' 2024.
+\newblock Consultado: noviembre 2025.
+
+\bibitem{deeppavlov}
+{Neural Networks and Deep Learning Lab, MIPT}, ``{DeepPavlov}: An open-source
+  library for deep learning end-to-end dialog systems,'' 2023.
+\newblock Consultado: noviembre 2025.
+
+\bibitem{rasadocs}
+{Rasa Technologies}, ``{Rasa} open source documentation,'' 2024.
+\newblock Consultado: abril 2026.
+
+\bibitem{bocklisch2020diet}
+T.~Bocklisch, J.~Faulkner, N.~Pawlowski, A.~Nichol, and V.~Vlasov, ``{DIET}:
+  Lightweight language understanding for dialogue systems.'' arXiv:2004.09936,
+  2020.
+
+\bibitem{lewis2020retrieval}
+P.~Lewis {\em et~al.}, ``Retrieval-augmented generation for knowledge-intensive
+  {NLP} tasks,'' in {\em NeurIPS}, 2020.
+
+\bibitem{supabasedocs}
+{Supabase Inc.}, ``Supabase documentation,'' 2024.
+\newblock Consultado: diciembre 2025.
+
+\bibitem{pgvectorgithub}
+A.~Kane, ``pgvector: Open-source vector similarity search for {P}ostgres,''
+  2024.
+\newblock Consultado: diciembre 2025.
+
+\bibitem{qdrantdocs}
+{Qdrant Solutions GmbH}, ``Qdrant documentation,'' 2024.
+\newblock Consultado: noviembre 2025.
+
+\bibitem{weaviatedocs}
+{Weaviate B.V.}, ``Weaviate documentation,'' 2024.
+\newblock Consultado: noviembre 2025.
+
+\bibitem{geminidocs}
+{Google DeepMind}, ``Gemini {API} documentation,'' 2024.
+\newblock Consultado: enero 2026.
+
 \bibitem{schwaber2020scrum}
 K.~Schwaber and J.~Sutherland, ``The {S}crum guide: The definitive guide to
   {S}crum: The rules of the game.''
@@ -163,15 +246,6 @@ I.~Casanueva, T.~Temcinas, D.~Gerz, M.~Henderson, and I.~Vulic, ``Efficient
 \bibitem{es2024ragas}
 S.~Es, J.~James, L.~Espinosa-Anke, and S.~Schockaert, ``{RAGAS}: Automated
   evaluation of retrieval augmented generation,'' in {\em EACL}, 2024.
-
-\bibitem{lewis2020retrieval}
-P.~Lewis {\em et~al.}, ``Retrieval-augmented generation for knowledge-intensive
-  {NLP} tasks,'' in {\em NeurIPS}, 2020.
-
-\bibitem{bocklisch2020diet}
-T.~Bocklisch, J.~Faulkner, N.~Pawlowski, A.~Nichol, and V.~Vlasov, ``{DIET}:
-  Lightweight language understanding for dialogue systems.'' arXiv:2004.09936,
-  2020.
 
 \bibitem{casas2020trends}
 J.~Casas, M.-O. Tricot, O.~Abou~Khaled, E.~Mugellini, and P.~Cudre-Mauroux,

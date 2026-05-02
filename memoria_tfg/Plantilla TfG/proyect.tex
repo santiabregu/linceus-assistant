@@ -14,8 +14,16 @@
 \counterwithin{figure}{chapter}
 
 % Paquetes para diagramas TikZ (arquitectura y despliegue)
+% La opcion `table` de xcolor habilita \rowcolor en tablas (carga colortbl).
+\usepackage[dvipsnames,table]{xcolor}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta, positioning, shapes.geometric, fit, calc}
+
+% Paleta corporativa Linceus, disponible globalmente para todos los capitulos.
+% --us-red #be0f2e, --us-teal #059f94
+\colorlet{usred}{red!75!black}
+\colorlet{usteal}{cyan!55!black}
+\colorlet{usorange}{orange!80!red}
 
 % Para incrustar diagramas UML (componentes / despliegue) en orientacion
 % apaisada cuando son demasiado anchos para caber legibles en portrait.
@@ -46,10 +54,14 @@
 
 	\input{tocdef}
 
-% Resumen primero, con numeracion arabica desde la pagina 1.
-% Los indices van despues. \mainmatter se redefine para no resetear el contador.
+% Cita inicial (estilo libro) y agradecimientos antes del resumen.
+% La cita va sin numeracion; los agradecimientos entran en el indice.
 \pagenumbering{arabic}
 \setcounter{page}{1}
+
+	\input{Capitulos/cita}
+
+	\input{Capitulos/agradecimientos}
 
 	\input{Capitulos/resumen}
 

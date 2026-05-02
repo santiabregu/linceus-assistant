@@ -18,21 +18,38 @@ La Figura~\ref{fig:edt} muestra la EDT a nivel de fases y paquetes de trabajo.
 
 \begin{figure}[hbtp]
 \centering
+% Paleta Linceus: --us-red #be0f2e, --us-teal #059f94
+% Rellenos muy ligeros, bordes suaves al 50%
+\colorlet{usred}{red!75!black}
+\colorlet{usteal}{cyan!55!black}
+\colorlet{usorange}{orange!80!red}
 \begin{tikzpicture}[
     every node/.style={font=\footnotesize\sffamily},
-    root/.style={rectangle, draw=black!80, fill=blue!15,
+    root/.style={rectangle, draw=black!60, fill=black!8,
         minimum width=60mm, minimum height=9mm,
         align=center, font=\small\sffamily\bfseries, rounded corners=3pt},
-    fase/.style={rectangle, draw=black!80, fill=#1,
+    f1style/.style={rectangle, draw=usteal!55, fill=usteal!8,
         minimum width=46mm, minimum height=9mm,
         align=center, font=\small\sffamily\bfseries, rounded corners=3pt},
-    fase/.default={blue!10},
-    pkg/.style={rectangle, draw=black!70, fill=#1,
+    f2style/.style={rectangle, draw=usred!55,  fill=usred!7,
+        minimum width=46mm, minimum height=9mm,
+        align=center, font=\small\sffamily\bfseries, rounded corners=3pt},
+    f3style/.style={rectangle, draw=usorange!55, fill=usorange!8,
+        minimum width=46mm, minimum height=9mm,
+        align=center, font=\small\sffamily\bfseries, rounded corners=3pt},
+    p1style/.style={rectangle, draw=usteal!35,  fill=usteal!4,
         minimum width=46mm, minimum height=8mm,
         text width=44mm, align=center,
         font=\scriptsize\sffamily, rounded corners=3pt},
-    pkg/.default={white},
-    arrow/.style={draw=black!60, thick}
+    p2style/.style={rectangle, draw=usred!35,   fill=usred!4,
+        minimum width=46mm, minimum height=8mm,
+        text width=44mm, align=center,
+        font=\scriptsize\sffamily, rounded corners=3pt},
+    p3style/.style={rectangle, draw=usorange!35, fill=usorange!4,
+        minimum width=46mm, minimum height=8mm,
+        text width=44mm, align=center,
+        font=\scriptsize\sffamily, rounded corners=3pt},
+    arrow/.style={draw=black!45, thick}
 ]
 
 % Columnas: Inicio x=-52mm, Desarrollo x=0, Cierre x=52mm
@@ -42,29 +59,29 @@ La Figura~\ref{fig:edt} muestra la EDT a nivel de fases y paquetes de trabajo.
 \node[root] (root) at (0,0) {Linceus Assistant};
 
 % --- Nivel 1
-\node[fase=green!20]  (f1) at (-52mm,-18mm) {1. Inicio};
-\node[fase=orange!25] (f2) at (  0mm,-18mm) {2. Desarrollo};
-\node[fase=red!20]    (f3) at ( 52mm,-18mm) {3. Cierre};
+\node[f1style] (f1) at (-52mm,-18mm) {1. Inicio};
+\node[f2style] (f2) at (  0mm,-18mm) {2. Desarrollo};
+\node[f3style] (f3) at ( 52mm,-18mm) {3. Cierre};
 
 \draw[arrow] (root.south) -- (f1.north);
 \draw[arrow] (root.south) -- (f2.north);
 \draw[arrow] (root.south) -- (f3.north);
 
 % --- Nivel 2 — Fase 1 (3 paquetes)
-\node[pkg=green!10] (p11) at (-52mm,-32mm) {1.1 Gestión del proyecto};
-\node[pkg=green!10] (p12) at (-52mm,-46mm) {1.2 Investigación tecnológica};
-\node[pkg=green!10] (p13) at (-52mm,-60mm) {1.3 Diseño de la arquitectura};
+\node[p1style] (p11) at (-52mm,-32mm) {1.1 Gestión del proyecto};
+\node[p1style] (p12) at (-52mm,-46mm) {1.2 Investigación tecnológica};
+\node[p1style] (p13) at (-52mm,-60mm) {1.3 Diseño de la arquitectura};
 
 \draw[arrow] (f1.south)  -- (p11.north);
 \draw[arrow] (p11.south) -- (p12.north);
 \draw[arrow] (p12.south) -- (p13.north);
 
 % --- Nivel 2 — Fase 2 (5 paquetes)
-\node[pkg=orange!12] (p21) at (0mm,-32mm) {2.1 \'Epica Asignaturas};
-\node[pkg=orange!12] (p22) at (0mm,-46mm) {2.2 \'Epica Profesores};
-\node[pkg=orange!12] (p23) at (0mm,-60mm) {2.3 \'Epica Horarios};
-\node[pkg=orange!12] (p24) at (0mm,-74mm) {2.4 Pipeline RAG};
-\node[pkg=orange!12] (p25) at (0mm,-88mm) {2.5 Panel admin y frontend};
+\node[p2style] (p21) at (0mm,-32mm) {2.1 \'Epica Asignaturas};
+\node[p2style] (p22) at (0mm,-46mm) {2.2 \'Epica Profesores};
+\node[p2style] (p23) at (0mm,-60mm) {2.3 \'Epica Horarios};
+\node[p2style] (p24) at (0mm,-74mm) {2.4 Pipeline RAG};
+\node[p2style] (p25) at (0mm,-88mm) {2.5 Panel admin y frontend};
 
 \draw[arrow] (f2.south)  -- (p21.north);
 \draw[arrow] (p21.south) -- (p22.north);
@@ -73,10 +90,10 @@ La Figura~\ref{fig:edt} muestra la EDT a nivel de fases y paquetes de trabajo.
 \draw[arrow] (p24.south) -- (p25.north);
 
 % --- Nivel 2 — Fase 3 (4 paquetes)
-\node[pkg=red!10] (p31) at (52mm,-32mm) {3.1 Validaci\'on y testing};
-\node[pkg=red!10] (p32) at (52mm,-46mm) {3.2 Piloto con usuarios};
-\node[pkg=red!10] (p33) at (52mm,-60mm) {3.3 Despliegue (DigitalOcean)};
-\node[pkg=red!10] (p34) at (52mm,-74mm) {3.4 Memoria y defensa};
+\node[p3style] (p31) at (52mm,-32mm) {3.1 Validaci\'on y testing};
+\node[p3style] (p32) at (52mm,-46mm) {3.2 Piloto con usuarios};
+\node[p3style] (p33) at (52mm,-60mm) {3.3 Despliegue (DigitalOcean)};
+\node[p3style] (p34) at (52mm,-74mm) {3.4 Memoria y defensa};
 
 \draw[arrow] (f3.south)  -- (p31.north);
 \draw[arrow] (p31.south) -- (p32.north);

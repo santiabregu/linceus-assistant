@@ -1,25 +1,287 @@
 % !TEX root = ../proyect.tex
 
-% =====================================================
-% IMPLEMENTACIÓN — placeholder
-% =====================================================
-% Guía Segura §10: detalles de implementación más relevantes.
-% Recomendaciones:
-%   - Listados de código numerados, fondo blanco (paquete listings).
-%   - No abusar: solo fragmentos representativos.
-%   - Cada listado debe estar referenciado desde el texto.
-% Complementa al capítulo de estructura_proyecto (que ya describe módulos).
-% Aquí entrarían los fragmentos concretos:
-%   - Pipeline NLU (config.yml de Rasa, DIET).
-%   - Acción consulta_profesor (Text-to-SQL + render).
-%   - Módulo RAG (chunking, embeddings con pgvector, prompt de respuesta).
-%   - action_cambiar_contexto (regex + lookup).
-%   - Slot inheritance (ultimo_nombre_asignatura) y seguimiento.
-
 \chapter{Implementación}\label{cap:implementacion}
 
-% TODO: redactar capítulo con listados de código numerados.
-\section{Pipeline NLU y política de diálogo}\label{sec:impl-nlu}
-\section{Acciones personalizadas y consultas a base de datos}\label{sec:impl-actions}
-\section{Módulo de recuperación aumentada por generación}\label{sec:impl-rag}
-\section{Cambio de contexto y seguimiento conversacional}\label{sec:impl-contexto}
+Este capítulo describe cómo se han traducido las decisiones de diseño en código operativo. La descripción no se centra en el detalle de cada función, sino en el \textit{pipeline de ejecución} que sigue cada épica desde que el usuario envía un mensaje hasta que el asistente devuelve una respuesta. Cada épica se presenta con un diagrama del flujo y una explicación de los puntos clave: cómo se extraen los datos del mensaje, qué papel juegan la base de datos y el modelo de lenguaje, y qué información se persiste para mantener el contexto en turnos posteriores.
+
+El código se organiza en una carpeta \texttt{actions/} con un módulo por épica (\texttt{asignaturas}, \texttt{profesores}, \texttt{horarios}, \texttt{contexto}, \texttt{fallback}, \texttt{multi\_intent}) y una carpeta \texttt{shared/} con utilidades transversales: conexión a Supabase (\texttt{db.py}), cliente de Gemini (\texttt{gemini\_client.py}), \textit{fuzzy matching} de nombres (\texttt{matching.py}) y configuración de alias (\texttt{config.py}). Los pipelines descritos a continuación se apoyan en estos módulos compartidos.
+
+% =====================================================
+% DEFINICIONES TIKZ COMUNES PARA LOS PIPELINES
+% =====================================================
+\colorlet{usred}{red!75!black}
+\colorlet{usteal}{cyan!55!black}
+\colorlet{usorange}{orange!80!red}
+
+\tikzset{
+    pipe/.style={font=\footnotesize\sffamily, node distance=8mm and 10mm},
+    plstart/.style={rectangle, rounded corners=8pt, draw=black!60, fill=black!8,
+        minimum width=34mm, minimum height=8mm, align=center,
+        font=\footnotesize\sffamily\bfseries},
+    plstep/.style={rectangle, draw=usteal!55, fill=usteal!8, rounded corners=3pt,
+        minimum width=42mm, minimum height=9mm, align=center,
+        text width=40mm, font=\scriptsize\sffamily},
+    plllm/.style={rectangle, draw=usred!55, fill=usred!7, rounded corners=3pt,
+        minimum width=42mm, minimum height=9mm, align=center,
+        text width=40mm, font=\scriptsize\sffamily},
+    pldb/.style={rectangle, draw=usorange!55, fill=usorange!8, rounded corners=3pt,
+        minimum width=42mm, minimum height=9mm, align=center,
+        text width=40mm, font=\scriptsize\sffamily},
+    pldec/.style={diamond, aspect=2, draw=black!50, fill=black!4,
+        align=center, font=\scriptsize\sffamily, inner sep=1pt},
+    plend/.style={rectangle, rounded corners=8pt, draw=black!60, fill=black!8,
+        minimum width=34mm, minimum height=8mm, align=center,
+        font=\footnotesize\sffamily\bfseries},
+    plflow/.style={draw=black!50, thick, -{Latex[length=2mm]}}
+}
+
+\section{Anatomía común de una \textit{custom action}}\label{sec:impl-anatomia}
+
+Antes de entrar en cada épica, conviene fijar el patrón al que responden todas las acciones del proyecto. Una \textit{custom action} de Rasa es una clase Python que hereda de \texttt{Action} y expone un método \texttt{run(dispatcher, tracker, domain)}. Dentro de ese método, todas las épicas siguen una misma secuencia de cinco pasos.
+
+\begin{enumerate}
+    \item \textbf{Validación de contexto}: si la consulta requiere titulación y el slot \texttt{contexto\_titulacion} está vacío, la acción interrumpe el flujo y muestra los botones de selección de titulación. Esta comprobación está centralizada en \texttt{shared/follow\_up.py} para evitar duplicarla en cada épica.
+    \item \textbf{Extracción y normalización}: se leen las entidades NLU del último mensaje y los slots persistentes. Los nombres se normalizan con NFKD (eliminación de tildes), paso a minúsculas y limpieza de partículas (\textit{de}, \textit{del}, \textit{la}, \textit{info}). Los acrónimos (\textit{FP}, \textit{ADDA}, \textit{DP1}) se expanden contra el diccionario \texttt{ALIAS\_ASIGNATURAS} de \texttt{shared/config.py}.
+    \item \textbf{Resolución}: con el dato extraído se busca en la base de datos. Cuando hay varias coincidencias se aplica \textit{fuzzy matching} (\texttt{rapidfuzz}) para descartar falsos positivos. En consultas que no se pueden expresar como filtro estructurado (por ejemplo, contenido del plan docente), se delega en el pipeline RAG.
+    \item \textbf{Generación de respuesta}: los datos recuperados se entregan al modelo Gemini junto con un prompt específico de la épica. Gemini se encarga de redactar la respuesta en lenguaje natural respetando un límite de 1500 caracteres. Si la llamada falla, cada épica dispone de una plantilla \textit{hardcoded} de respaldo.
+    \item \textbf{Persistencia de contexto}: la acción devuelve una lista de eventos \texttt{SlotSet} para guardar lo que pueda ser relevante en turnos siguientes (último código consultado, último profesor, curso o grupo) y la marca \texttt{ultima\_action\_ejecutada}, que el sistema de seguimiento usa para discriminar consultas de tipo ``hay más''.
+\end{enumerate}
+
+Los diagramas que siguen utilizan tres colores para diferenciar el tipo de operación: \textcolor{usteal}{\textbf{teal}} para pasos de procesamiento sobre datos del usuario, \textcolor{usred}{\textbf{rojo}} para llamadas al modelo de lenguaje y \textcolor{usorange}{\textbf{naranja}} para accesos a base de datos.
+
+% =====================================================
+% ÉPICA 1: ASIGNATURAS
+% =====================================================
+\section{Épica de asignaturas}\label{sec:impl-asignaturas}
+
+La épica de asignaturas concentra cuatro acciones: la consulta específica sobre una asignatura concreta (\texttt{ActionConsultaEspecifica}), el listado filtrado (\texttt{ActionConsultaListado}), el conteo (\texttt{ActionConsultaConteo}) y la consulta de horario por nombre de asignatura (\texttt{ActionConsultaHorarioAsignatura}). La consulta específica es la más compleja y articula la lógica de resolución de nombre que reutilizan el resto de épicas.
+
+\subsection{Consulta específica de asignatura}
+
+La acción \texttt{ActionConsultaEspecifica} responde a preguntas del tipo \textit{``¿cuántos créditos tiene Redes?''} o \textit{``¿cómo se evalúa Ingeniería del Software II?''}. La Figura~\ref{fig:pipe-asig-especifica} muestra su pipeline.
+
+\begin{figure}[hbtp]
+\centering
+\begin{tikzpicture}[pipe]
+\node[plstart] (in) {Mensaje del usuario};
+\node[plstep, below=of in] (extract) {Extraer entidad \texttt{nombre\_asignatura} y limpiar partículas};
+\node[plstep, below=of extract] (alias) {Expandir alias (\texttt{ALIAS\_ASIGNATURAS}) y normalizar (NFKD)};
+\node[pldb, below=of alias] (sql1) {SELECT en tabla \texttt{asignaturas} con ILIKE + fuzzy reordering};
+\node[pldec, below=of sql1] (rag) {¿Pregunta sobre plan docente?};
+\node[plllm, left=14mm of rag] (clasif) {Gemini clasificador (heurística + LLM)};
+\node[pldb, below=of rag] (vec) {Búsqueda vectorial \texttt{plan\_docente} (pgvector)};
+\node[plllm, below=of vec] (gen) {Gemini genera respuesta con \textit{chunks} como contexto};
+\node[plend, below=of gen] (out) {Respuesta + \texttt{SlotSet} de seguimiento};
+
+\draw[plflow] (in) -- (extract);
+\draw[plflow] (extract) -- (alias);
+\draw[plflow] (alias) -- (sql1);
+\draw[plflow] (sql1) -- (rag);
+\draw[plflow] (rag) -- (clasif);
+\draw[plflow] (clasif.south) |- (rag.west);
+\draw[plflow] (rag) -- node[right, font=\tiny\sffamily]{sí} (vec);
+\draw[plflow] (vec) -- (gen);
+\draw[plflow] (gen) -- (out);
+\draw[plflow] (rag.east) .. controls +(right:18mm) and +(right:18mm) .. node[right, font=\tiny\sffamily]{no} (gen.east);
+\end{tikzpicture}
+\caption{Pipeline de \texttt{ActionConsultaEspecifica}.}
+\label{fig:pipe-asig-especifica}
+\end{figure}
+
+El pipeline tiene dos ramas según la naturaleza de la pregunta. Una pregunta sobre datos estructurales (créditos, curso, tipología, duración) se resuelve con un \texttt{SELECT} sobre la tabla \texttt{asignaturas}. Una pregunta sobre contenido del plan docente (evaluación, temario, metodología, bibliografía) requiere recuperación vectorial: la consulta se transforma en \textit{embedding}, se buscan los \textit{chunks} más similares en \texttt{plan\_docente} mediante \texttt{pgvector} y esos \textit{chunks} se entregan a Gemini como contexto para que redacte la respuesta.
+
+La decisión entre las dos ramas se toma con un clasificador en dos pasos. Primero se aplica una heurística rápida que busca palabras clave (\textit{evalúa}, \textit{temario}, \textit{bibliografía}, \textit{competencias}, \textit{metodología}). Si la heurística no es concluyente, se invoca a Gemini con un prompt específico de clasificación binaria a temperatura cero. Esta arquitectura evita llamadas innecesarias al LLM en los casos triviales y mantiene la precisión cuando la frase es ambigua.
+
+La resolución del nombre de asignatura merece atención por sí misma. La función \texttt{resolver\_asignatura()} aplica una cascada de cinco estrategias: entidad NLU directa, expansión de acrónimo, búsqueda por regex sobre alias conocidos, herencia desde el slot \texttt{ultimo\_nombre\_asignatura} si la consulta es elíptica (\textit{``¿y de Matemáticas?''}) y, como último recurso, \textit{fuzzy matching} con \texttt{rapidfuzz} sobre los nombres normalizados de la base de datos con un umbral de \texttt{partial\_ratio}~$\geq$~85. Cuando el \texttt{SELECT} devuelve más de un candidato, se aplica un reordenamiento adicional con \texttt{token\_set\_ratio} contra la pregunta original para evitar confundir \textit{Administración} con \textit{Ampliación de Administración}.
+
+\subsection{Listado y conteo de asignaturas}
+
+Las acciones \texttt{ActionConsultaListado} y \texttt{ActionConsultaConteo} responden a consultas agregadas: \textit{``dame las optativas de cuarto''} o \textit{``¿cuántas asignaturas tiene primero?''}. Su pipeline (Figura~\ref{fig:pipe-asig-listado}) se basa en una técnica \textit{text-to-SQL}: se delega en Gemini la generación de la consulta SQL a partir del enunciado del usuario.
+
+\begin{figure}[hbtp]
+\centering
+\begin{tikzpicture}[pipe]
+\node[plstart] (in) {Pregunta agregada};
+\node[plllm, below=of in] (gen) {Gemini genera SQL (\textit{text-to-SQL}, \texttt{temperature=0})};
+\node[plstep, below=of gen] (val) {Validador: solo \texttt{SELECT}, tablas permitidas, sin \texttt{UNION/DROP}};
+\node[plstep, below=of val] (inj) {Inyectar filtro \texttt{titulacion\_id} desde slot};
+\node[pldb, below=of inj] (exec) {Ejecutar consulta sobre Supabase};
+\node[plllm, below=of exec] (resp) {Gemini redacta respuesta natural};
+\node[plend, below=of resp] (out) {Respuesta + paginación si $>$8 filas};
+
+\draw[plflow] (in) -- (gen);
+\draw[plflow] (gen) -- (val);
+\draw[plflow] (val) -- (inj);
+\draw[plflow] (inj) -- (exec);
+\draw[plflow] (exec) -- (resp);
+\draw[plflow] (resp) -- (out);
+\end{tikzpicture}
+\caption{Pipeline de listado y conteo (\textit{text-to-SQL}).}
+\label{fig:pipe-asig-listado}
+\end{figure}
+
+El SQL generado por el modelo no se ejecuta directamente. Pasa por un validador propio (\texttt{validar\_sql}) que rechaza cualquier sentencia que no empiece por \texttt{SELECT}, que acceda a tablas no permitidas o que contenga patrones peligrosos (\texttt{UNION}, \texttt{OR 1=1}, \texttt{SLEEP}, modificación de datos). Tras la validación, un paso adicional inyecta automáticamente el filtro \texttt{titulacion\_id} a partir del slot \texttt{contexto\_titulacion} para que un usuario que ha elegido GII-IS no reciba resultados de GII-TI. Solo entonces se ejecuta la consulta con \texttt{psycopg2} y se entrega el resultado a Gemini para la redacción final, que avisa explícitamente cuando la respuesta es una muestra paginada.
+
+La acción de conteo es estructuralmente idéntica pero el prompt instruye al modelo para devolver \texttt{SELECT COUNT(*)}. Si la pregunta hace referencia a una asignatura específica con palabras propias del plan docente (\textit{``¿cuántos temas tiene FP?''}), la heurística delega en \texttt{ActionConsultaEspecifica} en vez de generar un \texttt{COUNT}, porque la respuesta correcta proviene del documento, no de la base relacional.
+
+\subsection{Horario por asignatura}
+
+\texttt{ActionConsultaHorarioAsignatura} responde a \textit{``¿cuándo tengo Redes?''} o \textit{``aula de ADDA grupo 1''}. Reutiliza la resolución de nombre de la consulta específica y añade detección de grupo y cuatrimestre. El cuatrimestre se infiere de la fecha actual (septiembre--enero implica primer cuatrimestre, febrero--julio el segundo) salvo que el usuario lo indique explícitamente. La consulta SQL hace \texttt{JOIN} entre \texttt{horarios}, \texttt{grupos\_clase}, \texttt{asignaturas} y \texttt{aulas}; tras decisión D-068, cada aula es una fila distinta, lo que permite separar limpiamente sesiones de teoría y de laboratorio en el formateo final.
+
+% =====================================================
+% ÉPICA 2: PROFESORES
+% =====================================================
+\section{Épica de profesores}\label{sec:impl-profesores}
+
+\texttt{ActionConsultaProfesor} responde a un abanico amplio de consultas sobre el profesorado: correo, despacho, departamento, profesores que imparten una asignatura concreta o, indirectamente, tutorías. La Figura~\ref{fig:pipe-profesores} resume su flujo.
+
+\begin{figure}[hbtp]
+\centering
+\begin{tikzpicture}[pipe]
+\node[plstart] (in) {Mensaje del usuario};
+\node[plstep, below=of in] (ent) {Extraer \texttt{nombre\_profesor}, \texttt{nombre\_asignatura}, \texttt{nombre\_departamento}};
+\node[plstep, below=of ent] (foll) {Herencia de slots si faltan datos ($\leq$3 turnos)};
+\node[pldec, below=of foll] (gru) {¿Grupo + asignatura?};
+\node[pldb, left=14mm of gru] (rag) {Vía RAG sobre plan docente};
+\node[plllm, below=of gru] (sql) {Gemini genera SQL sobre \texttt{profesores}};
+\node[pldb, below=of sql] (exec) {Ejecutar + filtro fuzzy por nombre};
+\node[plstep, below=of exec] (enr) {Enriquecer con tabla \texttt{tutorias} si aplica};
+\node[plllm, below=of enr] (resp) {Gemini redacta respuesta};
+\node[plend, below=of resp] (out) {Respuesta + slots de seguimiento};
+
+\draw[plflow] (in) -- (ent);
+\draw[plflow] (ent) -- (foll);
+\draw[plflow] (foll) -- (gru);
+\draw[plflow] (gru) -- node[above, font=\tiny\sffamily]{sí} (rag);
+\draw[plflow] (rag.south) .. controls +(down:24mm) and +(left:14mm) .. (resp.west);
+\draw[plflow] (gru) -- node[right, font=\tiny\sffamily]{no} (sql);
+\draw[plflow] (sql) -- (exec);
+\draw[plflow] (exec) -- (enr);
+\draw[plflow] (enr) -- (resp);
+\draw[plflow] (resp) -- (out);
+\end{tikzpicture}
+\caption{Pipeline de \texttt{ActionConsultaProfesor}.}
+\label{fig:pipe-profesores}
+\end{figure}
+
+El pipeline también se apoya en \textit{text-to-SQL}, pero con dos peculiaridades. La primera es la herencia agresiva de contexto: si el usuario dice \textit{``¿y su correo?''} sin nombrar a nadie, la acción lee \texttt{ultimo\_profesor\_consultado} y \texttt{ultimo\_nombre\_asignatura} de los últimos tres turnos para reconstruir la consulta. La segunda es el desvío hacia RAG cuando la pregunta combina asignatura y grupo, porque la tabla \texttt{profesor\_asignatura} no tiene poblada la columna \texttt{grupo} (decisión Cat-2): la única fuente fiable de quién coordina o suple en un grupo concreto es el plan docente, así que en ese caso se omite el SQL y se va directo al pipeline RAG.
+
+Cuando el usuario pregunta por nombre, los resultados del \texttt{SELECT} se filtran con \texttt{shared/matching.py}: se calcula la proporción de tokens de la pregunta que aparecen en el \texttt{nombre\_normalizado} de cada profesor y se separan en dos listas, firmes (umbral $\geq$ 0,60) y sugerencias (entre 0,30 y 0,60). Si no hay coincidencias firmes pero sí sugerencias, la acción guarda la mejor en el slot \texttt{ultima\_sugerencia} para que el usuario pueda confirmarla con un \textit{``sí''} en el siguiente turno; este flujo de afirmación está implementado en \texttt{ActionResolverAfirmacion}.
+
+Las tutorías merecen una nota: la tabla \texttt{tutorias} permanece deliberadamente vacía (decisión D-061) porque ningún portal oficial publica horarios estables. Cuando el usuario pregunta por tutorías, la respuesta redirige al correo institucional del profesor, que sí está en la base de datos.
+
+% =====================================================
+% ÉPICA 3: HORARIOS
+% =====================================================
+\section{Épica de horarios}\label{sec:impl-horarios}
+
+\texttt{ActionConsultaHorario} responde a consultas por curso y grupo: \textit{``¿qué horario tiene 2º grupo 1?''} o \textit{``¿qué clases hay los lunes en primero grupo 2?''}. La Figura~\ref{fig:pipe-horarios} muestra su pipeline.
+
+\begin{figure}[hbtp]
+\centering
+\begin{tikzpicture}[pipe]
+\node[plstart] (in) {Mensaje del usuario};
+\node[plstep, below=of in] (det) {Detectar curso, grupo, día y cuatrimestre (regex + fecha actual)};
+\node[pldec, below=of det] (faltan) {¿Faltan datos clave?};
+\node[plstep, left=14mm of faltan] (her) {Heredar slots \texttt{ultimo\_curso/grupo} ($\leq$3 turnos)};
+\node[pldec, below=of faltan] (cross) {¿Asignatura reciente y sin pistas?};
+\node[plstep, right=14mm of cross] (deleg) {Delegar en \texttt{HorarioAsignatura}};
+\node[pldb, below=of cross] (sql) {SELECT con JOIN \texttt{horarios + grupos\_clase + aulas}};
+\node[plstep, below=of sql] (fmt) {Agrupar por (día, hora) y categorizar aula};
+\node[plllm, below=of fmt] (resp) {Gemini redacta respuesta natural};
+\node[plend, below=of resp] (out) {Respuesta + slots curso/grupo};
+
+\draw[plflow] (in) -- (det);
+\draw[plflow] (det) -- (faltan);
+\draw[plflow] (faltan) -- node[above, font=\tiny\sffamily]{sí} (her);
+\draw[plflow] (her.south) .. controls +(down:8mm) and +(left:10mm) .. (cross.west);
+\draw[plflow] (faltan) -- node[right, font=\tiny\sffamily]{no} (cross);
+\draw[plflow] (cross) -- node[above, font=\tiny\sffamily]{sí} (deleg);
+\draw[plflow] (cross) -- node[right, font=\tiny\sffamily]{no} (sql);
+\draw[plflow] (sql) -- (fmt);
+\draw[plflow] (fmt) -- (resp);
+\draw[plflow] (resp) -- (out);
+\end{tikzpicture}
+\caption{Pipeline de \texttt{ActionConsultaHorario}.}
+\label{fig:pipe-horarios}
+\end{figure}
+
+El pipeline parsea con expresiones regulares cuatro elementos: curso (\textit{2º}, \textit{segundo}, \textit{curso 2}), grupo (\textit{grupo 1}, \textit{g1}), día (lunes a viernes) y cuatrimestre (explícito o inferido por fecha). Si faltan curso o grupo, intenta heredarlos de los slots \texttt{ultimo\_curso\_consultado} y \texttt{ultimo\_grupo\_consultado} si fueron fijados en los últimos tres turnos. Existe además un seguimiento entre épicas: si la consulta no aporta ninguna pista de horario pero hay una asignatura reciente en el slot, la acción delega en \texttt{ActionConsultaHorarioAsignatura} en vez de pedir más datos.
+
+La consulta SQL hace \texttt{JOIN} entre \texttt{horarios}, \texttt{grupos\_clase}, \texttt{asignaturas}, \texttt{titulaciones} y \texttt{aulas}, filtrando por curso, grupo y, opcionalmente, día y cuatrimestre. El resultado se reagrupa por (\textit{día}, \textit{hora\_inicio}, \textit{hora\_fin}, \textit{asignatura}) para juntar las distintas aulas de una misma sesión, y se categoriza cada aula como teoría (prefijo \textit{A}) o laboratorio. Solo entonces se entrega a Gemini con instrucciones para que respete la fecha actual (\textit{``hoy''}, \textit{``mañana''}) y advierta cuando la consulta cae en sábado o domingo.
+
+% =====================================================
+% ÉPICA 4: CONTEXTO
+% =====================================================
+\section{Épica de contexto académico}\label{sec:impl-contexto}
+
+La épica de contexto agrupa cuatro acciones cortas: \texttt{ActionCambiarContexto} fija la titulación del usuario, \texttt{ActionConsultarContexto} la lee, \texttt{ActionResetContexto} la borra y \texttt{ActionConsultaTitulaciones} muestra las disponibles. La pieza interesante es la primera, porque transforma una frase libre del usuario en uno de los códigos canónicos \texttt{GII-IS}, \texttt{GII-TI} o \texttt{GII-IC}.
+
+La normalización se apoya en una combinación de coincidencia exacta sobre el diccionario \texttt{TITULACION\_MAP}, un guard que exige al menos un token discriminante (\textit{software}, \textit{computadores}, \textit{tecnologías}, \textit{is}, \textit{ti}, \textit{ic}) y, si nada de lo anterior funciona, un \textit{fuzzy matching} con \texttt{fuzz.WRatio} a un umbral conservador de 85. El umbral se elevó tras la revisión R3 para evitar que frases ambiguas como \textit{``ingeniería''} produjeran cambios de contexto silenciosos. El resto de épicas dependen del valor de \texttt{contexto\_titulacion} para inyectar el filtro \texttt{titulacion\_id} en sus consultas, por lo que un fallo en la normalización contamina toda la sesión: de ahí el cuidado con los umbrales.
+
+% =====================================================
+% ÉPICA 5: FALLBACK
+% =====================================================
+\section{Épica de fallback inteligente}\label{sec:impl-fallback}
+
+El fallback de Rasa se activa cuando la confianza del clasificador NLU está por debajo del umbral configurado en \texttt{config.yml}. En lugar de devolver un mensaje genérico de disculpa, \texttt{ActionSmartFallback} delega en Gemini la decisión de qué acción ejecutar a partir de la pregunta y del historial reciente. La Figura~\ref{fig:pipe-fallback} muestra el flujo.
+
+\begin{figure}[hbtp]
+\centering
+\begin{tikzpicture}[pipe]
+\node[plstart] (in) {NLU confidence baja};
+\node[plstep, below=of in] (cont) {¿Es continuación ``todos los grupos''?};
+\node[plllm, below=of cont] (clasif) {Gemini clasificador (action + parámetros, JSON)};
+\node[pldec, below=of clasif] (sw) {action};
+\node[pldb, below left=10mm and 16mm of sw] (asig) {BUSCAR\_ASIGNATURA \\ (BD + RAG)};
+\node[pldb, below=of sw] (hor) {BUSCAR\_HORARIO \\ (BD por alias o curso)};
+\node[pldb, below right=10mm and 16mm of sw] (prof) {BUSCAR\_PROFESOR \\ (BD por nombre)};
+\node[plllm, below=20mm of hor] (resp) {Gemini redacta respuesta natural};
+\node[plend, below=of resp] (out) {Respuesta o \texttt{respuesta\_directa}};
+
+\draw[plflow] (in) -- (cont);
+\draw[plflow] (cont) -- (clasif);
+\draw[plflow] (clasif) -- (sw);
+\draw[plflow] (sw) -- (asig);
+\draw[plflow] (sw) -- (hor);
+\draw[plflow] (sw) -- (prof);
+\draw[plflow] (asig.south) .. controls +(down:8mm) and +(left:8mm) .. (resp.west);
+\draw[plflow] (hor) -- (resp);
+\draw[plflow] (prof.south) .. controls +(down:8mm) and +(right:8mm) .. (resp.east);
+\draw[plflow] (resp) -- (out);
+\end{tikzpicture}
+\caption{Pipeline de \texttt{ActionSmartFallback}.}
+\label{fig:pipe-fallback}
+\end{figure}
+
+El \textit{prompt} de clasificación recibe la pregunta, el contexto de titulación, el último nombre de asignatura del tracker, los tres últimos pares de mensajes y la lista de acciones disponibles (\texttt{BUSCAR\_ASIGNATURA}, \texttt{BUSCAR\_HORARIO}, \texttt{BUSCAR\_PROFESOR}, \texttt{NINGUNO}). Gemini devuelve un JSON con la acción elegida, sus parámetros y, si elige \texttt{NINGUNO}, una respuesta directa breve. La temperatura se fija a cero para que la clasificación sea determinista.
+
+Antes de invocar al modelo, una regex detecta el patrón \textit{``todos los grupos''} sobre el último horario consultado, porque es una continuación frecuente que no merece coste de LLM. Si la clasificación elige una acción de búsqueda, la implementación correspondiente vive como función dentro del propio módulo \texttt{fallback}: no se reinvoca la \textit{custom action} de la épica, sino una versión simplificada que devuelve datos crudos para que un segundo prompt los redacte. Esta separación evita ciclos de Rasa y reduce la latencia.
+
+% =====================================================
+% ÉPICA 6: MULTI-INTENT
+% =====================================================
+\section{Épica de \textit{multi-intent}}\label{sec:impl-multi-intent}
+
+\texttt{ActionMultiIntent} cubre los mensajes que combinan varias intenciones en una sola frase: \textit{``soy de Ingeniería del Software, ¿qué horario tengo en segundo grupo 2?''} contiene a la vez un cambio de contexto y una consulta de horario. Rasa identifica este caso con un intent compuesto del tipo \texttt{cambiar\_contexto\_academico+consulta\_horario}, que se separa en sub-intents y se ejecutan en orden.
+
+La ejecución es secuencial por una razón funcional: el cambio de contexto debe completarse antes de la consulta de horario, porque esta última lee \texttt{contexto\_titulacion} para inyectar el filtro de titulación en su SQL. Cada sub-intent invoca un ejecutor que devuelve un diccionario con el tipo de resultado, los datos crudos y un texto preliminar; los textos se acumulan y se entregan a un último prompt de Gemini que pide integrarlos en un único mensaje natural. Si Gemini falla, la respuesta de respaldo es la concatenación directa de los textos preliminares.
+
+% =====================================================
+% MÓDULOS COMPARTIDOS
+% =====================================================
+\section{Módulos compartidos}\label{sec:impl-shared}
+
+Tres módulos de \texttt{shared/} concentran la complejidad transversal del sistema y merecen mención explícita.
+
+\subsection{Cliente de Gemini}
+
+\texttt{shared/gemini\_client.py} expone una función \texttt{llamar\_gemini(prompt, modelo, timeout, options, context)} que envuelve el SDK oficial. El modelo por defecto es \texttt{gemma-3-27b-it}. La función centraliza los \textit{timeouts}, los reintentos ante errores transitorios y, si la variable de entorno \texttt{LINCEUS\_BENCH\_METRICS} está activa, registra la latencia y el número de tokens de cada llamada en un fichero JSONL etiquetado con el campo \texttt{context} (\textit{``asignaturas.text\_to\_sql''}, \textit{``profesores.respuesta''}, etc.). Este registro fue clave durante la fase de optimización para identificar los prompts más caros y aplanar la curva de latencia.
+
+\subsection{Conexión a base de datos}
+
+\texttt{shared/db.py} define una clase \texttt{DatabaseConnection} que lee las credenciales de Supabase desde el \texttt{.env} y expone una instancia global \texttt{db\_client}. Cada \textit{custom action} obtiene un cursor a través de esta instancia, ejecuta su consulta parametrizada con \texttt{psycopg2} y la cierra. La parametrización (\texttt{cursor.execute(sql, parametros)}) es la barrera principal contra la inyección SQL en las épicas que usan \textit{text-to-SQL}; el validador de \texttt{validar\_sql} es la segunda.
+
+\subsection{Matching difuso de nombres}
+
+\texttt{shared/matching.py} implementa la función \texttt{score\_por\_normalizado(consulta, normalizado)} que devuelve un valor entre 0 y 1 según la proporción de tokens de la consulta presentes en el campo normalizado de la base de datos. Sobre esta función se construye \texttt{clasificar\_por\_normalizado()}, que separa una lista de resultados en firmes (umbral $\geq$ 0,60) y sugerencias (entre 0,30 y 0,60). Los umbrales fueron calibrados durante las pruebas piloto: por debajo de 0,30 los falsos positivos contaminaban las respuestas y por encima de 0,60 se perdían matches válidos por errores ortográficos del usuario.

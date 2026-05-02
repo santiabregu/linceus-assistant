@@ -4,30 +4,35 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Estructura de Descomposición del Trabajo (EDT) — fases y paquetes de trabajo.}}{37}{}%
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Estructura de Descomposición del Trabajo (EDT) — fases y paquetes de trabajo.}}{46}{}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {6.1}{\ignorespaces Widget conversacional accesible para el estudiante.}}{50}{}%
-\contentsline {figure}{\numberline {6.2}{\ignorespaces Panel de administración: gestión de asignaturas.}}{51}{}%
-\contentsline {figure}{\numberline {6.3}{\ignorespaces Panel de administración: auditoría de conversaciones.}}{51}{}%
-\contentsline {figure}{\numberline {6.4}{\ignorespaces Panel de administración: gestión de horarios.}}{51}{}%
-\contentsline {figure}{\numberline {6.5}{\ignorespaces Panel de administración: gestión de profesorado.}}{52}{}%
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Widget conversacional accesible para el estudiante.}}{59}{}%
+\contentsline {figure}{\numberline {6.2}{\ignorespaces Panel de administración: gestión de asignaturas.}}{60}{}%
+\contentsline {figure}{\numberline {6.3}{\ignorespaces Panel de administración: auditoría de conversaciones.}}{60}{}%
+\contentsline {figure}{\numberline {6.4}{\ignorespaces Panel de administración: gestión de horarios.}}{60}{}%
+\contentsline {figure}{\numberline {6.5}{\ignorespaces Panel de administración: gestión de profesorado.}}{61}{}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {7.1}{\ignorespaces Diagrama de componentes del sistema Linceus.}}{56}{}%
-\contentsline {figure}{\numberline {7.2}{\ignorespaces Diagrama de despliegue del sistema Linceus en DigitalOcean (Ubuntu 24.04 LTS) con el pipeline de despliegue automatizado vía GitHub Actions.}}{63}{}%
-\addvspace {10\p@ }
-\addvspace {10\p@ }
+\contentsline {figure}{\numberline {7.1}{\ignorespaces Diagrama de componentes del sistema Linceus.}}{65}{}%
+\contentsline {figure}{\numberline {7.2}{\ignorespaces Diagrama de despliegue del sistema Linceus en DigitalOcean (Ubuntu 24.04 LTS) con el pipeline de despliegue automatizado vía GitHub Actions.}}{72}{}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {13.1}{\ignorespaces Página principal del prototipo con el \textit {widget} de chat cerrado.}}{92}{}%
-\contentsline {figure}{\numberline {13.2}{\ignorespaces \textit {Widget} desplegado con mensaje de bienvenida y selector de titulación.}}{92}{}%
-\contentsline {figure}{\numberline {13.3}{\ignorespaces Ejemplo de sesión con seguimiento conversacional y cambio de contexto.}}{94}{}%
-\contentsline {figure}{\numberline {13.4}{\ignorespaces Panel de administración: vista de centros y titulaciones.}}{94}{}%
-\contentsline {figure}{\numberline {13.5}{\ignorespaces Panel de administración: gestión del profesorado.}}{95}{}%
-\contentsline {figure}{\numberline {13.6}{\ignorespaces Panel de administración: vista de horarios.}}{95}{}%
-\contentsline {figure}{\numberline {13.7}{\ignorespaces Panel de administración: registro de conversaciones anonimizadas.}}{96}{}%
-\contentsline {figure}{\numberline {13.8}{\ignorespaces Panel de administración: estadísticas de uso del sistema.}}{96}{}%
+\contentsline {figure}{\numberline {11.1}{\ignorespaces Pipeline de \texttt {ActionConsultaEspecifica}.}}{93}{}%
+\contentsline {figure}{\numberline {11.2}{\ignorespaces Pipeline de listado y conteo (\textit {text-to-SQL}).}}{94}{}%
+\contentsline {figure}{\numberline {11.3}{\ignorespaces Pipeline de \texttt {ActionConsultaProfesor}.}}{95}{}%
+\contentsline {figure}{\numberline {11.4}{\ignorespaces Pipeline de \texttt {ActionConsultaHorario}.}}{97}{}%
+\contentsline {figure}{\numberline {11.5}{\ignorespaces Pipeline de \texttt {ActionSmartFallback}.}}{98}{}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {13.1}{\ignorespaces Página principal del prototipo con el \textit {widget} de chat cerrado.}}{110}{}%
+\contentsline {figure}{\numberline {13.2}{\ignorespaces \textit {Widget} desplegado con mensaje de bienvenida y selector de titulación.}}{110}{}%
+\contentsline {figure}{\numberline {13.3}{\ignorespaces Ejemplo de sesión con seguimiento conversacional y cambio de contexto.}}{112}{}%
+\contentsline {figure}{\numberline {13.4}{\ignorespaces Panel de administración: vista de centros y titulaciones.}}{112}{}%
+\contentsline {figure}{\numberline {13.5}{\ignorespaces Panel de administración: gestión del profesorado.}}{113}{}%
+\contentsline {figure}{\numberline {13.6}{\ignorespaces Panel de administración: vista de horarios.}}{113}{}%
+\contentsline {figure}{\numberline {13.7}{\ignorespaces Panel de administración: registro de conversaciones anonimizadas.}}{114}{}%
+\contentsline {figure}{\numberline {13.8}{\ignorespaces Panel de administración: estadísticas de uso del sistema.}}{114}{}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

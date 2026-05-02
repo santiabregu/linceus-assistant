@@ -225,3 +225,59 @@ Se considera que la fase de validación del prototipo queda cerrada en el moment
 \subsection{Limitaciones y trabajo futuro}\label{subsec:pruebas-limitaciones}
 
 La validación realizada no agota la evaluación posible del sistema. Quedan fuera de su alcance la medición de la experiencia subjetiva del usuario mediante una escala estandarizada como SUS, la evaluación de la disponibilidad sostenida del servicio en producción mediante un acuerdo de nivel de servicio, y la suite automática para los \textit{endpoints} del panel de administración. Estos tres frentes se abordarán en una segunda iteración, junto con un conjunto de palancas técnicas identificadas durante la ejecución de las pruebas: la elección de modelo Gemini en función del tipo de llamada (clasificación, \textit{Text-to-SQL} o renderizado natural), la sustitución de heurísticas por expresiones regulares por clasificadores ligeros basados en LLM, la introducción de una memoria caché de respuestas para las consultas más frecuentes, la instrumentación de métricas de monitorización en producción y la persistencia de la última intención específica como \textit{slot} consultable para resolver el seguimiento conversacional entre sub-\textit{intents}.
+
+% =====================================================
+\section{Pruebas automatizadas del panel de administración}\label{sec:pruebas-admin}
+% =====================================================
+
+El panel de administración se valida mediante una suite de pruebas automatizadas con \textbf{pytest} y el cliente de test integrado de Flask, ubicada en \texttt{tests/test\_admin.py}. La suite se ejecuta con el comando \texttt{pytest tests/test\_admin.py -v} y no requiere infraestructura adicional.
+
+La estrategia combina tres bloques con objetivos distintos: los \textit{tests de lectura} ejercitan los endpoints GET contra la base de datos de producción sin ningún efecto secundario; los \textit{tests de validación} comprueban que los endpoints de escritura rechazan correctamente los parámetros inválidos antes de llegar a la base de datos; y los \textit{tests con mock} verifican la lógica de extracción de Sevius sustituyendo el scraper por un doble de prueba, lo que permite cubrir los flujos de error y los invariantes de inserción sin modificar los datos de producción.
+
+\subsection{Resultados}\label{subsec:admin-resultados}
+
+La Tabla~\ref{tab:admin-resultados} recoge los 24 casos ejecutados el 26 de abril de 2026, junto con su clasificación y veredicto.
+
+\begin{table}[hbtp]
+\centering
+\caption{Resultados de la suite \texttt{test\_admin.py} (pytest, 26/04/2026).}\label{tab:admin-resultados}
+\small
+\begin{tabular}{p{0.6cm}p{1.4cm}p{10.0cm}p{0.8cm}}
+\hline
+\textbf{ID} & \textbf{Bloque} & \textbf{Qué verifica} & \textbf{Res.} \\
+\hline
+A01 & GET & Servidor activo y BD accesible (\texttt{/health}) & PASS \\
+A02 & GET & \texttt{/stats} devuelve las 10 claves con valores $\geq$ 0 & PASS \\
+A03 & GET & \texttt{/centros} lista no vacía con campos requeridos & PASS \\
+A04 & GET & \texttt{/asignaturas} devuelve todas las asignaturas activas & PASS \\
+A05 & GET & \texttt{/asignaturas?titulacion\_id} filtra correctamente & PASS \\
+A06 & GET & \texttt{/profesores} lista con campos de contacto & PASS \\
+A07 & GET & \texttt{/profesores/<id>} devuelve perfil completo & PASS \\
+A08 & GET & \texttt{/profesores/<uuid-falso>} devuelve 404 & PASS \\
+A09 & GET & \texttt{/horarios?titulacion\_id} devuelve franjas con campos completos & PASS \\
+A10 & GET & \texttt{/conversaciones} devuelve \texttt{total} y \texttt{rows} & PASS \\
+A11 & GET & \texttt{/conversaciones/sesiones} devuelve \texttt{session\_id} y conteo & PASS \\
+A12 & GET & \texttt{/titulaciones?centro\_id} devuelve titulaciones con conteos & PASS \\
+A13 & GET & \texttt{/horarios/extractores} lista centros con extracción soportada & PASS \\
+\hline
+A14 & 400 & \texttt{POST /asignaturas/sync} sin body devuelve 400 & PASS \\
+A15 & 400 & \texttt{POST /asignaturas/sync} sin \texttt{titulacion\_id} devuelve 400 & PASS \\
+A16 & 400 & \texttt{POST /asignaturas/sync} con UUID inexistente devuelve 404 & PASS \\
+A17 & 400 & \texttt{POST /horarios/generar} sin \texttt{centro\_id} devuelve 400 & PASS \\
+A18 & 400 & \texttt{POST /horarios/generar} con UUID inexistente devuelve 404 & PASS \\
+A19 & 400 & \texttt{GET /horarios/titulaciones} sin \texttt{centro\_id} devuelve 400 & PASS \\
+A20 & 400 & \texttt{DELETE /horarios} sin \texttt{centro\_id} devuelve 400 & PASS \\
+\hline
+A21 & mock & Catálogo vacío de Sevius produce 404 & PASS \\
+A22 & mock & Excepción en Sevius produce 502 con mensaje descriptivo & PASS \\
+A23 & mock & Asignaturas ya existentes no se reinsertan & PASS \\
+A24 & mock & INSERT invocado con \texttt{titulacion\_id} correcto & PASS \\
+\hline
+\multicolumn{3}{l}{\textbf{Total}} & \textbf{24/24} \\
+\hline
+\end{tabular}
+\end{table}
+
+Los 24 casos pasan en 16,86 segundos. El bloque GET confirma la integridad de los datos en producción y la ausencia de regresiones en los endpoints de lectura. El bloque 400 verifica que la capa de validación rechaza las solicitudes malformadas antes de ejecutar cualquier operación en la base de datos. El bloque mock demuestra que la lógica de extracción de Sevius maneja correctamente los tres escenarios críticos: error de red, catálogo vacío y catálogo con elementos ya presentes, sin insertar duplicados en ningún caso.
+
+Las operaciones de escritura destructiva (\texttt{horarios/generar} con \texttt{limpiar=true} y \texttt{DELETE /horarios}) quedan fuera de la suite por el riesgo de dejar la base de datos en estado inconsistente al no disponer de un entorno de \textit{staging} aislado, tal como se documenta en la Sección~\ref{subsec:pruebas-limitaciones}.

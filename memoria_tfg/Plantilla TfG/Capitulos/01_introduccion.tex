@@ -6,16 +6,16 @@ Este proyecto tiene como finalidad el diseño y desarrollo de un chatbot intelig
 \section{Contexto}
 \label{sec:contexto}
 
-En la actualidad, el alumnado de la Universidad de Sevilla se enfrenta a una notable dispersión informativa. La información académica se encuentra repartida entre múltiples plataformas y páginas web, cada una gestionada de forma independiente por distintas facultades, servicios y departamentos. Esta fragmentación dificulta el acceso eficiente a datos esenciales como horarios, contacto con profesorado o información de las asignaturas.
+En la actualidad, el alumnado de la Universidad de Sevilla se enfrenta a una notable dispersión informativa. La información académica se encuentra repartida entre múltiples plataformas y páginas web, cada una gestionada de forma independiente por distintas facultades, servicios y departamentos. El portal institucional principal~\cite{usWeb}, la web de la propia ETSII~\cite{etsiiWeb}, los portales internos Sevius~\cite{sevius} y Sevius4~\cite{sevius4}, la Secretaría Virtual~\cite{usSecretaria} y los procedimientos de matrícula y pago de tasas~\cite{usMatricula,usPago} son solo algunos ejemplos. Esta fragmentación dificulta el acceso eficiente a datos esenciales como horarios, contacto con profesorado o información de las asignaturas.
 
-Además, muchos contenidos relevantes no se presentan de forma unificada ni están estructurados para su consulta directa, sino que requieren navegar por documentos PDF (como proyectos docentes), correos informativos, páginas institucionales específicas u otros portales como Sevius. Esta situación resulta especialmente compleja para estudiantes de nuevo ingreso o internacionales, que no siempre conocen el funcionamiento interno del entorno universitario y, en muchos casos, deben enfrentarse también a la barrera del idioma, lo que dificulta aún más la comprensión de la información disponible.
+Además, muchos contenidos relevantes no se presentan de forma unificada ni están estructurados para su consulta directa, sino que requieren navegar por documentos PDF (como proyectos docentes), correos informativos, páginas institucionales específicas u otros portales como Sevius~\cite{sevius} o Sevius4~\cite{sevius4}. Esta situación resulta especialmente compleja para estudiantes de nuevo ingreso o internacionales, que no siempre conocen el funcionamiento interno del entorno universitario y, en muchos casos, deben enfrentarse también a la barrera del idioma, lo que dificulta aún más la comprensión de la información disponible.
 
 La ausencia de un punto de acceso único, interactivo y orientado al usuario final pone de manifiesto la necesidad de una herramienta conversacional que permita acceder a la información de manera contextual, simplificada y guiada. En este sentido, un chatbot capaz de interpretar consultas abiertas en lenguaje natural y conectarse con diferentes fuentes de información representa una solución innovadora, alineada con los principios de accesibilidad, automatización y modernización de los servicios universitarios.
 
 \section{Motivación}
 \label{sec:motivacion}
 
-La motivación principal de este proyecto surge de la necesidad de centralizar el acceso a información académica dispersa y mejorar la experiencia del estudiante en su interacción con los sistemas universitarios. Los estudiantes, especialmente aquellos de nuevo ingreso o de programas de intercambio, se enfrentan con frecuencia a dificultades para localizar información básica como horarios de clase, datos de contacto del profesorado o detalles del plan docente de cada asignatura.
+La motivación principal de este proyecto surge de la necesidad de centralizar el acceso a información académica dispersa y mejorar la experiencia del estudiante en su interacción con los sistemas universitarios. Conviene subrayar que esta dificultad no se limita al alumnado de nuevo ingreso o de programas de intercambio: la mayoría de estudiantes, incluso tras varios años en la titulación, no domina todos los procedimientos institucionales ni recuerda en qué portal reside cada dato. Quien necesita consultar un horario, el correo de un profesor o un detalle del plan docente termina con frecuencia recurriendo a buscadores externos o preguntando a compañeros, no porque la información no exista, sino porque está repartida entre fuentes que el usuario no consulta a diario.
 
 Esta problemática no solo genera frustración y pérdida de tiempo, sino que también puede afectar negativamente al rendimiento académico y a la integración del estudiante en la comunidad universitaria. La dispersión de la información en múltiples fuentes web, documentos PDF y portales específicos dificulta la autonomía informativa del alumnado, que debe dedicar un esfuerzo significativo a buscar respuestas que deberían estar disponibles de forma inmediata.
 
@@ -27,7 +27,7 @@ Por tanto, el desarrollo de un asistente conversacional capaz de responder de fo
 \subsection{Objetivo general}
 \label{subsec:objetivo-general}
 
-El objetivo principal de este proyecto es diseñar y desarrollar un chatbot inteligente que proporcione a los estudiantes de la Universidad de Sevilla una vía centralizada, accesible y eficiente para consultar información académica y administrativa relevante. La solución pretende integrar capacidades de comprensión del lenguaje natural mediante modelos de Inteligencia Artificial Generativa, junto con búsquedas en bases de datos estructuradas y vectorizadas, permitiendo resolver dudas frecuentes relacionadas con horarios, profesorado, documentación, normativas o localización de espacios universitarios. El asistente está especialmente orientado a facilitar la autonomía informativa de estudiantes de nuevo ingreso, internacionales o aquellos menos familiarizados con los procedimientos institucionales de la Universidad de Sevilla.
+El objetivo principal de este proyecto es diseñar y desarrollar un chatbot inteligente que proporcione a los estudiantes de la Universidad de Sevilla una vía centralizada, accesible y eficiente para consultar información académica y administrativa relevante. La solución pretende integrar capacidades de comprensión del lenguaje natural mediante modelos de Inteligencia Artificial Generativa, junto con búsquedas en bases de datos estructuradas y vectorizadas, permitiendo resolver dudas frecuentes relacionadas con horarios, profesorado, documentación, normativas o localización de espacios universitarios. El asistente está dirigido al conjunto del alumnado y resulta de especial utilidad para quienes están menos familiarizados con los procedimientos institucionales, perfil que abarca a los estudiantes de nuevo ingreso o internacionales pero también a una parte significativa del alumnado ya matriculado.
 
 \subsection{Objetivos técnicos}
 \label{subsec:objetivos-tecnicos}
@@ -39,7 +39,9 @@ Los objetivos técnicos específicos del proyecto incluyen:
     \item Integrar la API de Gemini para la detección de intenciones y generación de respuestas enriquecidas mediante lenguaje natural.
     \item Diseñar y desarrollar una base de datos híbrida en Supabase que combine información estructurada (asignaturas, horarios y profesorado) con embeddings vectoriales para búsquedas semánticas sobre los planes docentes.
     \item Desarrollar acciones personalizadas en Python que permitan consultar datos estructurados y realizar búsquedas por similitud en documentación académica.
-    \item Implementar un \textit{widget} web ligero (HTML, CSS y JavaScript) que ofrezca una interfaz intuitiva y accesible para la interacción con el chatbot, junto con un panel de administración que garantice la mantenibilidad del sistema.
+    \item Implementar un \textit{widget} web ligero (HTML, CSS y JavaScript) que ofrezca una interfaz intuitiva y accesible para la interacción con el chatbot.
+    \item Desarrollar un panel de administración independiente que permita gestionar los datos del sistema (asignaturas, horarios, profesorado, planes docentes) sin intervención técnica, garantizando la mantenibilidad del proyecto a largo plazo.
+    \item Diseñar el sistema con una arquitectura escalable y extensible, de forma que la incorporación de nuevas titulaciones, centros o dominios funcionales pueda realizarse a través de la carga de datos, sin tocar el núcleo conversacional.
     \item Garantizar el cumplimiento de la normativa de protección de datos mediante el uso exclusivo de información de carácter público y el anonimato de las sesiones de usuario.
 \end{itemize}
 
@@ -54,6 +56,7 @@ Desde el punto de vista académico y personal, este proyecto permite:
     \item Profundizar en el uso de técnicas de Retrieval Augmented Generation (RAG) y bases de datos vectoriales.
     \item Desarrollar competencias en metodologías ágiles aplicadas a proyectos individuales.
     \item Contribuir a la mejora de los servicios universitarios mediante una solución tecnológica innovadora y accesible.
+    \item Devolver algo a la comunidad estudiantil de la que se forma parte, dejando una base sobre la que futuras generaciones de estudiantes puedan apoyarse y, si así lo deciden, ampliar el sistema a otros centros y titulaciones de la universidad.
     \item Demostrar la capacidad de diseñar, implementar y documentar un sistema completo de forma autónoma.
 \end{itemize}
 
@@ -62,8 +65,12 @@ Desde el punto de vista académico y personal, este proyecto permite:
 \section{Estructura de la memoria}
 \label{sec:estructura-memoria}
 
-Esta memoria se organiza en dos partes principales:
+La memoria se organiza en cuatro partes que siguen el ciclo de vida del proyecto, desde el planteamiento hasta la validación y el cierre.
 
-\textbf{Parte I: Introducción y Conceptos}, donde se contextualiza el proyecto, se justifica su necesidad, se definen los objetivos y se describen los conceptos técnicos fundamentales relacionados con sistemas conversacionales, procesamiento del lenguaje natural y arquitectura del sistema.
+\textbf{Parte I: Introducción y Conceptos.} Contextualiza el proyecto, justifica su necesidad frente a las soluciones existentes, fija los objetivos, presenta el estudio comparativo de tecnologías que sustenta las decisiones de diseño y define los conceptos técnicos fundamentales sobre sistemas conversacionales, NLU y arquitectura RAG.
 
-\textbf{Parte II: Metodología y Planificación}, que detalla la metodología de desarrollo empleada (SCRUM adaptado), las herramientas utilizadas y la planificación temporal del proyecto, incluyendo el backlog de tareas y la distribución en sprints.
+\textbf{Parte II: Metodología y Planificación.} Describe la metodología de desarrollo empleada (SCRUM adaptado a un proyecto individual), las herramientas de gestión utilizadas y la planificación temporal del trabajo, con la estructura de descomposición en fases, paquetes y sprints.
+
+\textbf{Parte III: Diseño e Implementación.} Recoge la especificación de requisitos, la arquitectura del sistema, el marco tecnológico definitivo, la estructura del proyecto y de la base de datos, y el detalle de implementación de cada épica funcional con sus pipelines de ejecución.
+
+\textbf{Parte IV: Validación y Cierre.} Presenta la estrategia de pruebas en cinco capas y los resultados obtenidos, incluye el manual de usuario y administrador, las conclusiones y líneas de trabajo futuro, y cierra con los anexos sobre uso de IA durante el desarrollo y vídeo de presentación.

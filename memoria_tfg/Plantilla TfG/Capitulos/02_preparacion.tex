@@ -13,9 +13,9 @@ En esta fase previa se llevó a cabo un análisis exhaustivo de las tecnologías
 Se han considerado distintos frameworks de chatbot \textbf{open source} que cumplen con los requisitos de despliegue local, integración en Python y soporte para RAG. Los principales son:
 
 \begin{itemize}
-    \item \textbf{Rasa}, centrado en Python y con gran control de flujo.
-    \item \textbf{Botpress (OSS)}, que destaca por su editor visual de flujos.
-    \item \textbf{DeepPavlov}, más orientado a NLP avanzado con módulos reutilizables.
+    \item \textbf{Rasa}~\cite{bocklisch2017rasa}, centrado en Python y con gran control de flujo.
+    \item \textbf{Botpress (OSS)}~\cite{botpressdocs}, que destaca por su editor visual de flujos.
+    \item \textbf{DeepPavlov}~\cite{deeppavlov}, más orientado a NLP avanzado con módulos reutilizables.
     \item \textbf{OpenDialog}, centrado en diseño visual y contextos conversacionales.
     \item \textbf{Tock} y \textbf{Botonic}, opciones alternativas con características interesantes, aunque con menor adopción o diferente enfoque tecnológico.
 \end{itemize}
@@ -80,12 +80,12 @@ La comunidad y la documentación de un framework son indicadores clave de su mad
 
 \subsubsection{Decisión final}
 
-El framework seleccionado es \textbf{Rasa}, ya que combina:
+El framework seleccionado es \textbf{Rasa}~\cite{rasadocs}, ya que combina:
 
 \begin{itemize}
     \item Máximo control sobre el flujo conversacional.
-    \item Capacidades de testing integradas y automatizables.
-    \item Soporte probado para RAG y bases vectoriales.
+    \item Capacidades de testing integradas y automatizables~\cite{bocklisch2020diet}.
+    \item Soporte probado para RAG y bases vectoriales~\cite{lewis2020retrieval}.
     \item Despliegue local sencillo y seguro, compatible con RGPD.
     \item Amplia comunidad y documentación, lo que garantiza sostenibilidad del proyecto.
 \end{itemize}
@@ -116,10 +116,10 @@ Comunidad y documentación & $\star\star\star$ & $\star\star$ & $\star\star$ & $
 Se revisaron diferentes opciones open source para almacenar tanto información estructurada como embeddings:
 
 \begin{itemize}
-    \item \textbf{Supabase (Postgres + pgvector)}.
-    \item \textbf{PostgreSQL autogestionado con pgvector}.
+    \item \textbf{Supabase (Postgres + pgvector)}~\cite{supabasedocs,pgvectorgithub}.
+    \item \textbf{PostgreSQL autogestionado con pgvector}~\cite{pgvectorgithub}.
     \item \textbf{Appwrite}, \textbf{PocketBase}, \textbf{Directus}, \textbf{Hasura}.
-    \item Motores vectoriales dedicados: \textbf{Qdrant, Weaviate, Milvus, FAISS.}
+    \item Motores vectoriales dedicados: \textbf{Qdrant}~\cite{qdrantdocs}, \textbf{Weaviate}~\cite{weaviatedocs}, \textbf{Milvus}, \textbf{FAISS.}
 \end{itemize}
 
 \subsubsection{Comparación detallada}
@@ -172,34 +172,36 @@ La comunidad y la documentación determinan el \textbf{nivel de soporte, recurso
 
 \subsubsection{Decisión final}
 
-La base de datos seleccionada es \textbf{Supabase (Postgres + pgvector)}, porque:
+La base de datos seleccionada es \textbf{Supabase (Postgres + pgvector)}~\cite{supabasedocs,pgvectorgithub}, porque:
 
 \begin{itemize}
-    \item Permite unificar datos estructurados y vectores en una sola plataforma.
+    \item Permite unificar datos estructurados y vectores en una sola plataforma~\cite{lewis2020retrieval}.
     \item Ofrece autenticación, reglas de seguridad a nivel de fila y APIs listas para consumir desde Python y React.
     \item Facilita el despliegue local sin costes de licencias.
-    \item Su comunidad y documentación reducen la curva de aprendizaje.
+    \item Su comunidad y documentación reducen la curva de aprendizaje~\cite{supabasedocs}.
     \item Cumple los requisitos de RAG con un volumen de datos manejable para el caso académico.
 \end{itemize}
 
 \subsubsection{Tabla de comparación de bases de datos}
 
-\begin{table}[h]
+\begin{landscape}
+\begin{table}[hbtp]
 \centering
-\scriptsize
-\begin{tabular}{|l|c|c|c|c|c|c|c|c|c|c|}
+\small
+\begin{tabular}{|p{4.2cm}|c|c|c|c|c|c|c|c|c|c|}
 \hline
-\textbf{Característica / BD} & \textbf{Supabase} & \textbf{Postgres} & \textbf{Appwrite} & \textbf{PocketBase} & \textbf{Directus} & \textbf{Hasura} & \textbf{Qdrant} & \textbf{Weaviate} & \textbf{Milvus} & \textbf{FAISS} \\ \hline
-Modelo de datos & $\star\star\star$ & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ \\ \hline
-Búsqueda vectorial & $\star\star$ & $\star\star$ & $\star$ & $\star$ & $\star$ & $\star$ & $\star\star\star$ & $\star\star\star$ & $\star\star\star$ & $\star\star$ \\ \hline
-Despliegue local y facilidad & $\star\star\star$ & $\star\star\star$ & $\star\star$ & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ \\ \hline
-Seguridad y RGPD & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star$ & $\star\star$ & $\star\star$ & $\star$ & $\star$ & $\star$ & $\star$ \\ \hline
-Comunidad y documentación & $\star\star\star$ & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ \\ \hline
-\textbf{Resultado global} & \textbf{$\star$ 14} & \textbf{$\star$ 13} & \textbf{$\star$ 9} & \textbf{$\star$ 9} & \textbf{$\star$ 9} & \textbf{$\star$ 9} & \textbf{$\star$ 10} & \textbf{$\star$ 10} & \textbf{$\star$ 10} & \textbf{$\star$ 9} \\ \hline
+\textbf{Característica} & \textbf{Supabase} & \textbf{Postgres} & \textbf{Appwrite} & \textbf{PocketBase} & \textbf{Directus} & \textbf{Hasura} & \textbf{Qdrant} & \textbf{Weaviate} & \textbf{Milvus} & \textbf{FAISS} \\ \hline
+Modelo de datos          & $\star\star\star$ & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ \\ \hline
+Búsqueda vectorial       & $\star\star$ & $\star\star$ & $\star$ & $\star$ & $\star$ & $\star$ & $\star\star\star$ & $\star\star\star$ & $\star\star\star$ & $\star\star$ \\ \hline
+Despliegue local         & $\star\star\star$ & $\star\star\star$ & $\star\star$ & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ \\ \hline
+Seguridad y RGPD         & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star$ & $\star\star$ & $\star\star$ & $\star$ & $\star$ & $\star$ & $\star$ \\ \hline
+Comunidad y docs.        & $\star\star\star$ & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ \\ \hline
+\textbf{Total}           & \textbf{14} & \textbf{13} & \textbf{9} & \textbf{9} & \textbf{9} & \textbf{9} & \textbf{10} & \textbf{10} & \textbf{10} & \textbf{9} \\ \hline
 \end{tabular}
 \caption{Comparación de bases de datos}
 \label{tab:databases}
 \end{table}
+\end{landscape}
 
 \subsection{Decisión de API de LLM}
 
@@ -208,7 +210,7 @@ Comunidad y documentación & $\star\star\star$ & $\star\star\star$ & $\star\star
 Se han considerado diferentes opciones de APIs de modelos de lenguaje de gran tamaño (LLMs) open source o con planes gratuitos/educativos:
 
 \begin{itemize}
-    \item \textbf{Gemini (Google AI / DeepMind)}
+    \item \textbf{Gemini (Google AI / DeepMind)}~\cite{geminidocs}
     \item \textbf{OpenAI GPT (GPT-4o, GPT-4o mini)}
     \item \textbf{DeepSeek}
     \item \textbf{Hugging Face Inference API}
@@ -265,7 +267,7 @@ La privacidad y el cumplimiento normativo son esenciales al utilizar modelos de 
 
 \subsubsection{Decisión final}
 
-La API seleccionada es \textbf{Gemini}, porque:
+La API seleccionada es \textbf{Gemini}~\cite{geminidocs}, porque:
 
 \begin{itemize}
     \item Dispone de un plan gratuito generoso en número de llamadas.
@@ -277,17 +279,17 @@ La API seleccionada es \textbf{Gemini}, porque:
 
 \subsubsection{Tabla de comparación detallada de APIs de LLM}
 
-\begin{table}[h]
+\begin{table}[hbtp]
 \centering
 \small
-\begin{tabular}{|l|c|c|c|c|c|c|}
+\begin{tabular}{|p{4.0cm}|c|c|c|c|c|c|}
 \hline
-\textbf{Característica / API} & \textbf{Gemini} & \textbf{OpenAI GPT} & \textbf{DeepSeek} & \textbf{Hugging Face API} & \textbf{Cohere} & \textbf{Claude} \\ \hline
-Coste y accesibilidad & $\star\star\star$ & $\star$ & $\star\star$ & $\star\star$ & $\star$ & $\star$ \\ \hline
-Calidad y rendimiento & $\star\star\star$ & $\star\star\star$ & $\star\star$ & $\star\star$ & $\star\star$ & $\star\star\star$ \\ \hline
-Integración y soporte técnico & $\star\star\star$ & $\star\star\star$ & $\star$ & $\star\star$ & $\star\star$ & $\star\star$ \\ \hline
-Privacidad y cumplimiento (RGPD) & $\star\star$ & $\star\star$ & $\star$ & $\star\star\star$ & $\star\star$ & $\star\star$ \\ \hline
-\textbf{Resultado global} & \textbf{$\star$ 11} & \textbf{$\star$ 9} & \textbf{$\star$ 6} & \textbf{$\star$ 9} & \textbf{$\star$ 7} & \textbf{$\star$ 8} \\ \hline
+\textbf{Característica} & \textbf{Gemini} & \shortstack{\textbf{OpenAI}\\\textbf{GPT}} & \textbf{DeepSeek} & \shortstack{\textbf{Hugging}\\\textbf{Face}} & \textbf{Cohere} & \textbf{Claude} \\ \hline
+Coste y accesibilidad    & $\star\star\star$ & $\star$         & $\star\star$      & $\star\star$                                  & $\star$         & $\star$         \\ \hline
+Calidad y rendimiento    & $\star\star\star$ & $\star\star\star$ & $\star\star$     & $\star\star$                                  & $\star\star$    & $\star\star\star$ \\ \hline
+Integración y soporte    & $\star\star\star$ & $\star\star\star$ & $\star$          & $\star\star$                                  & $\star\star$    & $\star\star$     \\ \hline
+Privacidad y RGPD        & $\star\star$     & $\star\star$     & $\star$           & $\star\star\star$                             & $\star\star$    & $\star\star$     \\ \hline
+\textbf{Total}           & \textbf{11}     & \textbf{9}      & \textbf{6}        & \textbf{9}                                   & \textbf{7}      & \textbf{8}      \\ \hline
 \end{tabular}
 \caption{Comparación de APIs de LLM}
 \label{tab:llm}
@@ -296,169 +298,147 @@ Privacidad y cumplimiento (RGPD) & $\star\star$ & $\star\star$ & $\star$ & $\sta
 \section{Infraestructura del sistema}
 \label{sec:infraestructura}
 
-La infraestructura técnica del sistema se basa en tecnologías de código abierto y servicios gratuitos que permiten una implementación funcional sin coste. Durante el desarrollo y pruebas del sistema, todos los componentes se ejecutan en entorno local, aunque se contempla la posibilidad de desplegarlos posteriormente en un entorno en la nube.
+La infraestructura del sistema se apoya en tecnologías de código abierto y servicios con plan gratuito, lo que permite mantener el coste operativo en niveles compatibles con un proyecto académico. El sistema está actualmente en producción, desplegado en una instancia de DigitalOcean mediante Docker Compose, y se ha utilizado tanto para la fase de pruebas como para el piloto con alumnos reales.
 
-El framework Rasa se ejecuta en un servidor local utilizando Python como lenguaje base. Las acciones personalizadas del chatbot también están desarrolladas en Python y permiten la integración con otros servicios. Para la comprensión de lenguaje natural, se utiliza la API de Gemini, accedida mediante una clave gratuita proporcionada por Google AI Studio. El almacenamiento y recuperación de datos estructurados y vectoriales se realiza en Supabase, una plataforma que ofrece una base de datos PostgreSQL con soporte para la extensión pgvector. Esto permite centralizar tanto la información relacional (como horarios y datos de profesores) como los vectores semánticos necesarios para las búsquedas por similitud.
+El núcleo conversacional se ejecuta sobre el framework Rasa~3.6 y Python como lenguaje base, tanto para el servidor de diálogo como para las acciones personalizadas. La comprensión del lenguaje natural se reparte entre el clasificador local DIET, entrenado con los ejemplos del corpus propio del proyecto, y la API de Gemini (modelo \texttt{gemma-3-27b-it}), que asume las tareas en las que el clasificador local no es suficiente: clasificación de fallback, generación de SQL a partir de lenguaje natural, decisión RAG/SQL y redacción final de respuestas. La clave de la API se obtiene a través de Google AI Studio, dentro del plan gratuito.
 
-La interfaz web del asistente está desarrollada en React y se conecta al backend de Rasa mediante HTTP, funcionando como punto de interacción para el usuario final.
+La capa de datos reside en Supabase, una plataforma gestionada que ofrece PostgreSQL con la extensión \texttt{pgvector} activada de serie. Esta combinación permite mantener en la misma base de datos la información estructurada del dominio académico (asignaturas, horarios, profesorado, titulaciones) y los \textit{embeddings} de los planes docentes utilizados por el pipeline RAG, sin necesidad de un motor vectorial independiente.
+
+La interfaz del usuario final se entrega como un \textit{widget} web ligero, implementado directamente en HTML, CSS y JavaScript sin necesidad de \textit{frameworks} de \textit{front-end}, lo que minimiza el peso del recurso y simplifica la integración en cualquier portal institucional. Junto al \textit{widget} se despliega un panel de administración independiente, construido en Flask, que conecta directamente con la base de datos para permitir al personal autorizado mantener actualizado el corpus sin intervención técnica. Todo el conjunto se sirve a través de un proxy inverso \texttt{nginx} que actúa como punto de entrada único.
 
 \subsection{Arquitectura del sistema}
 
-La arquitectura del sistema propuesto se basa en un enfoque modular que combina un marco conversacional, técnicas de procesamiento del lenguaje natural mediante modelos generativos, y el uso de bases de datos tanto estructuradas como vectoriales. El sistema está diseñado para ofrecer respuestas útiles a los estudiantes de la Universidad de Sevilla a través de un asistente conversacional accesible desde una interfaz web.
+La arquitectura sigue un enfoque modular y se descompone en cuatro contenedores Docker orquestados con Docker Compose: \texttt{nginx} como proxy inverso y servidor de los activos estáticos, \texttt{rasa} con el motor conversacional, \texttt{actions} con el servidor de acciones personalizadas, y \texttt{admin} con el panel Flask. Esta separación facilita el escalado independiente de cada pieza y la sustitución de componentes sin tocar el resto del sistema.
 
-Cuando un usuario realiza una consulta, esta es enviada al motor principal del sistema, construido sobre el framework Rasa, que se encarga de controlar el flujo de la conversación. Para la comprensión de la intención del usuario, el sistema puede operar en dos modos: uno basado en el entrenamiento tradicional de Rasa NLU con ejemplos, y otro utilizando la API del modelo de lenguaje Gemini para detectar la intención de forma dinámica.
-
-Según la intención detectada, el sistema puede acceder a una base de datos estructurada (por ejemplo, para obtener información sobre horarios, profesorado, o fórmulas de calificación) o bien a una base de datos vectorial que contiene fragmentos semánticos extraídos de sitios web oficiales y documentación académica. Esta última permite realizar búsquedas por similitud y obtener información no estructurada de forma precisa.
-
-Si el sistema no logra proporcionar una respuesta satisfactoria, se activa un mecanismo de recuperación (fallback) que consulta una base de datos de enlaces útiles asociados a cada tema. De este modo, se garantiza que el usuario siempre reciba algún tipo de orientación.
+El flujo de una consulta tipo es el siguiente. El mensaje del usuario llega al servidor Rasa, que invoca el pipeline NLU para clasificar el \textit{intent} y extraer las entidades relevantes. Si la confianza del clasificador local supera el umbral, el flujo continúa por la \textit{custom action} correspondiente; en caso contrario se activa el fallback inteligente, que delega en Gemini la decisión sobre qué acción ejecutar. La acción seleccionada lee y escribe en los \textit{slots} del \textit{tracker} para mantener el contexto, y según la naturaleza de la consulta accede a la base relacional (datos estructurales como créditos, horarios o despachos) o al pipeline RAG sobre \texttt{pgvector} (preguntas sobre el contenido de los planes docentes: evaluación, temario, bibliografía). Las respuestas finales se construyen con una llamada a Gemini que recibe los datos recuperados como contexto y los redacta en lenguaje natural respetando un límite de longitud configurable.
 
 \subsection{Componentes tecnológicos del sistema}
+
+La Tabla~\ref{tab:tech-stack} resume el papel de cada tecnología dentro del sistema en producción.
 
 \begin{table}[h]
 \centering
 \small
 \begin{tabular}{|l|p{9cm}|}
 \hline
+\rowcolor{black!10}
 \textbf{Tecnología} & \textbf{Rol en el sistema} \\ \hline
-\textbf{Rasa} & Framework principal para la gestión del diálogo y flujo de conversación. \\ \hline
-\textbf{Python} & Lenguaje principal para el backend y acciones personalizadas. \\ \hline
-\textbf{Gemini (API)} & Modelo generativo utilizado para la detección de intención y generación de respuestas naturales. \\ \hline
-\textbf{Supabase} & Plataforma de base de datos que permite almacenar información estructurada y vectores semánticos. \\ \hline
-\textbf{pgvector} & Extensión de PostgreSQL para el almacenamiento y búsqueda de vectores. \\ \hline
-\textbf{React} & Desarrollo de la interfaz web del chatbot. \\ \hline
-\textbf{FAISS (opcional)} & Motor local alternativo para búsqueda vectorial (solo si se opta por no usar Supabase). \\ \hline
-\textbf{Google AI Studio} & Plataforma utilizada para obtener la API key de Gemini y gestionar el modelo. \\ \hline
+\textbf{Rasa 3.6} & Motor conversacional: pipeline NLU, gestor de diálogo y servidor de acciones. \\ \hline
+\textbf{Python} & Lenguaje del servidor de acciones personalizadas y del panel de administración. \\ \hline
+\textbf{Gemini API} (\texttt{gemma-3-27b-it}) & Clasificación en fallback, \textit{text-to-SQL}, decisión RAG/SQL y redacción de respuestas. \\ \hline
+\textbf{Supabase} & PostgreSQL gestionado con autenticación y APIs listas para consumir desde Python. \\ \hline
+\textbf{pgvector} & Extensión de PostgreSQL para almacenar y consultar \textit{embeddings} en el pipeline RAG. \\ \hline
+\textbf{HTML, CSS, JavaScript} & \textit{Widget} web del usuario final, sin \textit{frameworks} de \textit{front-end}. \\ \hline
+\textbf{Flask} & Panel de administración para el mantenimiento del corpus. \\ \hline
+\textbf{nginx} & Proxy inverso y servidor estático del \textit{widget} y del panel admin. \\ \hline
+\textbf{Docker Compose} & Orquestación local y en producción de los cuatro contenedores del sistema. \\ \hline
+\textbf{DigitalOcean} & Proveedor cloud donde se aloja la instancia de producción. \\ \hline
+\textbf{Google AI Studio} & Gestión de la clave de acceso a la API de Gemini. \\ \hline
 \end{tabular}
-\caption{Componentes tecnológicos del sistema}
+\caption{Componentes tecnológicos del sistema en producción.}
 \label{tab:tech-stack}
 \end{table}
 
 \section{Casos de uso principales}
 \label{sec:casos-uso}
 
-\subsection{Consulta sobre horarios de clases}
+A partir del análisis del problema y de las decisiones tecnológicas de las secciones anteriores, se identifican los casos de uso que el sistema debe cubrir. Se agrupan en cuatro dominios funcionales: gestión de la titulación activa, información de asignaturas, horarios y profesorado. La gestión de la titulación se presenta en primer lugar porque es la condición previa que habilita el grueso de las consultas: las relativas a asignaturas y horarios solo devuelven resultados cuando la titulación ya se ha fijado, ya que dependen de ella para filtrar los datos. La excepción son las consultas de profesorado, que pueden resolverse sin titulación porque la información de contacto es transversal a las titulaciones de un mismo centro. Cada caso se describe con un escenario positivo (entrada esperada) y un escenario negativo (entrada que el sistema debe gestionar con elegancia, no solo rechazar).
+
+\subsection{Gestión del contexto académico}
+
+\subsubsection{Establecer o cambiar la titulación activa}
+
+La elección de titulación es el primer paso de la mayoría de las sesiones. Mientras el usuario no la fija, las consultas de asignaturas y horarios se interrumpen y el asistente solicita la selección mediante botones; las consultas de profesorado, en cambio, se atienden con normalidad. Una vez establecida, la titulación queda fijada como contexto y el usuario puede cambiarla en cualquier momento mediante una nueva orden.
+
+\begin{itemize}
+    \item Escenario positivo: el usuario indica \textit{``Soy de Ingeniería del Software''} o, ya en sesión, \textit{``Cambiar a Tecnologías Informáticas''}; el asistente reconoce la titulación, fija el contexto y confirma el cambio. A partir de ese momento, las consultas que dependen de la titulación se filtran automáticamente por ella.
+    \item Escenario negativo: el usuario propone una titulación ambigua o inexistente (\textit{``ingeniería''} a secas) y el asistente solicita una aclaración antes de cambiar el contexto, sin asumir una titulación por defecto.
+\end{itemize}
+
+\subsubsection{Consultar y reiniciar el contexto}
+
+\begin{itemize}
+    \item Escenario positivo: el usuario pregunta \textit{``¿Qué titulación tengo activa?''} y el asistente responde con el centro y la titulación seleccionada. Ante \textit{``Reset''} o \textit{``Empezar de cero''}, el asistente borra el contexto y vuelve a mostrar los botones de selección de titulación.
+    \item Escenario negativo: el usuario intenta consultar información sobre asignaturas u horarios sin haber elegido titulación y el asistente le solicita que elija una mediante los botones disponibles.
+\end{itemize}
+
+\subsubsection{Consultar las titulaciones disponibles}
+
+\begin{itemize}
+    \item Escenario positivo: el usuario pregunta \textit{``¿Qué titulaciones hay disponibles?''} y el asistente devuelve la lista de titulaciones activas en la base de datos, agrupadas por centro y con el número de asignaturas de cada una.
+    \item Escenario negativo: si la base de datos no tiene titulaciones cargadas, el asistente lo indica con claridad en lugar de devolver una lista vacía.
+\end{itemize}
+
+\subsection{Consulta sobre información de asignaturas}
+
+\subsubsection{Consultar datos estructurales de una asignatura}
+
+El asistente extrae de la pregunta el dato concreto que el usuario está pidiendo y responde solo con ese dato, evitando volcar todo el registro de la asignatura. La respuesta completa se reserva para las preguntas explícitas de tipo general (\textit{``Información de Redes''} o \textit{``Háblame de Bases de Datos''}).
+
+\begin{itemize}
+    \item Escenario positivo: el usuario pregunta \textit{``¿Cuántos créditos tiene Redes?''} y el asistente responde \textit{``Redes tiene 6 créditos''}. Si la pregunta es genérica (\textit{``Información de Redes''}), el asistente devuelve el conjunto de campos: créditos, curso, duración (anual o por cuatrimestre) y tipología (formación básica, obligatoria u optativa).
+    \item Escenario negativo: el usuario consulta \textit{``Información de Programación Interplanetaria''} (asignatura inexistente) y el asistente indica que no encuentra esa asignatura, ofreciendo, si procede, sugerencias por similitud.
+\end{itemize}
+
+\subsubsection{Consultar contenido del plan docente}
+
+Este caso cubre las preguntas cuyo dato vive dentro del plan docente oficial de la asignatura. El sistema cubre, entre otros, sistema de evaluación y fórmula de calificación, metodología docente, temario y temas concretos, competencias formativas, bibliografía recomendada y, cuando el plan docente lo recoge explícitamente, datos sobre coordinación de la asignatura. La cobertura depende de lo que aparezca en cada plan docente: hay información que solo figura en algunos documentos y otra que no aparece en ninguno; en particular, las tutorías del profesorado no suelen estar recogidas como horario estructurado, por lo que se gestionan aparte (véase Sección~\ref{subsec:cu-tutorias}).
+
+\begin{itemize}
+    \item Escenario positivo: el usuario pregunta \textit{``¿Qué bibliografía tiene Sistemas Operativos?''} o \textit{``Temario de Bases de Datos''} y el asistente recupera los fragmentos relevantes del plan docente mediante el pipeline RAG y redacta una respuesta en lenguaje natural.
+    \item Escenario negativo: el usuario pide información que el plan docente no contempla (\textit{``¿Cuántos alumnos aprueban Sistemas Operativos cada año?''}) y el asistente responde que ese dato no consta en la documentación oficial, sin inventar la cifra.
+\end{itemize}
+
+\subsubsection{Listado y conteo de asignaturas}
+
+\begin{itemize}
+    \item Escenario positivo: el usuario pide \textit{``Dame las optativas de cuarto''} y el asistente genera la consulta SQL correspondiente, la ejecuta y devuelve la lista paginada. De forma análoga, ante \textit{``¿Cuántas asignaturas tiene primero?''}, el sistema devuelve el conteo.
+    \item Escenario negativo: el usuario pide un filtro inválido (\textit{``optativas de séptimo curso''}) y el asistente aclara que ese curso no existe en la titulación activa.
+\end{itemize}
+
+\subsection{Consulta sobre horarios}
 
 \subsubsection{Consultar horario por asignatura}
 
 \begin{itemize}
-    \item Escenario positivo: El usuario introduce \textit{``Horario de Bases de Datos II''} y el asistente devuelve su planificación semanal.
-    \item Escenario negativo: El usuario consulta \textit{``Horario de Bases de Datos 7''} (asignatura inexistente) y el asistente informa que no encuentra coincidencias.
+    \item Escenario positivo: el usuario pregunta \textit{``¿A qué hora tengo Bases de Datos?''} y el asistente devuelve los horarios disponibles, distinguiendo aulas de teoría y de laboratorio.
+    \item Escenario negativo: el usuario pide \textit{``Horario de Bases de Datos 7''} (asignatura inexistente) y el asistente informa de que no encuentra coincidencias.
 \end{itemize}
 
-\subsubsection{Consultar horario por grupo}
+\subsubsection{Consultar horario por curso y grupo}
 
 \begin{itemize}
-    \item Escenario positivo: El usuario pide \textit{``Horario del Grupo A de Ingeniería de Software''} y obtiene la tabla completa.
-    \item Escenario negativo: El usuario introduce un grupo no registrado (\textit{``Grupo Z''}) y el asistente responde que ese grupo no existe.
+    \item Escenario positivo: el usuario solicita \textit{``Horario de 2º grupo 1''} y obtiene la planificación semanal completa de ese curso y grupo. Los grupos se identifican por número (1, 2, 3\ldots), tal como aparecen en los horarios oficiales de la ETSII.
+    \item Escenario negativo: el usuario introduce un grupo inexistente (\textit{``9º grupo 1''} o \textit{``2º grupo 99''}) y el asistente aclara que esa combinación no figura en la base de datos.
 \end{itemize}
 
-\subsubsection{Consultar horario por carrera/curso}
+\subsubsection{Consultar horario por día}
 
 \begin{itemize}
-    \item Escenario positivo: El usuario solicita \textit{``Horario de 3º de Informática''} y recibe la planificación de todas las asignaturas de ese curso.
-    \item Escenario negativo: El usuario introduce \textit{``Horario de 9º de Informática''} y el asistente aclara que no existe tal curso.
+    \item Escenario positivo: el usuario pregunta \textit{``¿Qué clases tengo el lunes en primero grupo 2?''} y el asistente devuelve solo las sesiones del día indicado.
+    \item Escenario negativo: el usuario pregunta por un día sin clases (sábado o domingo) y el asistente lo indica explícitamente en lugar de devolver una lista vacía.
 \end{itemize}
 
 \subsection{Consulta sobre datos de contacto del profesorado}
 
-\subsubsection{Consultar despacho de un profesor}
+\subsubsection{Consultar despacho, correo y categoría académica}
 
 \begin{itemize}
-    \item Escenario positivo: El usuario pregunta \textit{``Despacho del profesor Juan Pérez''} y el asistente devuelve la ubicación.
-    \item Escenario negativo: El usuario introduce un nombre inexistente y el asistente indica que no lo encuentra.
+    \item Escenario positivo: el usuario pregunta \textit{``¿Cuál es el despacho del profesor Parejo?''} o \textit{``Correo de Ana Bernárdez''} y el asistente devuelve la información correspondiente: despacho, correo institucional, departamento y categoría académica.
+    \item Escenario negativo: el usuario introduce un nombre inexistente y el asistente indica que no lo encuentra; si la similitud con algún profesor real es alta, ofrece la sugerencia para que el usuario la confirme.
 \end{itemize}
 
-\subsubsection{Consultar correo electrónico de un profesor}
+\subsubsection{Consultar tutorías de un profesor}\label{subsec:cu-tutorias}
 
 \begin{itemize}
-    \item Escenario positivo: El usuario pide \textit{``Correo de la profesora Ana López''} y el asistente devuelve su email institucional.
-    \item Escenario negativo: El usuario solicita \textit{``Correo personal de la profesora Ana López''} y el asistente aclara que solo puede dar la dirección oficial.
+    \item Escenario positivo: el usuario pregunta \textit{``Tutorías de la profesora Bernárdez''}. Los horarios estructurados de tutoría, en general, no se publican de forma estable en ningún portal oficial ni aparecen recogidos en los planes docentes, por lo que el asistente redirige al correo institucional del profesor para que el alumno pueda solicitar cita directamente.
+    \item Escenario negativo: el usuario pide tutorías de un profesor inexistente y el asistente indica que no lo encuentra.
 \end{itemize}
 
-\subsubsection{Consultar tutorías de un profesor}
+\subsubsection{Búsqueda de profesores por asignatura o departamento}
 
 \begin{itemize}
-    \item Escenario positivo: El usuario pregunta \textit{``Tutorías de la profesora Bernárdez''} y el asistente, al no disponer de horarios estructurados de tutoría en la base de datos, redirige al correo institucional del profesor para que el alumno solicite cita directamente.
-    \item Escenario negativo: El usuario pide tutorías de un profesor inexistente y el asistente indica que no lo encuentra.
+    \item Escenario positivo: el usuario pregunta \textit{``¿Quién da Fundamentos de Programación?''} o \textit{``Profesores del Departamento de Lenguajes y Sistemas Informáticos''} y el asistente devuelve la lista correspondiente con sus datos de contacto.
+    \item Escenario negativo: el usuario pide profesorado de una asignatura o departamento que no figura en la base de datos y el asistente informa del error.
 \end{itemize}
 
-\subsubsection{Búsqueda por asignatura}
-
-\begin{itemize}
-    \item Escenario positivo: El usuario pregunta \textit{``¿Quién da Programación Avanzada?''} y el asistente devuelve los profesores con sus datos de contacto.
-    \item Escenario negativo: El usuario pide \textit{``Profesor de Programación Interplanetaria''} (asignatura inexistente) y el asistente informa del error.
-\end{itemize}
-
-\subsubsection{Búsqueda por departamento (opcional)}
-
-\begin{itemize}
-    \item Escenario positivo: El usuario solicita \textit{``Profesores del Departamento de Lenguajes y Sistemas Informáticos''} y obtiene la lista.
-    \item Escenario negativo: El usuario pide un departamento inexistente y el asistente indica que no figura en la base de datos.
-\end{itemize}
-
-\subsection{Consulta sobre información de una asignatura}
-
-\subsubsection{Consultar fórmula de calificación}
-
-\begin{itemize}
-    \item Escenario positivo: El usuario pregunta \textit{``¿Cómo se califica Ingeniería del Software II?''} y el asistente responde \textit{``40\% prácticas, 60\% examen''}.
-    \item Escenario negativo: El usuario introduce \textit{``100\% aprobado automático''} y el asistente aclara que no existe esa modalidad.
-\end{itemize}
-
-\subsubsection{Consultar sistema de evaluación}
-
-\begin{itemize}
-    \item Escenario positivo: El usuario pide \textit{``Sistema de evaluación de Matemáticas Discretas''} y el asistente devuelve convocatorias y requisitos.
-    \item Escenario negativo: El usuario consulta \textit{``Aprobar sin presentarse''} y el asistente aclara que no es válido.
-\end{itemize}
-
-\subsubsection{Consultar metodologías docentes}
-
-\begin{itemize}
-    \item Escenario positivo: El usuario pregunta \textit{``Metodología de Programación Avanzada''} y el asistente devuelve que es aprendizaje basado en proyectos.
-    \item Escenario negativo: El usuario pide \textit{``Metodología libre, sin clases''} y el asistente indica que no corresponde con la asignatura.
-\end{itemize}
-
-\subsubsection{Consultar bibliografía recomendada}
-
-\begin{itemize}
-    \item Escenario positivo: El usuario pide \textit{``Bibliografía de Sistemas Operativos''} y el asistente devuelve libros y artículos recomendados.
-    \item Escenario negativo: El usuario solicita \textit{``Bibliografía de TikTok''} y el asistente aclara que no es material académico válido.
-\end{itemize}
-
-\subsubsection{Consultar competencias de la asignatura (opcional)}
-
-\begin{itemize}
-    \item Escenario positivo: El usuario pregunta \textit{``Competencias de Bases de Datos I''} y el asistente responde con los objetivos formativos.
-    \item Escenario negativo: El usuario pide \textit{``Competencias de Asignatura XYZ inventada''} y el asistente aclara que no existe.
-\end{itemize}
-
-\subsection{Consulta sobre normas y documentación de la Universidad}
-
-\subsubsection{Consultar convocatorias de examen}
-
-\begin{itemize}
-    \item Escenario positivo: El usuario pregunta \textit{``¿Cuántas convocatorias de examen hay en cada asignatura de grado?''} y el asistente responde que, por norma, existen dos por curso.
-    \item Escenario negativo: El usuario pide \textit{``Convocatorias ilimitadas''} y el asistente aclara que no es correcto.
-\end{itemize}
-
-\subsubsection{Consultar tiempos de examen}
-
-\begin{itemize}
-    \item Escenario positivo: El usuario consulta \textit{``Duración del examen oficial de Matemáticas I''} y el asistente responde que son 2 horas.
-    \item Escenario negativo: El usuario pregunta \textit{``Examen de 10 minutos''} y el asistente indica que ese dato no es válido.
-\end{itemize}
-
-\subsubsection{Consultar número máximo de suspensos permitidos}
-
-\begin{itemize}
-    \item Escenario positivo: El usuario pide \textit{``¿Cuántas veces se puede suspender una asignatura antes de perder el derecho a examen?''} y el asistente responde que hay un límite (ej. 6).
-    \item Escenario negativo: El usuario consulta \textit{``Suspender infinitas veces''} y el asistente informa que no es posible.
-\end{itemize}
-
-\subsubsection{Consultar plazos de revisión de exámenes (opcional)}
-
-\begin{itemize}
-    \item Escenario positivo: El usuario pregunta \textit{``¿Cuántos días tengo para pedir revisión de examen tras publicarse las notas?''} y el asistente responde que son 7 días hábiles.
-    \item Escenario negativo: El usuario consulta \textit{``Revisar un examen de hace 3 años''} y el asistente aclara que el plazo ya expiró.
-\end{itemize}
