@@ -1,4 +1,4 @@
-@startuml Diagrama de Componentes
+@startuml diagrama_componentes
 !pragma layout smetana
 skinparam componentStyle uml2
 skinparam defaultFontSize 13
@@ -6,68 +6,76 @@ skinparam packageStyle rectangle
 skinparam shadowing false
 skinparam linetype ortho
 
-title Component Diagram - Linceus Assistant
+' Estilo para componentes desactivados (referencia, no operativos)
+skinparam component<<inactivo>> {
+  BorderStyle dashed
+  BorderColor #888888
+  FontColor #666666
+  BackgroundColor #F5F5F5
+}
+
+title Diagrama de componentes - Linceus Assistant
 
 ' ─── Capa de presentación ────────────────────────────────────────────────────
-package "Presentation Layer" {
-  [Chatbot Widget] as widget
-  [Admin SPA] as adminui
+package "Capa de presentación" {
+  [Widget de chat] as widget
+  [SPA de administración] as adminui
 }
 
 ' ─── Capa NLU / diálogo ──────────────────────────────────────────────────────
-package "Conversational Layer (Rasa)" {
-  [NLU Pipeline] as nlu
-  [Dialog Manager] as dialog
+package "Capa conversacional (Rasa)" {
+  [Pipeline NLU] as nlu
+  [Gestor de diálogo] as dialog
 
   nlu -[hidden]right- dialog
 }
 
 ' ─── Capa de lógica de negocio ───────────────────────────────────────────────
-package "Business Logic Layer (Action Server)" {
-  [Action Dispatcher] as actions
+package "Capa de lógica de negocio (Action Server)" {
+  [Despachador de acciones] as actions
 
-  package "Domain Modules" as modules {
-    [Subjects] as mod_asig
-    [Schedules] as mod_hor
-    [Professors] as mod_prof
-    [Context] as mod_ctx
+  package "Módulos de dominio" as modules {
+    [Asignaturas] as mod_asig
+    [Horarios] as mod_hor
+    [Profesorado] as mod_prof
+    [Contexto] as mod_ctx
     [Fallback] as mod_fb
-    [Multi-Intent] as mod_multi
+    [Multi-intento] <<inactivo>> as mod_multi
   }
 
-  [Shared Helpers] as shared
+  [Utilidades compartidas] as shared
   [Text-to-SQL] as t2sql
 
-  actions ..> modules : <<delegates>>
-  modules ..> shared : <<uses>>
-  modules ..> t2sql : <<uses>>
+  actions ..> modules : <<delega>>
+  modules ..> shared : <<usa>>
+  modules ..> t2sql : <<usa>>
 }
 
 ' ─── Capa de IA ──────────────────────────────────────────────────────────────
-package "AI Layer" {
-  [Embedding Retriever] as retriever
-  [LLM Renderer] as llm
+package "Capa de IA" {
+  [Recuperador de embeddings] as retriever
+  [Generador LLM] as llm
 }
 
 ' ─── Capa de datos ───────────────────────────────────────────────────────────
-package "Data Layer" {
-  [Relational DB Client] as dbclient
-  [Vector DB Client\n(pgvector)] as vecclient
+package "Capa de datos" {
+  [Cliente BD relacional] as dbclient
+  [Cliente BD vectorial\n(pgvector)] as vecclient
 }
 
 ' ─── Capa de administración ──────────────────────────────────────────────────
-package "Admin Layer (Flask)" {
-  [Admin REST API] as adminapi
+package "Capa de administración (Flask)" {
+  [API REST de administración] as adminapi
 
-  package "Admin Modules" as adminmod {
-    [Catalog CRUD] as adm_crud
-    [Sevius Scraper] as adm_sevius
-    [us.es Scraper] as adm_uses
-    [PDF Horarios Parser] as adm_horarios
-    [RAG Vectorizer] as adm_vec
+  package "Módulos de administración" as adminmod {
+    [CRUD de catálogo] as adm_crud
+    [Scraper Sevius] as adm_sevius
+    [Scraper us.es] as adm_uses
+    [Parser de horarios PDF] as adm_horarios
+    [Vectorizador RAG] as adm_vec
   }
 
-  adminapi ..> adminmod : <<delegates>>
+  adminapi ..> adminmod : <<delega>>
 }
 
 ' ─── Interfaces / relaciones entre capas ─────────────────────────────────────
@@ -79,8 +87,8 @@ dialog ..> actions : <<HTTP>>
 
 actions ..> dbclient
 retriever ..> vecclient
-modules ..> retriever : <<uses>>
-modules ..> llm : <<uses>>
+modules ..> retriever : <<usa>>
+modules ..> llm : <<usa>>
 
 adm_vec ..> vecclient
 adm_crud ..> dbclient

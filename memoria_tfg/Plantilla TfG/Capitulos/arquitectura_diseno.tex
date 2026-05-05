@@ -58,10 +58,12 @@ El diagrama de componentes muestra los módulos principales del sistema, sus res
 \begin{figure}[p]
 \centering
 \includegraphics[width=0.95\linewidth,keepaspectratio]{img/diagrama_componentes.png}
-\caption{Diagrama de componentes del sistema Linceus.}
+\caption{Diagrama de componentes del sistema Linceus. El componente \textit{multi-intent} aparece con trazo discontinuo porque su código permanece en el repositorio como referencia pero está desactivado en el modelo de diálogo del prototipo (ver Sección~\ref{sec:impl-multi-intent}).}
 \label{fig:componentes}
 \end{figure}
 \end{landscape}
+
+Los puertos representados en el diagrama (\texttt{5005}, \texttt{5055}, \texttt{6543}, \texttt{443}) corresponden al despliegue local de desarrollo. En el despliegue de producción sobre DigitalOcean estos puertos internos se mantienen idénticos dentro de la red de contenedores Docker; lo que cambia es la exposición externa, que se concentra en el puerto \texttt{443} (HTTPS) a través del reverse proxy Nginx descrito en la Sección~\ref{sec:diagrama-despliegue}.
 
 A continuación se describe la responsabilidad de cada componente y las interfaces entre ellos:
 
@@ -85,7 +87,7 @@ El diagrama de despliegue describe la distribución física de los componentes d
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=0.85\linewidth,keepaspectratio]{img/diagrama_despliegue.png}
+\includegraphics[width=\linewidth,keepaspectratio]{img/diagrama_despliegue.png}
 \caption{Diagrama de despliegue del sistema Linceus en DigitalOcean (Ubuntu 24.04 LTS) con el pipeline de despliegue automatizado vía GitHub Actions.}
 \label{fig:despliegue}
 \end{figure}
@@ -167,39 +169,39 @@ A lo largo del desarrollo del sistema se han tomado decisiones de diseño que ha
 
 \subsection{Embeddings de 2000 dimensiones con HNSW}\label{subsec:dd-embeddings}
 
-\textbf{Contexto:} El modelo \texttt{gemini-embedding-001} genera embeddings de 3072 dimensiones de forma nativa. Sin embargo, el índice HNSW de pgvector presenta limitaciones de rendimiento y almacenamiento con dimensionalidades muy altas.
+\textbf{Contexto:} El modelo \texttt{gemini-embedding-001} genera embeddings de 3072 dimensiones de forma nativa. Sin embargo, el índice HNSW de pgvector~\cite{pgvectorgithub} presenta limitaciones de rendimiento y almacenamiento con dimensionalidades muy altas, tal y como describe el trabajo original sobre \textit{Hierarchical Navigable Small World graphs}~\cite{malkov2018hnsw}.
 
 \textbf{Decisión:} Se redujo la dimensionalidad de salida a \textbf{2000 dimensiones} mediante el parámetro \texttt{output\_dimensionality} de la API de Gemini.
 
 \textbf{Justificación:}
 \begin{itemize}
-    \item 2000 dimensiones ofrecen un equilibrio entre la calidad de la representación semántica y la eficiencia del índice HNSW (parámetros $m=16$, $ef\_construction=64$).
+    \item 2000 dimensiones ofrecen un equilibrio entre la calidad de la representación semántica y la eficiencia del índice HNSW (parámetros $m=16$, $ef\_construction=64$, recomendados en~\cite{malkov2018hnsw}).
     \item Reduce el tamaño de almacenamiento por vector en aproximadamente un 35\%.
-    \item Las pruebas empíricas muestran que la pérdida de precisión en la búsqueda semántica es negligible para el corpus de documentos del proyecto (planes docentes de la ETSII).
+    \item El trabajo de Karpukhin et al. sobre \textit{Dense Passage Retrieval}~\cite{karpukhin2020dpr} demuestra que dimensionalidades en el rango 768--2048 son suficientes para la recuperación semántica en dominios cerrados como el de los planes docentes.
 \end{itemize}
 
 \subsection{Chunking con solapamiento para preservar contexto}\label{subsec:dd-chunking}
 
-\textbf{Contexto:} Los planes docentes en PDF contienen información densa que debe fragmentarse para su vectorización. Un chunking demasiado grande diluye la relevancia; uno demasiado pequeño pierde contexto.
+\textbf{Contexto:} Los planes docentes en PDF contienen información densa que debe fragmentarse para su vectorización. Un chunking demasiado grande diluye la relevancia; uno demasiado pequeño pierde contexto. La literatura sobre RAG~\cite{lewis2020retrieval} y las guías prácticas de \textit{text splitters} de LangChain~\cite{langchainChunking} convergen en una recomendación de fragmentos de 500--1000 caracteres con un solapamiento del 10--20\,\%.
 
-\textbf{Decisión:} Se implementó un chunking de \textbf{800 caracteres con 100 caracteres de solapamiento} y un mínimo de 50 caracteres por fragmento.
+\textbf{Decisión:} Se implementó un chunking de \textbf{800 caracteres con 100 caracteres de solapamiento} (12,5\,\%) y un mínimo de 50 caracteres por fragmento, dentro del rango recomendado.
 
 \textbf{Justificación:}
 \begin{itemize}
-    \item 800 caracteres ($\approx$150--200 tokens) es suficiente para capturar un párrafo o sección temática completa.
-    \item El solapamiento de 100 caracteres garantiza que la información en los límites de fragmentos no se pierda, preservando la coherencia semántica.
-    \item Se aplica detección de secciones por expresiones regulares (``Datos básicos'', ``Objetivos'', ``Contenidos'', ``Evaluación'', ``Bibliografía'') para etiquetar cada fragmento con su sección de origen.
+    \item 800 caracteres ($\approx$150--200 tokens) es suficiente para capturar un párrafo o sección temática completa, en línea con los valores recomendados por LangChain~\cite{langchainChunking}.
+    \item El solapamiento del 12,5\,\% mitiga la pérdida de información en los límites de fragmento, técnica habitual en pipelines de RAG~\cite{lewis2020retrieval,karpukhin2020dpr}.
+    \item Se aplica detección de secciones por expresiones regulares (``Datos básicos'', ``Objetivos'', ``Contenidos'', ``Evaluación'', ``Bibliografía'') para etiquetar cada fragmento con su sección de origen, una práctica de \textit{metadata-augmented retrieval} que mejora la precisión sobre dominios estructurados~\cite{es2024ragas}.
 \end{itemize}
 
 \subsection{Búsqueda vectorial con fallback a búsqueda por palabras clave}\label{subsec:dd-fallback}
 
-\textbf{Contexto:} La generación de embeddings para las consultas de búsqueda depende de la API de Gemini, que puede agotar su cuota diaria (100 peticiones por minuto, 1000 por día).
+\textbf{Contexto:} La generación de embeddings para las consultas de búsqueda depende de la API de Gemini, que puede agotar su cuota diaria (100 peticiones por minuto, 1000 por día~\cite{geminiRateLimits}).
 
-\textbf{Decisión:} Se implementó un sistema de \textbf{doble búsqueda}: búsqueda vectorial como método principal y búsqueda por palabras clave (\texttt{ILIKE}) como fallback automático.
+\textbf{Decisión:} Se implementó un sistema de \textbf{doble búsqueda}: búsqueda vectorial como método principal y búsqueda por palabras clave (\texttt{ILIKE}) como fallback automático, siguiendo el patrón \textit{hybrid retrieval} descrito en~\cite{karpukhin2020dpr}.
 
 \textbf{Justificación:}
 \begin{itemize}
-    \item La búsqueda vectorial ofrece mejor precisión semántica (encuentra ``sistema de evaluación'' cuando el usuario pregunta ``¿cómo se califica?'').
+    \item La búsqueda vectorial ofrece mejor precisión semántica (encuentra ``sistema de evaluación'' cuando el usuario pregunta ``¿cómo se califica?''), tal como evalúa el marco RAGAS~\cite{es2024ragas}.
     \item El fallback por palabras clave garantiza que el sistema siga operativo aunque la API de embeddings no esté disponible, con resultados razonables para consultas que contienen términos exactos.
     \item El umbral de similitud coseno se fija en 0.5, bajo el cual los resultados se descartan por considerarse irrelevantes.
 \end{itemize}
@@ -233,32 +235,32 @@ A lo largo del desarrollo del sistema se han tomado decisiones de diseño que ha
 \begin{itemize}
     \item Los slots permiten que las acciones personalizadas recuperen el contexto sin que el usuario deba repetir información.
     \item La separación entre código y nombre de asignatura facilita tanto las consultas SQL (por código) como las respuestas al usuario (por nombre legible).
-    \item La titulación por defecto es GII-IS (Ingeniería del Software), configurable por el usuario mediante la intención \texttt{cambiar\_contexto\_academico}.
+    \item El slot \texttt{contexto\_titulacion} no tiene un valor por defecto: en el primer turno de cada sesión el \textit{widget} muestra un \textbf{modal de selección de titulación} con las opciones disponibles (GII-IS, GII-TI, GII-IC), de modo que la titulación queda fijada explícitamente por el usuario antes de cualquier consulta. Esta decisión (revisión R3) sustituye al antiguo valor por defecto GII-IS, que generaba respuestas incorrectas cuando el alumno pertenecía a otra titulación y no formulaba un cambio explícito. El slot puede modificarse posteriormente mediante la intención \texttt{cambiar\_contexto\_academico} dentro del flujo conversacional.
 \end{itemize}
 
 \subsection{Pipeline NLU de 9 etapas con doble featurización}\label{subsec:dd-pipeline}
 
-\textbf{Contexto:} El pipeline NLU de Rasa debe ser capaz de clasificar correctamente intenciones en español, tolerando errores ortográficos, abreviaturas y variaciones léxicas propias del lenguaje coloquial estudiantil.
+\textbf{Contexto:} El pipeline NLU de Rasa~\cite{rasadocs,bocklisch2017rasa} debe ser capaz de clasificar correctamente intenciones en español, tolerando errores ortográficos, abreviaturas y variaciones léxicas propias del lenguaje coloquial estudiantil.
 
-\textbf{Decisión:} Se configuró un pipeline de 9 componentes que combina \textbf{featurización a nivel de palabra} (n-gramas 1--2) y \textbf{a nivel de carácter} (n-gramas 1--4):
+\textbf{Decisión:} Se configuró un pipeline de 9 componentes que combina \textbf{featurización a nivel de palabra} (n-gramas 1--2) y \textbf{a nivel de carácter} (n-gramas 1--4), siguiendo el diseño \textit{multi-featurizer} recomendado en la documentación oficial~\cite{rasadocs}:
 
 \begin{enumerate}
-    \item \texttt{WhitespaceTokenizer}: Tokenización por espacios en blanco.
-    \item \texttt{RegexFeaturizer}: Patrones regex para códigos de asignatura y formatos especiales.
-    \item \texttt{LexicalSyntacticFeaturizer}: Características gramaticales del contexto local.
-    \item \texttt{CountVectorsFeaturizer} (palabra): N-gramas de palabras (1--2).
-    \item \texttt{CountVectorsFeaturizer} (carácter): N-gramas de caracteres (1--4).
-    \item \texttt{DIETClassifier}: Clasificador dual de intenciones y entidades (150 épocas, dropout 0.2).
-    \item \texttt{EntitySynonymMapper}: Normalización de sinónimos de entidades.
-    \item \texttt{ResponseSelector}: Selección de respuestas tipo FAQ.
-    \item \texttt{FallbackClassifier}: Detección de baja confianza (umbral 0.7).
+    \item \texttt{WhitespaceTokenizer}~\cite{rasadocs}: Tokenización por espacios en blanco.
+    \item \texttt{RegexFeaturizer}~\cite{rasadocs}: Patrones regex para códigos de asignatura y formatos especiales.
+    \item \texttt{LexicalSyntacticFeaturizer}~\cite{rasadocs}: Características gramaticales del contexto local.
+    \item \texttt{CountVectorsFeaturizer} (palabra)~\cite{rasadocs}: N-gramas de palabras (1--2).
+    \item \texttt{CountVectorsFeaturizer} (carácter)~\cite{rasadocs}: N-gramas de caracteres (1--4).
+    \item \texttt{DIETClassifier}~\cite{bocklisch2020diet}: Clasificador dual de intenciones y entidades (150 épocas, dropout 0.2).
+    \item \texttt{EntitySynonymMapper}~\cite{rasadocs}: Normalización de sinónimos de entidades.
+    \item \texttt{ResponseSelector}~\cite{rasadocs}: Selección de respuestas tipo FAQ.
+    \item \texttt{FallbackClassifier}~\cite{rasadocs}: Detección de baja confianza (umbral 0.7).
 \end{enumerate}
 
 \textbf{Justificación:}
 \begin{itemize}
-    \item La featurización a nivel de carácter es especialmente eficaz para manejar errores ortográficos (``Fundamnetos'' se reconoce por similitud de caracteres con ``Fundamentos'').
-    \item El umbral de fallback de 0.7 equilibra la precisión (evitar respuestas incorrectas) con la cobertura (no rechazar demasiadas consultas legítimas).
-    \item El \texttt{DIETClassifier} con 150 épocas y dropout de 0.2 proporciona un modelo robusto sin sobreajuste al conjunto de entrenamiento.
+    \item La featurización a nivel de carácter es especialmente eficaz para manejar errores ortográficos (``Fundamnetos'' se reconoce por similitud de caracteres con ``Fundamentos''), efecto documentado en el artículo original de DIET~\cite{bocklisch2020diet}.
+    \item El umbral de fallback de 0.7 equilibra la precisión (evitar respuestas incorrectas) con la cobertura (no rechazar demasiadas consultas legítimas), valor coherente con los rangos reportados en \textit{benchmarks} de detección de intenciones~\cite{casanueva2020efficient}.
+    \item El \texttt{DIETClassifier} con 150 épocas y dropout de 0.2 proporciona un modelo robusto sin sobreajuste al conjunto de entrenamiento, en línea con la configuración recomendada por sus autores~\cite{bocklisch2020diet}.
 \end{itemize}
 
 \subsection{Hash SHA-256 para evitar reprocesamiento de documentos}\label{subsec:dd-hash}

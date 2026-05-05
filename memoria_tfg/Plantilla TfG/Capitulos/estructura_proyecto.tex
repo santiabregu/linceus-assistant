@@ -2,152 +2,201 @@
 
 \chapter{Estructura del proyecto}\label{cap:estructura-proyecto}
 
-Este capítulo describe la organización del repositorio LinceUS Assistant, detallando el propósito de cada directorio y fichero relevante. La estructura ha sido diseñada para separar claramente las responsabilidades entre los distintos módulos del sistema y facilitar el mantenimiento y la escalabilidad del proyecto.
+Este capítulo describe la organización del repositorio LinceUS Assistant, detallando el propósito de cada directorio relevante. La estructura ha sido diseñada para separar claramente las responsabilidades entre los distintos módulos del sistema y facilitar el mantenimiento y la escalabilidad del proyecto.
 
 \section{Visión general del repositorio}\label{sec:vision-general}
 
-El repositorio sigue una organización modular en la que cada directorio agrupa elementos con una responsabilidad concreta dentro del sistema. La separación entre la lógica conversacional, los datos de entrenamiento, la capa de acceso a datos, la interfaz de usuario y la documentación responde al principio de separación de responsabilidades (\textit{Separation of Concerns}).
+El repositorio sigue una organización modular en la que cada directorio agrupa elementos con una responsabilidad concreta dentro del sistema. La separación entre la lógica conversacional, los datos de entrenamiento, el pipeline RAG, el panel de administración, la interfaz de usuario y la infraestructura de despliegue responde al principio de separación de responsabilidades (\textit{Separation of Concerns}).
 
 El árbol de directorios principal es el siguiente:
 
 \begin{verbatim}
 linceus-assistant/
-+-- actions/
-|   +-- __init__.py
-|   +-- actions.py
-|   +-- asignaturas.py
-|   +-- config.py
-|   +-- contexto.py
-|   +-- db.py
-|   +-- gemini_client.py
-|   +-- ollama_client.py
-|   \-- text_to_sql.py
-+-- data/
++-- actions/                  Núcleo conversacional (custom actions Rasa)
+|   +-- asignaturas/          Épica de asignaturas
+|   |   +-- actions.py        Custom actions de la épica
+|   |   \-- text_to_sql.py    Generación y validación de SQL con LLM
+|   +-- contexto/             Épica de contexto académico (titulación)
+|   +-- fallback/             Épica de fallback inteligente
+|   +-- horarios/             Épica de horarios
+|   +-- profesores/           Épica de profesorado
+|   +-- multi_intent/         Épica desactivada (referencia)
+|   +-- shared/               Utilidades transversales
+|   |   +-- db.py             Cliente Supabase / PostgreSQL
+|   |   +-- gemini_client.py  Cliente de Google Gemini
+|   |   +-- ollama_client.py  Cliente alternativo local
+|   |   +-- matching.py       Fuzzy matching de nombres
+|   |   +-- follow_up.py      Validación de contexto y seguimiento
+|   |   +-- resolver_afirmacion.py
+|   |   +-- config.py         Carga de variables de entorno y alias
+|   |   \-- logger.py         Logging estructurado
+|   \-- actions.py            Punto de entrada con re-exports
++-- admin/                    Panel de administración (API Flask)
+|   +-- app.py                Punto de entrada Flask (puerto 5050)
+|   +-- db.py                 Helpers de BD para el admin
+|   +-- routes/               Endpoints REST por dominio
+|   |   +-- asignaturas.py    horarios.py  profesores.py
+|   |   +-- centros.py        titulaciones.py  planes_docentes.py
+|   |   +-- conversaciones.py  sevius.py  stats.py
+|   +-- sevius_scraper.py     Scraper del catálogo Sevius
+|   +-- us_scraper.py         Scraper del directorio de la US
+|   +-- us_directorio_scraper.py   Scraper auxiliar del directorio US
+|   +-- horarios_extractores/ Extractores de horarios por centro
+|   \-- requirements.txt      Dependencias específicas del panel
++-- rag/                      Pipeline de Retrieval-Augmented Generation
+|   +-- pipeline.py           Orquestación end-to-end de la vectorización
+|   +-- extraer_pdf.py        Extracción de texto de planes docentes
+|   +-- chunking.py           Fragmentación con solapamiento
+|   +-- embeddings.py         Cliente de embeddings (Gemini)
+|   +-- db_vectores.py        Persistencia vectorial sobre pgvector
+|   +-- buscar.py             Búsqueda semántica con fallback ILIKE
+|   \-- sql/buscar_plan_docente.sql
++-- data/                     Datos de entrenamiento de Rasa
 |   +-- nlu/
-|   |   +-- asignaturas.yml
-|   |   +-- contexto.yml
-|   |   \-- general.yml
-|   +-- rules.yml
-|   \-- stories.yml
-+-- docs/
-|   +-- sprints/
-|   \-- other/
-+-- frontend/
-|   +-- chatbot-widget.js
-|   +-- chatbot-icon.html
-|   +-- pagina-principal.html
-|   \-- pagina-principal.css
-+-- memoria_tfg/
-+-- tests/
-|   \-- test_stories.yml
-+-- config.yml
-+-- domain.yml
-+-- credentials.yml
-+-- endpoints.yml
-\-- requirements.txt
+|   |   +-- asignaturas.yml   Intents de consulta sobre asignaturas
+|   |   +-- contexto.yml      Intents de seguimiento contextual
+|   |   +-- horarios.yml      Intents de horario
+|   |   +-- profesores.yml    Intents de profesorado
+|   |   +-- general.yml       Intents transversales (saludo, FAQ, etc.)
+|   |   \-- multi_intent.yml.disabled  (desactivado)
+|   +-- rules.yml             Reglas determinísticas
+|   \-- stories.yml           Historias de entrenamiento del Core
++-- frontend/                 Widget de chat y panel de administración
+|   +-- chatbot-widget.js     Widget embebible
+|   +-- chatbot-icon.html     Página de demostración
+|   +-- pagina-principal.html / .css   Prototipo institucional
+|   +-- admin.html  admin.js  admin.css   Panel de administración (SPA)
+|   +-- login.html  login.js
+|   +-- nginx.conf            Configuración de Nginx (Docker)
+|   +-- docker-entrypoint.sh
+|   \-- linceUS-logo.png  logo-us.png
++-- docker/                   Infraestructura de despliegue
+|   +-- docker-compose.yml
+|   +-- Dockerfile.rasa       Imagen del servidor Rasa
+|   +-- Dockerfile.actions    Imagen del action server
+|   \-- Dockerfile.admin      Imagen de la API Flask de administración
++-- tests/                    Suite de pruebas
+|   +-- test_admin.py         Pytest para el panel de administración
+|   +-- test_rag.py           Pruebas del pipeline RAG
+|   +-- test_stories.yml      Historias de prueba E2E de Rasa
+|   +-- run_test_plan.py      Runner de la suite end-to-end
+|   +-- plans/                Planes de pruebas (Markdown)
+|   +-- results/              Resultados de las últimas corridas
+|   \-- scripts/              Benchmarks de coste y latencia
++-- docs/                     Documentación técnica
+|   +-- sprints/              Documentación por sprint
+|   +-- asignaturas/  other/  Diccionarios y notas de diseño
++-- knowledge_base/           Documentos fuente (planes docentes en PDF)
++-- models/                   Modelos entrenados de Rasa (.tar.gz)
++-- memoria_tfg/              Memoria del TFG (LaTeX) y entregables
++-- config.yml                Pipeline NLU y políticas de Rasa
++-- domain.yml                Universo del bot (intents, slots, acciones)
++-- credentials.yml           Canales de comunicación
++-- endpoints.yml             Endpoints de servicios externos
++-- requirements.txt          Dependencias del servidor Rasa
++-- requirements-actions.txt  Dependencias adicionales del action server
++-- package.json              Dependencias de herramientas Node (ESLint)
+\-- README.md  CONTRIBUTING.md  LICENSE
 \end{verbatim}
 
 \section{Directorio raíz}\label{sec:directorio-raiz}
 
-Los ficheros situados en la raíz del repositorio configuran el comportamiento global del sistema Rasa y la gestión de dependencias del proyecto.
+Los ficheros situados en la raíz del repositorio configuran el comportamiento global del sistema Rasa y la gestión de dependencias del proyecto:
 
 \begin{itemize}
-    \item \texttt{config.yml}: Define el pipeline de procesamiento de lenguaje natural (NLU) y las políticas de diálogo de Rasa. Especifica los componentes utilizados para tokenización, extracción de características e identificación de intenciones y entidades.
-    \item \texttt{domain.yml}: Declara el universo del asistente: intenciones, entidades, slots, acciones y respuestas predefinidas. Es el fichero central que Rasa utiliza para construir el modelo de diálogo.
-    \item \texttt{credentials.yml}: Contiene las credenciales de conexión con los canales de comunicación externos (REST, Slack, etc.). Las claves sensibles se gestionan mediante variables de entorno para no exponerlas en el repositorio.
-    \item \texttt{endpoints.yml}: Configura los endpoints de los servicios externos con los que se comunica Rasa, como el servidor de acciones personalizadas (\textit{action server}).
-    \item \texttt{requirements.txt}: Lista todas las dependencias de Python necesarias para ejecutar el proyecto, con versiones fijas para garantizar la reproducibilidad del entorno.
+    \item \texttt{config.yml}: Define el pipeline de procesamiento de lenguaje natural (NLU) y las políticas de diálogo de Rasa, incluidos los nueve componentes descritos en la Sección~\ref{subsec:dd-pipeline}.
+    \item \texttt{domain.yml}: Declara el universo del asistente: \textit{intents}, entidades, \textit{slots}, acciones y respuestas predefinidas.
+    \item \texttt{credentials.yml}: Configura los canales de comunicación (en este proyecto, REST). Las claves sensibles se gestionan mediante variables de entorno.
+    \item \texttt{endpoints.yml}: Configura los endpoints de los servicios externos: \textit{action server}, base de datos y URL del modelo de lenguaje.
+    \item \texttt{requirements.txt} y \texttt{requirements-actions.txt}: Dependencias Python del servidor Rasa y del \textit{action server} respectivamente, con versiones ancladas.
+    \item \texttt{package.json}: Dependencias de herramientas de desarrollo en JavaScript (ESLint).
 \end{itemize}
 
 \section{Directorio \texttt{actions/}}\label{sec:actions}
 
-El directorio \texttt{actions/} contiene la lógica de negocio del asistente, implementada como acciones personalizadas de Rasa. Cuando el motor conversacional determina que debe ejecutar una acción, invoca el código Python correspondiente de este directorio a través del \textit{action server}.
+El directorio \texttt{actions/} contiene la lógica de negocio del asistente, implementada como acciones personalizadas de Rasa. Cuando el motor conversacional determina que debe ejecutar una acción, invoca el código Python correspondiente a través del \textit{action server} (puerto 5055).
 
-\subsection{Organización de los módulos}
+\subsection{Organización por épicas}
 
-Cada fichero encapsula una responsabilidad específica:
+A diferencia de la versión inicial del prototipo (en la que toda la lógica residía en un único \texttt{actions.py}), el código se organiza en un \textbf{módulo por épica funcional}. Cada subdirectorio (\texttt{asignaturas/}, \texttt{contexto/}, \texttt{fallback/}, \texttt{horarios/}, \texttt{profesores/}) contiene su propio \texttt{actions.py} con las clases que implementan los pipelines descritos en el Capítulo~\ref{cap:implementacion}. El subdirectorio \texttt{asignaturas/} aloja además \texttt{text\_to\_sql.py}, que aísla la generación, sanitización y ejecución de las consultas SQL producidas por Gemini (decisión de diseño en la Sección~\ref{subsec:dd-texttosql}). La épica \texttt{multi\_intent/} permanece como referencia desactivada (Sección~\ref{sec:impl-multi-intent}).
+
+El módulo raíz \texttt{actions/actions.py} actúa como punto de entrada y se limita a re-exportar las clases de cada épica para que Rasa las descubra en un único espacio de nombres.
+
+\subsection{Subdirectorio \texttt{shared/}}
+
+El subdirectorio \texttt{shared/} concentra la complejidad transversal que utilizan varias épicas:
 
 \begin{itemize}
-    \item \texttt{actions.py}: Punto de entrada principal. Define las acciones de Rasa (\texttt{ActionQueryAsignaturas}, \texttt{ActionFallback}, etc.) y orquesta las llamadas al resto de módulos según la intención detectada.
-    \item \texttt{asignaturas.py}: Módulo especializado en la consulta de información sobre asignaturas. Implementa la lógica de búsqueda por nombre, curso, tipología y otras características, integrando coincidencia difusa (\textit{fuzzy matching}) para tolerancia a errores ortográficos.
-    \item \texttt{db.py}: Capa de acceso a datos. Centraliza todas las operaciones contra la base de datos Supabase (PostgreSQL), abstrayendo las consultas SQL del resto de la lógica de negocio.
-    \item \texttt{config.py}: Carga y expone la configuración del sistema a partir de variables de entorno. Gestiona credenciales de Supabase, parámetros de Ollama y otros ajustes globales.
-    \item \texttt{contexto.py}: Gestiona la memoria de contexto de la conversación. Mantiene información sobre la sesión del usuario (asignatura mencionada previamente, curso, etc.) para responder de forma coherente a preguntas de seguimiento.
-    \item \texttt{text\_to\_sql.py}: Implementa el pipeline de generación de consultas SQL a partir de lenguaje natural mediante un modelo de lenguaje grande (LLM). Transforma preguntas del usuario en consultas SQL válidas para su ejecución contra la base de datos.
-    \item \texttt{gemini\_client.py}: Cliente de integración con la API de Gemini (Google). Gestiona las llamadas al modelo para la detección dinámica de intenciones y la generación de respuestas enriquecidas.
-    \item \texttt{ollama\_client.py}: Cliente de integración con Ollama para la ejecución local de modelos de lenguaje grande. Permite realizar inferencias sin depender de servicios externos en la nube.
+    \item \texttt{db.py}: Cliente de Supabase / PostgreSQL (clase \texttt{DatabaseConnection}, instancia \texttt{db\_client}).
+    \item \texttt{gemini\_client.py}: Cliente de Google Gemini, con \textit{timeouts}, reintentos y registro de métricas.
+    \item \texttt{ollama\_client.py}: Cliente alternativo de Ollama con la misma interfaz que el de Gemini.
+    \item \texttt{matching.py}: \textit{Fuzzy matching} de nombres normalizados (\texttt{rapidfuzz}).
+    \item \texttt{follow\_up.py}: Validación centralizada del slot \texttt{contexto\_titulacion} y lógica de seguimiento conversacional.
+    \item \texttt{resolver\_afirmacion.py}: Manejo del flujo de afirmación (\textit{``sí, esa''}) sobre la última sugerencia.
+    \item \texttt{config.py}: Carga de variables de entorno y diccionario de alias y acrónimos (\texttt{ALIAS\_ASIGNATURAS}, \texttt{TITULACION\_MAP}).
+    \item \texttt{logger.py}: Logging estructurado para depuración.
 \end{itemize}
 
-\subsection{Flujo de ejecución de una acción}
+\section{Directorio \texttt{admin/}}\label{sec:admin}
 
-Cuando el asistente recibe una consulta, el flujo típico dentro del directorio \texttt{actions/} es el siguiente:
+El módulo \texttt{admin/} aloja el \textbf{panel de administración}, implementado como una API Flask independiente que se ejecuta en el puerto 5050. Su responsabilidad es ofrecer una interfaz CRUD sobre el dominio académico (centros, titulaciones, asignaturas, profesores, horarios y conversaciones) y orquestar las importaciones desde fuentes externas.
 
-\begin{enumerate}
-    \item \texttt{actions.py} recibe la petición del \textit{action server} de Rasa.
-    \item Se extrae la intención y las entidades identificadas del tracker de Rasa.
-    \item Se consulta \texttt{contexto.py} para recuperar información de la sesión activa.
-    \item Se delega en el módulo específico (\texttt{asignaturas.py}, etc.) que ejecuta la consulta a través de \texttt{db.py}.
-    \item Si la consulta requiere generación de lenguaje natural, se invoca \texttt{gemini\_client.py} u \texttt{ollama\_client.py}.
-    \item La respuesta se devuelve a Rasa para ser enviada al usuario.
-\end{enumerate}
+\begin{itemize}
+    \item \texttt{app.py}: Punto de entrada Flask. Registra las \textit{blueprints} de \texttt{routes/} y expone \texttt{/health}.
+    \item \texttt{routes/}: Un fichero por dominio (\texttt{asignaturas.py}, \texttt{centros.py}, \texttt{titulaciones.py}, \texttt{horarios.py}, \texttt{profesores.py}, \texttt{planes\_docentes.py}, \texttt{conversaciones.py}, \texttt{sevius.py}, \texttt{stats.py}). Cada uno agrupa los endpoints REST de su dominio.
+    \item \texttt{db.py}: Helpers de acceso a Supabase específicos del panel (\textit{queries}, ejecución, normalización).
+    \item \texttt{sevius\_scraper.py}, \texttt{us\_scraper.py} y \texttt{us\_directorio\_scraper.py}: \textit{Scrapers} del catálogo Sevius y del directorio de profesorado de la Universidad de Sevilla. El scraper auxiliar de directorio se utiliza para resolver correos y despachos cuando el listado principal no los expone.
+    \item \texttt{horarios\_extractores/}: Extractores de horarios por centro (clase base más implementación específica, hoy disponible solo para la ETSII).
+    \item \texttt{requirements.txt}: Dependencias Python específicas del panel (Flask y librerías auxiliares), separadas del \textit{action server} para reducir el peso de su imagen Docker.
+\end{itemize}
+
+\section{Directorio \texttt{rag/}}\label{sec:rag-dir}
+
+El directorio \texttt{rag/} contiene el \textbf{pipeline de Retrieval-Augmented Generation} que vectoriza los planes docentes y soporta la búsqueda semántica. Se ejecuta bajo demanda (no es un servicio permanente) y consume la API de \textit{embeddings} de Gemini.
+
+\begin{itemize}
+    \item \texttt{pipeline.py}: Orquestación end-to-end del proceso (extracción $\rightarrow$ chunking $\rightarrow$ embeddings $\rightarrow$ inserción), aplicando el patrón \textit{Pipes and Filters} descrito en el Capítulo~\ref{cap:arquitectura}.
+    \item \texttt{extraer\_pdf.py}: Extracción de texto y detección de secciones del plan docente.
+    \item \texttt{chunking.py}: Fragmentación con la estrategia definida en la Sección~\ref{subsec:dd-chunking}.
+    \item \texttt{embeddings.py}: Generación de vectores con \texttt{gemini-embedding-001} y dimensionalidad reducida.
+    \item \texttt{db\_vectores.py}: Persistencia y consulta sobre la tabla \texttt{plan\_docente} con \texttt{pgvector}.
+    \item \texttt{buscar.py}: Búsqueda semántica con \textit{fallback} a \texttt{ILIKE} ante agotamiento de cuota.
+    \item \texttt{sql/buscar\_plan\_docente.sql}: Función SQL almacenada que encapsula la consulta vectorial.
+\end{itemize}
 
 \section{Directorio \texttt{data/}}\label{sec:data}
 
-El directorio \texttt{data/} contiene todos los datos de entrenamiento del modelo Rasa. Estos ficheros en formato YAML definen el comportamiento conversacional del asistente.
-
-\subsection{Subdirectorio \texttt{nlu/}}
-
-El subdirectorio \texttt{nlu/} agrupa los ficheros de entrenamiento del componente de comprensión del lenguaje natural (NLU), organizados temáticamente:
-
-\begin{itemize}
-    \item \texttt{asignaturas.yml}: Ejemplos de entrenamiento para intenciones relacionadas con consultas sobre asignaturas: créditos, tipología, curso, duración, etc.
-    \item \texttt{contexto.yml}: Ejemplos para intenciones de seguimiento contextual, como referencias anafóricas («¿y esa asignatura?», «¿cuántos créditos tiene?»).
-    \item \texttt{general.yml}: Intenciones generales del asistente: saludo, despedida, afirmación, negación, solicitud de ayuda y gestión del fallback.
-\end{itemize}
-
-\subsection{Ficheros de flujo conversacional}
-
-\begin{itemize}
-    \item \texttt{stories.yml}: Historias de entrenamiento que definen conversaciones de ejemplo. Rasa Core aprende de estas secuencias para predecir la siguiente acción del bot ante nuevas interacciones.
-    \item \texttt{rules.yml}: Reglas determinísticas de alto nivel. A diferencia de las historias, las reglas se aplican siempre que se cumpla la condición, sin aprendizaje estadístico. Se utilizan para comportamientos críticos como el manejo del fallback o la finalización de formularios.
-\end{itemize}
+El directorio \texttt{data/} contiene todos los datos de entrenamiento del modelo Rasa. El subdirectorio \texttt{nlu/} agrupa los \textit{intents} por dominio (\texttt{asignaturas.yml}, \texttt{horarios.yml}, \texttt{profesores.yml}, \texttt{contexto.yml}, \texttt{general.yml}); el fichero \texttt{multi\_intent.yml.disabled} permanece como histórico y, por su extensión, no es cargado por Rasa. \texttt{stories.yml} y \texttt{rules.yml} definen, respectivamente, las historias de entrenamiento del Core y las reglas determinísticas para flujos críticos como el \textit{fallback} o las afirmaciones.
 
 \section{Directorio \texttt{frontend/}}\label{sec:frontend-estructura}
 
-El directorio \texttt{frontend/} contiene la interfaz web del asistente. Está diseñado como un widget embebible que puede integrarse en cualquier página web institucional.
+El directorio \texttt{frontend/} contiene tanto el \textbf{widget de chat} como el \textbf{panel de administración}, ambos como aplicaciones HTML/CSS/JS estáticas:
 
 \begin{itemize}
-    \item \texttt{chatbot-widget.js}: Componente principal del chat. Implementa la lógica de comunicación con el servidor Rasa mediante la API REST, gestiona el estado de la conversación en el cliente y renderiza los mensajes del asistente con soporte para texto enriquecido.
-    \item \texttt{chatbot-icon.html}: Página de demostración que muestra el widget integrado con el icono flotante característico del asistente.
-    \item \texttt{pagina-principal.html} y \texttt{pagina-principal.css}: Prototipo de la página principal de LinceUS, que sirve como entorno de prueba de la integración del chatbot en un contexto universitario real.
+    \item \texttt{chatbot-widget.js}: Widget de chat embebible. Implementa la comunicación con Rasa por HTTP REST, el modal de selección de titulación y el renderizado Markdown.
+    \item \texttt{chatbot-icon.html}, \texttt{pagina-principal.html}, \texttt{pagina-principal.css}: Páginas de demostración y prototipo institucional.
+    \item \texttt{admin.html}, \texttt{admin.js}, \texttt{admin.css}: Panel SPA que consume la API Flask del módulo \texttt{admin/}.
+    \item \texttt{login.html}, \texttt{login.js}: Pantalla de autenticación del panel.
+    \item \texttt{nginx.conf} y \texttt{docker-entrypoint.sh}: Configuración del servidor web Nginx para el despliegue en contenedor.
 \end{itemize}
 
-\section{Directorio \texttt{data/} de Rasa vs. \texttt{docs/}}\label{sec:docs}
+\section{Directorio \texttt{docker/}}\label{sec:docker}
 
-El directorio \texttt{docs/} almacena la documentación técnica del proyecto, organizada en sprints y documentos de referencia:
+El directorio \texttt{docker/} agrupa la infraestructura reproducible de despliegue: \texttt{docker-compose.yml} orquesta los cuatro servicios principales (Rasa, \textit{action server}, API admin y Nginx), y los \texttt{Dockerfile.rasa}, \texttt{Dockerfile.actions} y \texttt{Dockerfile.admin} definen las imágenes correspondientes. Esta separación entre código y empaquetado permite levantar el sistema completo con \texttt{docker compose up} sin instalar dependencias en la máquina anfitriona.
 
-\begin{itemize}
-    \item \texttt{sprints/}: Carpetas por sprint con los documentos de planificación, decisiones técnicas y resultados de cada iteración del desarrollo.
-    \item \texttt{other/}: Documentos de referencia transversales, como el esquema de la base de datos, investigaciones sobre tecnologías alternativas y planes de implementación.
-\end{itemize}
+\section{Directorios \texttt{tests/} y \texttt{docs/}}\label{sec:tests-docs}
 
-\section{Directorio \texttt{tests/}}\label{sec:tests}
+\texttt{tests/} contiene la suite de pruebas (\texttt{test\_admin.py} con Pytest, \texttt{test\_rag.py}, \texttt{test\_stories.yml} con el formato nativo de Rasa, el \textit{runner} \texttt{run\_test\_plan.py} y los \textit{benchmarks} de \texttt{scripts/}). Los planes y los resultados de las corridas se almacenan en \texttt{plans/} y \texttt{results/} respectivamente, y se referencian individualmente en el Capítulo~\ref{cap:pruebas}.
 
-El directorio \texttt{tests/} contiene los casos de prueba del sistema conversacional.
-
-\begin{itemize}
-    \item \texttt{test\_stories.yml}: Historias de prueba end-to-end siguiendo el formato nativo de Rasa para testing conversacional. Cada historia simula una conversación completa y verifica que el asistente responde con las acciones correctas en cada turno.
-\end{itemize}
-
-La estrategia de pruebas se complementa con scripts externos ubicados en \texttt{docs/other/}, que cubren pruebas de integración del pipeline Text-to-SQL y del módulo de contexto conversacional.
+\texttt{docs/} agrupa la documentación técnica generada durante el desarrollo: documentación por sprint, diccionarios del sistema, notas de diseño y planes de implementación. \texttt{knowledge\_base/} aloja los planes docentes en PDF que el \textit{pipeline} RAG vectoriza. \texttt{models/} guarda los modelos entrenados de Rasa, y \texttt{memoria\_tfg/} contiene la presente memoria en LaTeX y los entregables asociados.
 
 \section{Separación de responsabilidades}\label{sec:separacion-responsabilidades}
 
-La estructura del repositorio refleja una separación clara entre los distintos módulos del sistema, lo que aporta las siguientes ventajas:
+La estructura del repositorio refleja una separación clara entre los distintos módulos del sistema:
 
 \begin{itemize}
     \item \textbf{Mantenibilidad}: Cada módulo puede modificarse de forma independiente sin afectar al resto del sistema, siempre que se respete la interfaz entre capas.
-    \item \textbf{Testabilidad}: Los módulos de acceso a datos y de clientes de IA pueden probarse de forma aislada mediante mocks.
-    \item \textbf{Escalabilidad}: Añadir soporte para nuevas épicas (por ejemplo, ampliar el dominio a otros centros de la Universidad de Sevilla) implica crear nuevos ficheros en \texttt{actions/} y ampliar los datos en \texttt{data/nlu/}, sin modificar la arquitectura existente.
-    \item \textbf{Colaboración}: La organización modular facilita el trabajo paralelo en distintas partes del sistema.
+    \item \textbf{Testabilidad}: Los módulos de acceso a datos y de clientes de IA pueden probarse de forma aislada mediante \textit{mocks}, como demuestra la suite \texttt{test\_admin.py} (Capítulo~\ref{cap:pruebas}).
+    \item \textbf{Escalabilidad}: Añadir soporte para nuevas épicas (por ejemplo, ampliar el dominio a otros centros de la Universidad de Sevilla) implica crear un nuevo subdirectorio en \texttt{actions/} y ampliar los datos en \texttt{data/nlu/}, sin modificar la arquitectura existente.
+    \item \textbf{Reproducibilidad}: La combinación de Docker, ficheros de \textit{requirements} con versiones ancladas y separación entre código y configuración permite que cualquier desarrollador reconstruya el entorno completo con un único comando.
 \end{itemize}

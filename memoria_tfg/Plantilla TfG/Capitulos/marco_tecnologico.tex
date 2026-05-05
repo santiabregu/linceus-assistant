@@ -2,20 +2,13 @@
 
 \chapter{Marco tecnológico}\label{cap:marco-tecnologico}
 
-Este capítulo describe el conjunto de tecnologías, frameworks y paradigmas que conforman la base técnica del proyecto LinceUS Assistant. Se complementa con el Capítulo~\ref{cap:arquitectura}, donde se detallan la arquitectura del sistema, las decisiones de diseño y los diagramas de componentes y despliegue. Aquí se justifica la elección de cada componente del stack tecnológico.
+Este capítulo describe el conjunto de tecnologías, frameworks y paradigmas que conforman la base técnica del proyecto LinceUS Assistant. Se complementa con el Capítulo~\ref{cap:arquitectura}, donde se detallan la arquitectura del sistema, las decisiones de diseño y los diagramas de componentes y despliegue, y con la Sección~\ref{subsubsec:investigacion} del Capítulo~\ref{cap:planificacion}, que recoge la comparativa cuantitativa de \textit{frameworks} (Rasa, Botpress, DeepPavlov), motores de LLM (Gemini, OpenAI, DeepSeek, Ollama) y bases vectoriales que sustenta las decisiones aquí adoptadas. Para evitar duplicación, este capítulo describe el rol de cada tecnología en el sistema sin reabrir la justificación cuantitativa.
 
 \section{Tecnologías de procesamiento conversacional}\label{sec:procesamiento-conversacional}
 
 \subsection{Rasa Framework}
 
-Rasa es un framework de código abierto para la construcción de asistentes conversacionales basados en IA. A diferencia de soluciones comerciales como Dialogflow o Lex de AWS, Rasa ofrece:
-
-\begin{itemize}
-    \item \textbf{Control total sobre el modelo}: Los datos de entrenamiento y los modelos permanecen bajo control del desarrollador
-    \item \textbf{Personalización completa}: Políticas de diálogo y pipelines de NLU totalmente configurables
-    \item \textbf{Ejecución local}: No depende de servicios externos para funcionar
-    \item \textbf{Multilenguaje}: Soporte nativo para español mediante modelos de spaCy
-\end{itemize}
+Rasa~\cite{rasadocs,bocklisch2017rasa} es el \textit{framework} de código abierto sobre el que se construye el núcleo conversacional del asistente. La justificación cuantitativa de su elección frente a Botpress y DeepPavlov (coste, integración con Python, soporte de RAG y despliegue local) figura en la tarea 1.2.2 del Diccionario EDT (Capítulo~\ref{cap:planificacion}).
 
 \subsubsection{Componentes de Rasa utilizados}
 
@@ -75,140 +68,87 @@ Se utiliza el algoritmo de \textit{Levenshtein distance} con un umbral de simili
 
 \section{Tecnologías de Inteligencia Artificial}\label{sec:ia}
 
-\subsection{Ollama y modelos de lenguaje grandes (LLMs)}
+\subsection{Google Gemini como modelo de lenguaje principal}
 
-Ollama es una plataforma que permite ejecutar modelos de lenguaje de gran tamaño localmente, sin necesidad de conexión a servicios cloud. En LinceUS Assistant se utiliza para dos propósitos principales:
+El modelo de lenguaje de referencia del sistema es \textbf{Google Gemini}~\cite{geminidocs}, en concreto la familia \texttt{gemma-3-27b-it} para generación de texto y \texttt{gemini-embedding-001} para vectorización. Las llamadas al modelo se centralizan en el cliente \texttt{actions/shared/gemini\_client.py}, que envuelve el SDK oficial y aplica los parámetros de proyecto (temperatura, \textit{timeout}, registro de métricas). La selección de Gemini frente al resto de candidatos analizados se justifica de manera cuantitativa en la comparativa de la Sección~\ref{subsubsec:investigacion}.
 
-\subsubsection{Text-to-SQL}
-
-El sistema implementa un pipeline de generación de consultas SQL a partir de lenguaje natural:
+Gemini interviene en tres puntos del sistema:
 
 \begin{enumerate}
-    \item El usuario formula una pregunta en lenguaje natural
-    \item Ollama (usando un modelo como Llama 3 o Mistral) genera la consulta SQL correspondiente
-    \item La consulta se valida y ejecuta contra la base de datos
-    \item Los resultados se procesan y formatean para presentarlos al usuario
+    \item \textbf{Text-to-SQL}: a partir del esquema de la base de datos y la pregunta del usuario, el modelo genera la sentencia \texttt{SELECT} que se ejecuta tras pasar por un validador propio.
+    \item \textbf{Generación de respuesta natural}: tanto los datos estructurados recuperados de la base relacional como los \textit{chunks} devueltos por el módulo RAG se entregan al modelo junto con un \textit{prompt} específico de cada épica para producir la respuesta final.
+    \item \textbf{Embeddings}: la vectorización de los planes docentes y de las consultas de búsqueda usa \texttt{gemini-embedding-001} con dimensionalidad reducida a 2000 (decisión documentada en la Sección~\ref{subsec:dd-embeddings}).
 \end{enumerate}
 
-Este enfoque permite consultas complejas sin necesidad de definir explícitamente todas las posibles preguntas.
+\subsection{Ollama como alternativa local opcional}
 
-\subsubsection{Generación de respuestas contextualizadas}
-
-Para consultas que no se ajustan a patrones predefinidos, el modelo LLM genera respuestas naturales basándose en:
+\textbf{Ollama} se mantiene como motor de inferencia local opcional y se utilizó principalmente durante la fase de prototipado, antes de adoptar Gemini como proveedor estable. En el despliegue actual no es un servicio en ejecución sino una vía alternativa que el cliente \texttt{actions/shared/ollama\_client.py} expone con la misma interfaz que el cliente de Gemini. Esto permite, sin reescribir el núcleo conversacional:
 
 \begin{itemize}
-    \item El contexto de la conversación
-    \item La información recuperada de la base de datos
-    \item El conocimiento previo del modelo
+    \item Probar localmente nuevos \textit{prompts} sin consumir cuota de la API de Gemini.
+    \item Disponer de un \textit{plan B} ante cambios de política o cuotas del proveedor cloud (precedente histórico recogido en la Sección~\ref{sec:costes}).
+    \item Ejecutar el sistema en entornos sin conectividad a servicios externos.
 \end{itemize}
 
-\subsection{Embeddings y búsqueda semántica}
+\subsection{Embeddings y búsqueda semántica (RAG)}
 
-Para la recuperación de información a partir de los planes docentes oficiales, se utiliza:
+La recuperación de información sobre los planes docentes oficiales se implementa mediante el patrón \textit{Retrieval-Augmented Generation}~\cite{lewis2020retrieval}, que combina búsqueda semántica y generación con LLM. Las piezas son:
 
 \begin{itemize}
-    \item \textbf{Modelos de embeddings}: Transforman texto en vectores numéricos que capturan el significado semántico
-    \item \textbf{pgvector}: Extensión de PostgreSQL que permite almacenar y buscar vectores eficientemente
-    \item \textbf{Búsqueda de similitud}: Encuentra documentos relevantes usando distancia coseno entre vectores
+    \item \textbf{Modelo de embeddings} (\texttt{gemini-embedding-001}): transforma texto en vectores que capturan el significado semántico.
+    \item \textbf{pgvector}~\cite{pgvectorgithub}: extensión de PostgreSQL que almacena los vectores y soporta búsqueda por similitud coseno.
+    \item \textbf{Índice HNSW}~\cite{malkov2018hnsw}: estructura de vecinos más cercanos aproximados que ofrece tiempos de consulta sub-lineales sobre el corpus de planes docentes.
 \end{itemize}
 
-Este enfoque implementa un sistema RAG (\textit{Retrieval-Augmented Generation}) que mejora la precisión de las respuestas al combinar búsqueda semántica con generación de lenguaje.
+Las decisiones concretas de \textit{chunking} (800 caracteres con 100 de solapamiento) y dimensionalidad (2000) se documentan en las Secciones~\ref{subsec:dd-chunking} y~\ref{subsec:dd-embeddings} respectivamente.
 
 \section{Tecnologías de base de datos}\label{sec:base-datos}
 
-\subsection{PostgreSQL}
+La capa de datos se apoya en PostgreSQL como motor relacional, Supabase~\cite{supabasedocs} como plataforma gestionada y pgvector~\cite{pgvectorgithub} como extensión vectorial. La elección frente a alternativas (Pinecone, Weaviate~\cite{weaviatedocs}, Qdrant~\cite{qdrantdocs}) se discute en la fase de investigación recogida en el Diccionario EDT (Sección~\ref{subsubsec:investigacion}); aquí basta con detallar el rol de cada pieza en el sistema.
 
-PostgreSQL es el sistema de gestión de bases de datos relacional utilizado. Se ha elegido por:
+\subsection{PostgreSQL y Supabase}
 
-\begin{itemize}
-    \item \textbf{Robustez}: Base de datos ACID con alta integridad de datos
-    \item \textbf{Extensibilidad}: Soporte para tipos de datos personalizados y extensiones
-    \item \textbf{Rendimiento}: Optimización de consultas complejas y soporte para índices avanzados
-    \item \textbf{Código abierto}: Sin costes de licencia y comunidad activa
-\end{itemize}
-
-\subsection{Supabase}
-
-Supabase proporciona una capa de servicios sobre PostgreSQL:
-
-\begin{itemize}
-    \item \textbf{API REST automática}: Generación automática de endpoints para operaciones CRUD
-    \item \textbf{Real-time}: Suscripciones a cambios en la base de datos
-    \item \textbf{Autenticación}: Sistema de usuarios y permisos integrado
-    \item \textbf{Almacenamiento}: Para archivos y documentos
-    \item \textbf{Funciones Edge}: Ejecución de código serverless
-\end{itemize}
-
-La API REST de Supabase simplifica la integración con el backend de Python, eliminando la necesidad de escribir queries SQL manualmente para operaciones básicas.
+\textbf{PostgreSQL} almacena toda la información académica estructurada (universidades, centros, titulaciones, asignaturas, planes docentes, profesorado, horarios). \textbf{Supabase} actúa como capa gestionada: ofrece la instancia de PostgreSQL en \textit{cloud}, el \textit{connection pooling} a través del puerto 6543, autenticación, almacenamiento de ficheros y panel de administración. El proyecto utiliza Supabase exclusivamente como base de datos gestionada; las API REST y \textit{Edge Functions} no se emplean porque toda la lógica reside en las acciones de Rasa y en la API Flask del panel de administración.
 
 \subsection{pgvector}
 
-La extensión pgvector añade capacidades de búsqueda vectorial a PostgreSQL:
-
-\begin{itemize}
-    \item Almacenamiento eficiente de vectores de alta dimensionalidad (hasta 16,000 dimensiones)
-    \item Índices IVFFlat y HNSW para búsquedas rápidas de vecinos más cercanos
-    \item Operadores de similitud (distancia euclidiana, producto punto, similitud coseno)
-\end{itemize}
-
-Esto permite implementar búsqueda semántica directamente en la base de datos, sin necesidad de sistemas externos como Pinecone o Weaviate.
+La extensión \textbf{pgvector}~\cite{pgvectorgithub} añade el tipo \texttt{vector} y los operadores de similitud (coseno, euclidiana, producto punto) directamente sobre PostgreSQL. Esto evita introducir un servicio adicional de base vectorial: el corpus de planes docentes y sus embeddings residen en la misma instancia que el resto de datos académicos. Sobre los vectores se construye un índice HNSW~\cite{malkov2018hnsw} para búsquedas sub-lineales, configurado con los parámetros $m=16$ y $ef\_construction=64$ (Sección~\ref{subsec:dd-embeddings}).
 
 \section{Tecnologías de frontend}\label{sec:frontend}
 
-\subsection{Node.js}
+El frontend del proyecto está formado por dos piezas: el \textbf{widget de chat} embebible en cualquier página de la US y el \textbf{panel de administración} que da acceso a las importaciones de datos y a las conversaciones registradas. Ambas son aplicaciones estáticas (HTML, CSS y JavaScript ES6+ sin \textit{frameworks} reactivos) servidas por Nginx en producción y por el servidor HTTP de Python en desarrollo.
 
-El frontend del asistente está desarrollado usando Node.js, que proporciona:
+\subsection{Widget de chat}
 
-\begin{itemize}
-    \item \textbf{JavaScript del lado del servidor}: Mismo lenguaje en frontend y backend de la interfaz
-    \item \textbf{NPM}: Gestor de paquetes con millones de librerías disponibles
-    \item \textbf{Rendimiento}: Motor V8 de alta velocidad
-\end{itemize}
-
-\subsection{Framework web}
-
-Se utiliza un framework minimalista que permite:
+El \texttt{chatbot-widget.js} se carga directamente desde una página HTML mediante una etiqueta \texttt{<script>}, sin pasos de \textit{build}. Implementa:
 
 \begin{itemize}
-    \item Servir la interfaz de chat web
-    \item Gestionar la conexión WebSocket con el backend de Rasa
-    \item Renderizar mensajes con formato enriquecido (tablas, enlaces, imágenes)
+    \item La comunicación con el servidor Rasa por HTTP REST contra el endpoint \texttt{/\allowbreak webhooks/\allowbreak rest/\allowbreak webhook} (peticiones síncronas \texttt{fetch}, sin WebSocket).
+    \item El renderizado de respuestas en Markdown ligero (tablas, listas, enlaces, énfasis) y de botones inyectados desde Rasa.
+    \item El \textbf{modal de selección de titulación} que se muestra al iniciar la sesión y fija el slot \texttt{contexto\_titulacion} antes de la primera consulta (Sección~\ref{subsec:dd-slots}).
 \end{itemize}
+
+\subsection{Panel de administración}
+
+El panel (\texttt{admin.html}, \texttt{admin.js}, \texttt{admin.css}) es una aplicación SPA ligera que consume la API Flask descrita en la Sección~\ref{sec:procesamiento-conversacional}. Permite gestionar centros, titulaciones, asignaturas, profesores, horarios y conversaciones, y dispara las importaciones desde Sevius mediante los \textit{scrapers} del módulo \texttt{admin/}.
+
+\subsection{Servidor web}
+
+\textbf{Nginx} sirve los activos estáticos del \textit{frontend} y el panel en el despliegue Docker (puerto 80) y actúa como \textit{reverse proxy} hacia los servicios internos. En desarrollo local, los mismos activos se sirven con \texttt{python -m http.server 8080}. Node.js se utiliza únicamente para herramientas de desarrollo (ESLint~\cite{eslint} a través de \texttt{npm}); ningún componente del \textit{runtime} depende de él.
 
 \section{Herramientas de desarrollo}\label{sec:herramientas-desarrollo-marco}
 
 \subsection{Control de versiones}
 
-\textbf{Git} es el sistema de control de versiones utilizado, con \textbf{GitHub} como plataforma de hosting. La estructura del repositorio incluye:
-
-\begin{itemize}
-    \item \texttt{/actions}: Acciones personalizadas de Rasa
-    \item \texttt{/data}: Datos de entrenamiento (intents, stories, rules)
-    \item \texttt{/models}: Modelos entrenados de Rasa
-    \item \texttt{/frontend}: Código de la interfaz web
-    \item \texttt{/docs}: Documentación del proyecto
-\end{itemize}
+\textbf{Git} es el sistema de control de versiones utilizado, con \textbf{GitHub} como plataforma de \textit{hosting}. La estructura concreta del repositorio se detalla en el Capítulo~\ref{cap:estructura-proyecto}; no se reproduce aquí para evitar duplicar información.
 
 \subsection{Gestión de dependencias}
 
-Las dependencias de Python se gestionan mediante:
-
-\begin{itemize}
-    \item \textbf{requirements.txt}: Lista de todas las librerías necesarias con versiones específicas
-    \item \textbf{Entorno virtual (venv)}: Aislamiento de dependencias del sistema
-\end{itemize}
+Las dependencias de Python se fijan en \texttt{requirements.txt} (servidor Rasa) y \texttt{requirements-actions.txt} (\textit{action server}), ambos con versiones ancladas para garantizar la reproducibilidad. El aislamiento del entorno se consigue con \textit{venv} en desarrollo y con la imagen Docker en producción.
 
 \subsection{Variables de entorno}
 
-La librería \texttt{python-dotenv} gestiona la configuración mediante archivos \texttt{.env}:
-
-\begin{itemize}
-    \item Credenciales de Supabase (URL, API key)
-    \item Configuración de Ollama (URL del servidor, modelo a utilizar)
-    \item Parámetros de configuración del sistema
-\end{itemize}
-
-Esto permite cambiar la configuración sin modificar el código y evita exponer credenciales en el repositorio público.
+La librería \texttt{python-dotenv} carga la configuración desde un fichero \texttt{.env} en la raíz del proyecto: credenciales de Supabase (URL y API key), clave de la API de Gemini, parámetros opcionales de Ollama y el resto de ajustes del sistema. Este mecanismo evita exponer secretos en el repositorio y permite alternar entre entornos (local, Docker, producción) sin tocar el código.
 
 \section{Consideraciones de seguridad}\label{sec:seguridad}
 
@@ -228,39 +168,45 @@ Esto permite cambiar la configuración sin modificar el código y evita exponer 
     \item Limitación de longitud de mensajes
 \end{itemize}
 
-\subsection{Ejecución local de modelos}
+\subsection{Aislamiento del proveedor de LLM}
 
-El uso de Ollama para ejecutar modelos localmente aporta beneficios de privacidad:
+En el despliegue actual, las consultas se envían a la API de Google Gemini~\cite{geminidocs} sobre HTTPS y autenticación por clave; no se transmiten datos personales del alumnado, sino exclusivamente el texto de la consulta y, cuando aplica, los \textit{chunks} recuperados de los planes docentes (que son documentos públicos). El cliente \texttt{shared/gemini\_client.py} centraliza estas llamadas, lo que aporta dos garantías relevantes desde el punto de vista de seguridad y privacidad:
 
 \begin{itemize}
-    \item Las consultas de los usuarios no se envían a servicios externos
-    \item No hay dependencia de APIs comerciales que puedan cambiar términos de uso
-    \item Control total sobre los datos procesados
+    \item \textbf{Punto único de auditoría}: cualquier llamada saliente al LLM atraviesa el cliente, lo que facilita la inspección de \textit{prompts}, el registro de uso y la aplicación de filtros si fuera necesario.
+    \item \textbf{Sustituibilidad del proveedor}: la misma interfaz está implementada por \texttt{shared/ollama\_client.py}, de modo que ante un cambio de política de Google o un escenario que exija inferencia local (por ejemplo, un despliegue institucional sobre infraestructura propia de la US, ver Sección~\ref{sec:costes}), se puede conmutar a Ollama sin tocar las acciones de Rasa.
 \end{itemize}
+
+La opción local con Ollama se mantiene, por tanto, como mecanismo de mitigación de riesgo (cambios de cuotas o términos de uso del proveedor cloud) y no como modo de operación por defecto.
 
 \section{Stack tecnológico completo}\label{sec:stack-completo}
 
-La siguiente tabla resume todas las tecnologías empleadas en el proyecto:
+La Tabla~\ref{tab:stack-tecnologico} resume las tecnologías empleadas en el proyecto, agrupadas por capa.
 
 \begin{table}[h]
 \centering
+\small
 \begin{tabular}{|l|l|l|}
 \hline
-\textbf{Capa} & \textbf{Tecnología} & \textbf{Versión} \\ \hline
-Frontend & Node.js & 18.x \\ \hline
-Frontend & HTML/CSS/JavaScript & ES6+ \\ \hline
-Backend conversacional & Python & 3.10 \\ \hline
-Backend conversacional & Rasa & 3.6.21 \\ \hline
-Backend conversacional & Rasa SDK & 3.6.2 \\ \hline
-Backend conversacional & spaCy & 3.8.0 \\ \hline
-IA y LLMs & Ollama & latest \\ \hline
-IA y LLMs & Modelos LLM & Llama 3 / Mistral \\ \hline
-Base de datos & PostgreSQL & 15.x \\ \hline
-Base de datos & pgvector & 0.5.0 \\ \hline
-Plataforma BD & Supabase & cloud \\ \hline
-Librerías NLP & RapidFuzz & 3.0.0 \\ \hline
-Librerías NLP & python-dotenv & 1.0.0 \\ \hline
-Control versiones & Git \& GitHub & 2.x \\ \hline
+\textbf{Capa} & \textbf{Tecnología} & \textbf{Rol / versión} \\ \hline
+Frontend (chatbot) & HTML / CSS / JavaScript ES6+ & Widget embebible sin \textit{framework} \\ \hline
+Frontend (admin)   & HTML / CSS / JavaScript ES6+ & SPA ligera contra la API Flask \\ \hline
+Servidor web      & Nginx (Docker) / Python http.server (local) & Sirve estáticos y \textit{reverse proxy} \\ \hline
+Admin API         & Flask (Python 3.10) & API REST de administración (puerto 5050) \\ \hline
+Núcleo conversacional & Rasa & 3.6.21 \\ \hline
+Núcleo conversacional & Rasa SDK & 3.6.2 \\ \hline
+Núcleo conversacional & spaCy (\texttt{es\_core\_news\_md}) & 3.8.x \\ \hline
+LLM principal     & Google Gemini (\texttt{gemma-3-27b-it}) & Generación de texto vía API \\ \hline
+Embeddings        & Google Gemini (\texttt{gemini-embedding-001}) & Vectorización (2000 dims) \\ \hline
+LLM alternativo (opcional) & Ollama (\texttt{llama3.2:3b}) & Inferencia local de respaldo \\ \hline
+Base de datos     & PostgreSQL (gestionada por Supabase) & 15.x \\ \hline
+Vectorial         & pgvector & Extensión PostgreSQL, índice HNSW \\ \hline
+Plataforma BD     & Supabase Cloud & Connection pooling, panel admin \\ \hline
+Librerías NLP     & RapidFuzz, python-dotenv & \textit{Fuzzy matching}, configuración \\ \hline
+Despliegue        & Docker / Docker Compose & Contenedores reproducibles \\ \hline
+Hosting           & DigitalOcean (Ubuntu 24.04 LTS) & Droplet de producción \\ \hline
+Control versiones & Git \& GitHub & Repositorio, CI/CD con Actions \\ \hline
+Calidad de código & ESLint, Pylint, Flake8 & \textit{Linting} JS y Python \\ \hline
 \end{tabular}
 \caption{Stack tecnológico completo del proyecto LinceUS Assistant.}
 \label{tab:stack-tecnologico}
