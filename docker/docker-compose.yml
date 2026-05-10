@@ -47,8 +47,8 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile.admin
-    ports:
-      - "5050:5050"
+    expose:
+      - "5050"
     env_file:
       - ../.env
     volumes:
