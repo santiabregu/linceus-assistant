@@ -1,9 +1,13 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.4.26)  5 MAY 2026 23:05
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.4.26)  9 MAY 2026 20:49
 entering extended mode
  restricted \write18 enabled.
+ file:line:error style messages enabled.
  %&-line parsing enabled.
-**./proyect.tex
-(proyect.tex
+**"c:/Users/santi/Desktop/cuarto/TFG/linceus-assistant/memoria_tfg/Plantilla Tf
+G/proyect.tex"
+
+(c:/Users/santi/Desktop/cuarto/TFG/linceus-assistant/memoria_tfg/Plantilla TfG/
+proyect.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
 (pclass.cls
@@ -961,7 +965,7 @@ Package hyperref Info: Link coloring OFF on input line 47.
 \@outlinefile=\write4
 \openout4 = `proyect.out'.
 
-<img/us.jpg, id=1066, 36.135pt x 36.135pt>
+<img/us.jpg, id=1070, 36.135pt x 36.135pt>
 File: img/us.jpg Graphic file (type jpg)
 <use img/us.jpg>
 Package pdftex.def Info: img/us.jpg  used on input line 56.
@@ -1699,27 +1703,27 @@ Underfull \hbox (badness 10000) in paragraph at lines 192--192
  []
 
 [66]
-<img/conversacion_ejemplo.png, id=2085, 1426.57968pt x 620.3175pt>
+<img/conversacion_ejemplo.png, id=2090, 1426.57968pt x 620.3175pt>
 File: img/conversacion_ejemplo.png Graphic file (type png)
 <use img/conversacion_ejemplo.png>
 Package pdftex.def Info: img/conversacion_ejemplo.png  used on input line 208.
 (pdftex.def)             Requested size: 426.79135pt x 185.5761pt.
-<img/admin_home.png, id=2087, 1443.14156pt x 621.82312pt>
+<img/admin_home.png, id=2092, 1443.14156pt x 621.82312pt>
 File: img/admin_home.png Graphic file (type png)
 <use img/admin_home.png>
 Package pdftex.def Info: img/admin_home.png  used on input line 214.
 (pdftex.def)             Requested size: 426.79135pt x 183.89166pt.
-<img/admin_conversaciones.png, id=2088, 1428.08531pt x 620.3175pt>
+<img/admin_conversaciones.png, id=2093, 1428.08531pt x 620.3175pt>
 File: img/admin_conversaciones.png Graphic file (type png)
 <use img/admin_conversaciones.png>
 Package pdftex.def Info: img/admin_conversaciones.png  used on input line 220.
 (pdftex.def)             Requested size: 426.79135pt x 185.3868pt.
-<img/admin_horarios.png, id=2089, 1425.82687pt x 620.3175pt>
+<img/admin_horarios.png, id=2094, 1425.82687pt x 620.3175pt>
 File: img/admin_horarios.png Graphic file (type png)
 <use img/admin_horarios.png>
 Package pdftex.def Info: img/admin_horarios.png  used on input line 226.
 (pdftex.def)             Requested size: 426.79135pt x 185.6802pt.
-<img/admin_profesores.png, id=2090, 1425.82687pt x 620.3175pt>
+<img/admin_profesores.png, id=2095, 1425.82687pt x 620.3175pt>
 File: img/admin_profesores.png Graphic file (type png)
 <use img/admin_profesores.png>
 Package pdftex.def Info: img/admin_profesores.png  used on input line 232.
@@ -1758,13 +1762,13 @@ Overfull \hbox (74.59674pt too wide) in paragraph at lines 46--47
  []
 
 [71]
-<img/diagrama_componentes.png, id=2121, 1854.93pt x 841.1425pt>
+<img/diagrama_componentes.png, id=2126, 1854.93pt x 841.1425pt>
 File: img/diagrama_componentes.png Graphic file (type png)
 <use img/diagrama_componentes.png>
 Package pdftex.def Info: img/diagrama_componentes.png  used on input line 60.
 (pdftex.def)             Requested size: 667.64177pt x 302.7469pt.
  [72 <./img/diagrama_componentes.png (PNG copy)>]
-<img/diagrama_despliegue.png, id=2131, 1413.28pt x 1035.87pt>
+<img/diagrama_despliegue.png, id=2136, 1413.28pt x 1035.87pt>
 File: img/diagrama_despliegue.png Graphic file (type png)
 <use img/diagrama_despliegue.png>
 Package pdftex.def Info: img/diagrama_despliegue.png  used on input line 90.
@@ -1810,8 +1814,43 @@ ient.py\OT1/ptm/m/n/10.95 ,
  []
 
 
-Overfull \hbox (85.58524pt too wide) in paragraph at lines 189--211
- [][] 
+Underfull \hbox (badness 10000) in paragraph at lines 194--194
+[]|\OT1/ptm/m/n/10 Nginx (Doc-ker) / Python
+ []
+
+
+Underfull \hbox (badness 1199) in paragraph at lines 196--196
+[]|\OT1/ptm/m/n/10 N[]ucleo con-ver-sa-cio-
+ []
+
+
+Underfull \hbox (badness 1199) in paragraph at lines 197--197
+[]|\OT1/ptm/m/n/10 N[]ucleo con-ver-sa-cio-
+ []
+
+
+Underfull \hbox (badness 1199) in paragraph at lines 198--198
+[]|\OT1/ptm/m/n/10 N[]ucleo con-ver-sa-cio-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 199--199
+[]|\OT1/ptm/m/n/10 Google Ge-mi-ni
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 200--200
+[]|\OT1/ptm/m/n/10 Google Ge-mi-ni
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 203--203
+[]|\OT1/ptm/m/n/10 Extensi[]on Post-greSQL, []^^Pndi-ce
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 207--207
+[]|\OT1/ptm/m/n/10 DigitalOcean (Ubun-tu 24.04
  []
 
 
@@ -3374,7 +3413,7 @@ File: img/admin_conversaciones.png Graphic file (type png)
 <use img/admin_conversaciones.png>
 Package pdftex.def Info: img/admin_conversaciones.png  used on input line 388.
 (pdftex.def)             Requested size: 426.79135pt x 185.3868pt.
-<img/admin_stats.png, id=2466, 1442.38875pt x 621.07031pt>
+<img/admin_stats.png, id=2471, 1442.38875pt x 621.07031pt>
 File: img/admin_stats.png Graphic file (type png)
 <use img/admin_stats.png>
 Package pdftex.def Info: img/admin_stats.png  used on input line 395.
@@ -3393,12 +3432,12 @@ Cap\'{\i }tulo 12.
 
 ] [117] [118] [119] [120] [121] [122]) (Capitulos/manual.tex [123] [124]
 Cap\'{\i }tulo 13.
-<img/widget_cerrado.png, id=2571, 1427.3325pt x 622.57594pt>
+<img/widget_cerrado.png, id=2576, 1427.3325pt x 622.57594pt>
 File: img/widget_cerrado.png Graphic file (type png)
 <use img/widget_cerrado.png>
 Package pdftex.def Info: img/widget_cerrado.png  used on input line 25.
 (pdftex.def)             Requested size: 426.79135pt x 186.15674pt.
-<img/widget_abierto.png, id=2573, 1425.82687pt x 621.07031pt>
+<img/widget_abierto.png, id=2578, 1425.82687pt x 621.07031pt>
 File: img/widget_abierto.png Graphic file (type png)
 <use img/widget_abierto.png>
 Package pdftex.def Info: img/widget_abierto.png  used on input line 37.
@@ -5246,17 +5285,17 @@ hay asig-na-tu-ra re-cien-te, y \OT1/pcr/m/n/10.95 ActionSmartFallback
 
 [140]) (Capitulos/uso_ia.tex [141]
 Cap\'{\i }tulo 15.
-) (Capitulos/video_presentacion.tex [142
+[142
 
-]
+]) (Capitulos/video_presentacion.tex [143]
 Cap\'{\i }tulo 16.
-) [143
+) [144
 
-] (Capitulos/apendices.tex [144
+] (Capitulos/apendices.tex [145
 
 
-] [145] [146]) [147] [148] (proyect.bbl
-[149
+] [146] [147]) [148] [149] (proyect.bbl
+[150
 
 
 ]
@@ -5266,25 +5305,25 @@ Package Fancyhdr Warning: \headheight is too small (13.59999pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[150]
+[151]
 LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <10.95> not available
 (Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 186.
- [151]) [152] (proyect.aux)
+ [152]) [153] (proyect.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
 Package rerunfilecheck Info: File `proyect.out' has not changed.
-(rerunfilecheck)             Checksum: EAB7F7F4A004133E619A8E1F5DA30EBA;51794.
+(rerunfilecheck)             Checksum: 2C8058B1BF97DB3E774A35EA032A9D2F;52116.
  ) 
 Here is how much of TeX's memory you used:
- 29050 strings out of 467871
- 526006 string characters out of 5418376
- 1173176 words of memory out of 5000000
- 56496 multiletter control sequences out of 15000+600000
+ 29056 strings out of 467871
+ 526294 string characters out of 5418376
+ 1173253 words of memory out of 5000000
+ 56498 multiletter control sequences out of 15000+600000
  697368 words of font info for 177 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,13n,94p,1888b,2081s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,13n,94p,1966b,2081s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\santi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm
 1095.pk><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
 ts/cm/cmbx10.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/publ
@@ -5308,9 +5347,9 @@ urw/times/utmb8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/
 urw/times/utmbi8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1
 /urw/times/utmr8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1
 /urw/times/utmri8a.pfb>
-Output written on proyect.pdf (153 pages, 2086970 bytes).
+Output written on proyect.pdf (154 pages, 2094739 bytes).
 PDF statistics:
- 3135 PDF objects out of 3580 (max. 8388607)
- 804 named destinations out of 1000 (max. 500000)
- 2188 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 3147 PDF objects out of 3580 (max. 8388607)
+ 806 named destinations out of 1000 (max. 500000)
+ 2196 words of extra memory for PDF output out of 10000 (max. 10000000)
 

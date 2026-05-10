@@ -186,7 +186,7 @@ La Tabla~\ref{tab:stack-tecnologico} resume las tecnologías empleadas en el pro
 \begin{table}[h]
 \centering
 \small
-\begin{tabular}{|l|l|l|}
+\begin{tabular}{|p{3cm}|p{4.6cm}|p{5cm}|}
 \hline
 \textbf{Capa} & \textbf{Tecnología} & \textbf{Rol / versión} \\ \hline
 Frontend (chatbot) & HTML / CSS / JavaScript ES6+ & Widget embebible sin \textit{framework} \\ \hline
@@ -201,10 +201,10 @@ Embeddings        & Google Gemini (\texttt{gemini-embedding-001}) & Vectorizaci�
 LLM alternativo (opcional) & Ollama (\texttt{llama3.2:3b}) & Inferencia local de respaldo \\ \hline
 Base de datos     & PostgreSQL (gestionada por Supabase) & 15.x \\ \hline
 Vectorial         & pgvector & Extensión PostgreSQL, índice HNSW \\ \hline
-Plataforma BD     & Supabase Cloud & Connection pooling, panel admin \\ \hline
+Plataforma BD     & Supabase Cloud & \textit{Connection pooling}, panel admin \\ \hline
 Librerías NLP     & RapidFuzz, python-dotenv & \textit{Fuzzy matching}, configuración \\ \hline
 Despliegue        & Docker / Docker Compose & Contenedores reproducibles \\ \hline
-Hosting           & DigitalOcean (Ubuntu 24.04 LTS) & Droplet de producción \\ \hline
+Hosting           & DigitalOcean (Ubuntu 24.04 LTS) & \textit{Droplet} de producción \\ \hline
 Control versiones & Git \& GitHub & Repositorio, CI/CD con Actions \\ \hline
 Calidad de código & ESLint, Pylint, Flake8 & \textit{Linting} JS y Python \\ \hline
 \end{tabular}

@@ -59,7 +59,7 @@ export const timeline = [
   {
     id: 'caso-1-info-asignatura',
     label: 'Caso 1 — Información sobre Sistemas Operativos',
-    duration: 22000,
+    duration: 18000,
     stage: 'web',
     chatOpen: true,
     camera: { scale: 1.55, targetX: CHAT_CENTER.x, targetY: CHAT_CENTER.y },
@@ -101,7 +101,7 @@ export const timeline = [
   {
     id: 'caso-3-listado',
     label: 'Caso 3 — Listado text-to-SQL',
-    duration: 21000,
+    duration: 18000,
     stage: 'web',
     chatOpen: true,
     camera: { scale: 1.45, targetX: CHAT_CENTER.x, targetY: CHAT_CENTER.y },
@@ -125,7 +125,7 @@ export const timeline = [
   {
     id: 'caso-4-horario-asignatura',
     label: 'Caso 4 — Horario por asignatura sin grupo',
-    duration: 14000,
+    duration: 13000,
     stage: 'web',
     chatOpen: true,
     camera: { scale: 1.5, targetX: CHAT_CENTER.x, targetY: CHAT_CENTER.y },
@@ -173,7 +173,7 @@ export const timeline = [
   {
     id: 'caso-6-correo-profesor',
     label: 'Caso 6 — Correo de un profesor',
-    duration: 15000,
+    duration: 13000,
     stage: 'web',
     chatOpen: true,
     camera: { scale: 1.55, targetX: CHAT_CENTER.x, targetY: CHAT_CENTER.y },
@@ -197,7 +197,7 @@ export const timeline = [
   {
     id: 'caso-7-cambio-contexto',
     label: 'Caso 7 — Cambio de titulación a IC',
-    duration: 11000,
+    duration: 10000,
     stage: 'web',
     chatOpen: true,
     camera: { scale: 1.55, targetX: CHAT_CENTER.x, targetY: CHAT_CENTER.y },
@@ -222,7 +222,7 @@ export const timeline = [
   {
     id: 'caso-8-jailbreak',
     label: 'Caso 8 — Jailbreak',
-    duration: 20000,
+    duration: 17000,
     stage: 'web',
     chatOpen: true,
     camera: { scale: 1.5, targetX: CHAT_CENTER.x, targetY: CHAT_CENTER.y },
@@ -250,7 +250,7 @@ export const timeline = [
   {
     id: 'admin-1-home',
     label: 'Admin · Inicio (centros)',
-    duration: 10000,
+    duration: 9000,
     stage: 'admin',
     chatOpen: false,
     camera: { scale: 1 }, // panel admin a tamaño completo
@@ -260,23 +260,61 @@ export const timeline = [
     ],
   },
   {
-    id: 'admin-2-profesores',
+    // Drill-down a Asignaturas para mostrar las acciones del panel: vectorizar
+    // planes docentes, enriquecer desde us.es y sincronizar desde Sevius.
+    id: 'admin-2-asignaturas',
+    label: 'Admin · Asignaturas (vectorizar / enriquecer / sync)',
+    duration: 9000,
+    stage: 'admin',
+    chatOpen: false,
+    camera: { scale: 1 },
+    actions: [
+      // Click sobre la card de la ETSII (centro de la primera columna)
+      { at: 200, type: 'cursorMove', payload: { x: 480, y: 540 } },
+      { at: 900, type: 'cursorClick' },
+      { at: 1200, type: 'adminView', payload: 'asignaturas' },
+      // Cursor recorre la fila de botones de acción para destacarlos
+      { at: 3000, type: 'cursorMove', payload: { x: 1140, y: 200 } }, // Vectorizar
+      { at: 5000, type: 'cursorMove', payload: { x: 1370, y: 200 } }, // Enriquecer
+      { at: 7000, type: 'cursorMove', payload: { x: 1620, y: 200 } }, // Sincronizar
+    ],
+  },
+  {
+    id: 'admin-3-horarios',
+    label: 'Admin · Horarios (extractores y generación)',
+    duration: 7000,
+    stage: 'admin',
+    chatOpen: false,
+    camera: { scale: 1 },
+    actions: [
+      // Tab "HORARIOS" en NavTabs (tercera tab)
+      { at: 200, type: 'cursorMove', payload: { x: 1506, y: 176 } },
+      { at: 1100, type: 'cursorClick' },
+      { at: 1300, type: 'adminView', payload: 'horarios' },
+      // Cursor sobre el botón "Generar horarios" de la tarjeta de la ETSII
+      { at: 3500, type: 'cursorMove', payload: { x: 480, y: 670 } },
+    ],
+  },
+  {
+    id: 'admin-4-profesores',
     label: 'Admin · Profesores',
     duration: 8000,
     stage: 'admin',
     chatOpen: false,
     camera: { scale: 1 },
     actions: [
-      // Tab "PROFESORES" en NavTabs (alineado a la derecha, segunda tab)
+      // Tab "PROFESORES" en NavTabs (segunda tab)
       { at: 200, type: 'cursorMove', payload: { x: 1374, y: 176 } },
       { at: 1200, type: 'cursorClick' },
       { at: 1400, type: 'adminView', payload: 'profesores' },
+      // Cursor sobre el botón "Enriquecer desde us.es" arriba a la derecha
+      { at: 3500, type: 'cursorMove', payload: { x: 1700, y: 290 } },
     ],
   },
   {
-    id: 'admin-3-conversaciones',
+    id: 'admin-5-conversaciones',
     label: 'Admin · Conversaciones',
-    duration: 8000,
+    duration: 7000,
     stage: 'admin',
     chatOpen: false,
     camera: { scale: 1 },
@@ -288,9 +326,9 @@ export const timeline = [
     ],
   },
   {
-    id: 'admin-4-stats',
+    id: 'admin-6-stats',
     label: 'Admin · Estadísticas',
-    duration: 9000,
+    duration: 8000,
     stage: 'admin',
     chatOpen: false,
     camera: { scale: 1 },

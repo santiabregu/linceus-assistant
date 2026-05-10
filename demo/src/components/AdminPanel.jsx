@@ -57,6 +57,10 @@ function NavTabs({ active }) {
     { id: 'conversaciones', icon: 'fa-comments', label: 'CONVERSACIONES' },
     { id: 'feedback', icon: 'fa-star', label: 'FEEDBACK' },
   ];
+  // Asignaturas es sub-vista bajo CENTROS, así que la pestaña activa sigue
+  // siendo "home" cuando se está en esa vista.
+  const activeTab = active === 'asignaturas' ? 'home' : active;
+  const isAsignaturas = active === 'asignaturas';
   const breadcrumb = {
     home: 'Centros',
     profesores: 'Profesores',
@@ -67,14 +71,28 @@ function NavTabs({ active }) {
   return (
     <nav className="border-b-2 border-[#be0f2e] bg-white px-10 py-4 flex items-center justify-between text-[13px] font-semibold">
       <div className="flex items-center gap-2 text-gray-700">
-        <i className="fa-solid fa-house" /> {breadcrumb}
+        {isAsignaturas ? (
+          <>
+            <i className="fa-solid fa-house" /> Centros
+            <span className="text-gray-400">›</span>
+            <span>ETSII</span>
+            <span className="text-gray-400">›</span>
+            <span>Ingeniería del Software</span>
+            <span className="text-gray-400">›</span>
+            <span className="text-[#be0f2e]">Asignaturas</span>
+          </>
+        ) : (
+          <>
+            <i className="fa-solid fa-house" /> {breadcrumb}
+          </>
+        )}
       </div>
       <div className="flex gap-8">
         {tabs.map((t) => (
           <a
             key={t.id}
             className={`flex items-center gap-2 ${
-              active === t.id ? 'text-[#be0f2e]' : 'text-gray-600'
+              activeTab === t.id ? 'text-[#be0f2e]' : 'text-gray-600'
             }`}
           >
             <i className={`fa-solid ${t.icon}`} /> {t.label}
@@ -137,6 +155,140 @@ function ViewHome() {
                 Activo
               </span>
             </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ───────────────────── Vista: Asignaturas (drill-down) ─────────────
+function ViewAsignaturas() {
+  const segundo = [
+    { c: 'GIIS04114', n: 'Análisis y Diseño de Datos y Algoritmos', tip: 'Obligatoria', ects: 6, dur: 'C2' },
+    { c: 'GIIS04115', n: 'Sistemas Operativos', tip: 'Obligatoria', ects: 6, dur: 'C1' },
+    { c: 'GIIS04116', n: 'Tecnología Básica de Computadores', tip: 'Obligatoria', ects: 6, dur: 'C1' },
+    { c: 'GIIS04117', n: 'Arquitectura e Integración SW', tip: 'Obligatoria', ects: 6, dur: 'C1' },
+  ];
+  const tercero = [
+    { c: 'GIIS05121', n: 'Diseño y Pruebas', tip: 'Obligatoria', ects: 6, dur: 'C1' },
+    { c: 'GIIS05122', n: 'Ingeniería de Requisitos', tip: 'Obligatoria', ects: 6, dur: 'C1' },
+    { c: 'GIIS05123', n: 'Sistemas Inteligentes', tip: 'Obligatoria', ects: 6, dur: 'C2' },
+    { c: 'GIIS05124', n: 'Bases de Datos', tip: 'Obligatoria', ects: 6, dur: 'C1' },
+  ];
+  const TipologiaTag = ({ t }) => (
+    <span className="inline-block text-[10px] bg-[#fdf2f4] text-[#be0f2e] rounded-full px-2 py-0.5">
+      {t}
+    </span>
+  );
+  const Card = ({ a }) => (
+    <div className="bg-white rounded-lg shadow p-4 border border-gray-100">
+      <div className="flex justify-between items-start gap-2">
+        <div className="font-semibold text-sm text-gray-800 leading-tight">{a.n}</div>
+        <TipologiaTag t={a.tip} />
+      </div>
+      <div className="text-[11px] text-gray-500 mt-1">{a.c}</div>
+      <div className="flex gap-3 text-xs text-gray-600 mt-2">
+        <span><i className="fa-solid fa-award mr-1" /> {a.ects} ECTS</span>
+        <span><i className="fa-solid fa-clock mr-1" /> {a.dur}</span>
+      </div>
+    </div>
+  );
+  const ActionBtn = ({ icon, label, primary }) => (
+    <button
+      className={`px-3 py-2 rounded text-xs font-semibold flex items-center gap-2 ${
+        primary
+          ? 'bg-[#be0f2e] text-white shadow'
+          : 'bg-white border border-gray-300 text-gray-700'
+      }`}
+    >
+      <i className={`fa-solid ${icon}`} /> {label}
+    </button>
+  );
+  return (
+    <div className="p-10">
+      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <h2 className="font-display text-2xl text-gray-800">
+          Asignaturas{' '}
+          <span className="ml-2 inline-block text-sm bg-[#be0f2e] text-white rounded-full px-3 py-0.5">
+            48
+          </span>
+        </h2>
+        <div className="flex gap-2 flex-wrap">
+          <ActionBtn icon="fa-cube" label="Vectorizar planes docentes" primary />
+          <ActionBtn icon="fa-wand-magic-sparkles" label="Enriquecer datos (us.es)" />
+          <ActionBtn icon="fa-chalkboard-user" label="Cargar docencia" />
+          <ActionBtn icon="fa-rotate" label="Sincronizar desde Sevius" />
+        </div>
+      </div>
+
+      <div className="mb-6">
+        <div className="text-sm font-semibold text-gray-700 mb-3">
+          <i className="fa-solid fa-layer-group mr-2 text-[#be0f2e]" /> 2º Curso (12)
+        </div>
+        <div className="grid grid-cols-4 gap-4">
+          {segundo.map((a) => <Card key={a.c} a={a} />)}
+        </div>
+      </div>
+
+      <div>
+        <div className="text-sm font-semibold text-gray-700 mb-3">
+          <i className="fa-solid fa-layer-group mr-2 text-[#be0f2e]" /> 3er Curso (12)
+        </div>
+        <div className="grid grid-cols-4 gap-4">
+          {tercero.map((a) => <Card key={a.c} a={a} />)}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ───────────────────── Vista: Horarios (centros) ───────────────────
+function ViewHorarios() {
+  const centros = [
+    { nombre: 'ETSII', titulaciones: 3, horarios: 1335, soportado: true },
+    { nombre: 'Facultad de Biología', titulaciones: 8, horarios: 0, soportado: false },
+    { nombre: 'Facultad de Matemáticas', titulaciones: 13, horarios: 0, soportado: false },
+  ];
+  return (
+    <div className="p-10">
+      <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
+        <h2 className="font-display text-2xl text-gray-800">
+          Horarios por centro{' '}
+          <span className="ml-2 inline-block text-sm bg-[#be0f2e] text-white rounded-full px-3 py-0.5">
+            3
+          </span>
+        </h2>
+      </div>
+
+      <div className="bg-amber-50 border-l-4 border-amber-400 text-amber-900 px-4 py-3 rounded text-sm mb-6">
+        <i className="fa-solid fa-circle-info mr-2" />
+        <strong>Extracción de horarios dependiente de centro.</strong> Cada centro publica
+        sus horarios en un formato distinto (PDF, web propia, etc.); para añadir un nuevo
+        centro hay que crear un extractor en <code className="bg-white/60 px-1 rounded">admin/horarios_extractores/</code>.
+      </div>
+
+      <div className="grid grid-cols-3 gap-6">
+        {centros.map((c) => (
+          <div
+            key={c.nombre}
+            className="bg-white rounded-lg shadow p-6 border border-gray-100"
+          >
+            <i className="fa-solid fa-clock text-3xl text-[#be0f2e] mb-3" />
+            <h3 className="font-semibold text-lg leading-tight mb-2">{c.nombre}</h3>
+            <div className="text-sm text-gray-600 flex items-center gap-2 mb-1">
+              <i className="fa-solid fa-graduation-cap" /> {c.titulaciones} titulaciones
+            </div>
+            <div className="text-sm text-gray-600 flex items-center gap-2 mb-3">
+              <i className="fa-solid fa-clock" /> {c.horarios} horarios
+            </div>
+            {c.soportado ? (
+              <button className="w-full px-3 py-2 bg-[#be0f2e] text-white rounded text-xs font-semibold flex items-center justify-center gap-2">
+                <i className="fa-solid fa-wand-magic-sparkles" /> Generar horarios
+              </button>
+            ) : (
+              <div className="text-xs text-gray-400 italic">Sin extractor disponible</div>
+            )}
           </div>
         ))}
       </div>
@@ -295,6 +447,8 @@ function ViewStats() {
 export default function AdminPanel({ view }) {
   const views = {
     home: <ViewHome />,
+    asignaturas: <ViewAsignaturas />,
+    horarios: <ViewHorarios />,
     profesores: <ViewProfesores />,
     conversaciones: <ViewConversaciones />,
     stats: <ViewStats />,

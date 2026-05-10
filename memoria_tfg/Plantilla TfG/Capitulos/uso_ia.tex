@@ -1,23 +1,54 @@
 % !TEX root = ../proyect.tex
 
-% =====================================================
-% USO DE INTELIGENCIA ARTIFICIAL - placeholder
-% =====================================================
-% Guía Segura §13: declaración transparente y responsable del uso de IA.
-% Tres principios obligatorios:
-%   1. Mejora de contenido, no generación desde cero.
-%   2. Desconfianza en resultados (verificar cifras, código, referencias).
-%   3. Transparencia: indicar herramientas y para qué se usaron.
-% Herramientas a declarar (concretar al final del proyecto):
-%   - Claude (Anthropic) - redacción asistida de la memoria.
-%   - Gemini (Google) - componente embebido del propio sistema (no en memoria).
-%   - GitHub Copilot / IDE assistants - completado de código durante desarrollo.
-% Importante: distinguir IA usada PARA construir el sistema vs IA que ES
-% parte del sistema. La segunda no se declara aquí (es parte de la solución).
-
 \chapter{Uso de Inteligencia Artificial}\label{cap:uso-ia}
 
-% TODO: redactar declaración formal una vez cerrada la memoria.
+Este capítulo documenta de forma transparente el uso que se ha hecho de herramientas de IA generativa durante el desarrollo del proyecto, atendiendo al criterio de declaración recogido en la Guía Segura de TFG. Se distinguen dos ámbitos claramente separados: el uso aplicado al desarrollo del software (código fuente, arquitectura, refactorización) y el uso aplicado a la redacción de la presente memoria. La política seguida en ambos casos ha sido la misma: la IA actúa como asistente bajo supervisión directa del autor, nunca como agente autónomo, y en ningún caso se ha empleado para generar componentes desde cero o producir contenido sin revisión humana posterior.
+
+Es importante distinguir además entre la IA empleada \textit{para construir} el sistema (objeto de este capítulo) y la IA que \textit{forma parte} del propio sistema (Google Gemini, descrito en el Capítulo~\ref{cap:marco-tecnologico}). La segunda no se declara aquí porque constituye una pieza del producto entregado, no una herramienta de desarrollo.
+
 \section{Herramientas utilizadas}\label{sec:ia-herramientas}
-\section{Tareas asistidas y verificación}\label{sec:ia-tareas}
+
+La herramienta principal de asistencia ha sido \textbf{Claude Code} (Anthropic), un asistente de IA en línea de comandos integrado con el repositorio local. Se ha utilizado tanto para tareas relacionadas con el código como, de forma muy acotada, para la revisión gramatical de la memoria. No se han empleado otras herramientas de IA generativa para el desarrollo o la redacción del proyecto.
+
+\section{Uso de IA en el desarrollo del código}\label{sec:ia-codigo}
+
+Claude Code se ha empleado durante el desarrollo del software como apoyo en tareas concretas, siempre con revisión y validación posterior por parte del autor. Las situaciones en las que se ha utilizado son las siguientes:
+
+\begin{itemize}
+    \item \textbf{Refactorización de código existente}: reorganización de funciones ya escritas, extracción de utilidades comunes a varias acciones de Rasa y reescritura de fragmentos para mejorar la legibilidad o la coherencia con el resto del módulo. El código de partida y la dirección del cambio los ha definido el autor en cada caso.
+    \item \textbf{Sugerencias de arquitectura óptima}: a partir de la información obtenida durante la fase de investigación previa (comparativas de \textit{frameworks}, motores de LLM y bases vectoriales recogidas en el Capítulo~\ref{cap:planificacion}), se ha consultado a la herramienta para contrastar alternativas arquitectónicas y obtener sugerencias sobre patrones adecuados al contexto del proyecto. La decisión final en cada caso se ha adoptado tras evaluar las propuestas frente a la documentación oficial y las restricciones del sistema.
+    \item \textbf{Limpieza de código}: detección de \textit{imports} no utilizados, normalización de estilos, eliminación de \textit{logs} de depuración residuales y aplicación uniforme de convenciones de nombrado.
+    \item \textbf{Generación asistida de funciones puntuales}: redacción inicial de funciones concretas y delimitadas a partir de una especificación detallada del autor, observadas durante el proceso y revisadas y modificadas antes de su integración en el repositorio.
+\end{itemize}
+
+A continuación se enumeran de forma explícita los usos que \textbf{no} se han realizado, para evitar ambigüedades:
+
+\begin{itemize}
+    \item No se ha empleado IA para generar el sistema, módulos completos o clases enteras desde cero a partir de un \textit{prompt}.
+    \item No se ha concedido autonomía a la herramienta para producir componentes completos sin intervención del autor durante el proceso.
+    \item No se ha aceptado código generado sin revisión: cada fragmento producido con asistencia de IA ha sido leído, comprendido y, cuando ha sido necesario, modificado antes de su incorporación.
+\end{itemize}
+
+\section{Uso de IA en la redacción de la memoria}\label{sec:ia-memoria}
+
+El uso de IA en la redacción del presente documento ha sido sensiblemente más restrictivo que en el ámbito del código. Se ha limitado a la siguiente tarea:
+
+\begin{itemize}
+    \item \textbf{Revisión gramatical y ortográfica}: detección de erratas, faltas de concordancia, tildes omitidas y construcciones poco fluidas en textos ya redactados por el autor.
+\end{itemize}
+
+En particular, y de forma deliberada, \textbf{no} se ha utilizado IA para ninguna de las siguientes finalidades:
+
+\begin{itemize}
+    \item Generar contenido desde cero (secciones, párrafos, justificaciones o descripciones técnicas).
+    \item Aportar ideas, argumentos, decisiones de diseño o líneas de razonamiento que después se hayan trasladado al texto.
+    \item Reescribir o reformular capítulos completos a partir de una indicación general.
+\end{itemize}
+
+La estructura del documento, la selección de contenidos, las justificaciones técnicas, las decisiones de diseño y las conclusiones son obra exclusiva del autor. La asistencia de IA en este ámbito se ha limitado a un papel comparable al de un corrector ortográfico avanzado.
+
 \section{Limitaciones y responsabilidad del autor}\label{sec:ia-limitaciones}
+
+El autor asume la responsabilidad íntegra del contenido del proyecto, tanto del software entregado como de la memoria. La asistencia de herramientas de IA se ha empleado siempre bajo supervisión directa: cada sugerencia arquitectónica se ha contrastado con la investigación previa, cada función generada se ha revisado antes de su integración y cada corrección lingüística se ha validado contra el texto original. La trazabilidad de las aportaciones puede consultarse a través del histórico de \textit{commits} del repositorio, donde la actividad de desarrollo refleja la intervención humana en cada cambio.
+
+El uso descrito en este capítulo se enmarca en los principios de transparencia y verificación: declarar las herramientas empleadas, acotar su rol y mantener la responsabilidad última del trabajo en el autor.
