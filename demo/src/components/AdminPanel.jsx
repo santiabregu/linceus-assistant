@@ -5,12 +5,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 function TopBar({ active }) {
   return (
-    <div className="bg-[#be0f2e] text-white text-sm px-10 py-3 flex gap-8">
-      <span className="flex items-center gap-2 cursor-pointer font-semibold">
+    <div className="bg-[#be0f2e] text-white text-base px-10 py-3.5 flex gap-10">
+      <span className="flex items-center gap-2.5 cursor-pointer font-semibold">
         <i className="fa-solid fa-arrow-left" /> Volver al sitio
       </span>
       <span
-        className={`flex items-center gap-2 cursor-pointer font-semibold ${
+        className={`flex items-center gap-2.5 cursor-pointer font-semibold ${
           active === 'stats' ? 'underline' : ''
         }`}
       >
@@ -22,23 +22,23 @@ function TopBar({ active }) {
 
 function Header() {
   return (
-    <header className="px-10 py-5 flex items-center justify-between bg-white">
-      <div className="flex items-center gap-4">
-        <img src="/logo-us.png" alt="Universidad de Sevilla" style={{ height: 56 }} />
+    <header className="px-10 py-6 flex items-center justify-between bg-white">
+      <div className="flex items-center gap-5">
+        <img src="/logo-us.png" alt="Universidad de Sevilla" style={{ height: 64 }} />
         <div>
-          <h1 className="text-2xl font-semibold text-gray-800 leading-tight">
+          <h1 className="text-3xl font-semibold text-gray-800 leading-tight">
             Panel de Administracion
           </h1>
-          <span className="text-xs text-gray-500">
+          <span className="text-sm text-gray-500">
             LinceUS - Gestion de datos academicos
           </span>
         </div>
       </div>
       <div className="flex items-center gap-4">
-        <div className="text-sm text-green-600 flex items-center gap-2">
+        <div className="text-base text-green-600 flex items-center gap-2">
           <i className="fa-solid fa-circle text-[10px]" /> Conectado
         </div>
-        <button className="px-3 py-1.5 border border-gray-300 rounded text-sm text-gray-700">
+        <button className="px-4 py-2 border border-gray-300 rounded text-base text-gray-700">
           <i className="fa-solid fa-right-from-bracket mr-1" /> Salir
         </button>
       </div>
@@ -69,8 +69,8 @@ function NavTabs({ active }) {
     stats: 'Estadísticas',
   }[active] || 'Centros';
   return (
-    <nav className="border-b-2 border-[#be0f2e] bg-white px-10 py-4 flex items-center justify-between text-[13px] font-semibold">
-      <div className="flex items-center gap-2 text-gray-700">
+    <nav className="border-b-2 border-[#be0f2e] bg-white px-10 py-5 flex items-center justify-between text-[15px] font-semibold">
+      <div className="flex items-center gap-2.5 text-gray-700">
         {isAsignaturas ? (
           <>
             <i className="fa-solid fa-house" /> Centros
@@ -127,14 +127,14 @@ function ViewHome() {
   ];
   return (
     <div className="p-10">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="font-display text-2xl text-gray-800">
+      <div className="flex justify-between items-center mb-7">
+        <h2 className="font-display text-3xl text-gray-800">
           Centros disponibles{' '}
-          <span className="ml-2 inline-block text-sm bg-[#be0f2e] text-white rounded-full px-3 py-0.5">
+          <span className="ml-2 inline-block text-base bg-[#be0f2e] text-white rounded-full px-3 py-0.5">
             3
           </span>
         </h2>
-        <button className="px-4 py-2 bg-[#be0f2e] text-white rounded shadow text-sm font-semibold">
+        <button className="px-5 py-2.5 bg-[#be0f2e] text-white rounded shadow text-base font-semibold">
           + Nuevo centro
         </button>
       </div>
@@ -142,16 +142,16 @@ function ViewHome() {
         {centros.map((c) => (
           <div
             key={c.siglas}
-            className="bg-white rounded-lg shadow p-6 border border-gray-100"
+            className="bg-white rounded-lg shadow p-7 border border-gray-100"
           >
-            <i className="fa-solid fa-building-columns text-3xl text-[#be0f2e] mb-3" />
-            <h3 className="font-semibold text-lg leading-tight mb-1">{c.nombre}</h3>
-            <div className="text-xs text-gray-500 mb-3">{c.siglas}</div>
-            <div className="text-sm text-[#059f94] flex items-center gap-2">
+            <i className="fa-solid fa-building-columns text-4xl text-[#be0f2e] mb-4" />
+            <h3 className="font-semibold text-xl leading-tight mb-1">{c.nombre}</h3>
+            <div className="text-sm text-gray-500 mb-3">{c.siglas}</div>
+            <div className="text-base text-[#059f94] flex items-center gap-2">
               <i className="fa-solid fa-graduation-cap" /> {c.titulaciones} titulaciones
             </div>
             <div className="mt-3">
-              <span className="inline-block text-xs bg-[#fdf2f4] text-[#be0f2e] rounded-full px-3 py-0.5">
+              <span className="inline-block text-sm bg-[#fdf2f4] text-[#be0f2e] rounded-full px-3 py-0.5">
                 Activo
               </span>
             </div>
@@ -177,18 +177,18 @@ function ViewAsignaturas() {
     { c: 'GIIS05124', n: 'Bases de Datos', tip: 'Obligatoria', ects: 6, dur: 'C1' },
   ];
   const TipologiaTag = ({ t }) => (
-    <span className="inline-block text-[10px] bg-[#fdf2f4] text-[#be0f2e] rounded-full px-2 py-0.5">
+    <span className="inline-block text-[11px] bg-[#fdf2f4] text-[#be0f2e] rounded-full px-2 py-0.5">
       {t}
     </span>
   );
   const Card = ({ a }) => (
-    <div className="bg-white rounded-lg shadow p-4 border border-gray-100">
+    <div className="bg-white rounded-lg shadow p-5 border border-gray-100">
       <div className="flex justify-between items-start gap-2">
-        <div className="font-semibold text-sm text-gray-800 leading-tight">{a.n}</div>
+        <div className="font-semibold text-base text-gray-800 leading-tight">{a.n}</div>
         <TipologiaTag t={a.tip} />
       </div>
-      <div className="text-[11px] text-gray-500 mt-1">{a.c}</div>
-      <div className="flex gap-3 text-xs text-gray-600 mt-2">
+      <div className="text-xs text-gray-500 mt-1">{a.c}</div>
+      <div className="flex gap-3 text-sm text-gray-600 mt-2.5">
         <span><i className="fa-solid fa-award mr-1" /> {a.ects} ECTS</span>
         <span><i className="fa-solid fa-clock mr-1" /> {a.dur}</span>
       </div>
@@ -196,7 +196,7 @@ function ViewAsignaturas() {
   );
   const ActionBtn = ({ icon, label, primary }) => (
     <button
-      className={`px-3 py-2 rounded text-xs font-semibold flex items-center gap-2 ${
+      className={`px-3.5 py-2.5 rounded text-sm font-semibold flex items-center gap-2 ${
         primary
           ? 'bg-[#be0f2e] text-white shadow'
           : 'bg-white border border-gray-300 text-gray-700'
@@ -207,10 +207,10 @@ function ViewAsignaturas() {
   );
   return (
     <div className="p-10">
-      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-        <h2 className="font-display text-2xl text-gray-800">
+      <div className="flex items-center justify-between mb-7 flex-wrap gap-3">
+        <h2 className="font-display text-3xl text-gray-800">
           Asignaturas{' '}
-          <span className="ml-2 inline-block text-sm bg-[#be0f2e] text-white rounded-full px-3 py-0.5">
+          <span className="ml-2 inline-block text-base bg-[#be0f2e] text-white rounded-full px-3 py-0.5">
             48
           </span>
         </h2>
@@ -223,7 +223,7 @@ function ViewAsignaturas() {
       </div>
 
       <div className="mb-6">
-        <div className="text-sm font-semibold text-gray-700 mb-3">
+        <div className="text-base font-semibold text-gray-700 mb-3">
           <i className="fa-solid fa-layer-group mr-2 text-[#be0f2e]" /> 2º Curso (12)
         </div>
         <div className="grid grid-cols-4 gap-4">
@@ -232,7 +232,7 @@ function ViewAsignaturas() {
       </div>
 
       <div>
-        <div className="text-sm font-semibold text-gray-700 mb-3">
+        <div className="text-base font-semibold text-gray-700 mb-3">
           <i className="fa-solid fa-layer-group mr-2 text-[#be0f2e]" /> 3er Curso (12)
         </div>
         <div className="grid grid-cols-4 gap-4">
@@ -252,16 +252,16 @@ function ViewHorarios() {
   ];
   return (
     <div className="p-10">
-      <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
-        <h2 className="font-display text-2xl text-gray-800">
+      <div className="flex justify-between items-center mb-5 flex-wrap gap-3">
+        <h2 className="font-display text-3xl text-gray-800">
           Horarios por centro{' '}
-          <span className="ml-2 inline-block text-sm bg-[#be0f2e] text-white rounded-full px-3 py-0.5">
+          <span className="ml-2 inline-block text-base bg-[#be0f2e] text-white rounded-full px-3 py-0.5">
             3
           </span>
         </h2>
       </div>
 
-      <div className="bg-amber-50 border-l-4 border-amber-400 text-amber-900 px-4 py-3 rounded text-sm mb-6">
+      <div className="bg-amber-50 border-l-4 border-amber-400 text-amber-900 px-5 py-3.5 rounded text-base mb-7">
         <i className="fa-solid fa-circle-info mr-2" />
         <strong>Extracción de horarios dependiente de centro.</strong> Cada centro publica
         sus horarios en un formato distinto (PDF, web propia, etc.); para añadir un nuevo
@@ -272,22 +272,22 @@ function ViewHorarios() {
         {centros.map((c) => (
           <div
             key={c.nombre}
-            className="bg-white rounded-lg shadow p-6 border border-gray-100"
+            className="bg-white rounded-lg shadow p-7 border border-gray-100"
           >
-            <i className="fa-solid fa-clock text-3xl text-[#be0f2e] mb-3" />
-            <h3 className="font-semibold text-lg leading-tight mb-2">{c.nombre}</h3>
-            <div className="text-sm text-gray-600 flex items-center gap-2 mb-1">
+            <i className="fa-solid fa-clock text-4xl text-[#be0f2e] mb-4" />
+            <h3 className="font-semibold text-xl leading-tight mb-2">{c.nombre}</h3>
+            <div className="text-base text-gray-600 flex items-center gap-2 mb-1">
               <i className="fa-solid fa-graduation-cap" /> {c.titulaciones} titulaciones
             </div>
-            <div className="text-sm text-gray-600 flex items-center gap-2 mb-3">
+            <div className="text-base text-gray-600 flex items-center gap-2 mb-3">
               <i className="fa-solid fa-clock" /> {c.horarios} horarios
             </div>
             {c.soportado ? (
-              <button className="w-full px-3 py-2 bg-[#be0f2e] text-white rounded text-xs font-semibold flex items-center justify-center gap-2">
-                <i className="fa-solid fa-wand-magic-sparkles" /> Generar horarios
-              </button>
+              <div className="text-sm text-[#059f94] flex items-center gap-2">
+                <i className="fa-solid fa-circle-check" /> Extracción disponible
+              </div>
             ) : (
-              <div className="text-xs text-gray-400 italic">Sin extractor disponible</div>
+              <div className="text-sm text-gray-400 italic">Sin extractor disponible</div>
             )}
           </div>
         ))}
@@ -310,35 +310,35 @@ function ViewProfesores() {
   ];
   return (
     <div className="p-10">
-      <div className="flex items-center justify-between mb-4">
-        <div className="text-sm text-gray-500">
+      <div className="flex items-center justify-between mb-5">
+        <div className="text-base text-gray-500">
           Inicio › ETSII › Ingeniería del Software › <span className="text-[#be0f2e] font-semibold">Profesores</span>
         </div>
-        <button className="px-4 py-2 bg-[#be0f2e] text-white rounded text-sm font-semibold">
+        <button className="px-5 py-2.5 bg-[#be0f2e] text-white rounded text-base font-semibold">
           <i className="fa-solid fa-rotate mr-2" /> Enriquecer desde us.es
         </button>
       </div>
-      <h2 className="font-display text-xl mb-4">
+      <h2 className="font-display text-2xl mb-5">
         Departamento de Lenguajes y Sistemas Informáticos{' '}
-        <span className="ml-2 text-sm bg-[#be0f2e] text-white rounded-full px-3 py-0.5">62</span>
+        <span className="ml-2 text-base bg-[#be0f2e] text-white rounded-full px-3 py-0.5">62</span>
       </h2>
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="w-full text-sm">
+        <table className="w-full text-base">
           <thead className="bg-[#be0f2e] text-white">
             <tr>
-              <th className="px-4 py-2 text-left">Nombre</th>
-              <th className="px-4 py-2 text-left">Categoría</th>
-              <th className="px-4 py-2 text-left">Email</th>
-              <th className="px-4 py-2 text-left">Despacho</th>
+              <th className="px-4 py-3 text-left">Nombre</th>
+              <th className="px-4 py-3 text-left">Categoría</th>
+              <th className="px-4 py-3 text-left">Email</th>
+              <th className="px-4 py-3 text-left">Despacho</th>
             </tr>
           </thead>
           <tbody>
             {profes.map((p, i) => (
               <tr key={i} className="border-t border-gray-100 hover:bg-gray-50">
-                <td className="px-4 py-2 font-medium text-gray-800">{p.n}</td>
-                <td className="px-4 py-2 text-gray-600">{p.cat}</td>
-                <td className="px-4 py-2 text-[#be0f2e]">{p.email}</td>
-                <td className="px-4 py-2 text-gray-700">{p.desp}</td>
+                <td className="px-4 py-2.5 font-medium text-gray-800">{p.n}</td>
+                <td className="px-4 py-2.5 text-gray-600">{p.cat}</td>
+                <td className="px-4 py-2.5 text-[#be0f2e]">{p.email}</td>
+                <td className="px-4 py-2.5 text-gray-700">{p.desp}</td>
               </tr>
             ))}
           </tbody>
@@ -360,25 +360,25 @@ function ViewConversaciones() {
   ];
   return (
     <div className="p-10">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="font-display text-2xl">
-          Conversaciones <span className="ml-2 text-sm bg-[#be0f2e] text-white rounded-full px-3 py-0.5">72 sesiones</span>
+      <div className="flex justify-between items-center mb-7">
+        <h2 className="font-display text-3xl">
+          Conversaciones <span className="ml-2 text-base bg-[#be0f2e] text-white rounded-full px-3 py-0.5">72 sesiones</span>
         </h2>
-        <button className="px-4 py-2 bg-[#be0f2e] text-white rounded text-sm font-semibold">
+        <button className="px-5 py-2.5 bg-[#be0f2e] text-white rounded text-base font-semibold">
           <i className="fa-solid fa-download mr-2" /> Exportar esta página
         </button>
       </div>
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="w-full text-sm">
+        <table className="w-full text-base">
           <thead className="bg-[#be0f2e] text-white">
             <tr>
-              <th className="px-3 py-2 w-8"><i className="fa-solid fa-check" /></th>
-              <th className="px-3 py-2 text-left">Sesión</th>
-              <th className="px-3 py-2 text-left">Mensajes</th>
-              <th className="px-3 py-2 text-left">Primer mensaje</th>
-              <th className="px-3 py-2 text-left">Último mensaje</th>
-              <th className="px-3 py-2 text-left">Inicio</th>
-              <th className="px-3 py-2 text-left">Duración</th>
+              <th className="px-3 py-3 w-8"><i className="fa-solid fa-check" /></th>
+              <th className="px-3 py-3 text-left">Sesión</th>
+              <th className="px-3 py-3 text-left">Mensajes</th>
+              <th className="px-3 py-3 text-left">Primer mensaje</th>
+              <th className="px-3 py-3 text-left">Último mensaje</th>
+              <th className="px-3 py-3 text-left">Inicio</th>
+              <th className="px-3 py-3 text-left">Duración</th>
             </tr>
           </thead>
           <tbody>
@@ -389,15 +389,15 @@ function ViewConversaciones() {
                   s.revisada ? 'bg-green-50' : 'hover:bg-gray-50'
                 }`}
               >
-                <td className="px-3 py-2">
+                <td className="px-3 py-2.5">
                   <input type="checkbox" defaultChecked={s.revisada} readOnly />
                 </td>
-                <td className="px-3 py-2 font-mono text-gray-700">{s.id}</td>
-                <td className="px-3 py-2 font-bold text-center">{s.n}</td>
-                <td className="px-3 py-2 text-gray-700">{s.primero}</td>
-                <td className={`px-3 py-2 ${s.revisada ? 'text-gray-400 line-through' : 'text-gray-800'}`}>{s.ultimo}</td>
-                <td className="px-3 py-2 text-gray-600">{s.inicio}</td>
-                <td className="px-3 py-2 text-gray-600">{s.dur}</td>
+                <td className="px-3 py-2.5 font-mono text-gray-700">{s.id}</td>
+                <td className="px-3 py-2.5 font-bold text-center">{s.n}</td>
+                <td className="px-3 py-2.5 text-gray-700">{s.primero}</td>
+                <td className={`px-3 py-2.5 ${s.revisada ? 'text-gray-400 line-through' : 'text-gray-800'}`}>{s.ultimo}</td>
+                <td className="px-3 py-2.5 text-gray-600">{s.inicio}</td>
+                <td className="px-3 py-2.5 text-gray-600">{s.dur}</td>
               </tr>
             ))}
           </tbody>
@@ -423,7 +423,7 @@ function ViewStats() {
   ];
   return (
     <div className="p-10">
-      <h2 className="font-display text-3xl mb-8">Estadísticas generales</h2>
+      <h2 className="font-display text-4xl mb-9">Estadísticas generales</h2>
       <div className="grid grid-cols-5 gap-5">
         {stats.map((s, i) => (
           <motion.div
@@ -431,10 +431,10 @@ function ViewStats() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.06 }}
-            className="bg-white rounded-lg shadow p-6 text-center border border-gray-100"
+            className="bg-white rounded-lg shadow p-7 text-center border border-gray-100"
           >
-            <div className="text-4xl font-display font-bold text-[#be0f2e]">{s.v}</div>
-            <div className="text-xs text-gray-500 mt-2 flex items-center justify-center gap-1.5">
+            <div className="text-5xl font-display font-bold text-[#be0f2e]">{s.v}</div>
+            <div className="text-sm text-gray-500 mt-3 flex items-center justify-center gap-1.5">
               <i className={`fa-solid ${s.icon}`} /> {s.label.toUpperCase()}
             </div>
           </motion.div>

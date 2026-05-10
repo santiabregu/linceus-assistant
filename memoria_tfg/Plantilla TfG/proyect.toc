@@ -2,334 +2,341 @@
 \contentsline {chapter}{Agradecimientos}{2}{chapter*.1}%
 \contentsline {chapter}{Resumen}{3}{chapter*.2}%
 \contentsline {chapter}{Abstract}{4}{chapter*.3}%
-\contentsline {part}{I\hspace {1em}Introducción y Conceptos}{15}{part.1}%
-\contentsline {chapter}{\numberline {1}Introducción}{16}{chapter.1}%
-\contentsline {section}{\numberline {1.1}Contexto}{16}{section.1.1}%
-\contentsline {section}{\numberline {1.2}Motivación}{16}{section.1.2}%
-\contentsline {section}{\numberline {1.3}Objetivos}{17}{section.1.3}%
-\contentsline {subsection}{\numberline {1.3.1}Objetivo general}{17}{subsection.1.3.1}%
-\contentsline {subsection}{\numberline {1.3.2}Objetivos técnicos}{17}{subsection.1.3.2}%
-\contentsline {subsection}{\numberline {1.3.3}Objetivos académicos y personales}{18}{subsection.1.3.3}%
-\contentsline {section}{\numberline {1.4}Soluciones existentes}{18}{section.1.4}%
-\contentsline {subsection}{\numberline {1.4.1}Asistentes en universidades españolas}{18}{subsection.1.4.1}%
-\contentsline {subsection}{\numberline {1.4.2}Plataformas internacionales}{19}{subsection.1.4.2}%
-\contentsline {subsection}{\numberline {1.4.3}Trabajos académicos comparables}{19}{subsection.1.4.3}%
-\contentsline {subsection}{\numberline {1.4.4}Comparativa y diferenciación}{20}{subsection.1.4.4}%
-\contentsline {section}{\numberline {1.5}Estructura de la memoria}{21}{section.1.5}%
-\contentsline {chapter}{\numberline {2}Preparación del proyecto}{23}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Estudio de las tecnologías y toma de decisiones}{23}{section.2.1}%
-\contentsline {subsection}{\numberline {2.1.1}Decisión de frameworks conversacionales}{23}{subsection.2.1.1}%
-\contentsline {subsubsection}{Frameworks analizados}{23}{subsubsection*.4}%
-\contentsline {subsubsection}{Comparación detallada}{23}{subsubsection*.5}%
-\contentsline {paragraph}{Flujo conversacional}{23}{paragraph*.6}%
-\contentsline {paragraph}{Testing}{24}{paragraph*.7}%
-\contentsline {paragraph}{Compatibilidad con RAG y embeddings}{24}{paragraph*.8}%
-\contentsline {paragraph}{Despliegue local y privacidad}{24}{paragraph*.9}%
-\contentsline {paragraph}{Comunidad y documentación}{25}{paragraph*.10}%
-\contentsline {subsubsection}{Decisión final}{25}{subsubsection*.11}%
-\contentsline {subsubsection}{Tabla de comparación detallada de frameworks}{25}{subsubsection*.12}%
-\contentsline {subsection}{\numberline {2.1.2}Decisión de base de datos}{25}{subsection.2.1.2}%
-\contentsline {subsubsection}{Bases de Datos analizadas}{25}{subsubsection*.13}%
-\contentsline {subsubsection}{Comparación detallada}{26}{subsubsection*.14}%
-\contentsline {paragraph}{Modelo de datos}{26}{paragraph*.15}%
-\contentsline {paragraph}{Búsqueda vectorial}{26}{paragraph*.16}%
-\contentsline {paragraph}{Despliegue local y facilidad}{26}{paragraph*.17}%
-\contentsline {paragraph}{Seguridad y RGPD}{26}{paragraph*.18}%
-\contentsline {paragraph}{Comunidad y documentación}{27}{paragraph*.19}%
-\contentsline {subsubsection}{Decisión final}{27}{subsubsection*.20}%
-\contentsline {subsubsection}{Tabla de comparación de bases de datos}{27}{subsubsection*.21}%
-\contentsline {subsection}{\numberline {2.1.3}Decisión de API de LLM}{29}{subsection.2.1.3}%
-\contentsline {subsubsection}{APIs analizadas}{29}{subsubsection*.22}%
-\contentsline {subsubsection}{Comparación detallada}{29}{subsubsection*.23}%
-\contentsline {paragraph}{Coste y accesibilidad}{29}{paragraph*.24}%
-\contentsline {paragraph}{Calidad y rendimiento}{29}{paragraph*.25}%
-\contentsline {paragraph}{Integración y soporte técnico}{30}{paragraph*.26}%
-\contentsline {paragraph}{Privacidad y cumplimiento (RGPD)}{30}{paragraph*.27}%
-\contentsline {subsubsection}{Decisión final}{30}{subsubsection*.28}%
-\contentsline {subsubsection}{Tabla de comparación detallada de APIs de LLM}{31}{subsubsection*.29}%
-\contentsline {section}{\numberline {2.2}Infraestructura del sistema}{31}{section.2.2}%
-\contentsline {subsection}{\numberline {2.2.1}Arquitectura del sistema}{32}{subsection.2.2.1}%
-\contentsline {subsection}{\numberline {2.2.2}Componentes tecnológicos del sistema}{32}{subsection.2.2.2}%
-\contentsline {section}{\numberline {2.3}Casos de uso principales}{32}{section.2.3}%
-\contentsline {subsection}{\numberline {2.3.1}Gestión del contexto académico}{33}{subsection.2.3.1}%
-\contentsline {subsubsection}{Establecer o cambiar la titulación activa}{33}{subsubsection*.30}%
-\contentsline {subsubsection}{Consultar y reiniciar el contexto}{33}{subsubsection*.31}%
-\contentsline {subsubsection}{Consultar las titulaciones disponibles}{33}{subsubsection*.32}%
-\contentsline {subsection}{\numberline {2.3.2}Consulta sobre información de asignaturas}{33}{subsection.2.3.2}%
-\contentsline {subsubsection}{Consultar datos estructurales de una asignatura}{33}{subsubsection*.33}%
-\contentsline {subsubsection}{Consultar contenido del plan docente}{34}{subsubsection*.34}%
-\contentsline {subsubsection}{Listado y conteo de asignaturas}{34}{subsubsection*.35}%
-\contentsline {subsection}{\numberline {2.3.3}Consulta sobre horarios}{34}{subsection.2.3.3}%
-\contentsline {subsubsection}{Consultar horario por asignatura}{34}{subsubsection*.36}%
-\contentsline {subsubsection}{Consultar horario por curso y grupo}{34}{subsubsection*.37}%
-\contentsline {subsubsection}{Consultar horario por día}{34}{subsubsection*.38}%
-\contentsline {subsection}{\numberline {2.3.4}Consulta sobre datos de contacto del profesorado}{35}{subsection.2.3.4}%
-\contentsline {subsubsection}{Consultar despacho, correo y categoría académica}{35}{subsubsection*.39}%
-\contentsline {subsubsection}{Consultar tutorías de un profesor}{35}{subsubsection*.40}%
-\contentsline {subsubsection}{Búsqueda de profesores por asignatura o departamento}{35}{subsubsection*.41}%
-\contentsline {chapter}{\numberline {3}Conceptos iniciales}{36}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Sistema conversacional}{36}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Componentes del sistema conversacional con Rasa}{36}{section.3.2}%
-\contentsline {subsection}{\numberline {3.2.1}Comprensión del lenguaje natural (NLU)}{36}{subsection.3.2.1}%
-\contentsline {paragraph}{Intent}{36}{paragraph*.42}%
-\contentsline {paragraph}{Entity}{36}{paragraph*.43}%
-\contentsline {subsection}{\numberline {3.2.2}Gestión del diálogo}{37}{subsection.3.2.2}%
-\contentsline {paragraph}{Slot}{37}{paragraph*.44}%
-\contentsline {paragraph}{Tracker}{37}{paragraph*.45}%
-\contentsline {subsection}{\numberline {3.2.3}Mecanismos de respuesta: actions}{37}{subsection.3.2.3}%
-\contentsline {subsection}{\numberline {3.2.4}Formularios}{37}{subsection.3.2.4}%
-\contentsline {subsection}{\numberline {3.2.5}Fallback}{37}{subsection.3.2.5}%
-\contentsline {section}{\numberline {3.3}Archivos de configuración de Rasa}{37}{section.3.3}%
-\contentsline {section}{\numberline {3.4}Flujo de procesamiento de un mensaje}{38}{section.3.4}%
-\contentsline {section}{\numberline {3.5}Generación aumentada por recuperación (RAG)}{38}{section.3.5}%
-\contentsline {section}{\numberline {3.6}Backend y persistencia de datos}{38}{section.3.6}%
-\contentsline {subsection}{\numberline {3.6.1}Supabase y PostgreSQL}{38}{subsection.3.6.1}%
-\contentsline {subsection}{\numberline {3.6.2}pgvector}{39}{subsection.3.6.2}%
-\contentsline {subsection}{\numberline {3.6.3}Embeddings}{39}{subsection.3.6.3}%
-\contentsline {part}{II\hspace {1em}Metodología y Planificación}{40}{part.2}%
-\contentsline {chapter}{\numberline {4}Metodología}{41}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Metodología de desarrollo: Scrum adaptado}{41}{section.4.1}%
-\contentsline {subsection}{\numberline {4.1.1}Scrum: fundamentos}{41}{subsection.4.1.1}%
-\contentsline {subsection}{\numberline {4.1.2}Adaptación al proyecto individual}{41}{subsection.4.1.2}%
-\contentsline {subsection}{\numberline {4.1.3}Sprints, número y duración}{42}{subsection.4.1.3}%
-\contentsline {section}{\numberline {4.2}Gestión del código fuente}{42}{section.4.2}%
-\contentsline {subsection}{\numberline {4.2.1}Política de ramas}{42}{subsection.4.2.1}%
-\contentsline {subsection}{\numberline {4.2.2}Convenciones de commits}{42}{subsection.4.2.2}%
-\contentsline {section}{\numberline {4.3}Estándares de codificación}{43}{section.4.3}%
-\contentsline {section}{\numberline {4.4}Política de delegación al modelo de lenguaje}{43}{section.4.4}%
-\contentsline {subsection}{\numberline {4.4.1}Criterio: heurísticas baratas primero, LLM cuando aporta}{43}{subsection.4.4.1}%
-\contentsline {subsection}{\numberline {4.4.2}Aplicación en el sistema}{44}{subsection.4.4.2}%
-\contentsline {subsection}{\numberline {4.4.3}Limitaciones conocidas}{44}{subsection.4.4.3}%
-\contentsline {section}{\numberline {4.5}Gestión del trabajo}{45}{section.4.5}%
-\contentsline {section}{\numberline {4.6}Versionado del sistema}{45}{section.4.6}%
-\contentsline {chapter}{\numberline {5}Planificación}{46}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Estructura de Descomposición del Trabajo (EDT)}{46}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Diccionario EDT}{46}{section.5.2}%
-\contentsline {subsection}{\numberline {5.2.1}Fase 1:Inicio}{46}{subsection.5.2.1}%
-\contentsline {subsubsection}{1.1: Gestión del proyecto}{46}{subsubsection*.46}%
-\contentsline {subsubsection}{1.2: Investigación tecnológica}{46}{subsubsection*.47}%
-\contentsline {subsubsection}{1.3: Diseño de la arquitectura}{48}{subsubsection*.48}%
-\contentsline {subsection}{\numberline {5.2.2}Fase 2:Desarrollo}{48}{subsection.5.2.2}%
-\contentsline {subsubsection}{2.1: Épica Asignaturas}{48}{subsubsection*.49}%
-\contentsline {subsubsection}{2.2: Épica Profesores}{48}{subsubsection*.50}%
-\contentsline {subsubsection}{2.3: Épica Horarios}{49}{subsubsection*.51}%
-\contentsline {subsubsection}{2.4: Pipeline RAG}{49}{subsubsection*.52}%
-\contentsline {subsubsection}{2.5: Panel admin y frontend}{49}{subsubsection*.53}%
-\contentsline {subsection}{\numberline {5.2.3}Fase 3:Cierre}{49}{subsection.5.2.3}%
-\contentsline {subsubsection}{3.1: Validación y testing}{51}{subsubsection*.54}%
-\contentsline {subsubsection}{3.2: Piloto con usuarios}{51}{subsubsection*.55}%
-\contentsline {subsubsection}{3.3: Despliegue en producción}{51}{subsubsection*.56}%
-\contentsline {subsubsection}{3.4: Memoria y defensa}{52}{subsubsection*.57}%
-\contentsline {section}{\numberline {5.3}Resumen cuantitativo de la EDT}{52}{section.5.3}%
-\contentsline {section}{\numberline {5.4}Backlog del producto}{52}{section.5.4}%
-\contentsline {section}{\numberline {5.5}Planificación temporal}{53}{section.5.5}%
-\contentsline {subsection}{\numberline {5.5.1}Estimación inicial por fase}{53}{subsection.5.5.1}%
-\contentsline {subsection}{\numberline {5.5.2}Planificación de sprints}{53}{subsection.5.5.2}%
-\contentsline {subsection}{\numberline {5.5.3}Cronograma e hitos}{53}{subsection.5.5.3}%
-\contentsline {section}{\numberline {5.6}Planificación de costes}{55}{section.5.6}%
-\contentsline {subsection}{\numberline {5.6.1}Costes de personal}{55}{subsection.5.6.1}%
-\contentsline {subsection}{\numberline {5.6.2}Costes de material e infraestructura}{55}{subsection.5.6.2}%
-\contentsline {subsubsection}{Alojamiento: DigitalOcean}{55}{subsubsection*.58}%
-\contentsline {subsubsection}{Base de datos: Supabase}{55}{subsubsection*.59}%
-\contentsline {subsubsection}{Modelo de lenguaje: Gemini / Gemma}{56}{subsubsection*.60}%
-\contentsline {paragraph}{Límites de uso y dimensionado.}{56}{paragraph*.61}%
-\contentsline {paragraph}{Estrategia de evolución del modelo.}{56}{paragraph*.62}%
-\contentsline {paragraph}{Riesgo de cambios de política.}{56}{paragraph*.63}%
-\contentsline {subsubsection}{Coste actual de explotación}{57}{subsubsection*.64}%
-\contentsline {subsubsection}{Escenarios de escalado}{57}{subsubsection*.65}%
-\contentsline {subsection}{\numberline {5.6.3}Resumen de costes y contingencias}{57}{subsection.5.6.3}%
-\contentsline {section}{\numberline {5.7}Análisis de desviaciones}{58}{section.5.7}%
-\contentsline {subsection}{\numberline {5.7.1}Desviación temporal}{58}{subsection.5.7.1}%
-\contentsline {subsection}{\numberline {5.7.2}Desviación en costes}{58}{subsection.5.7.2}%
-\contentsline {subsection}{\numberline {5.7.3}Lecciones aprendidas}{58}{subsection.5.7.3}%
-\contentsline {part}{III\hspace {1em}Diseño e Implementación}{60}{part.3}%
-\contentsline {chapter}{\numberline {6}Análisis de requisitos}{61}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Identificación de actores}{61}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Requisitos funcionales}{62}{section.6.2}%
-\contentsline {subsection}{\numberline {6.2.1}Dominio de asignaturas}{62}{subsection.6.2.1}%
-\contentsline {subsection}{\numberline {6.2.2}Dominio de horarios}{62}{subsection.6.2.2}%
-\contentsline {subsection}{\numberline {6.2.3}Dominio de profesorado}{64}{subsection.6.2.3}%
-\contentsline {subsection}{\numberline {6.2.4}Comportamientos transversales}{64}{subsection.6.2.4}%
-\contentsline {subsection}{\numberline {6.2.5}Funcionalidades del panel de administración}{64}{subsection.6.2.5}%
-\contentsline {section}{\numberline {6.3}Requisitos de información}{64}{section.6.3}%
-\contentsline {subsection}{\numberline {6.3.1}Entidades de dominio}{64}{subsection.6.3.1}%
-\contentsline {subsection}{\numberline {6.3.2}Entidades del módulo RAG}{64}{subsection.6.3.2}%
-\contentsline {subsection}{\numberline {6.3.3}Entidades de operación}{66}{subsection.6.3.3}%
-\contentsline {section}{\numberline {6.4}Requisitos no funcionales}{66}{section.6.4}%
-\contentsline {section}{\numberline {6.5}Prototipos de interfaz}{67}{section.6.5}%
-\contentsline {section}{\numberline {6.6}Evolución del alcance respecto a la propuesta inicial}{67}{section.6.6}%
-\contentsline {chapter}{\numberline {7}Arquitectura del sistema y decisiones de diseño}{70}{chapter.7}%
-\contentsline {section}{\numberline {7.1}Arquitectura general}{70}{section.7.1}%
-\contentsline {subsection}{\numberline {7.1.1}Capa de presentación}{70}{subsection.7.1.1}%
-\contentsline {subsection}{\numberline {7.1.2}Capa de procesamiento conversacional}{70}{subsection.7.1.2}%
-\contentsline {subsection}{\numberline {7.1.3}Capa de datos}{71}{subsection.7.1.3}%
-\contentsline {section}{\numberline {7.2}Diagrama de componentes}{71}{section.7.2}%
-\contentsline {section}{\numberline {7.3}Diagrama de despliegue}{73}{section.7.3}%
-\contentsline {subsection}{\numberline {7.3.1}Nodos de ejecución}{73}{subsection.7.3.1}%
-\contentsline {subsection}{\numberline {7.3.2}Protocolos de comunicación}{75}{subsection.7.3.2}%
-\contentsline {section}{\numberline {7.4}Decisiones de diseño}{75}{section.7.4}%
-\contentsline {subsection}{\numberline {7.4.1}Text-to-SQL con LLM en lugar de reglas estáticas}{75}{subsection.7.4.1}%
-\contentsline {subsection}{\numberline {7.4.2}Gemini como servicio principal con Ollama como alternativa local}{76}{subsection.7.4.2}%
-\contentsline {subsection}{\numberline {7.4.3}Embeddings de 2000 dimensiones con HNSW}{76}{subsection.7.4.3}%
-\contentsline {subsection}{\numberline {7.4.4}Chunking con solapamiento para preservar contexto}{76}{subsection.7.4.4}%
-\contentsline {subsection}{\numberline {7.4.5}Búsqueda vectorial con fallback a búsqueda por palabras clave}{77}{subsection.7.4.5}%
-\contentsline {subsection}{\numberline {7.4.6}Fuzzy matching para resolución de nombres}{77}{subsection.7.4.6}%
-\contentsline {subsection}{\numberline {7.4.7}Slots conversacionales para memoria de contexto}{77}{subsection.7.4.7}%
-\contentsline {subsection}{\numberline {7.4.8}Pipeline NLU de 9 etapas con doble featurización}{78}{subsection.7.4.8}%
-\contentsline {subsection}{\numberline {7.4.9}Hash SHA-256 para evitar reprocesamiento de documentos}{79}{subsection.7.4.9}%
-\contentsline {section}{\numberline {7.5}Patrones arquitectónicos aplicados}{79}{section.7.5}%
-\contentsline {subsection}{\numberline {7.5.1}Arquitectura por capas (\textit {Layered Architecture})}{79}{subsection.7.5.1}%
-\contentsline {subsection}{\numberline {7.5.2}Patrón \textit {Action Server} (microservicio de lógica)}{79}{subsection.7.5.2}%
-\contentsline {subsection}{\numberline {7.5.3}Patrón \textit {Strategy} para clientes LLM}{79}{subsection.7.5.3}%
-\contentsline {subsection}{\numberline {7.5.4}Patrón \textit {Pipeline} para procesamiento RAG}{79}{subsection.7.5.4}%
-\contentsline {subsection}{\numberline {7.5.5}Patrón \textit {Repository} para acceso a datos}{80}{subsection.7.5.5}%
-\contentsline {chapter}{\numberline {8}Marco tecnológico}{81}{chapter.8}%
-\contentsline {section}{\numberline {8.1}Tecnologías de procesamiento conversacional}{81}{section.8.1}%
-\contentsline {subsection}{\numberline {8.1.1}Rasa Framework}{81}{subsection.8.1.1}%
-\contentsline {subsubsection}{Componentes de Rasa utilizados}{81}{subsubsection*.66}%
-\contentsline {subsection}{\numberline {8.1.2}Procesamiento de Lenguaje Natural}{82}{subsection.8.1.2}%
-\contentsline {subsubsection}{spaCy}{82}{subsubsection*.67}%
-\contentsline {subsubsection}{Coincidencia difusa (Fuzzy Matching)}{82}{subsubsection*.68}%
-\contentsline {section}{\numberline {8.2}Tecnologías de Inteligencia Artificial}{82}{section.8.2}%
-\contentsline {subsection}{\numberline {8.2.1}Google Gemini como modelo de lenguaje principal}{82}{subsection.8.2.1}%
-\contentsline {subsection}{\numberline {8.2.2}Ollama como alternativa local opcional}{83}{subsection.8.2.2}%
-\contentsline {subsection}{\numberline {8.2.3}Embeddings y búsqueda semántica (RAG)}{83}{subsection.8.2.3}%
-\contentsline {section}{\numberline {8.3}Tecnologías de base de datos}{83}{section.8.3}%
-\contentsline {subsection}{\numberline {8.3.1}PostgreSQL y Supabase}{83}{subsection.8.3.1}%
-\contentsline {subsection}{\numberline {8.3.2}pgvector}{84}{subsection.8.3.2}%
-\contentsline {section}{\numberline {8.4}Tecnologías de frontend}{84}{section.8.4}%
-\contentsline {subsection}{\numberline {8.4.1}Widget de chat}{84}{subsection.8.4.1}%
-\contentsline {subsection}{\numberline {8.4.2}Panel de administración}{84}{subsection.8.4.2}%
-\contentsline {subsection}{\numberline {8.4.3}Servidor web}{84}{subsection.8.4.3}%
-\contentsline {section}{\numberline {8.5}Herramientas de desarrollo}{84}{section.8.5}%
-\contentsline {subsection}{\numberline {8.5.1}Control de versiones}{84}{subsection.8.5.1}%
-\contentsline {subsection}{\numberline {8.5.2}Gestión de dependencias}{85}{subsection.8.5.2}%
-\contentsline {subsection}{\numberline {8.5.3}Variables de entorno}{85}{subsection.8.5.3}%
-\contentsline {section}{\numberline {8.6}Consideraciones de seguridad}{85}{section.8.6}%
-\contentsline {subsection}{\numberline {8.6.1}Protección de datos}{85}{subsection.8.6.1}%
-\contentsline {subsection}{\numberline {8.6.2}Validación de entrada}{85}{subsection.8.6.2}%
-\contentsline {subsection}{\numberline {8.6.3}Aislamiento del proveedor de LLM}{85}{subsection.8.6.3}%
-\contentsline {section}{\numberline {8.7}Stack tecnológico completo}{85}{section.8.7}%
-\contentsline {chapter}{\numberline {9}Estructura del proyecto}{87}{chapter.9}%
-\contentsline {section}{\numberline {9.1}Visión general del repositorio}{87}{section.9.1}%
+\contentsline {part}{I\hspace {1em}Introducción y Conceptos}{16}{part.1}%
+\contentsline {chapter}{\numberline {1}Introducción}{17}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Contexto}{17}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Motivación}{17}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Objetivos}{18}{section.1.3}%
+\contentsline {subsection}{\numberline {1.3.1}Objetivo general}{18}{subsection.1.3.1}%
+\contentsline {subsection}{\numberline {1.3.2}Objetivos técnicos}{18}{subsection.1.3.2}%
+\contentsline {subsection}{\numberline {1.3.3}Objetivos académicos y personales}{19}{subsection.1.3.3}%
+\contentsline {section}{\numberline {1.4}Soluciones existentes}{19}{section.1.4}%
+\contentsline {subsection}{\numberline {1.4.1}Asistentes en universidades españolas}{19}{subsection.1.4.1}%
+\contentsline {subsection}{\numberline {1.4.2}Plataformas internacionales}{20}{subsection.1.4.2}%
+\contentsline {subsection}{\numberline {1.4.3}Trabajos académicos comparables}{20}{subsection.1.4.3}%
+\contentsline {subsection}{\numberline {1.4.4}Comparativa y diferenciación}{21}{subsection.1.4.4}%
+\contentsline {section}{\numberline {1.5}Estructura de la memoria}{22}{section.1.5}%
+\contentsline {chapter}{\numberline {2}Preparación del proyecto}{24}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Estudio de las tecnologías y toma de decisiones}{24}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}Decisión de frameworks conversacionales}{24}{subsection.2.1.1}%
+\contentsline {subsubsection}{Frameworks analizados}{24}{subsubsection*.4}%
+\contentsline {subsubsection}{Comparación detallada}{24}{subsubsection*.5}%
+\contentsline {paragraph}{Flujo conversacional}{24}{paragraph*.6}%
+\contentsline {paragraph}{Testing}{25}{paragraph*.7}%
+\contentsline {paragraph}{Compatibilidad con RAG y embeddings}{25}{paragraph*.8}%
+\contentsline {paragraph}{Despliegue local y privacidad}{25}{paragraph*.9}%
+\contentsline {paragraph}{Comunidad y documentación}{26}{paragraph*.10}%
+\contentsline {subsubsection}{Decisión final}{26}{subsubsection*.11}%
+\contentsline {subsubsection}{Tabla de comparación detallada de frameworks}{26}{subsubsection*.12}%
+\contentsline {subsection}{\numberline {2.1.2}Decisión de base de datos}{26}{subsection.2.1.2}%
+\contentsline {subsubsection}{Bases de Datos analizadas}{26}{subsubsection*.13}%
+\contentsline {subsubsection}{Comparación detallada}{27}{subsubsection*.14}%
+\contentsline {paragraph}{Modelo de datos}{27}{paragraph*.15}%
+\contentsline {paragraph}{Búsqueda vectorial}{27}{paragraph*.16}%
+\contentsline {paragraph}{Despliegue local y facilidad}{27}{paragraph*.17}%
+\contentsline {paragraph}{Seguridad y RGPD}{27}{paragraph*.18}%
+\contentsline {paragraph}{Comunidad y documentación}{28}{paragraph*.19}%
+\contentsline {subsubsection}{Decisión final}{28}{subsubsection*.20}%
+\contentsline {subsubsection}{Tabla de comparación de bases de datos}{28}{subsubsection*.21}%
+\contentsline {subsection}{\numberline {2.1.3}Decisión de API de LLM}{30}{subsection.2.1.3}%
+\contentsline {subsubsection}{APIs analizadas}{30}{subsubsection*.22}%
+\contentsline {subsubsection}{Comparación detallada}{30}{subsubsection*.23}%
+\contentsline {paragraph}{Coste y accesibilidad}{30}{paragraph*.24}%
+\contentsline {paragraph}{Calidad y rendimiento}{30}{paragraph*.25}%
+\contentsline {paragraph}{Integración y soporte técnico}{31}{paragraph*.26}%
+\contentsline {paragraph}{Privacidad y cumplimiento (RGPD)}{31}{paragraph*.27}%
+\contentsline {subsubsection}{Decisión final}{31}{subsubsection*.28}%
+\contentsline {subsubsection}{Tabla de comparación detallada de APIs de LLM}{32}{subsubsection*.29}%
+\contentsline {section}{\numberline {2.2}Infraestructura del sistema}{32}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Arquitectura del sistema}{33}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Componentes tecnológicos del sistema}{33}{subsection.2.2.2}%
+\contentsline {section}{\numberline {2.3}Casos de uso principales}{33}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Gestión del contexto académico}{34}{subsection.2.3.1}%
+\contentsline {subsubsection}{Establecer o cambiar la titulación activa}{34}{subsubsection*.30}%
+\contentsline {subsubsection}{Consultar y reiniciar el contexto}{34}{subsubsection*.31}%
+\contentsline {subsubsection}{Consultar las titulaciones disponibles}{34}{subsubsection*.32}%
+\contentsline {subsection}{\numberline {2.3.2}Consulta sobre información de asignaturas}{34}{subsection.2.3.2}%
+\contentsline {subsubsection}{Consultar datos estructurales de una asignatura}{34}{subsubsection*.33}%
+\contentsline {subsubsection}{Consultar contenido del plan docente}{35}{subsubsection*.34}%
+\contentsline {subsubsection}{Listado y conteo de asignaturas}{35}{subsubsection*.35}%
+\contentsline {subsection}{\numberline {2.3.3}Consulta sobre horarios}{35}{subsection.2.3.3}%
+\contentsline {subsubsection}{Consultar horario por asignatura}{35}{subsubsection*.36}%
+\contentsline {subsubsection}{Consultar horario por curso y grupo}{35}{subsubsection*.37}%
+\contentsline {subsubsection}{Consultar horario por día}{35}{subsubsection*.38}%
+\contentsline {subsection}{\numberline {2.3.4}Consulta sobre datos de contacto del profesorado}{36}{subsection.2.3.4}%
+\contentsline {subsubsection}{Consultar despacho, correo y categoría académica}{36}{subsubsection*.39}%
+\contentsline {subsubsection}{Consultar tutorías de un profesor}{36}{subsubsection*.40}%
+\contentsline {subsubsection}{Búsqueda de profesores por asignatura o departamento}{36}{subsubsection*.41}%
+\contentsline {chapter}{\numberline {3}Conceptos iniciales}{37}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Sistema conversacional}{37}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Componentes del sistema conversacional con Rasa}{37}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Comprensión del lenguaje natural (NLU)}{37}{subsection.3.2.1}%
+\contentsline {paragraph}{Intent}{37}{paragraph*.42}%
+\contentsline {paragraph}{Entity}{37}{paragraph*.43}%
+\contentsline {subsection}{\numberline {3.2.2}Gestión del diálogo}{38}{subsection.3.2.2}%
+\contentsline {paragraph}{Slot}{38}{paragraph*.44}%
+\contentsline {paragraph}{Tracker}{38}{paragraph*.45}%
+\contentsline {subsection}{\numberline {3.2.3}Mecanismos de respuesta: actions}{38}{subsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.2.4}Formularios}{38}{subsection.3.2.4}%
+\contentsline {subsection}{\numberline {3.2.5}Fallback}{38}{subsection.3.2.5}%
+\contentsline {section}{\numberline {3.3}Archivos de configuración de Rasa}{38}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Flujo de procesamiento de un mensaje}{39}{section.3.4}%
+\contentsline {section}{\numberline {3.5}Generación aumentada por recuperación (RAG)}{39}{section.3.5}%
+\contentsline {section}{\numberline {3.6}Backend y persistencia de datos}{39}{section.3.6}%
+\contentsline {subsection}{\numberline {3.6.1}Supabase y PostgreSQL}{39}{subsection.3.6.1}%
+\contentsline {subsection}{\numberline {3.6.2}pgvector}{40}{subsection.3.6.2}%
+\contentsline {subsection}{\numberline {3.6.3}Embeddings}{40}{subsection.3.6.3}%
+\contentsline {part}{II\hspace {1em}Metodología y Planificación}{41}{part.2}%
+\contentsline {chapter}{\numberline {4}Metodología}{42}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Metodología de desarrollo: Scrum adaptado}{42}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Scrum: fundamentos}{42}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Adaptación al proyecto individual}{42}{subsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.1.3}Sprints, número y duración}{43}{subsection.4.1.3}%
+\contentsline {section}{\numberline {4.2}Gestión del código fuente}{43}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Política de ramas}{43}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Convenciones de commits}{43}{subsection.4.2.2}%
+\contentsline {section}{\numberline {4.3}Estándares de codificación}{44}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Política de delegación al modelo de lenguaje}{44}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Criterio: heurísticas baratas primero, LLM cuando aporta}{44}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Aplicación en el sistema}{45}{subsection.4.4.2}%
+\contentsline {subsection}{\numberline {4.4.3}Limitaciones conocidas}{45}{subsection.4.4.3}%
+\contentsline {section}{\numberline {4.5}Gestión del trabajo}{46}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Versionado del sistema}{46}{section.4.6}%
+\contentsline {chapter}{\numberline {5}Planificación}{47}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Estructura de Descomposición del Trabajo (EDT)}{47}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Diccionario EDT}{47}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Fase 1:Inicio}{47}{subsection.5.2.1}%
+\contentsline {subsubsection}{1.1: Gestión del proyecto}{47}{subsubsection*.46}%
+\contentsline {subsubsection}{1.2: Investigación tecnológica}{47}{subsubsection*.47}%
+\contentsline {subsubsection}{1.3: Diseño de la arquitectura}{49}{subsubsection*.48}%
+\contentsline {subsection}{\numberline {5.2.2}Fase 2:Desarrollo}{49}{subsection.5.2.2}%
+\contentsline {subsubsection}{2.1: Épica Asignaturas}{49}{subsubsection*.49}%
+\contentsline {subsubsection}{2.2: Épica Profesores}{49}{subsubsection*.50}%
+\contentsline {subsubsection}{2.3: Épica Horarios}{50}{subsubsection*.51}%
+\contentsline {subsubsection}{2.4: Pipeline RAG}{50}{subsubsection*.52}%
+\contentsline {subsubsection}{2.5: Panel admin y frontend}{50}{subsubsection*.53}%
+\contentsline {subsection}{\numberline {5.2.3}Fase 3:Cierre}{50}{subsection.5.2.3}%
+\contentsline {subsubsection}{3.1: Validación y testing}{52}{subsubsection*.54}%
+\contentsline {subsubsection}{3.2: Piloto con usuarios}{52}{subsubsection*.55}%
+\contentsline {subsubsection}{3.3: Despliegue en producción}{52}{subsubsection*.56}%
+\contentsline {subsubsection}{3.4: Memoria}{53}{subsubsection*.57}%
+\contentsline {section}{\numberline {5.3}Resumen cuantitativo de la EDT}{53}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Backlog del producto}{53}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Planificación temporal}{54}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}Estimación inicial por fase}{54}{subsection.5.5.1}%
+\contentsline {subsection}{\numberline {5.5.2}Planificación de sprints}{54}{subsection.5.5.2}%
+\contentsline {subsection}{\numberline {5.5.3}Cronograma e hitos}{54}{subsection.5.5.3}%
+\contentsline {section}{\numberline {5.6}Planificación de costes}{56}{section.5.6}%
+\contentsline {subsection}{\numberline {5.6.1}Costes de personal}{56}{subsection.5.6.1}%
+\contentsline {subsection}{\numberline {5.6.2}Costes de material e infraestructura}{56}{subsection.5.6.2}%
+\contentsline {subsubsection}{Alojamiento: DigitalOcean}{56}{subsubsection*.58}%
+\contentsline {subsubsection}{Base de datos: Supabase}{56}{subsubsection*.59}%
+\contentsline {subsubsection}{Modelo de lenguaje: Gemini / Gemma}{57}{subsubsection*.60}%
+\contentsline {paragraph}{Límites de uso y dimensionado.}{57}{paragraph*.61}%
+\contentsline {paragraph}{Estrategia de evolución del modelo.}{57}{paragraph*.62}%
+\contentsline {paragraph}{Riesgo de cambios de política.}{57}{paragraph*.63}%
+\contentsline {subsubsection}{Coste actual de explotación}{58}{subsubsection*.64}%
+\contentsline {subsubsection}{Escenarios de escalado}{58}{subsubsection*.65}%
+\contentsline {subsection}{\numberline {5.6.3}Resumen de costes y contingencias}{58}{subsection.5.6.3}%
+\contentsline {section}{\numberline {5.7}Análisis de desviaciones}{59}{section.5.7}%
+\contentsline {subsection}{\numberline {5.7.1}Desviación temporal}{59}{subsection.5.7.1}%
+\contentsline {subsection}{\numberline {5.7.2}Desviación en costes}{59}{subsection.5.7.2}%
+\contentsline {subsection}{\numberline {5.7.3}Lecciones aprendidas}{59}{subsection.5.7.3}%
+\contentsline {part}{III\hspace {1em}Diseño e Implementación}{61}{part.3}%
+\contentsline {chapter}{\numberline {6}Análisis de requisitos}{62}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Identificación de actores}{62}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Requisitos funcionales}{63}{section.6.2}%
+\contentsline {subsection}{\numberline {6.2.1}Dominio de asignaturas}{63}{subsection.6.2.1}%
+\contentsline {subsection}{\numberline {6.2.2}Dominio de horarios}{63}{subsection.6.2.2}%
+\contentsline {subsection}{\numberline {6.2.3}Dominio de profesorado}{65}{subsection.6.2.3}%
+\contentsline {subsection}{\numberline {6.2.4}Comportamientos transversales}{65}{subsection.6.2.4}%
+\contentsline {subsection}{\numberline {6.2.5}Funcionalidades del panel de administración}{65}{subsection.6.2.5}%
+\contentsline {section}{\numberline {6.3}Requisitos de información}{65}{section.6.3}%
+\contentsline {subsection}{\numberline {6.3.1}Entidades de dominio}{65}{subsection.6.3.1}%
+\contentsline {subsection}{\numberline {6.3.2}Entidades del módulo RAG}{65}{subsection.6.3.2}%
+\contentsline {subsection}{\numberline {6.3.3}Entidades de operación}{67}{subsection.6.3.3}%
+\contentsline {section}{\numberline {6.4}Requisitos no funcionales}{67}{section.6.4}%
+\contentsline {section}{\numberline {6.5}Prototipos de interfaz}{68}{section.6.5}%
+\contentsline {section}{\numberline {6.6}Evolución del alcance respecto a la propuesta inicial}{68}{section.6.6}%
+\contentsline {chapter}{\numberline {7}Arquitectura del sistema y decisiones de diseño}{71}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Arquitectura general}{71}{section.7.1}%
+\contentsline {subsection}{\numberline {7.1.1}Capa de presentación}{71}{subsection.7.1.1}%
+\contentsline {subsection}{\numberline {7.1.2}Capa de procesamiento conversacional}{71}{subsection.7.1.2}%
+\contentsline {subsection}{\numberline {7.1.3}Capa de datos}{72}{subsection.7.1.3}%
+\contentsline {section}{\numberline {7.2}Diagrama de componentes}{72}{section.7.2}%
+\contentsline {section}{\numberline {7.3}Diagrama de despliegue}{74}{section.7.3}%
+\contentsline {subsection}{\numberline {7.3.1}Nodos de ejecución}{74}{subsection.7.3.1}%
+\contentsline {subsection}{\numberline {7.3.2}Protocolos de comunicación}{76}{subsection.7.3.2}%
+\contentsline {section}{\numberline {7.4}Decisiones de diseño}{76}{section.7.4}%
+\contentsline {subsection}{\numberline {7.4.1}Text-to-SQL con LLM en lugar de reglas estáticas}{76}{subsection.7.4.1}%
+\contentsline {subsection}{\numberline {7.4.2}Gemini como servicio principal con Ollama como alternativa local}{77}{subsection.7.4.2}%
+\contentsline {subsection}{\numberline {7.4.3}Embeddings de 2000 dimensiones con HNSW}{77}{subsection.7.4.3}%
+\contentsline {subsection}{\numberline {7.4.4}Chunking con solapamiento para preservar contexto}{77}{subsection.7.4.4}%
+\contentsline {subsection}{\numberline {7.4.5}Búsqueda vectorial con fallback a búsqueda por palabras clave}{78}{subsection.7.4.5}%
+\contentsline {subsection}{\numberline {7.4.6}Fuzzy matching para resolución de nombres}{78}{subsection.7.4.6}%
+\contentsline {subsection}{\numberline {7.4.7}Slots conversacionales para memoria de contexto}{78}{subsection.7.4.7}%
+\contentsline {subsection}{\numberline {7.4.8}Pipeline NLU de 9 etapas con doble featurización}{79}{subsection.7.4.8}%
+\contentsline {subsection}{\numberline {7.4.9}Hash SHA-256 para evitar reprocesamiento de documentos}{80}{subsection.7.4.9}%
+\contentsline {section}{\numberline {7.5}Patrones arquitectónicos aplicados}{80}{section.7.5}%
+\contentsline {subsection}{\numberline {7.5.1}Arquitectura por capas (\textit {Layered Architecture})}{80}{subsection.7.5.1}%
+\contentsline {subsection}{\numberline {7.5.2}Patrón \textit {Action Server} (microservicio de lógica)}{80}{subsection.7.5.2}%
+\contentsline {subsection}{\numberline {7.5.3}Patrón \textit {Strategy} para clientes LLM}{80}{subsection.7.5.3}%
+\contentsline {subsection}{\numberline {7.5.4}Patrón \textit {Pipeline} para procesamiento RAG}{80}{subsection.7.5.4}%
+\contentsline {subsection}{\numberline {7.5.5}Patrón \textit {Repository} para acceso a datos}{81}{subsection.7.5.5}%
+\contentsline {chapter}{\numberline {8}Marco tecnológico}{82}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Tecnologías de procesamiento conversacional}{82}{section.8.1}%
+\contentsline {subsection}{\numberline {8.1.1}Rasa Framework}{82}{subsection.8.1.1}%
+\contentsline {subsubsection}{Componentes de Rasa utilizados}{82}{subsubsection*.66}%
+\contentsline {subsection}{\numberline {8.1.2}Procesamiento de Lenguaje Natural}{83}{subsection.8.1.2}%
+\contentsline {subsubsection}{spaCy}{83}{subsubsection*.67}%
+\contentsline {subsubsection}{Coincidencia difusa (Fuzzy Matching)}{83}{subsubsection*.68}%
+\contentsline {section}{\numberline {8.2}Tecnologías de Inteligencia Artificial}{83}{section.8.2}%
+\contentsline {subsection}{\numberline {8.2.1}Google Gemini como modelo de lenguaje principal}{83}{subsection.8.2.1}%
+\contentsline {subsection}{\numberline {8.2.2}Ollama como alternativa local opcional}{84}{subsection.8.2.2}%
+\contentsline {subsection}{\numberline {8.2.3}Embeddings y búsqueda semántica (RAG)}{84}{subsection.8.2.3}%
+\contentsline {section}{\numberline {8.3}Tecnologías de base de datos}{84}{section.8.3}%
+\contentsline {subsection}{\numberline {8.3.1}PostgreSQL y Supabase}{84}{subsection.8.3.1}%
+\contentsline {subsection}{\numberline {8.3.2}pgvector}{85}{subsection.8.3.2}%
+\contentsline {section}{\numberline {8.4}Tecnologías de frontend}{85}{section.8.4}%
+\contentsline {subsection}{\numberline {8.4.1}Widget de chat}{85}{subsection.8.4.1}%
+\contentsline {subsection}{\numberline {8.4.2}Panel de administración}{85}{subsection.8.4.2}%
+\contentsline {subsection}{\numberline {8.4.3}Servidor web}{85}{subsection.8.4.3}%
+\contentsline {section}{\numberline {8.5}Herramientas de desarrollo}{85}{section.8.5}%
+\contentsline {subsection}{\numberline {8.5.1}Control de versiones}{85}{subsection.8.5.1}%
+\contentsline {subsection}{\numberline {8.5.2}Gestión de dependencias}{86}{subsection.8.5.2}%
+\contentsline {subsection}{\numberline {8.5.3}Variables de entorno}{86}{subsection.8.5.3}%
+\contentsline {section}{\numberline {8.6}Consideraciones de seguridad}{86}{section.8.6}%
+\contentsline {subsection}{\numberline {8.6.1}Protección de datos}{86}{subsection.8.6.1}%
+\contentsline {subsection}{\numberline {8.6.2}Validación de entrada}{86}{subsection.8.6.2}%
+\contentsline {subsection}{\numberline {8.6.3}Aislamiento del proveedor de LLM}{86}{subsection.8.6.3}%
+\contentsline {section}{\numberline {8.7}Stack tecnológico completo}{86}{section.8.7}%
+\contentsline {chapter}{\numberline {9}Estructura del proyecto}{88}{chapter.9}%
+\contentsline {section}{\numberline {9.1}Visión general del repositorio}{88}{section.9.1}%
 \contentsline {section}{\numberline {9.2}Directorio raíz}{89}{section.9.2}%
-\contentsline {section}{\numberline {9.3}Directorio \texttt {actions/}}{89}{section.9.3}%
-\contentsline {subsection}{\numberline {9.3.1}Organización por épicas}{89}{subsection.9.3.1}%
+\contentsline {section}{\numberline {9.3}Directorio \texttt {actions/}}{90}{section.9.3}%
+\contentsline {subsection}{\numberline {9.3.1}Organización por épicas}{90}{subsection.9.3.1}%
 \contentsline {subsection}{\numberline {9.3.2}Subdirectorio \texttt {shared/}}{90}{subsection.9.3.2}%
-\contentsline {section}{\numberline {9.4}Directorio \texttt {admin/}}{90}{section.9.4}%
+\contentsline {section}{\numberline {9.4}Directorio \texttt {admin/}}{91}{section.9.4}%
 \contentsline {section}{\numberline {9.5}Directorio \texttt {rag/}}{91}{section.9.5}%
-\contentsline {section}{\numberline {9.6}Directorio \texttt {data/}}{91}{section.9.6}%
-\contentsline {section}{\numberline {9.7}Directorio \texttt {frontend/}}{91}{section.9.7}%
+\contentsline {section}{\numberline {9.6}Directorio \texttt {data/}}{92}{section.9.6}%
+\contentsline {section}{\numberline {9.7}Directorio \texttt {frontend/}}{92}{section.9.7}%
 \contentsline {section}{\numberline {9.8}Directorio \texttt {docker/}}{92}{section.9.8}%
 \contentsline {section}{\numberline {9.9}Directorios \texttt {tests/} y \texttt {docs/}}{92}{section.9.9}%
-\contentsline {section}{\numberline {9.10}Separación de responsabilidades}{92}{section.9.10}%
-\contentsline {chapter}{\numberline {10}Estructura de la base de datos}{93}{chapter.10}%
-\contentsline {section}{\numberline {10.1}Diseño conceptual}{93}{section.10.1}%
-\contentsline {subsection}{\numberline {10.1.1}Principios de diseño}{93}{subsection.10.1.1}%
-\contentsline {section}{\numberline {10.2}Modelo entidad-relación}{93}{section.10.2}%
-\contentsline {section}{\numberline {10.3}Entidades principales}{93}{section.10.3}%
-\contentsline {subsection}{\numberline {10.3.1}Universidades}{93}{subsection.10.3.1}%
-\contentsline {subsection}{\numberline {10.3.2}Centros}{94}{subsection.10.3.2}%
-\contentsline {subsection}{\numberline {10.3.3}Departamentos}{94}{subsection.10.3.3}%
-\contentsline {subsection}{\numberline {10.3.4}Titulaciones}{94}{subsection.10.3.4}%
-\contentsline {subsection}{\numberline {10.3.5}Asignaturas}{94}{subsection.10.3.5}%
-\contentsline {subsection}{\numberline {10.3.6}Profesores}{94}{subsection.10.3.6}%
-\contentsline {subsection}{\numberline {10.3.7}Horarios}{97}{subsection.10.3.7}%
-\contentsline {section}{\numberline {10.4}Tablas de vectorización (RAG)}{97}{section.10.4}%
-\contentsline {subsection}{\numberline {10.4.1}Planes docentes}{97}{subsection.10.4.1}%
-\contentsline {subsection}{\numberline {10.4.2}Chunks de planes docentes}{98}{subsection.10.4.2}%
-\contentsline {section}{\numberline {10.5}Relaciones entre entidades}{98}{section.10.5}%
-\contentsline {section}{\numberline {10.6}Índices y optimización}{99}{section.10.6}%
-\contentsline {section}{\numberline {10.7}Integridad referencial}{99}{section.10.7}%
-\contentsline {section}{\numberline {10.8}Estrategia de datos de prueba}{100}{section.10.8}%
-\contentsline {chapter}{\numberline {11}Implementación}{101}{chapter.11}%
-\contentsline {section}{\numberline {11.1}Anatomía común de una \textit {custom action}}{101}{section.11.1}%
-\contentsline {section}{\numberline {11.2}Épica de asignaturas}{102}{section.11.2}%
-\contentsline {subsection}{\numberline {11.2.1}Consulta específica de asignatura}{102}{subsection.11.2.1}%
-\contentsline {paragraph}{Resolución del nombre de asignatura.}{103}{paragraph*.69}%
-\contentsline {paragraph}{Bifurcación entre datos estructurales y plan docente.}{103}{paragraph*.70}%
-\contentsline {subsection}{\numberline {11.2.2}Listado y conteo de asignaturas}{104}{subsection.11.2.2}%
-\contentsline {subsection}{\numberline {11.2.3}Horario por asignatura}{105}{subsection.11.2.3}%
-\contentsline {section}{\numberline {11.3}Épica de profesores}{105}{section.11.3}%
-\contentsline {section}{\numberline {11.4}Épica de horarios}{107}{section.11.4}%
-\contentsline {section}{\numberline {11.5}Épica de contexto académico}{109}{section.11.5}%
-\contentsline {section}{\numberline {11.6}Épica de fallback inteligente}{109}{section.11.6}%
-\contentsline {section}{\numberline {11.7}Épica de \textit {multi-intent} (desactivada)}{110}{section.11.7}%
-\contentsline {section}{\numberline {11.8}Módulos compartidos}{110}{section.11.8}%
-\contentsline {subsection}{\numberline {11.8.1}Cliente de Gemini}{110}{subsection.11.8.1}%
-\contentsline {subsection}{\numberline {11.8.2}Conexión a base de datos}{110}{subsection.11.8.2}%
+\contentsline {section}{\numberline {9.10}Separación de responsabilidades}{93}{section.9.10}%
+\contentsline {chapter}{\numberline {10}Estructura de la base de datos}{94}{chapter.10}%
+\contentsline {section}{\numberline {10.1}Diseño conceptual}{94}{section.10.1}%
+\contentsline {subsection}{\numberline {10.1.1}Principios de diseño}{94}{subsection.10.1.1}%
+\contentsline {section}{\numberline {10.2}Modelo entidad-relación}{94}{section.10.2}%
+\contentsline {section}{\numberline {10.3}Entidades principales}{94}{section.10.3}%
+\contentsline {subsection}{\numberline {10.3.1}Universidades}{94}{subsection.10.3.1}%
+\contentsline {subsection}{\numberline {10.3.2}Centros}{95}{subsection.10.3.2}%
+\contentsline {subsection}{\numberline {10.3.3}Departamentos}{95}{subsection.10.3.3}%
+\contentsline {subsection}{\numberline {10.3.4}Titulaciones}{95}{subsection.10.3.4}%
+\contentsline {subsection}{\numberline {10.3.5}Asignaturas}{95}{subsection.10.3.5}%
+\contentsline {subsection}{\numberline {10.3.6}Profesores}{95}{subsection.10.3.6}%
+\contentsline {subsection}{\numberline {10.3.7}Horarios}{98}{subsection.10.3.7}%
+\contentsline {section}{\numberline {10.4}Tablas de vectorización (RAG)}{98}{section.10.4}%
+\contentsline {subsection}{\numberline {10.4.1}Planes docentes}{98}{subsection.10.4.1}%
+\contentsline {subsection}{\numberline {10.4.2}Chunks de planes docentes}{99}{subsection.10.4.2}%
+\contentsline {section}{\numberline {10.5}Relaciones entre entidades}{99}{section.10.5}%
+\contentsline {section}{\numberline {10.6}Índices y optimización}{100}{section.10.6}%
+\contentsline {section}{\numberline {10.7}Integridad referencial}{100}{section.10.7}%
+\contentsline {section}{\numberline {10.8}Estrategia de datos de prueba}{101}{section.10.8}%
+\contentsline {chapter}{\numberline {11}Implementación}{102}{chapter.11}%
+\contentsline {section}{\numberline {11.1}Anatomía común de una \textit {custom action}}{102}{section.11.1}%
+\contentsline {section}{\numberline {11.2}Épica de asignaturas}{103}{section.11.2}%
+\contentsline {subsection}{\numberline {11.2.1}Consulta específica de asignatura}{103}{subsection.11.2.1}%
+\contentsline {paragraph}{Resolución del nombre de asignatura.}{104}{paragraph*.69}%
+\contentsline {paragraph}{Bifurcación entre datos estructurales y plan docente.}{104}{paragraph*.70}%
+\contentsline {subsection}{\numberline {11.2.2}Listado y conteo de asignaturas}{105}{subsection.11.2.2}%
+\contentsline {subsection}{\numberline {11.2.3}Horario por asignatura}{106}{subsection.11.2.3}%
+\contentsline {section}{\numberline {11.3}Épica de profesores}{106}{section.11.3}%
+\contentsline {section}{\numberline {11.4}Épica de horarios}{108}{section.11.4}%
+\contentsline {section}{\numberline {11.5}Épica de contexto académico}{108}{section.11.5}%
+\contentsline {section}{\numberline {11.6}Épica de fallback inteligente}{110}{section.11.6}%
+\contentsline {section}{\numberline {11.7}Épica de \textit {multi-intent} (desactivada)}{111}{section.11.7}%
+\contentsline {section}{\numberline {11.8}Módulos compartidos}{111}{section.11.8}%
+\contentsline {subsection}{\numberline {11.8.1}Cliente de Gemini}{111}{subsection.11.8.1}%
+\contentsline {subsection}{\numberline {11.8.2}Conexión a base de datos}{111}{subsection.11.8.2}%
 \contentsline {subsection}{\numberline {11.8.3}Matching difuso de nombres}{111}{subsection.11.8.3}%
-\contentsline {section}{\numberline {11.9}Panel de administración}{111}{section.11.9}%
-\contentsline {subsection}{\numberline {11.9.1}Estructura de la API}{111}{subsection.11.9.1}%
-\contentsline {subsection}{\numberline {11.9.2}Pipeline de vectorización}{112}{subsection.11.9.2}%
-\contentsline {part}{IV\hspace {1em}Validación y Cierre}{115}{part.4}%
-\contentsline {chapter}{\numberline {12}Pruebas y Validación}{116}{chapter.12}%
-\contentsline {section}{\numberline {12.1}Estrategia general}{116}{section.12.1}%
-\contentsline {subsection}{\numberline {12.1.1}Marco metodológico}{116}{subsection.12.1.1}%
-\contentsline {subsection}{\numberline {12.1.2}Política de exclusión por trabajo futuro}{117}{subsection.12.1.2}%
-\contentsline {subsection}{\numberline {12.1.3}Ejecución y registro}{117}{subsection.12.1.3}%
-\contentsline {section}{\numberline {12.2}Ejecución funcional extremo a extremo}{117}{section.12.2}%
-\contentsline {subsection}{\numberline {12.2.1}Alcance}{117}{subsection.12.2.1}%
-\contentsline {subsection}{\numberline {12.2.2}Lectura frente a la literatura}{118}{subsection.12.2.2}%
-\contentsline {section}{\numberline {12.3}Recuperación aumentada por generación}{118}{section.12.3}%
-\contentsline {subsection}{\numberline {12.3.1}Capa baseline}{118}{subsection.12.3.1}%
-\contentsline {subsection}{\numberline {12.3.2}Capa de profundidad}{118}{subsection.12.3.2}%
-\contentsline {section}{\numberline {12.4}Clasificación NLU y política de diálogo}{119}{section.12.4}%
-\contentsline {section}{\numberline {12.5}Reproducción de tráfico real tras el despliegue}{120}{section.12.5}%
-\contentsline {subsection}{\numberline {12.5.1}Metodología de revisión}{120}{subsection.12.5.1}%
-\contentsline {subsection}{\numberline {12.5.2}Resultados}{120}{subsection.12.5.2}%
-\contentsline {section}{\numberline {12.6}Métricas no funcionales: latencia y coste}{120}{section.12.6}%
-\contentsline {subsection}{\numberline {12.6.1}Latencia}{121}{subsection.12.6.1}%
-\contentsline {subsection}{\numberline {12.6.2}Coste por turno}{121}{subsection.12.6.2}%
-\contentsline {section}{\numberline {12.7}Visión integrada y discusión}{122}{section.12.7}%
-\contentsline {subsection}{\numberline {12.7.1}Cumplimiento del criterio de cierre}{122}{subsection.12.7.1}%
-\contentsline {subsection}{\numberline {12.7.2}Limitaciones y trabajo futuro}{122}{subsection.12.7.2}%
-\contentsline {section}{\numberline {12.8}Pruebas automatizadas del panel de administración}{123}{section.12.8}%
-\contentsline {subsection}{\numberline {12.8.1}Resultados}{123}{subsection.12.8.1}%
-\contentsline {chapter}{\numberline {13}Manuales}{125}{chapter.13}%
-\contentsline {section}{\numberline {13.1}Manual de usuario}{125}{section.13.1}%
-\contentsline {subsection}{\numberline {13.1.1}Acceso a la aplicación}{125}{subsection.13.1.1}%
-\contentsline {subsection}{\numberline {13.1.2}Modelo conversacional}{127}{subsection.13.1.2}%
-\contentsline {subsection}{\numberline {13.1.3}Funcionalidades disponibles}{127}{subsection.13.1.3}%
-\contentsline {subsection}{\numberline {13.1.4}Recomendaciones de uso}{127}{subsection.13.1.4}%
-\contentsline {subsection}{\numberline {13.1.5}Panel de administración}{128}{subsection.13.1.5}%
-\contentsline {section}{\numberline {13.2}Manual de despliegue}{129}{section.13.2}%
-\contentsline {subsection}{\numberline {13.2.1}Requisitos previos}{131}{subsection.13.2.1}%
-\contentsline {subsection}{\numberline {13.2.2}Instalación}{131}{subsection.13.2.2}%
-\contentsline {subsection}{\numberline {13.2.3}Arquitectura del despliegue}{131}{subsection.13.2.3}%
-\contentsline {subsection}{\numberline {13.2.4}Verificación del despliegue}{132}{subsection.13.2.4}%
-\contentsline {subsection}{\numberline {13.2.5}Operaciones habituales}{132}{subsection.13.2.5}%
-\contentsline {section}{\numberline {13.3}Manual de desarrollo}{133}{section.13.3}%
-\contentsline {subsection}{\numberline {13.3.1}Estructura del repositorio}{133}{subsection.13.3.1}%
-\contentsline {subsection}{\numberline {13.3.2}Entorno de desarrollo}{133}{subsection.13.3.2}%
-\contentsline {subsection}{\numberline {13.3.3}Ciclo de incorporación de cambios}{134}{subsection.13.3.3}%
-\contentsline {subsection}{\numberline {13.3.4}Cómo añadir una nueva intención}{134}{subsection.13.3.4}%
-\contentsline {subsection}{\numberline {13.3.5}Buenas prácticas y convenciones}{135}{subsection.13.3.5}%
-\contentsline {chapter}{\numberline {14}Conclusiones y desarrollos futuros}{137}{chapter.14}%
-\contentsline {section}{\numberline {14.1}Cumplimiento de objetivos}{137}{section.14.1}%
-\contentsline {subsection}{\numberline {14.1.1}Objetivo general}{137}{subsection.14.1.1}%
-\contentsline {subsection}{\numberline {14.1.2}Objetivos técnicos}{137}{subsection.14.1.2}%
-\contentsline {subsection}{\numberline {14.1.3}Objetivos académicos y personales}{138}{subsection.14.1.3}%
-\contentsline {section}{\numberline {14.2}Lecciones aprendidas}{138}{section.14.2}%
-\contentsline {section}{\numberline {14.3}Análisis de desviación}{139}{section.14.3}%
-\contentsline {section}{\numberline {14.4}Desarrollos futuros}{139}{section.14.4}%
-\contentsline {subsection}{\numberline {14.4.1}Optimización del sistema actual}{139}{subsection.14.4.1}%
-\contentsline {subsection}{\numberline {14.4.2}Ampliación funcional}{140}{subsection.14.4.2}%
-\contentsline {subsection}{\numberline {14.4.3}Validación reforzada}{141}{subsection.14.4.3}%
-\contentsline {section}{\numberline {14.5}Reflexión final}{141}{section.14.5}%
-\contentsline {chapter}{\numberline {15}Uso de Inteligencia Artificial}{142}{chapter.15}%
-\contentsline {section}{\numberline {15.1}Herramientas utilizadas}{142}{section.15.1}%
-\contentsline {section}{\numberline {15.2}Uso de IA en el desarrollo del código}{142}{section.15.2}%
-\contentsline {section}{\numberline {15.3}Uso de IA en la redacción de la memoria}{143}{section.15.3}%
-\contentsline {section}{\numberline {15.4}Limitaciones y responsabilidad del autor}{143}{section.15.4}%
-\contentsline {chapter}{\numberline {16}Vídeo demostración y presentación}{144}{chapter.16}%
-\contentsline {section}{\numberline {16.1}Vídeo demostración}{144}{section.16.1}%
-\contentsline {section}{\numberline {16.2}Estructura de la presentación}{144}{section.16.2}%
-\contentsline {chapter}{Apéndices}{145}{appendix*.71}%
-\contentsline {section}{\numberline {.1}Actas de reuniones con el tutor}{145}{section.Alph0.1}%
-\contentsline {section}{\numberline {.2}Listado completo de casos de prueba}{148}{section.Alph0.2}%
-\contentsline {section}{\numberline {.3}Esquema SQL de la base de datos}{148}{section.Alph0.3}%
-\contentsline {section}{\numberline {.4}Configuración de Rasa}{148}{section.Alph0.4}%
-\contentsline {section}{\numberline {.5}Informe de tiempo invertido}{148}{section.Alph0.5}%
-\contentsline {chapter}{Bibliograf\'{\i }a}{150}{section*.73}%
+\contentsline {section}{\numberline {11.9}Panel de administración}{112}{section.11.9}%
+\contentsline {subsection}{\numberline {11.9.1}Estructura de la API}{112}{subsection.11.9.1}%
+\contentsline {subsection}{\numberline {11.9.2}Operaciones del panel}{112}{subsection.11.9.2}%
+\contentsline {subsection}{\numberline {11.9.3}Pipeline de vectorización}{115}{subsection.11.9.3}%
+\contentsline {part}{IV\hspace {1em}Validación y Cierre}{116}{part.4}%
+\contentsline {chapter}{\numberline {12}Pruebas y Validación}{117}{chapter.12}%
+\contentsline {section}{\numberline {12.1}Estrategia general}{117}{section.12.1}%
+\contentsline {subsection}{\numberline {12.1.1}Marco metodológico}{117}{subsection.12.1.1}%
+\contentsline {subsection}{\numberline {12.1.2}Política de exclusión por trabajo futuro}{118}{subsection.12.1.2}%
+\contentsline {subsection}{\numberline {12.1.3}Ejecución y registro}{118}{subsection.12.1.3}%
+\contentsline {section}{\numberline {12.2}Ejecución funcional extremo a extremo}{118}{section.12.2}%
+\contentsline {subsection}{\numberline {12.2.1}Alcance}{118}{subsection.12.2.1}%
+\contentsline {subsection}{\numberline {12.2.2}Lectura frente a la literatura}{119}{subsection.12.2.2}%
+\contentsline {section}{\numberline {12.3}Recuperación aumentada por generación}{119}{section.12.3}%
+\contentsline {subsection}{\numberline {12.3.1}Capa baseline}{119}{subsection.12.3.1}%
+\contentsline {subsection}{\numberline {12.3.2}Capa de profundidad}{119}{subsection.12.3.2}%
+\contentsline {section}{\numberline {12.4}Clasificación NLU y política de diálogo}{120}{section.12.4}%
+\contentsline {section}{\numberline {12.5}Reproducción de tráfico real tras el despliegue}{121}{section.12.5}%
+\contentsline {subsection}{\numberline {12.5.1}Metodología de revisión}{121}{subsection.12.5.1}%
+\contentsline {subsection}{\numberline {12.5.2}Resultados}{121}{subsection.12.5.2}%
+\contentsline {section}{\numberline {12.6}Métricas no funcionales: latencia y coste}{121}{section.12.6}%
+\contentsline {subsection}{\numberline {12.6.1}Latencia}{122}{subsection.12.6.1}%
+\contentsline {subsection}{\numberline {12.6.2}Coste por turno}{122}{subsection.12.6.2}%
+\contentsline {section}{\numberline {12.7}Visión integrada y discusión}{123}{section.12.7}%
+\contentsline {subsection}{\numberline {12.7.1}Cumplimiento del criterio de cierre}{123}{subsection.12.7.1}%
+\contentsline {subsection}{\numberline {12.7.2}Limitaciones y trabajo futuro}{123}{subsection.12.7.2}%
+\contentsline {section}{\numberline {12.8}Pruebas automatizadas del panel de administración}{124}{section.12.8}%
+\contentsline {subsection}{\numberline {12.8.1}Resultados}{124}{subsection.12.8.1}%
+\contentsline {chapter}{\numberline {13}Manuales}{126}{chapter.13}%
+\contentsline {section}{\numberline {13.1}Manual de usuario}{126}{section.13.1}%
+\contentsline {subsection}{\numberline {13.1.1}Acceso a la aplicación}{126}{subsection.13.1.1}%
+\contentsline {subsection}{\numberline {13.1.2}Modelo conversacional}{128}{subsection.13.1.2}%
+\contentsline {subsection}{\numberline {13.1.3}Funcionalidades disponibles}{128}{subsection.13.1.3}%
+\contentsline {subsection}{\numberline {13.1.4}Recomendaciones de uso}{128}{subsection.13.1.4}%
+\contentsline {section}{\numberline {13.2}Manual de administrador}{132}{section.13.2}%
+\contentsline {subsection}{\numberline {13.2.1}Acceso e interfaz general}{132}{subsection.13.2.1}%
+\contentsline {subsection}{\numberline {13.2.2}Pestaña Centros}{133}{subsection.13.2.2}%
+\contentsline {subsection}{\numberline {13.2.3}Pestaña Asignaturas}{133}{subsection.13.2.3}%
+\contentsline {subsection}{\numberline {13.2.4}Pestaña Profesores}{134}{subsection.13.2.4}%
+\contentsline {subsection}{\numberline {13.2.5}Pestaña Horarios}{135}{subsection.13.2.5}%
+\contentsline {subsection}{\numberline {13.2.6}Pestaña Conversaciones y feedback}{135}{subsection.13.2.6}%
+\contentsline {subsection}{\numberline {13.2.7}Pestaña Estadísticas}{136}{subsection.13.2.7}%
+\contentsline {subsection}{\numberline {13.2.8}Procedimiento recomendado de carga inicial}{136}{subsection.13.2.8}%
+\contentsline {section}{\numberline {13.3}Manual de despliegue}{138}{section.13.3}%
+\contentsline {subsection}{\numberline {13.3.1}Requisitos previos}{138}{subsection.13.3.1}%
+\contentsline {subsection}{\numberline {13.3.2}Instalación}{138}{subsection.13.3.2}%
+\contentsline {subsection}{\numberline {13.3.3}Arquitectura del despliegue}{139}{subsection.13.3.3}%
+\contentsline {subsection}{\numberline {13.3.4}Verificación del despliegue}{139}{subsection.13.3.4}%
+\contentsline {subsection}{\numberline {13.3.5}Operaciones habituales}{139}{subsection.13.3.5}%
+\contentsline {section}{\numberline {13.4}Manual de desarrollo}{140}{section.13.4}%
+\contentsline {subsection}{\numberline {13.4.1}Estructura del repositorio}{140}{subsection.13.4.1}%
+\contentsline {subsection}{\numberline {13.4.2}Entorno de desarrollo}{140}{subsection.13.4.2}%
+\contentsline {subsection}{\numberline {13.4.3}Ciclo de incorporación de cambios}{141}{subsection.13.4.3}%
+\contentsline {subsection}{\numberline {13.4.4}Cómo añadir una nueva intención}{142}{subsection.13.4.4}%
+\contentsline {subsection}{\numberline {13.4.5}Buenas prácticas y convenciones}{142}{subsection.13.4.5}%
+\contentsline {chapter}{\numberline {14}Conclusiones y desarrollos futuros}{144}{chapter.14}%
+\contentsline {section}{\numberline {14.1}Cumplimiento de objetivos}{144}{section.14.1}%
+\contentsline {subsection}{\numberline {14.1.1}Objetivo general}{144}{subsection.14.1.1}%
+\contentsline {subsection}{\numberline {14.1.2}Objetivos técnicos}{144}{subsection.14.1.2}%
+\contentsline {subsection}{\numberline {14.1.3}Objetivos académicos y personales}{145}{subsection.14.1.3}%
+\contentsline {section}{\numberline {14.2}Lecciones aprendidas}{145}{section.14.2}%
+\contentsline {section}{\numberline {14.3}Análisis de desviación}{146}{section.14.3}%
+\contentsline {section}{\numberline {14.4}Desarrollos futuros}{146}{section.14.4}%
+\contentsline {subsection}{\numberline {14.4.1}Optimización del sistema actual}{146}{subsection.14.4.1}%
+\contentsline {subsection}{\numberline {14.4.2}Ampliación funcional}{147}{subsection.14.4.2}%
+\contentsline {subsection}{\numberline {14.4.3}Validación reforzada}{148}{subsection.14.4.3}%
+\contentsline {section}{\numberline {14.5}Reflexión final}{148}{section.14.5}%
+\contentsline {chapter}{\numberline {15}Uso de Inteligencia Artificial}{149}{chapter.15}%
+\contentsline {section}{\numberline {15.1}Herramientas utilizadas}{149}{section.15.1}%
+\contentsline {section}{\numberline {15.2}Uso de IA en el desarrollo del código}{149}{section.15.2}%
+\contentsline {section}{\numberline {15.3}Uso de IA en la redacción de la memoria}{150}{section.15.3}%
+\contentsline {section}{\numberline {15.4}Limitaciones y responsabilidad del autor}{150}{section.15.4}%
+\contentsline {chapter}{\numberline {16}Vídeo demostración}{151}{chapter.16}%
+\contentsline {section}{\numberline {16.1}Vídeo demostración}{151}{section.16.1}%
+\contentsline {subsection}{\numberline {16.1.1}Estructura del vídeo}{151}{subsection.16.1.1}%
+\contentsline {subsection}{\numberline {16.1.2}Notas sobre la producción}{152}{subsection.16.1.2}%
+\contentsline {chapter}{Apéndices}{153}{appendix*.71}%
+\contentsline {section}{\numberline {.1}Actas de reuniones con el tutor}{153}{section.Alph0.1}%
+\contentsline {section}{\numberline {.2}Informe de tiempo invertido}{156}{section.Alph0.2}%
+\contentsline {chapter}{Bibliograf\'{\i }a}{158}{section*.73}%
 \contentsfinish 

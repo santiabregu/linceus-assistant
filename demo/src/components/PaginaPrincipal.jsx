@@ -305,62 +305,20 @@ function Footer() {
   );
 }
 
-// Logo US recreado en SVG (formato clásico: escudo a la izda + texto a la dcha).
+// Logo US oficial: usa el PNG copiado a demo/public/logo-us.png (idéntico
+// al de frontend/). Para la versión blanca del footer, aplicamos un filtro
+// que pasa la imagen a silueta blanca.
 function UsLogo({ white = false }) {
-  const colorPrimary = white ? '#fff' : RED;
   return (
-    <svg width="170" height="50" viewBox="0 0 170 50" style={{ display: 'block' }}>
-      {/* Escudo: óvalo con corona estilizada */}
-      <g transform="translate(0,0)">
-        <ellipse cx="22" cy="25" rx="20" ry="22" fill={colorPrimary} />
-        <text
-          x="22"
-          y="32"
-          textAnchor="middle"
-          fontFamily="Raleway, serif"
-          fontSize="18"
-          fontWeight="700"
-          fill="#fff"
-        >
-          US
-        </text>
-        {/* Corona pequeña */}
-        <path d="M10 8 L14 4 L18 8 L22 4 L26 8 L30 4 L34 8 L34 10 L10 10 Z" fill={colorPrimary} />
-      </g>
-      {/* Texto */}
-      <text
-        x="55"
-        y="22"
-        fontFamily="Raleway, serif"
-        fontSize="13"
-        fontWeight="700"
-        fill={colorPrimary}
-        letterSpacing="1.2"
-      >
-        UNIVERSIDAD
-      </text>
-      <text
-        x="55"
-        y="38"
-        fontFamily="Raleway, serif"
-        fontSize="13"
-        fontWeight="700"
-        fill={colorPrimary}
-        letterSpacing="1.2"
-      >
-        DSEVILLA
-      </text>
-      <text
-        x="55"
-        y="48"
-        fontFamily="Raleway, serif"
-        fontSize="7"
-        fill={colorPrimary}
-        letterSpacing="1"
-      >
-        1505
-      </text>
-    </svg>
+    <img
+      src="/logo-us.png"
+      alt="Universidad de Sevilla"
+      style={{
+        height: 60,
+        display: 'block',
+        filter: white ? 'brightness(0) invert(1)' : 'none',
+      }}
+    />
   );
 }
 

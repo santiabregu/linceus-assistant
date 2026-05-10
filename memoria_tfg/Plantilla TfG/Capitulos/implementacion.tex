@@ -66,10 +66,10 @@ La acción \texttt{ActionConsultaEspecifica} responde a preguntas del tipo \text
 \node[plstart] (in) {Mensaje del usuario};
 \node[plstep, below=of in, text width=44mm, minimum width=46mm] (resolv) {\textbf{Resolver asignatura} (cascada de 5 etapas, Listado~\ref{lst:asig-cascada})};
 \node[pldec, below=of resolv] (dec) {¿Pregunta sobre plan docente?};
-\node[plllm, left=14mm of dec] (clasif) {Gemini clasificador (heurística + LLM)};
+\node[plllm, left=6mm of dec, text width=32mm] (clasif) {Gemini clasificador (heurística + LLM)};
 \node[pldb, below=of dec] (vec) {Búsqueda vectorial \texttt{plan\_docente} (pgvector)};
 \node[plllm, below=of vec] (genrag) {Gemini redacta respuesta con \textit{chunks} como contexto};
-\node[plllm, right=18mm of dec] (gensql) {Gemini redacta respuesta con datos estructurales};
+\node[plllm, right=8mm of dec, text width=32mm] (gensql) {Gemini redacta respuesta con datos estructurales};
 \node[plend, below=of genrag] (out) {Respuesta + \texttt{SlotSet} de seguimiento};
 
 \draw[plflow] (in) -- (resolv);
@@ -87,34 +87,35 @@ La acción \texttt{ActionConsultaEspecifica} responde a preguntas del tipo \text
 
 \paragraph{Resolución del nombre de asignatura.} La función \texttt{resolver\_asignatura()} (en \texttt{actions/asignaturas/actions.py}) es la pieza más reutilizada del proyecto, porque el resto de épicas (horarios, profesores, fallback) la invocan para identificar la asignatura aludida por el usuario. Aplica una cascada de cinco estrategias en orden de mayor a menor confianza, y se detiene en la primera que devuelve un candidato fiable. El Listado~\ref{lst:asig-cascada} muestra el esqueleto de esa cascada.
 
-\begin{lstlisting}[language=python, caption={Cascada de resolucion de \texttt{resolver\_asignatura()} (\texttt{actions/asignaturas/actions.py}).}, label={lst:asig-cascada}]
-def resolver_asignatura(pregunta, tracker, contexto_titulacion,
-                        usar_seguimiento=True):
+\begin{lstlisting}[language=python, basicstyle=\ttfamily\footnotesize, caption={Cascada de resolucion de \texttt{resolver\_asignatura()}.}, label={lst:asig-cascada}]
+def resolver_asignatura(pregunta, tracker, contexto, seguir=True):
     # 1. Entidad NLU del ultimo mensaje (extractor de Rasa)
     nombre = extraer_nombre_asignatura(tracker, ...)
 
-    # 2. Expansion de acronimo contra ALIAS_ASIGNATURAS (FP -> Fundamentos...)
+    # 2. Expansion de acronimo (FP -> Fundamentos...)
     if nombre:
-        nombre = _expandir_alias(nombre, contexto_titulacion)
+        nombre = _expandir_alias(nombre, contexto)
 
-    # 3. Sin entidad NLU: regex sobre alias conocidos en el texto crudo
+    # 3. Sin entidad NLU: regex sobre alias en el texto crudo
     if not nombre:
-        for alias in sorted(ALIAS_ASIGNATURAS, key=len, reverse=True):
-            if re.search(r"\b" + re.escape(alias) + r"\b", pregunta.lower()):
-                nombre = _expandir_alias(alias, contexto_titulacion)
+        for alias in sorted(ALIAS, key=len, reverse=True):
+            patron = r"\b" + re.escape(alias) + r"\b"
+            if re.search(patron, pregunta.lower()):
+                nombre = _expandir_alias(alias, contexto)
                 break
 
-    # 4. Seguimiento: heredar slot ultimo_nombre_asignatura si <=3 turnos atras
-    if usar_seguimiento and not nombre:
-        if _contar_turnos_desde_slot(tracker, "ultimo_nombre_asignatura") <= 3:
-            nombre = tracker.get_slot("ultimo_nombre_asignatura")
+    # 4. Seguimiento: heredar slot si <=3 turnos atras
+    if seguir and not nombre:
+        slot = "ultimo_nombre_asignatura"
+        if _turnos_desde_slot(tracker, slot) <= 3:
+            nombre = tracker.get_slot(slot)
 
-    # 5. Fuzzy matching contra nombres reales de la BD (rapidfuzz, umbral 85)
+    # 5. Fuzzy matching contra nombres de la BD (umbral 85)
     if not nombre:
-        nombre = _resolver_nombre_desde_texto(pregunta, contexto_titulacion)
+        nombre = _resolver_desde_texto(pregunta, contexto)
 
-    # SELECT con ILIKE; si no hay resultados, fallback con fuzzy reordering
-    # (token_set_ratio contra la pregunta original para desempatar candidatos).
+    # SELECT con ILIKE; si vacio, fuzzy reordering por
+    # token_set_ratio contra la pregunta original.
     ...
 \end{lstlisting}
 
@@ -206,23 +207,26 @@ Conviene precisar qué hay y qué no hay en la base relacional, porque los tres 
 
 El primer atajo se dispara cuando la pregunta menciona explícitamente \textit{coordinador} o \textit{suplente}, datos que viven en el plan docente y no en la columna (vacía) \texttt{es\_coordinador}. El segundo, cuando combina asignatura y un grupo concreto (\textit{``profesores de Redes en el grupo 2''}): SQL no puede filtrar por grupo porque la columna \texttt{grupo} también está vacía. El tercero es un fallback que rescata la consulta cuando el text-to-SQL devuelve cero filas pero el usuario sí ha mencionado una asignatura; cubre los casos en que la asignación profesor--asignatura del plan docente todavía no se ha sincronizado a \texttt{profesor\_asignatura} o el nombre que dio el usuario no matchea ninguna fila del JOIN. El Listado~\ref{lst:prof-atajos} muestra los dos primeros atajos tal como están implementados.
 
-\begin{lstlisting}[language=python, caption={Atajos a RAG en \texttt{ActionConsultaProfesor} (\texttt{actions/profesores/actions.py}).}, label={lst:prof-atajos}]
+\begin{lstlisting}[language=python, basicstyle=\ttfamily\footnotesize, caption={Atajos a RAG en \texttt{ActionConsultaProfesor}.}, label={lst:prof-atajos}]
 # Atajo 1: rol coordinador/suplente -> RAG directo
-if codigo_asignatura and _pregunta_menciona_rol_rag(pregunta):
-    chunks = _rag_chunks_plan_docente(
-        codigo_asignatura, grupo=grupo_detectado,
+if codigo_asig and _menciona_rol_rag(pregunta):
+    chunks = _rag_chunks_plan(
+        codigo_asig, grupo=grupo_detectado,
     )
     if chunks:
-        respuesta = _generar_respuesta_rag(pregunta, chunks, nombre_asignatura)
+        respuesta = _generar_respuesta_rag(
+            pregunta, chunks, nombre_asig,
+        )
         if respuesta:
             dispatcher.utter_message(text=respuesta)
             return [...]
-    # Si el RAG no devuelve respuesta, cae al flujo SQL normal.
+    # Si el RAG no responde, cae al flujo SQL normal.
 
-# Atajo 2: asignatura + grupo concreto -> RAG con filtro de grupo
-if codigo_asignatura and grupo_detectado and not _pregunta_menciona_rol_rag(pregunta):
-    chunks = _rag_chunks_plan_docente(
-        codigo_asignatura, grupo=grupo_detectado,
+# Atajo 2: asignatura + grupo concreto -> RAG con filtro
+if (codigo_asig and grupo_detectado
+        and not _menciona_rol_rag(pregunta)):
+    chunks = _rag_chunks_plan(
+        codigo_asig, grupo=grupo_detectado,
     )
     # ... mismo patron con fallback a SQL.
 \end{lstlisting}
@@ -267,7 +271,7 @@ Las tutorías merecen una nota: la tabla \texttt{tutorias} permanece deliberadam
 \label{fig:pipe-horarios}
 \end{figure}
 
-El pipeline parsea con expresiones regulares cuatro elementos: curso (\textit{2º}, \textit{segundo}, \textit{curso 2}), grupo (\textit{grupo 1}, \textit{g1}), día (lunes a viernes) y cuatrimestre (explícito o inferido por fecha). Si faltan curso o grupo, intenta heredarlos de los slots \texttt{ultimo\_curso\_consultado} y \texttt{ultimo\_grupo\_consultado} si fueron fijados en los últimos tres turnos. Existe además un seguimiento entre épicas: si la consulta no aporta ninguna pista de horario pero hay una asignatura reciente en el slot, la acción delega en \texttt{ActionConsultaHorarioAsignatura} en vez de pedir más datos.
+El pipeline parsea con expresiones regulares cuatro elementos: curso (\textit{2º}, \textit{segundo}, \textit{curso 2}), grupo (\textit{grupo 1}, \textit{g1}), día (lunes a viernes) y cuatrimestre (explícito o inferido por fecha). Si faltan curso o grupo, intenta heredarlos de los slots \texttt{ultimo\_curso\_consultado} y \texttt{ultimo\_grupo\_consultado} si fueron fijados en los últimos tres turnos. Existe además un seguimiento entre épicas: cuando la consulta no aporta ninguna pista de horario pero el slot mantiene una asignatura reciente, el control pasa a \texttt{ActionConsultaHorarioAsignatura} en vez de pedir más datos.
 
 La consulta SQL hace \texttt{JOIN} entre \texttt{horarios}, \texttt{grupos\_clase}, \texttt{asignaturas}, \texttt{titulaciones} y \texttt{aulas}, filtrando por curso, grupo y, opcionalmente, día y cuatrimestre. El resultado se reagrupa por (\textit{día}, \textit{hora\_inicio}, \textit{hora\_fin}, \textit{asignatura}) para juntar las distintas aulas de una misma sesión, y se categoriza cada aula como teoría (prefijo \textit{A}) o laboratorio. Solo entonces se entrega a Gemini con instrucciones para que respete la fecha actual (\textit{``hoy''}, \textit{``mañana''}) y advierta cuando la consulta cae en sábado o domingo.
 
@@ -285,7 +289,7 @@ La normalización se apoya en una combinación de coincidencia exacta sobre el d
 % =====================================================
 \section{Épica de fallback inteligente}\label{sec:impl-fallback}
 
-El fallback de Rasa se activa cuando la confianza del clasificador NLU está por debajo del umbral configurado en \texttt{config.yml}. En lugar de devolver un mensaje genérico de disculpa, \texttt{ActionSmartFallback} delega en Gemini la decisión de qué acción ejecutar a partir de la pregunta y del historial reciente. La Figura~\ref{fig:pipe-fallback} muestra el flujo.
+El fallback de Rasa se activa cuando la confianza del clasificador NLU está por debajo del umbral configurado en \texttt{config.yml}. La acción \texttt{ActionSmartFallback} sustituye el mensaje genérico de disculpa por una llamada a Gemini, que decide qué consulta ejecutar a partir de la pregunta y del historial reciente. La Figura~\ref{fig:pipe-fallback} muestra el flujo.
 
 \begin{figure}[hbtp]
 \centering
@@ -294,9 +298,9 @@ El fallback de Rasa se activa cuando la confianza del clasificador NLU está por
 \node[plstep, below=of in] (cont) {¿Es continuación ``todos los grupos''?};
 \node[plllm, below=of cont] (clasif) {Gemini clasificador (action + parámetros, JSON)};
 \node[pldec, below=of clasif] (sw) {action};
-\node[pldb, below left=10mm and 16mm of sw] (asig) {BUSCAR\_ASIGNATURA \\ (BD + RAG)};
-\node[pldb, below=of sw] (hor) {BUSCAR\_HORARIO \\ (BD por alias o curso)};
-\node[pldb, below right=10mm and 16mm of sw] (prof) {BUSCAR\_PROFESOR \\ (BD por nombre)};
+\node[pldb, below left=12mm and 28mm of sw] (asig) {BUSCAR\_ASIGNATURA \\ (BD + RAG)};
+\node[pldb, below=14mm of sw] (hor) {BUSCAR\_HORARIO \\ (BD por alias o curso)};
+\node[pldb, below right=12mm and 28mm of sw] (prof) {BUSCAR\_PROFESOR \\ (BD por nombre)};
 \node[plllm, below=20mm of hor] (resp) {Gemini redacta respuesta natural};
 \node[plend, below=of resp] (out) {Respuesta o \texttt{respuesta\_directa}};
 
@@ -361,7 +365,7 @@ El servidor se define en \texttt{admin/app.py} y registra nueve \textit{blueprin
 \begin{itemize}
     \item \texttt{centros} y \texttt{titulaciones}: CRUD jerárquico de la estructura académica. La pantalla de inicio del panel (Figura~\ref{fig:impl-admin-home}) muestra los centros disponibles como tarjetas con el número de titulaciones asociadas.
     \item \texttt{asignaturas}: CRUD de asignaturas con soporte para importación masiva. Cada asignatura se vincula a una titulación y se etiqueta con curso, tipo y créditos.
-    \item \texttt{profesores}: tabla de consulta paginada del directorio PDI. El \textit{endpoint} \texttt{/api/admin/profesores/sync} lanza el scraper de \texttt{us.es} que actualiza la tabla \texttt{profesores} y rellena \texttt{profesor\_asignatura} para el curso vigente (Figura~\ref{fig:impl-admin-profesores}).
+    \item \texttt{profesores}: tabla de consulta paginada del directorio PDI con acciones para enriquecer datos desde \texttt{us.es} y refrescar enlaces oficiales (Figura~\ref{fig:impl-admin-profesores}). El detalle de cada operación se recoge en la Tabla~\ref{tab:impl-admin-operaciones}.
     \item \texttt{horarios}: gestión de los horarios importados desde los PDFs de la ETSII. El módulo delega en \texttt{admin/horarios\_extractores/} la extracción de sesiones desde los documentos oficiales.
     \item \texttt{sevius}: \textit{endpoints} de \textit{preview} que consultan el portal Sevius sin modificar la base de datos, útiles para explorar los grupos y planes docentes disponibles antes de lanzar la vectorización.
     \item \texttt{planes\_docentes}: combina scraping de grupos en Sevius, descarga de PDFs y procesado RAG en un único \textit{endpoint} \texttt{POST /api/admin/planes\_docentes/vectorize}. Por cada par (asignatura, grupo) que no esté ya vectorizado, descarga el PDF, lo trocea con el pipeline \texttt{rag/pipeline.py} y almacena los \textit{chunks} en \texttt{planes\_docentes\_chunks} junto con su \textit{embedding} en pgvector. El campo \texttt{estado\_rag} de cada plan docente registra el estado del proceso (\texttt{pendiente}, \texttt{completado} o \texttt{error}).
@@ -396,6 +400,63 @@ El servidor se define en \texttt{admin/app.py} y registra nueve \textit{blueprin
     \caption{Panel de estadísticas generales. Los contadores se calculan en tiempo real contra Supabase. En el momento de la captura el sistema contaba con 244~asignaturas, 268~profesores, 157~planes docentes vectorizados y 1352~\textit{chunks} RAG.}
     \label{fig:impl-admin-stats}
 \end{figure}
+
+\subsection{Operaciones del panel}\label{subsec:impl-admin-operaciones}
+
+Más allá de las consultas de lectura, el panel expone una colección de operaciones de mantenimiento que el administrador lanza desde la interfaz. Cada operación se traduce en una llamada HTTP a un \textit{endpoint} concreto del API y, según el caso, dispara un \textit{scraper} contra Sevius o el directorio de \texttt{us.es} antes de modificar la base de datos. La Tabla~\ref{tab:impl-admin-operaciones} las resume agrupadas por la pestaña en la que se invocan.
+
+\begin{table}[hbtp]
+\centering
+\caption{Operaciones del panel de administración por pestaña. Todos los \textit{endpoints} van prefijados por \texttt{/api/admin}.}\label{tab:impl-admin-operaciones}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{4.6cm}|>{\raggedright\arraybackslash}p{4.4cm}|}
+\hline
+\textbf{Acción visible} & \textbf{\textit{Endpoint}} & \textbf{Efecto} \\
+\hline
+\multicolumn{3}{|l|}{\textbf{Centros}} \\
+\hline
+Nuevo centro & \texttt{POST /centros} & Inserta fila en \texttt{centros} \\
+\hline
+Sincronizar desde Sevius & \texttt{GET /sevius/centros} & Lectura previa; el alta sigue \texttt{POST /centros} \\
+\hline
+Nueva titulación & \texttt{POST /titulaciones} & Inserta fila en \texttt{titulaciones} \\
+\hline
+Sincronizar titulaciones desde Sevius & \texttt{POST /titulaciones/sync} & Inserta titulaciones del centro que aún no estén en BD \\
+\hline
+\multicolumn{3}{|l|}{\textbf{Asignaturas}} \\
+\hline
+Sincronizar desde Sevius & \texttt{POST /asignaturas/sync} & Inserta asignaturas nuevas de la titulación con campos básicos \\
+\hline
+Enriquecer datos & \texttt{POST /asignaturas/enrich} & Actualiza curso, créditos y tipología desde \texttt{us.es} \\
+\hline
+Cargar docencia & \texttt{POST /titulaciones/} \texttt{$\langle$id$\rangle$/sync\_docencia} & Popula \texttt{profesor\_asignatura} desde el directorio PDI \\
+\hline
+Vectorizar planes docentes & \texttt{POST /planes\_docentes/} \texttt{vectorize} & Descarga PDFs y guarda \textit{embeddings} en \texttt{pgvector} \\
+\hline
+\multicolumn{3}{|l|}{\textbf{Profesores}} \\
+\hline
+Enriquecer desde us.es (centro) & \texttt{POST /centros/$\langle$id$\rangle$/} \texttt{enrich\_profesores} & Da de alta departamentos y \textit{upsert} de profesores \\
+\hline
+Enriquecer desde us.es (depto.) & \texttt{POST /departamentos/} \texttt{$\langle$id$\rangle$/enrich\_profesores} & Igual al anterior pero limitado a un departamento \\
+\hline
+Refrescar enlaces us.es & \texttt{POST /centros/$\langle$id$\rangle$/} \texttt{refresh\_enlaces\_us} & Actualiza \texttt{enlace\_perfil} con el slug del directorio \\
+\hline
+\multicolumn{3}{|l|}{\textbf{Horarios}} \\
+\hline
+Generar horarios & \texttt{POST /horarios/generar} & Lanza el extractor del centro y pobla \texttt{horarios}, \texttt{grupos\_clase}, \texttt{aulas} \\
+\hline
+\multicolumn{3}{|l|}{\textbf{Conversaciones}} \\
+\hline
+Marcar sesión como revisada & \texttt{PATCH /conversaciones/} \texttt{sesiones/$\langle$id$\rangle$/revisada} & Cambia el flag \texttt{revisada} de todas las filas de la sesión \\
+\hline
+Exportar conversaciones & --- (cliente) & Vuelca el JSON ya cargado en navegador a fichero local para tests \\
+\hline
+\end{tabular}
+\end{table}
+
+Tres rasgos transversales gobiernan estas operaciones. El primero es la \textbf{idempotencia}: las acciones que sincronizan datos externos (Sevius, \texttt{us.es}) comprueban primero si cada entidad ya existe en BD y nunca duplican filas; cualquiera de ellas puede relanzarse sin riesgo tras un fallo parcial. El segundo es el \textbf{respeto a los datos manuales}: los \textit{upserts} de profesores nunca sobreescriben con \texttt{NULL} un campo ya poblado, lo que permite combinar carga automática con correcciones manuales sin perder estas últimas. El tercero es el \textbf{orden de prerrequisitos}: vectorizar planes docentes exige tener asignaturas; cargar docencia exige tener profesores con enlace de \texttt{us.es} (de ahí la acción \textit{Refrescar enlaces} previa); generar horarios exige tener grupos de clase ya creados. La pantalla de cada pestaña inhabilita los botones cuando esos prerrequisitos no se cumplen, lo que reduce la probabilidad de errores operativos.
 
 \subsection{Pipeline de vectorización}
 

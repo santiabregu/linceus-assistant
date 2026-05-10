@@ -1,23 +1,71 @@
 % !TEX root = ../proyect.tex
 
 % =====================================================
-% VÍDEO DEMOSTRACIÓN Y PRESENTACIÓN - placeholder
+% VÍDEO DEMOSTRACIÓN
 % =====================================================
-% Guía Segura §14 y §15.
+% Guía Segura §14.
 % Vídeo:
 %   - Obligatorio en LSI ETSII, máximo 3 minutos.
 %   - Voz del estudiante, datos realistas.
 %   - Cubrir las funcionalidades más importantes.
-% Presentación:
-%   - 15 minutos ante tribunal de mínimo 2 profesores.
-%   - Plantilla blanca, formato 4:3, poco texto.
-%   - Empezar con problema y resultado.
-%   - Referencias: PresentationZen (Reynolds), Slide:ology (Duarte).
-% En la memoria: capítulo breve que enlace al vídeo (URL o anexo) y
-% recoja la estructura de la presentación.
 
-\chapter{Vídeo demostración y presentación}\label{cap:video-presentacion}
+\chapter{Vídeo demostración}\label{cap:video}
 
-% TODO: completar tras grabar vídeo y preparar presentación.
+Este capítulo recoge el vídeo demostración del prototipo, alojado en YouTube y referenciado a continuación.
+
 \section{Vídeo demostración}\label{sec:video}
-\section{Estructura de la presentación}\label{sec:presentacion}
+
+El vídeo demostración resume en \textbf{tres minutos} las funcionalidades principales de Linceus Assistant, tanto del chatbot público como del panel de administración. Está alojado en YouTube y disponible en la siguiente dirección:
+
+\begin{center}
+\href{https://youtu.be/XAlKT8lACcM}{\texttt{https://youtu.be/XAlKT8lACcM}}
+\end{center}
+
+La Figura~\ref{fig:video-thumbnail} reproduce la miniatura del vídeo; al pulsarla en la versión PDF se abre directamente la pagina del vídeo.
+
+\begin{figure}[hbtp]
+\centering
+\href{https://youtu.be/XAlKT8lACcM}{%
+\includegraphics[width=0.85\linewidth]{img/youtube-demo-thumbnail.png}%
+}
+\caption{Miniatura del vídeo demostración alojado en YouTube. La imagen es un enlace activo en la versión PDF.}
+\label{fig:video-thumbnail}
+\end{figure}
+
+\subsection{Estructura del vídeo}\label{subsec:video-estructura}
+
+El vídeo está dividido en dos bloques claramente diferenciados: un primer bloque centrado en el \textbf{uso real del chatbot} desde el punto de vista del estudiante, y un segundo bloque que recorre el \textbf{panel de administración} desde el punto de vista del responsable del catálogo. La Tabla~\ref{tab:video-estructura} recoge la sucesión completa de escenas con sus marcas temporales.
+
+\begin{table}[hbtp]
+\centering
+\caption{Sucesión de escenas del vídeo demostración.}\label{tab:video-estructura}
+\small
+\begin{tabular}{p{1.8cm}p{6cm}p{5.5cm}}
+\hline
+\textbf{Tiempo} & \textbf{Escena} & \textbf{Propósito} \\
+\hline
+00:00–00:10 & Apertura & Introducción del producto e invitación a abrir el \textit{widget}. \\
+00:10–00:23 & Onboarding & Selección de titulación al abrir el chat. \\
+00:23–00:34 & Consulta sobre asignatura & Ficha completa de Sistemas Operativos. \\
+00:34–00:45 & Seguimiento elíptico & Pregunta sobre créditos sin repetir el nombre. \\
+00:45–00:56 & Listado de optativas & Aplicación de \textit{text-to-SQL}. \\
+00:56–01:06 & Horario por asignatura & Devolución de todos los grupos disponibles. \\
+01:06–01:17 & Horario por curso y grupo & Filtrado explícito. \\
+01:17–01:28 & Correo de un profesor & Consulta sobre profesorado. \\
+01:28–01:39 & Cambio de titulación & Conmutación de contexto en lenguaje natural. \\
+01:39–01:50 & Resistencia a \textit{jailbreak} & Rechazo educado de un intento de manipulación. \\
+01:50–02:04 & Panel: inicio (centros) & Vista de centros gestionados. \\
+02:04–02:18 & Panel: asignaturas & Acciones de vectorización, enriquecimiento y sincronización. \\
+02:18–02:26 & Panel: horarios & Extractores disponibles por centro. \\
+02:26–02:36 & Panel: profesores & Directorio del PDI con enriquecimiento. \\
+02:36–02:46 & Panel: conversaciones & Auditoría de sesiones. \\
+02:46–02:54 & Panel: estadísticas & Contadores globales del catálogo. \\
+02:54–03:00 & Cierre & Cierre conceptual del prototipo. \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Notas sobre la producción}\label{subsec:video-produccion}
+
+El vídeo no se grabó directamente sobre el prototipo en producción por dos motivos prácticos. El primero es que los tiempos de respuesta reales del bot (entre uno y tres segundos por turno, ver Capítulo~\ref{cap:pruebas}) producirían un vídeo con demasiado tiempo muerto para mantenerlo dentro del límite de tres minutos exigido. El segundo es que la captura de pantalla del panel de administración deja entrever información sensible (credenciales, identificadores reales de sesión) que no debe figurar en un material público.
+

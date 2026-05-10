@@ -93,7 +93,7 @@ La Figura~\ref{fig:edt} muestra la EDT a nivel de fases y paquetes de trabajo.
 \node[p3style] (p31) at (52mm,-32mm) {3.1 Validaci\'on y testing};
 \node[p3style] (p32) at (52mm,-46mm) {3.2 Piloto con usuarios};
 \node[p3style] (p33) at (52mm,-60mm) {3.3 Despliegue (DigitalOcean)};
-\node[p3style] (p34) at (52mm,-74mm) {3.4 Memoria y defensa};
+\node[p3style] (p34) at (52mm,-74mm) {3.4 Memoria};
 
 \draw[arrow] (f3.south)  -- (p31.north);
 \draw[arrow] (p31.south) -- (p32.north);
@@ -123,7 +123,7 @@ La fase de inicio agrupa todo el trabajo previo a la implementación: planificac
 % --- 1.1 ---
 \subsubsection{1.1: Gestión del proyecto}\label{subsubsec:gestion}
 
-Paquete transversal: aunque su esfuerzo principal se concentra en el inicio (planificación) y en el cierre (memoria, defensa), la gestión del proyecto está activa durante todo el ciclo de vida.
+Paquete transversal: aunque su esfuerzo principal se concentra en el inicio (planificación) y en el cierre (memoria), la gestión del proyecto está activa durante todo el ciclo de vida.
 
 \begin{table}[hbtp]
 \centering
@@ -353,9 +353,9 @@ Puesta en funcionamiento del sistema en una infraestructura accesible públicame
 \end{table}
 
 % --- 3.4 ---
-\subsubsection{3.4: Memoria y defensa}\label{subsubsec:memoria}
+\subsubsection{3.4: Memoria}\label{subsubsec:memoria}
 
-Documentación académica final del proyecto y preparación del acto de defensa.
+Documentación académica final del proyecto.
 
 \begin{table}[hbtp]
 \centering
@@ -365,9 +365,8 @@ Documentación académica final del proyecto y preparación del acto de defensa.
 \textbf{ID} & \textbf{Tarea} & \textbf{Descripción y entregables} & \textbf{Est.} \\ \hline
 3.4.1 & Redacción de la memoria & Capítulos de introducción, marco, metodología, arquitectura, planificación, pruebas y conclusiones. \textit{Entregable: memoria.} & L \\ \hline
 3.4.2 & Diagramas técnicos & Diagrama de componentes y de despliegue en notación UML2 (PlantUML). \textit{Entregable: \texttt{img/diagrama\_*.png}.} & S \\ \hline
-3.4.3 & Defensa & Diapositivas, ensayo y demo en vivo del prototipo desplegado. \textit{Entregable: presentación.} & M \\ \hline
 \end{tabular}
-\caption{Diccionario EDT:3.4: Memoria y defensa.}
+\caption{Diccionario EDT:3.4: Memoria del proyecto.}
 \label{tab:dict-3-4}
 \end{table}
 
@@ -398,7 +397,7 @@ La Tabla~\ref{tab:resumen-edt} resume los paquetes de trabajo por fase y la dist
   & 3.1 Validación y testing         & 5 & 1 & 3 & 1 \\ \cline{2-6}
   & 3.2 Piloto con usuarios          & 3 & 1 & 2 & 0 \\ \cline{2-6}
   & 3.3 Despliegue en producción     & 3 & 2 & 1 & 0 \\ \cline{2-6}
-  & 3.4 Memoria y defensa            & 3 & 1 & 1 & 1 \\ \hline
+  & 3.4 Memoria                       & 3 & 1 & 1 & 1 \\ \hline
 \hline
 \multicolumn{2}{|l|}{\textbf{Total}} & \textbf{45} & \textbf{8} & \textbf{26} & \textbf{11} \\ \hline
 \end{tabular}
@@ -467,7 +466,7 @@ Esta cifra refleja el esfuerzo agregado de todos los paquetes considerados de fo
 \textbf{Fase} & \textbf{Estimación (h)} & \textbf{\% sobre 300\,h} \\ \hline
 1. Inicio (anteproyecto, investigación, arquitectura) &  45 & 15\,\% \\ \hline
 2. Desarrollo (cinco épicas)                          & 195 & 65\,\% \\ \hline
-3. Cierre (pruebas, despliegue, memoria, defensa)     &  60 & 20\,\% \\ \hline
+3. Cierre (pruebas, despliegue y memoria)              &  60 & 20\,\% \\ \hline
 \textbf{Total estimado}                               & \textbf{300} & \textbf{100\,\%} \\ \hline
 \end{tabular}
 \caption{Estimación inicial de esfuerzo por fase.}
@@ -491,7 +490,7 @@ S4 & Dic 2025--Ene 2026 & Épica Asignaturas avanzada, Ollama/Gemini, pipeline R
 S5 & Feb 2026       & Vectorización de planes docentes, integración Gemini, documentación & 17,68 \\ \hline
 S6 & Feb--Abr 2026  & Épicas Horarios y Profesores, panel admin, pruebas, piloto & 23,72 \\ \hline
 S7 & Abr 2026       & Sprint largo: épicas restantes, CD, pruebas exhaustivas, memoria & 106,35+44,17 \\ \hline
-S8 & Abr--May 2026  & Cierre de memoria, manuales, presentación                        & 10,79 \\ \hline
+S8 & Abr--May 2026  & Cierre de memoria y manuales                                    & 10,79 \\ \hline
 \multicolumn{3}{|l|}{Reuniones de seguimiento con el tutor (sin sprint asociado)} & 3,91 \\ \hline
 \multicolumn{3}{|l|}{\textbf{Total registrado a 02/05/2026}} & \textbf{281,72} \\ \hline
 \end{tabular}
@@ -501,7 +500,7 @@ S8 & Abr--May 2026  & Cierre de memoria, manuales, presentación                
 
 \subsection{Cronograma e hitos}\label{sec:cronograma}
 
-Los hitos principales del proyecto cubren no solo las tareas de desarrollo sino también las de investigación tecnológica, documentación técnica, redacción de manuales y preparación de la defensa, tal como recomienda la guía académica de elaboración del TFG. La Tabla~\ref{tab:hitos} recoge cada hito con su fecha real de consecución, el sprint en el que se completó y la categoría de trabajo a la que corresponde.
+Los hitos principales del proyecto cubren no solo las tareas de desarrollo sino también las de investigación tecnológica, documentación técnica, redacción de manuales y cierre del entregable, tal como recomienda la guía académica de elaboración del TFG. La Tabla~\ref{tab:hitos} recoge cada hito con su fecha real de consecución, el sprint en el que se completó y la categoría de trabajo a la que corresponde.
 
 \begin{table}[hbtp]
 \centering
@@ -522,7 +521,7 @@ Piloto con usuarios reales completado & 15/04/2026 & S7 & Validación \\ \hline
 Suite de pruebas E2E, RAG y panel admin estabilizada & 26/04/2026 & S7 & Validación \\ \hline
 Redacción de la memoria (Partes I y II) & 02/05/2026 & S8 & Documentación \\ \hline
 Manual de usuario y manual de despliegue & mayo 2026 & S8 & Documentación \\ \hline
-Vídeo de presentación y defensa & mayo 2026 & S8 & Presentación \\ \hline
+Vídeo demostración del prototipo & mayo 2026 & S8 & Documentación \\ \hline
 \end{tabular}
 \caption{Hitos principales del proyecto.}
 \label{tab:hitos}
@@ -643,7 +642,7 @@ Beneficio industrial (10\,\%)                  &   452,20\,€ \\ \hline
 \label{tab:costes-resumen}
 \end{table}
 
-El porcentaje de contingencias del 10\,\% cubre posibles ampliaciones de horas de desarrollo, renovaciones imprevistas de infraestructura o material durante la defensa. El beneficio industrial del 10\,\% refleja la práctica habitual en presupuestos de proyecto software. La cifra de infraestructura corresponde únicamente a los dos meses en los que el sistema ha estado desplegado en DigitalOcean durante la fase de validación; el coste anual de explotación posterior se ha desglosado en la Tabla~\ref{tab:costes-actuales}.
+El porcentaje de contingencias del 10\,\% cubre posibles ampliaciones de horas de desarrollo y renovaciones imprevistas de infraestructura o material durante la fase de cierre del proyecto. El beneficio industrial del 10\,\% refleja la práctica habitual en presupuestos de proyecto software. La cifra de infraestructura corresponde únicamente a los dos meses en los que el sistema ha estado desplegado en DigitalOcean durante la fase de validación; el coste anual de explotación posterior se ha desglosado en la Tabla~\ref{tab:costes-actuales}.
 
 % =====================================================
 % SECCIÓN 7: ANÁLISIS DE DESVIACIONES
@@ -653,7 +652,7 @@ El porcentaje de contingencias del 10\,\% cubre posibles ampliaciones de horas d
 
 \subsection{Desviación temporal}
 
-A fecha de cierre del presente documento (02/05/2026), el sistema Clockify registra \textbf{281,72\,h}, con las secciones de manuales y presentación pendientes de completar. La estimación final, considerando esas tareas restantes, se sitúa en torno a \textbf{300--310\,h}, lo que supone una desviación positiva de entre 0 y 10\,h respecto a la previsión inicial de 300\,h (entre el 0\,\% y el 3,3\,\%).
+A fecha de cierre del presente documento (02/05/2026), el sistema Clockify registra \textbf{281,72\,h}, con las secciones de manuales pendientes de completar. La estimación final, considerando esas tareas restantes, se sitúa en torno a \textbf{300--310\,h}, lo que supone una desviación positiva de entre 0 y 10\,h respecto a la previsión inicial de 300\,h (entre el 0\,\% y el 3,3\,\%).
 
 La distribución real del esfuerzo difiere sensiblemente de la prevista en un aspecto: la fase de Desarrollo acumuló un porcentaje de horas mayor al estimado, en particular el Sprint 7 (150,52\,h registradas), que concentró las épicas de Horarios y Profesores, el panel de administración, el piloto con usuarios y varias iteraciones de mejora basadas en el feedback recibido. Esta concentración fue consecuencia de decisiones técnicas tomadas durante el desarrollo (incorporación del panel admin, extracción automatizada de datos desde los portales oficiales) que no estaban contempladas en la planificación inicial.
 
@@ -667,7 +666,7 @@ La distribución real del esfuerzo difiere sensiblemente de la prevista en un as
 2. Desarrollo & 195 & 197,81 & +2,81\,h \,(+1,4\,\%) \\ \hline
 3. Cierre     &  60 &  36,61$^*$ & $-$23,39\,h (pendiente) \\ \hline
 \textbf{Total}&\textbf{300} & \textbf{281,72$^*$} & \textbf{$-$18,28\,h} \\ \hline
-\multicolumn{4}{l}{\footnotesize $^*$ A 02/05/2026; pendientes manuales, presentación y revisión final.}
+\multicolumn{4}{l}{\footnotesize $^*$ A 02/05/2026; pendientes manuales y revisión final.}
 \end{tabular}
 \caption{Desviación temporal por fase.}
 \label{tab:desviacion-temporal}

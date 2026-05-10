@@ -221,7 +221,36 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.playing, state.sceneIdx]);
 
-  // Atajos: espacio = play/pause, R = reset
+  // Salta al inicio de la escena siguiente (o se queda en la última si ya estamos
+  // al final). Funciona tanto en play como en pausa.
+  const goToScene = (idx) => {
+    const targetIdx = Math.max(0, Math.min(idx, timeline.length - 1));
+    let targetTime = 0;
+    for (let i = 0; i < targetIdx; i++) {
+      targetTime += timeline[i].duration;
+    }
+    elapsedAtPauseRef.current = targetTime;
+    startedRef.current = performance.now();
+    firedActionsRef.current = new Set();
+    // Forzar el cambio inmediato (importante en pausa, sin esperar al rAF)
+    dispatch({
+      type: 'SET_SCENE',
+      idx: targetIdx,
+      now: targetTime,
+      scene: timeline[targetIdx],
+    });
+    // Disparar acciones at:0 de la nueva escena (clearMessages, adminView, etc.)
+    for (const action of timeline[targetIdx].actions) {
+      if (action.at === 0) {
+        firedActionsRef.current.add(`${targetIdx}:0:${action.type}`);
+        applyAction(action, dispatch, state);
+      }
+    }
+  };
+  const nextScene = () => goToScene(state.sceneIdx + 1);
+  const prevScene = () => goToScene(state.sceneIdx - 1);
+
+  // Atajos: espacio = play/pause, R = reset, N = siguiente, P = anterior
   useEffect(() => {
     const onKey = (e) => {
       if (e.code === 'Space') {
@@ -239,6 +268,12 @@ export default function App() {
         startedRef.current = performance.now();
         firedActionsRef.current = new Set();
         dispatch({ type: 'RESET' });
+      } else if (e.code === 'KeyN' || e.code === 'ArrowRight') {
+        e.preventDefault();
+        nextScene();
+      } else if (e.code === 'KeyP' || e.code === 'ArrowLeft') {
+        e.preventDefault();
+        prevScene();
       } else if (e.code === 'KeyD') {
         setDebug((d) => !d);
       } else if (e.code === 'KeyH') {
@@ -247,7 +282,7 @@ export default function App() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [state.playing]);
+  }, [state.playing, state.sceneIdx]);
 
   const currentScene = timeline[state.sceneIdx] || timeline[0];
 
@@ -328,6 +363,14 @@ export default function App() {
           </div>
           <div className="flex gap-2 pointer-events-auto">
             <button
+              onClick={prevScene}
+              disabled={state.sceneIdx === 0}
+              className="bg-black/70 text-white px-3 py-1.5 rounded text-xs disabled:opacity-40"
+              title="Escena anterior (P o ←)"
+            >
+              ⏪ Anterior (P)
+            </button>
+            <button
               onClick={() => {
                 if (state.playing) {
                   const now = performance.now();
@@ -340,6 +383,14 @@ export default function App() {
               className="bg-black/70 text-white px-3 py-1.5 rounded text-xs"
             >
               {state.playing ? '⏸ Pausa (Space)' : '▶ Play (Space)'}
+            </button>
+            <button
+              onClick={nextScene}
+              disabled={state.sceneIdx >= timeline.length - 1}
+              className="bg-black/70 text-white px-3 py-1.5 rounded text-xs disabled:opacity-40"
+              title="Escena siguiente (N o →)"
+            >
+              ⏩ Siguiente (N)
             </button>
             <button
               onClick={() => {

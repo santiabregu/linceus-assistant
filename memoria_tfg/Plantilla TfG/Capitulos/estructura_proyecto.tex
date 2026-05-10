@@ -10,6 +10,7 @@ El repositorio sigue una organización modular en la que cada directorio agrupa 
 
 El árbol de directorios principal es el siguiente:
 
+\begingroup\footnotesize
 \begin{verbatim}
 linceus-assistant/
 +-- actions/                  Núcleo conversacional (custom actions Rasa)
@@ -98,6 +99,7 @@ linceus-assistant/
 +-- package.json              Dependencias de herramientas Node (ESLint)
 \-- README.md  CONTRIBUTING.md  LICENSE
 \end{verbatim}
+\endgroup
 
 \section{Directorio raíz}\label{sec:directorio-raiz}
 
@@ -166,7 +168,7 @@ El directorio \texttt{rag/} contiene el \textbf{pipeline de Retrieval-Augmented 
 
 \section{Directorio \texttt{data/}}\label{sec:data}
 
-El directorio \texttt{data/} contiene todos los datos de entrenamiento del modelo Rasa. El subdirectorio \texttt{nlu/} agrupa los \textit{intents} por dominio (\texttt{asignaturas.yml}, \texttt{horarios.yml}, \texttt{profesores.yml}, \texttt{contexto.yml}, \texttt{general.yml}); el fichero \texttt{multi\_intent.yml.disabled} permanece como histórico y, por su extensión, no es cargado por Rasa. \texttt{stories.yml} y \texttt{rules.yml} definen, respectivamente, las historias de entrenamiento del Core y las reglas determinísticas para flujos críticos como el \textit{fallback} o las afirmaciones.
+El directorio \texttt{data/} contiene todos los datos de entrenamiento del modelo Rasa. El subdirectorio \texttt{nlu/} agrupa los \textit{intents} por dominio en cinco ficheros: \texttt{asignaturas.yml}, \texttt{horarios.yml}, \texttt{profesores.yml}, \texttt{contexto.yml} y \texttt{general.yml}. El fichero \texttt{multi\_intent.yml.disabled} permanece como histórico y, por su extensión, no es cargado por Rasa. Los ficheros \texttt{stories.yml} y \texttt{rules.yml} definen, respectivamente, las historias de entrenamiento del Core y las reglas determinísticas para flujos críticos como el \textit{fallback} o las afirmaciones.
 
 \section{Directorio \texttt{frontend/}}\label{sec:frontend-estructura}
 
@@ -182,7 +184,7 @@ El directorio \texttt{frontend/} contiene tanto el \textbf{widget de chat} como 
 
 \section{Directorio \texttt{docker/}}\label{sec:docker}
 
-El directorio \texttt{docker/} agrupa la infraestructura reproducible de despliegue: \texttt{docker-compose.yml} orquesta los cuatro servicios principales (Rasa, \textit{action server}, API admin y Nginx), y los \texttt{Dockerfile.rasa}, \texttt{Dockerfile.actions} y \texttt{Dockerfile.admin} definen las imágenes correspondientes. Esta separación entre código y empaquetado permite levantar el sistema completo con \texttt{docker compose up} sin instalar dependencias en la máquina anfitriona.
+El directorio \texttt{docker/} agrupa la infraestructura reproducible de despliegue. El fichero \texttt{docker-compose.yml} orquesta los cuatro servicios principales (Rasa, \textit{action server}, API admin y Nginx), mientras que los tres \textit{Dockerfile} (\texttt{rasa}, \texttt{actions} y \texttt{admin}) definen las imágenes correspondientes. Esta separación entre código y empaquetado permite levantar el sistema completo con \texttt{docker compose up} sin instalar dependencias en la máquina anfitriona.
 
 \section{Directorios \texttt{tests/} y \texttt{docs/}}\label{sec:tests-docs}
 

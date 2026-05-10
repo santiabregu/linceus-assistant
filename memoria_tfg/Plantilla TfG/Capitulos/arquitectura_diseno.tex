@@ -43,7 +43,7 @@ La capa de datos se implementa sobre \textbf{Supabase}, una plataforma que propo
 \begin{itemize}
     \item \textbf{PostgreSQL}: Almacena toda la información académica estructurada: universidades, centros, titulaciones, asignaturas, planes docentes y sus metadatos asociados.
     \item \textbf{pgvector}: Extensión que añade el tipo de dato \texttt{vector} y operadores de similitud (distancia coseno, euclidiana y producto punto). Almacena los embeddings de los fragmentos de documentos vectorizados y permite realizar búsquedas semánticas eficientes mediante índices HNSW.
-    \item \textbf{Funciones SQL personalizadas}: Funciones almacenadas en la base de datos que encapsulan la lógica de búsqueda vectorial (\texttt{buscar\_plan\_docente()}, \texttt{buscar\_plan\_docente\_global()}), permitiendo filtrar por asignatura, grupo y curso académico con un umbral de similitud configurable.
+    \item \textbf{Funciones SQL personalizadas}: dos funciones almacenadas en la base de datos encapsulan la lógica de búsqueda vectorial. \texttt{buscar\_plan\_docente()} filtra por asignatura, grupo y curso académico, y su variante global busca en todos los planes con un umbral de similitud configurable.
 \end{itemize}
 
 % =====================================================
@@ -87,7 +87,7 @@ El diagrama de despliegue describe la distribución física de los componentes d
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=\linewidth,keepaspectratio]{img/diagrama_despliegue.png}
+\includegraphics[width=\linewidth,height=0.85\textheight,keepaspectratio]{img/diagrama_despliegue.png}
 \caption{Diagrama de despliegue del sistema Linceus en DigitalOcean (Ubuntu 24.04 LTS) con el pipeline de despliegue automatizado vía GitHub Actions.}
 \label{fig:despliegue}
 \end{figure}
@@ -267,7 +267,7 @@ A lo largo del desarrollo del sistema se han tomado decisiones de diseño que ha
 
 \textbf{Contexto:} El pipeline de vectorización RAG procesa documentos PDF que pueden ser costosos de re-vectorizar (extracción de texto, chunking, generación de embeddings con API de pago por uso).
 
-\textbf{Decisión:} Se almacena un \textbf{hash SHA-256} de cada PDF procesado en la tabla \texttt{planes\_docentes}. Antes de procesar un documento, se compara el hash actual con el almacenado.
+\textbf{Decisión:} La tabla \texttt{planes\_docentes} guarda un \textbf{hash SHA-256} de cada PDF procesado. Antes de procesar un documento, se compara el hash actual con el almacenado.
 
 \textbf{Justificación:}
 \begin{itemize}

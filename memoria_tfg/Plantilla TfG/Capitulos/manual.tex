@@ -2,7 +2,7 @@
 
 \chapter{Manuales}\label{cap:manuales}
 
-Un sistema de software no se considera completo si quienes han de utilizarlo, mantenerlo o evolucionarlo no disponen de instrucciones suficientes para hacerlo. Por ese motivo, este capítulo recoge tres manuales complementarios que cubren los tres perfiles de interacción previstos para Linceus Assistant. El \textbf{manual de usuario} se dirige al alumnado de la ETSII, principal destinatario del prototipo, y describe cómo formular consultas y aprovechar las funcionalidades disponibles. El \textbf{manual de despliegue} se dirige al personal técnico encargado de instalar y mantener el sistema, y detalla los requisitos, procedimientos y comprobaciones necesarias para poner en marcha la plataforma. El \textbf{manual de desarrollo}, por último, se dirige a los futuros estudiantes, becarios o investigadores que continúen este trabajo, y describe la organización del repositorio, las convenciones de codificación y el ciclo de incorporación de nuevos cambios.
+Un sistema de software no se considera completo si quienes han de utilizarlo, mantenerlo o evolucionarlo no disponen de instrucciones suficientes para hacerlo. Por ese motivo, este capítulo recoge cuatro manuales complementarios que cubren los cuatro perfiles de interacción previstos para Linceus Assistant. El \textbf{manual de usuario} se dirige al alumnado de la ETSII, principal destinatario del prototipo, y describe cómo formular consultas y aprovechar las funcionalidades disponibles. El \textbf{manual de administrador} se dirige a quien gestiona el catálogo académico que alimenta al asistente, y describe las operaciones del panel de administración, sus prerrequisitos y el orden recomendado de carga. El \textbf{manual de despliegue} se dirige al personal técnico encargado de instalar y mantener el sistema, y detalla los requisitos, procedimientos y comprobaciones necesarias para poner en marcha la plataforma. El \textbf{manual de desarrollo}, por último, se dirige a los futuros estudiantes, becarios o investigadores que continúen este trabajo, y describe la organización del repositorio, las convenciones de codificación y el ciclo de incorporación de nuevos cambios.
 
 Los tres manuales se basan en el estado del proyecto a fecha del cierre del prototipo (26 de abril de 2026). Cualquier divergencia con el repositorio actual debe consultarse en los ficheros \texttt{README.md} y \texttt{docker-compose.yml}, que son las referencias técnicas autoritativas y se mantienen actualizadas con los cambios del proyecto.
 
@@ -74,75 +74,236 @@ Profesorado & Datos de contacto & ``Email de Galindo'' \\
 \end{tabular}
 \end{table}
 
-Más allá de estas funcionalidades primarias, el bot incorpora dos comportamientos transversales que conviene conocer. El primero es el \textit{cambio de contexto académico}, ya mencionado, que permite consultar información de cualquiera de las tres titulaciones de la ETSII (Ingeniería del Software, Ingeniería de Computadores, Tecnologías Informáticas) cambiando dinámicamente la titulación activa. El segundo es el \textit{seguimiento conversacional}, que permite formular consultas elípticas apoyadas en los turnos anteriores: tras preguntar por una asignatura, expresiones del tipo ``¿y de qué curso es?'', ``¿y los profesores?'' o ``¿y el horario?'' resuelven correctamente la referencia implícita. La Figura~\ref{fig:conversacion-ejemplo} muestra una sesión representativa con varias de estas capacidades encadenadas.
+Las Figuras~\ref{fig:ejemplo-asignatura} a \ref{fig:ejemplo-profesor} ilustran cómo se ven en el chat tres de estos tipos de consulta, mostrando el formato de respuesta del bot.
 
 \begin{figure}[hbtp]
   \centering
-  % CAPTURA: conversación real en el widget que muestre al menos:
-  %   - una consulta de asignatura (p.ej. "¿qué es ADDA?")
-  %   - una pregunta de seguimiento elíptica (p.ej. "¿y cuántos créditos?")
-  %   - una consulta de profesorado o cambio de titulación
-  % Guardar como: img/conversacion_ejemplo.png
-  \includegraphics[width=\linewidth]{img/conversacion_ejemplo.png}
-  \caption{Ejemplo de sesión con seguimiento conversacional y cambio de contexto.}
-  \label{fig:conversacion-ejemplo}
+  % CAPTURA: zoom del widget con una consulta de asignatura específica.
+  % Sugerido: "¿qué es ADDA?" o "¿cuántos créditos tiene Redes?".
+  % Mostrar la pregunta del usuario y la respuesta completa del bot.
+  % Guardar como: img/ejemplo_asignatura.png
+  \includegraphics[width=0.85\linewidth]{img/ejemplo_asignatura.png}
+  \caption{Ejemplo de consulta sobre una asignatura concreta (ficha individual).}
+  \label{fig:ejemplo-asignatura}
 \end{figure}
+
+\begin{figure}[hbtp]
+  \centering
+  % CAPTURA: zoom del widget con una consulta de horario.
+  % Sugerido: "horario de segundo grupo 3" o "¿cuándo es ADDA?".
+  % Guardar como: img/ejemplo_horario.png
+  \includegraphics[width=0.85\linewidth]{img/ejemplo_horario.png}
+  \caption{Ejemplo de consulta de horario con curso y grupo.}
+  \label{fig:ejemplo-horario}
+\end{figure}
+
+\begin{figure}[hbtp]
+  \centering
+  % CAPTURA: zoom del widget con una consulta de profesor.
+  % Sugerido: "¿quién coordina IA?" o "email de Galindo".
+  % Guardar como: img/ejemplo_profesor.png
+  \includegraphics[width=0.85\linewidth]{img/ejemplo_profesor.png}
+  \caption{Ejemplo de consulta sobre profesorado.}
+  \label{fig:ejemplo-profesor}
+\end{figure}
+
+Más allá de estas funcionalidades primarias, el bot incorpora dos comportamientos transversales que conviene conocer. El primero es el \textit{cambio de contexto académico}, ya mencionado, que permite consultar información de cualquiera de las tres titulaciones de la ETSII (Ingeniería del Software, Ingeniería de Computadores, Tecnologías Informáticas) cambiando dinámicamente la titulación activa. El segundo es el \textit{seguimiento conversacional}, que permite formular consultas elípticas apoyadas en los turnos anteriores: tras preguntar por una asignatura, expresiones del tipo ``¿y de qué curso es?'', ``¿y los profesores?'' o ``¿y el horario?'' resuelven correctamente la referencia implícita sin necesidad de repetir el nombre de la entidad.
 
 \subsection{Recomendaciones de uso}\label{subsec:usuario-recomendaciones}
 
 Aunque el sistema admite formulaciones libres, la calidad de la respuesta mejora cuando el alumno aporta el contexto necesario en la propia consulta. Para horarios resulta útil indicar curso y grupo desde el primer turno; para profesorado, el apellido completo o el nombre exacto reduce la ambigüedad cuando varios docentes comparten apellido. Las consultas demasiado abiertas (``cuéntame cosas de la carrera'') tienden a producir respuestas genéricas, ya que el bot no dispone de un único objetivo informativo al que dirigirse. Por último, el sistema no almacena el contenido de las conversaciones para fines comerciales y permite al usuario reportar respuestas incorrectas mediante el botón de \textit{feedback} integrado en cada turno, lo cual contribuye a la mejora continua del prototipo.
 
-\subsection{Panel de administración}\label{subsec:usuario-admin}
+% =====================================================
+% SECCIÓN 2: MANUAL DE ADMINISTRADOR
+% =====================================================
+\section{Manual de administrador}\label{sec:manual-admin}
 
-El sistema incluye un panel de administración accesible en \texttt{/admin.html}, protegido por autenticación, que permite gestionar los datos académicos del prototipo sin necesidad de acceder directamente a la base de datos. El panel se organiza en cinco secciones accesibles desde la barra de navegación superior.
+Este manual se dirige al perfil de \emph{administrador del catálogo}: la persona responsable de mantener actualizada la base de datos académica que alimenta al asistente. A diferencia del usuario final, que únicamente formula consultas en lenguaje natural, el administrador opera sobre el contenido del prototipo a través de un panel web independiente. El presente manual describe la interfaz, las operaciones disponibles en cada pestaña y el orden recomendado para la carga inicial del catálogo. Para la traducción técnica de cada acción visible (\textit{endpoint} REST, tablas afectadas) puede consultarse la Sección~\ref{subsec:impl-admin-operaciones}.
 
-La vista de inicio (Figura~\ref{fig:admin-home}) muestra la jerarquía de centros y titulaciones disponibles. Desde ella se puede navegar a las asignaturas de cada titulación y consultar o actualizar su información.
+\subsection{Acceso e interfaz general}\label{subsec:admin-acceso}
+
+El panel está disponible en \texttt{http://<host>/admin.html} y requiere un usuario con permisos de administración. Tras autenticarse, la interfaz muestra una barra de navegación superior con cinco pestañas (Figura~\ref{fig:admin-home}): \textit{Centros}, \textit{Profesores}, \textit{Horarios}, \textit{Conversaciones} y \textit{Estadísticas}. La pestaña activa por defecto es \textit{Centros}, que actúa como punto de entrada jerárquico al resto del catálogo.
 
 \begin{figure}[hbtp]
   \centering
   \includegraphics[width=\linewidth]{img/admin_home.png}
-  \caption{Panel de administración: vista de centros y titulaciones.}
+  \caption{Panel de administración: pantalla de inicio con la jerarquía de centros.}
   \label{fig:admin-home}
 \end{figure}
 
-La sección de profesores (Figura~\ref{fig:admin-profesores}) lista el profesorado con sus datos de contacto y permite actualizar la información directamente desde el panel, sin necesidad de re-entrenar el modelo.
+Antes de entrar en el detalle de cada pestaña, conviene fijar dos comportamientos transversales que el administrador encontrará repetidamente. El primero es la \emph{idempotencia} de las sincronizaciones: las acciones que extraen datos de Sevius o del directorio de \texttt{us.es} comparan con lo que ya hay en BD e insertan únicamente lo nuevo, de modo que pueden relanzarse sin temor a duplicados. El segundo es la \emph{información de progreso}: las acciones síncronas largas devuelven al concluir un resumen con el conteo de elementos creados, actualizados y errores, que el panel muestra como notificación.
+
+\subsection{Pestaña Centros}\label{subsec:admin-centros}
+
+La pestaña \textit{Centros} es el punto de entrada jerárquico al catálogo y, a partir de ella, el administrador puede crear y poblar centros, titulaciones y asignaturas. La Tabla~\ref{tab:admin-centros-acciones} resume las acciones disponibles. Tomando como ejemplo la ETSII, el flujo recomendado para el alta inicial es: pulsar \textit{Sincronizar desde Sevius} para que el panel proponga la lista de centros oficiales y permita seleccionar el correspondiente; entrar al detalle del centro recién creado; lanzar \textit{Sincronizar titulaciones desde Sevius} para crear las titulaciones del centro; y por último \textit{Nueva titulación} si alguna no aparece en Sevius pero el administrador desea añadirla a mano. Las altas manuales (\textit{Nuevo centro}, \textit{Nueva titulación}) se conciben como excepción para escenarios en los que Sevius no recoge la entidad.
+
+\begin{table}[hbtp]
+\centering
+\caption{Acciones de la pestaña \textit{Centros}.}\label{tab:admin-centros-acciones}
+\begin{tabular}{p{5cm}p{8cm}}
+\hline
+\textbf{Acción} & \textbf{Para qué sirve} \\
+\hline
+Nuevo centro & Da de alta un centro manualmente, indicando código, nombre y código Sevius \\
+Sincronizar desde Sevius & Trae la lista oficial de centros desde Sevius para crear uno por selección \\
+Nueva titulación (dentro del centro) & Da de alta una titulación manualmente vinculada al centro \\
+Sincronizar titulaciones desde Sevius & Crea las titulaciones del centro que aún no existan en BD \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Pestaña Asignaturas}\label{subsec:admin-asignaturas}
+
+La pestaña \textit{Asignaturas} aparece al entrar al detalle de una titulación y concentra las operaciones de carga de contenido docente (Figura~\ref{fig:man-admin-asignaturas}). Es la pestaña con mayor variedad de acciones porque cubre desde la mera importación de identificadores hasta la generación de \textit{embeddings} para el módulo RAG. La Tabla~\ref{tab:admin-asignaturas-acciones} las recoge.
+
+\begin{figure}[hbtp]
+  \centering
+  % CAPTURA: vista de la pestaña Asignaturas dentro de una titulación, mostrando
+  % la tabla de asignaturas y la barra de botones (Sincronizar desde Sevius,
+  % Enriquecer datos, Cargar docencia, Vectorizar planes docentes).
+  % Guardar como: img/admin_asignaturas.png
+  \includegraphics[width=\linewidth]{img/admin_asignaturas.png}
+  \caption{Pestaña \textit{Asignaturas} con la barra de acciones disponibles para la titulación.}
+  \label{fig:man-admin-asignaturas}
+\end{figure}
+
+\begin{table}[hbtp]
+\centering
+\caption{Acciones de la pestaña \textit{Asignaturas}.}\label{tab:admin-asignaturas-acciones}
+\begin{tabular}{p{5cm}p{8cm}}
+\hline
+\textbf{Acción} & \textbf{Para qué sirve} \\
+\hline
+Sincronizar desde Sevius & Crea las asignaturas de la titulación que aún no existan, con código y nombre \\
+Enriquecer datos & Cruza con \texttt{us.es} y completa curso, créditos y tipología (básica/optativa) \\
+Cargar docencia & Popula la relación profesor--asignatura recorriendo los perfiles del PDI \\
+Vectorizar planes docentes & Descarga los PDFs de cada grupo y genera \textit{embeddings} en \texttt{pgvector} \\
+\hline
+\end{tabular}
+\end{table}
+
+El orden de ejecución recomendado para una titulación nueva es: \textit{Sincronizar desde Sevius} (alta de los códigos), \textit{Enriquecer datos} (relleno de curso y créditos), \textit{Cargar docencia} (matrícula del profesorado del curso vigente) y, por último, \textit{Vectorizar planes docentes} (incorporación al RAG). Las cuatro acciones son idempotentes y pueden relanzarse aisladamente cuando el catálogo cambie. La de mayor coste, en tiempo y en cuota de la API de \textit{embeddings}, es la vectorización: conviene lanzarla únicamente cuando los planes docentes del curso académico estén estabilizados.
+
+\subsection{Pestaña Profesores}\label{subsec:admin-profesores}
+
+La pestaña \textit{Profesores} (Figura~\ref{fig:admin-profesores}) muestra la lista del PDI agrupada por departamento, con datos de contacto y enlace al perfil oficial. Las acciones disponibles se concentran en la cabecera (alcance \emph{centro completo}) y en cada departamento (alcance \emph{departamento}). La Tabla~\ref{tab:admin-profesores-acciones} las describe.
 
 \begin{figure}[hbtp]
   \centering
   \includegraphics[width=\linewidth]{img/admin_profesores.png}
-  \caption{Panel de administración: gestión del profesorado.}
+  \caption{Pestaña \textit{Profesores} del panel de administración. La columna \textit{Enriquecer desde us.es} dispara el scraper del directorio PDI para el departamento correspondiente.}
   \label{fig:admin-profesores}
 \end{figure}
 
-La sección de horarios (Figura~\ref{fig:man-admin-horarios}) muestra los horarios estructurados por titulación, curso y grupo, y expone los mismos datos que el chatbot consulta en tiempo real.
+\begin{table}[hbtp]
+\centering
+\caption{Acciones de la pestaña \textit{Profesores}.}\label{tab:admin-profesores-acciones}
+\begin{tabular}{p{5cm}p{8cm}}
+\hline
+\textbf{Acción} & \textbf{Para qué sirve} \\
+\hline
+Enriquecer desde us.es (cabecera) & Recorre todos los departamentos del centro y crea o actualiza los profesores \\
+Refrescar enlaces us.es & Resuelve el enlace del directorio PDI para los profesores que aún no lo tienen \\
+Enriquecer desde us.es (departamento) & Misma acción que la anterior, restringida a un departamento concreto \\
+\hline
+\end{tabular}
+\end{table}
+
+La acción de cabecera es la más utilizada en una primera carga: con un único \textit{click} el panel descubre los departamentos del centro y trae a todos sus profesores. Las acciones por departamento son útiles después, cuando un departamento concreto sufre cambios (incorporaciones, jubilaciones) y no merece la pena reescanear el centro entero. \textit{Refrescar enlaces us.es} es un paso intermedio que alimenta la acción \textit{Cargar docencia} de la pestaña anterior: sin enlace al directorio el sistema no puede consultar la docencia del profesor; por eso conviene ejecutarla justo antes de \textit{Cargar docencia} si la base recoge profesores cargados manualmente.
+
+\subsection{Pestaña Horarios}\label{subsec:admin-horarios}
+
+La pestaña \textit{Horarios} (Figura~\ref{fig:man-admin-horarios}) reaprovecha los listados generados por los extractores específicos de cada centro. Para los centros que disponen de extractor (la ETSII a fecha del cierre del prototipo), un botón \textit{Generar horarios} dispara la extracción del PDF oficial de horarios, lo trocea y pobla las tablas \texttt{horarios}, \texttt{grupos\_clase} y \texttt{aulas}. Los centros sin extractor muestran ese botón inhabilitado, con un mensaje informativo. La Tabla~\ref{tab:admin-horarios-acciones} resume la acción.
 
 \begin{figure}[hbtp]
   \centering
-  \includegraphics[width=\linewidth]{img/admin_horarios.png}
-  \caption{Panel de administración: vista de horarios.}
+  % CAPTURA: vista de la pestaña Horarios mostrando el listado por curso/grupo
+  % y el botón "Generar horarios" (habilitado para ETSII, deshabilitado en
+  % otros centros).
+  \includegraphics[width=\linewidth]{img/admin_horarios_con_boton_generar_horarios.png}
+  \caption{Pestaña \textit{Horarios} con el botón \textit{Generar horarios} activo para los centros con extractor disponible.}
   \label{fig:man-admin-horarios}
 \end{figure}
 
-La sección de conversaciones (Figura~\ref{fig:man-admin-conversaciones}) registra las sesiones de usuario de forma anonimizada, lo que permite detectar patrones de uso, preguntas frecuentes y casos en los que el bot no proporcionó una respuesta satisfactoria.
+\begin{table}[hbtp]
+\centering
+\caption{Acciones de la pestaña \textit{Horarios}.}\label{tab:admin-horarios-acciones}
+\begin{tabular}{p{5cm}p{8cm}}
+\hline
+\textbf{Acción} & \textbf{Para qué sirve} \\
+\hline
+Generar horarios (donde disponible) & Ejecuta el extractor del centro, pobla horarios, grupos y aulas para el curso académico actual \\
+\hline
+\end{tabular}
+\end{table}
+
+La acción acepta un parámetro de \emph{limpieza} que vacía los horarios del centro antes de regenerarlos, útil cuando el PDF oficial cambia tras la publicación inicial. Por defecto la acción es aditiva, pero conviene activar \textit{limpiar} si el cambio del PDF es estructural (alteraciones de aulas, fusión de grupos, cambio de turnos), pues una ejecución meramente aditiva conservaría las filas obsoletas.
+
+\subsection{Pestaña Conversaciones y feedback}\label{subsec:admin-conversaciones}
+
+La pestaña \textit{Conversaciones} (Figura~\ref{fig:man-admin-conversaciones}) muestra las sesiones registradas anonimizadas, agrupadas por sesión, con primer y último mensaje, duración y número de turnos. Sirve a dos fines: detectar patrones de uso para priorizar mejoras y generar conjuntos de prueba a partir de interacciones reales. La Tabla~\ref{tab:admin-conv-acciones} recoge las acciones disponibles sobre la lista.
 
 \begin{figure}[hbtp]
   \centering
   \includegraphics[width=\linewidth]{img/admin_conversaciones.png}
-  \caption{Panel de administración: registro de conversaciones anonimizadas.}
+  \caption{Pestaña \textit{Conversaciones} con las sesiones agrupadas. La fila resaltada en verde indica una sesión ya revisada por el administrador.}
   \label{fig:man-admin-conversaciones}
 \end{figure}
 
-Por último, la vista de estadísticas (Figura~\ref{fig:admin-stats}) agrega métricas de uso del sistema: número de sesiones, distribución de intenciones detectadas y evolución temporal del tráfico.
+\begin{table}[hbtp]
+\centering
+\caption{Acciones de la pestaña \textit{Conversaciones}.}\label{tab:admin-conv-acciones}
+\begin{tabular}{p{5cm}p{8cm}}
+\hline
+\textbf{Acción} & \textbf{Para qué sirve} \\
+\hline
+Marcar sesión como revisada & Indica que un examinador ya ha valorado la conversación; resaltada en verde \\
+Exportar para testing & Vuelca la página actual de sesiones a un fichero local apto para la suite de pruebas \\
+\hline
+\end{tabular}
+\end{table}
+
+La marca de sesiones revisadas resulta útil cuando el administrador realiza pasadas periódicas de control de calidad: tras leer una sesión la marca y, en visitas posteriores, el filtro de la pestaña deja a un lado las ya revisadas, lo que permite avanzar sin perder de vista el progreso. La exportación, por su parte, es la fuente más rápida de casos de prueba reales: las preguntas que se vuelcan se pueden incorporar al catálogo de \texttt{tests/} para validar regresiones tras los cambios en el modelo NLU.
+
+\subsection{Pestaña Estadísticas}\label{subsec:admin-stats}
+
+La pestaña \textit{Estadísticas} (Figura~\ref{fig:admin-stats}) no expone acciones de escritura: presenta una colección de contadores globales que se calculan en tiempo real contra la base de datos. Su utilidad es doble: sirve como \emph{health check} de carga (un valor inesperadamente bajo en \textit{Asignaturas} o \textit{Profesores} delata un problema en una sincronización reciente) y como referencia rápida del tamaño del catálogo a fecha actual. Los contadores que muestra son: centros, titulaciones, asignaturas, profesores, grupos, horarios, planes docentes, \textit{chunks} RAG, conversaciones y \textit{feedbacks}.
 
 \begin{figure}[hbtp]
   \centering
   \includegraphics[width=\linewidth]{img/admin_stats.png}
-  \caption{Panel de administración: estadísticas de uso del sistema.}
+  \caption{Pestaña \textit{Estadísticas}: contadores globales del catálogo cargado.}
   \label{fig:admin-stats}
 \end{figure}
 
+\subsection{Procedimiento recomendado de carga inicial}\label{subsec:admin-onboarding}
+
+Aunque cada pestaña puede operarse de forma autónoma, el orden importa cuando se carga el catálogo desde cero, porque varias acciones tienen prerrequisitos en otras pestañas. La Tabla~\ref{tab:admin-onboarding} recoge la secuencia validada durante la fase de pruebas del prototipo, que el administrador puede tomar como referencia para futuras instalaciones en otros centros.
+
+\begin{table}[hbtp]
+\centering
+\caption{Secuencia recomendada para la carga inicial del catálogo de un centro.}\label{tab:admin-onboarding}
+\begin{tabular}{p{0.8cm}p{4.5cm}p{7.5cm}}
+\hline
+\textbf{Paso} & \textbf{Pestaña / acción} & \textbf{Resultado esperado} \\
+\hline
+1 & Centros / \textit{Sincronizar desde Sevius} & Centro creado a partir del catálogo oficial \\
+2 & Centros / \textit{Sincronizar titulaciones desde Sevius} & Titulaciones del centro disponibles en BD \\
+3 & Asignaturas / \textit{Sincronizar desde Sevius} & Asignaturas creadas con código y nombre, sin metadatos completos \\
+4 & Asignaturas / \textit{Enriquecer datos} & Asignaturas con curso, créditos y tipología actualizados desde \texttt{us.es} \\
+5 & Profesores / \textit{Enriquecer desde us.es} (cabecera) & Departamentos del centro y profesorado del PDI cargados \\
+6 & Profesores / \textit{Refrescar enlaces us.es} & Profesores con enlace al directorio oficial, prerrequisito de cargar docencia \\
+7 & Asignaturas / \textit{Cargar docencia} & Tabla \texttt{profesor\_asignatura} poblada para el curso vigente \\
+8 & Asignaturas / \textit{Vectorizar planes docentes} & \textit{Embeddings} RAG generados; el bot puede contestar preguntas sobre planes docentes \\
+9 & Horarios / \textit{Generar horarios} (si extractor disponible) & Horarios del curso académico actual cargados \\
+\hline
+\end{tabular}
+\end{table}
+
+Tras completar los nueve pasos, la pestaña de \textit{Estadísticas} debería reflejar volúmenes coherentes con el centro cargado, y el chatbot pasa a estar operativo para los tres dominios funcionales (asignaturas, horarios, profesorado) descritos en el Capítulo~\ref{cap:requisitos}. Las actualizaciones posteriores, ya en régimen estacionario, suelen reducirse a relanzar las acciones de \textit{enriquecer} y \textit{cargar docencia} al inicio de cada curso, y a vectorizar los planes docentes nuevos a medida que los departamentos los publican en Sevius.
+
 % =====================================================
-% SECCIÓN 2: MANUAL DE DESPLIEGUE
+% SECCIÓN 3: MANUAL DE DESPLIEGUE
 % =====================================================
 \section{Manual de despliegue}\label{sec:manual-despliegue}
 
@@ -191,13 +352,15 @@ La pila se compone de cuatro contenedores que se comunican entre sí a través d
 \begin{table}[hbtp]
 \centering
 \caption{Contenedores del despliegue y responsabilidad de cada uno.}\label{tab:despliegue-contenedores}
-\begin{tabular}{llll}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{p{1.7cm}p{3.4cm}p{2.2cm}p{4.8cm}}
 \hline
 \textbf{Contenedor} & \textbf{Imagen base} & \textbf{Versión} & \textbf{Responsabilidad} \\
 \hline
 \texttt{frontend} & \texttt{nginx:alpine} & alpine & Sirve los ficheros estáticos y actúa como \textit{proxy} \\
 \texttt{rasa} & \texttt{rasa/rasa} & 3.6.21 + spaCy & Gestor del diálogo y NLU (puerto 5005) \\
-\texttt{actions} & \texttt{python:3.10.14-slim-bookworm} & 3.10.14 & Acciones personalizadas y módulo RAG \\
+\texttt{actions} & \texttt{python:3.10.14-} \texttt{slim-bookworm} & 3.10.14 & Acciones personalizadas y módulo RAG \\
 \texttt{admin} & \texttt{python:3.10-slim} & 3.10 & API Flask del panel de administración \\
 \hline
 \end{tabular}
@@ -234,7 +397,7 @@ docker compose -f docker/docker-compose.yml down
 \end{lstlisting}
 
 % =====================================================
-% SECCIÓN 3: MANUAL DE DESARROLLO
+% SECCIÓN 4: MANUAL DE DESARROLLO
 % =====================================================
 \section{Manual de desarrollo}\label{sec:manual-desarrollo}
 

@@ -174,7 +174,7 @@ En el despliegue actual, las consultas se envían a la API de Google Gemini~\cit
 
 \begin{itemize}
     \item \textbf{Punto único de auditoría}: cualquier llamada saliente al LLM atraviesa el cliente, lo que facilita la inspección de \textit{prompts}, el registro de uso y la aplicación de filtros si fuera necesario.
-    \item \textbf{Sustituibilidad del proveedor}: la misma interfaz está implementada por \texttt{shared/ollama\_client.py}, de modo que ante un cambio de política de Google o un escenario que exija inferencia local (por ejemplo, un despliegue institucional sobre infraestructura propia de la US, ver Sección~\ref{sec:costes}), se puede conmutar a Ollama sin tocar las acciones de Rasa.
+    \item \textbf{Sustituibilidad del proveedor}: el cliente \texttt{shared/ollama\_client.py} implementa la misma interfaz, de modo que ante un cambio de política de Google o un escenario que exija inferencia local (por ejemplo, un despliegue institucional sobre infraestructura propia de la US, ver Sección~\ref{sec:costes}), se puede conmutar a Ollama sin tocar las acciones de Rasa.
 \end{itemize}
 
 La opción local con Ollama se mantiene, por tanto, como mecanismo de mitigación de riesgo (cambios de cuotas o términos de uso del proveedor cloud) y no como modo de operación por defecto.
