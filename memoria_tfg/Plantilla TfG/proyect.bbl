@@ -1,5 +1,40 @@
 \begin{thebibliography}{10}
 
+\bibitem{usWeb}
+{Universidad de Sevilla}, ``{U}niversidad de {S}evilla -- portal
+  institucional.'' \url{https://www.us.es}.
+\newblock Consultado en abril de 2026.
+
+\bibitem{etsiiWeb}
+{Universidad de Sevilla}, ``{E}scuela {T}\'ecnica {S}uperior de
+  {I}ngenier{\'\i}a {I}nform\'atica.'' \url{https://www.informatica.us.es}.
+\newblock Consultado en abril de 2026.
+
+\bibitem{sevius}
+{Universidad de Sevilla}, ``{Sevius} -- portal del personal de la {U}niversidad
+  de {S}evilla.'' \url{https://sevius.us.es}.
+\newblock Consultado en abril de 2026.
+
+\bibitem{sevius4}
+{Universidad de Sevilla}, ``{Sevius4} -- portal de docencia y planes de
+  estudio.'' \url{https://sevius4.us.es}.
+\newblock Consultado en abril de 2026.
+
+\bibitem{usSecretaria}
+{Universidad de Sevilla}, ``{Secretar\'\i}a {V}irtual de la {U}niversidad de
+  {S}evilla.'' \url{https://sevius.us.es/secretariavirtual}.
+\newblock Consultado en abril de 2026.
+
+\bibitem{usMatricula}
+{Universidad de Sevilla}, ``{P}ortal de matr{\'\i}cula y autom{\'a}trula de la
+  {U}niversidad de {S}evilla.'' \url{https://www.us.es/estudiar/matricula}.
+\newblock Consultado en abril de 2026.
+
+\bibitem{usPago}
+{Universidad de Sevilla}, ``{P}lataforma de pago de tasas acad{\'e}micas.''
+  \url{https://www.us.es/estudiar/matricula/precios-publicos-y-becas}.
+\newblock Consultado en abril de 2026.
+
 \bibitem{millionbotPlatform}
 {1MillionBot}, ``{1MillionBot}: {AI} for {U}niversities.''
   \url{https://1millionbot.com/en/universidades/}, 2026.
@@ -97,6 +132,54 @@ B.~R. Ranoliya, N.~Raghuwanshi, and S.~Singh, ``Chatbot for university related
 D.~K. Dibya and S.~Sahoo, ``Implementation of a chatbot system using {AI} and
   {NLP},'' in {\em IEEE ICCCNT}, 2021.
 
+\bibitem{bocklisch2017rasa}
+T.~Bocklisch, J.~Faulkner, N.~Pawlowski, and A.~Nichol, ``Rasa: Open source
+  language understanding and dialogue management,'' in {\em NIPS 2017
+  Conversational AI Workshop}, 2017.
+
+\bibitem{botpressdocs}
+{Botpress Inc.}, ``Botpress documentation,'' 2024.
+\newblock Consultado: noviembre 2025.
+
+\bibitem{deeppavlov}
+{Neural Networks and Deep Learning Lab, MIPT}, ``{DeepPavlov}: An open-source
+  library for deep learning end-to-end dialog systems,'' 2023.
+\newblock Consultado: noviembre 2025.
+
+\bibitem{rasadocs}
+{Rasa Technologies}, ``{Rasa} open source documentation,'' 2024.
+\newblock Consultado: abril 2026.
+
+\bibitem{bocklisch2020diet}
+T.~Bocklisch, J.~Faulkner, N.~Pawlowski, A.~Nichol, and V.~Vlasov, ``{DIET}:
+  Lightweight language understanding for dialogue systems.'' arXiv:2004.09936,
+  2020.
+
+\bibitem{lewis2020retrieval}
+P.~Lewis {\em et~al.}, ``Retrieval-augmented generation for knowledge-intensive
+  {NLP} tasks,'' in {\em NeurIPS}, 2020.
+
+\bibitem{supabasedocs}
+{Supabase Inc.}, ``Supabase documentation,'' 2024.
+\newblock Consultado: diciembre 2025.
+
+\bibitem{pgvectorgithub}
+A.~Kane, ``pgvector: Open-source vector similarity search for {P}ostgres,''
+  2024.
+\newblock Consultado: diciembre 2025.
+
+\bibitem{qdrantdocs}
+{Qdrant Solutions GmbH}, ``Qdrant documentation,'' 2024.
+\newblock Consultado: noviembre 2025.
+
+\bibitem{weaviatedocs}
+{Weaviate B.V.}, ``Weaviate documentation,'' 2024.
+\newblock Consultado: noviembre 2025.
+
+\bibitem{geminidocs}
+{Google DeepMind}, ``Gemini {API} documentation,'' 2024.
+\newblock Consultado: enero 2026.
+
 \bibitem{schwaber2020scrum}
 K.~Schwaber and J.~Sutherland, ``The {S}crum guide: The definitive guide to
   {S}crum: The rules of the game.''
@@ -129,11 +212,71 @@ G.~van Rossum, B.~Warsaw, and N.~Coghlan, ``{PEP 8} -- style guide for {P}ython
   \url{https://eslint.org/}, 2013.
 \newblock Consultado en abril de 2026.
 
+\bibitem{infojobs2025}
+{InfoJobs}, ``Salario medio de un desarrollador j{\'u}nior en {E}spa{\~n}a
+  (informe 2025).'' \url{https://www.infojobs.net/}, 2025.
+\newblock Consultado en mayo de 2026.
+
+\bibitem{rasaForumMemory}
+{Rasa Community}, ``{R}educing memory usage for {R}asa {O}pen {S}ource (foro
+  oficial).''
+  \url{https://forum.rasa.com/t/reducing-memory-usage-for-rasa-open-source/49970}.
+\newblock Consultado en mayo de 2026.
+
+\bibitem{doDroplets}
+{DigitalOcean}, ``{D}ig{O}cean {D}roplets pricing.''
+  \url{https://www.digitalocean.com/pricing/droplets}.
+\newblock Consultado en mayo de 2026.
+
+\bibitem{doBandwidth}
+{DigitalOcean}, ``{D}ig{O}cean {D}roplet bandwidth billing.''
+  \url{https://docs.digitalocean.com/platform/billing/bandwidth/}.
+\newblock Consultado en mayo de 2026.
+
+\bibitem{supabasePricing}
+{Supabase}, ``{S}upabase pricing.'' \url{https://supabase.com/pricing}.
+\newblock Consultado en mayo de 2026.
+
+\bibitem{geminiPricing}
+{Google}, ``{G}emini {D}eveloper {API} pricing.''
+  \url{https://ai.google.dev/gemini-api/docs/pricing}.
+\newblock Consultado en mayo de 2026.
+
+\bibitem{geminiRateLimits}
+{Google}, ``{G}emini {API} rate limits.''
+  \url{https://ai.google.dev/gemini-api/docs/rate-limits}.
+\newblock Consultado en mayo de 2026.
+
 \bibitem{segura2024guiatfg}
 S.~Segura and A.~Ruiz, ``Guia para proyectos fin de grado sobre desarrollo de
   software.'' \url{https://github.com/ssegura/Guia_TFG}, 2024.
 \newblock Departamento de Lenguajes y Sistemas Informaticos, ETSII, Universidad
   de Sevilla.
+
+\bibitem{malkov2018hnsw}
+Y.~A. Malkov and D.~A. Yashunin, ``Efficient and robust approximate nearest
+  neighbor search using hierarchical navigable small world graphs,'' {\em IEEE
+  Transactions on Pattern Analysis and Machine Intelligence}, vol.~42, no.~4,
+  pp.~824--836, 2020.
+
+\bibitem{karpukhin2020dpr}
+V.~Karpukhin, B.~O\u{g}uz, S.~Min, P.~Lewis, L.~Wu, S.~Edunov, D.~Chen, and
+  W.~Yih, ``Dense passage retrieval for open-domain question answering,'' in
+  {\em EMNLP}, 2020.
+
+\bibitem{langchainChunking}
+{LangChain}, ``Text splitters: Recursive character splitting strategy.''
+  \url{https://python.langchain.com/docs/concepts/text_splitters/}, 2024.
+\newblock Recommended chunk size 500--1000 chars with 10--20\,\% overlap.
+
+\bibitem{es2024ragas}
+S.~Es, J.~James, L.~Espinosa-Anke, and S.~Schockaert, ``{RAGAS}: Automated
+  evaluation of retrieval augmented generation,'' in {\em EACL}, 2024.
+
+\bibitem{casanueva2020efficient}
+I.~Casanueva, T.~Temcinas, D.~Gerz, M.~Henderson, and I.~Vulic, ``Efficient
+  intent detection with dual sentence encoders,'' in {\em ACL NLP4ConvAI
+  Workshop}, 2020.
 
 \bibitem{iso25010}
 {International Organization for Standardization}, ``{ISO/IEC 25010:2023} --
@@ -154,24 +297,6 @@ D.~North, ``Introducing {BDD}.'' Better Software Magazine, 2006.
 D.~Braun, A.~Hernandez-Mendez, F.~Matthes, and M.~Langen, ``Evaluating natural
   language understanding services for conversational question answering
   systems,'' in {\em SIGDIAL, ACL}, 2017.
-
-\bibitem{casanueva2020efficient}
-I.~Casanueva, T.~Temcinas, D.~Gerz, M.~Henderson, and I.~Vulic, ``Efficient
-  intent detection with dual sentence encoders,'' in {\em ACL NLP4ConvAI
-  Workshop}, 2020.
-
-\bibitem{es2024ragas}
-S.~Es, J.~James, L.~Espinosa-Anke, and S.~Schockaert, ``{RAGAS}: Automated
-  evaluation of retrieval augmented generation,'' in {\em EACL}, 2024.
-
-\bibitem{lewis2020retrieval}
-P.~Lewis {\em et~al.}, ``Retrieval-augmented generation for knowledge-intensive
-  {NLP} tasks,'' in {\em NeurIPS}, 2020.
-
-\bibitem{bocklisch2020diet}
-T.~Bocklisch, J.~Faulkner, N.~Pawlowski, A.~Nichol, and V.~Vlasov, ``{DIET}:
-  Lightweight language understanding for dialogue systems.'' arXiv:2004.09936,
-  2020.
 
 \bibitem{casas2020trends}
 J.~Casas, M.-O. Tricot, O.~Abou~Khaled, E.~Mugellini, and P.~Cudre-Mauroux,

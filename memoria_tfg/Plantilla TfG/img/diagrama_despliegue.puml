@@ -1,63 +1,63 @@
-@startuml Diagrama de Despliegue
+@startuml diagrama_despliegue
 !pragma layout smetana
 skinparam defaultFontSize 13
 skinparam shadowing false
 skinparam nodeStyle rectangle
 
-title Deployment Diagram - Linceus Assistant
+title Diagrama de despliegue - Linceus Assistant
 
 ' ─── Cliente ─────────────────────────────────────────────────────────────────
-node "User Machine" as client <<device>> {
-  node "Web Browser" as browser <<execution environment>> {
-    artifact "Chatbot Widget\n(HTML / JS)" as chatwidget
-    artifact "Admin SPA\n(HTML / JS)" as adminspa
+node "Equipo del usuario" as client <<dispositivo>> {
+  node "Navegador web" as browser <<entorno de ejecución>> {
+    artifact "Widget de chat\n(HTML / JS)" as chatwidget
+    artifact "SPA de administración\n(HTML / JS)" as adminspa
   }
 }
 
 ' ─── Servidor de producción ──────────────────────────────────────────────────
-node "DigitalOcean Droplet\n(Ubuntu 24.04 LTS)" as droplet <<execution environment>> {
+node "Droplet DigitalOcean\n(Ubuntu 24.04 LTS)" as droplet <<entorno de ejecución>> {
 
-  node "Nginx Container\n(port 80)" as nginx_container <<Docker container>> {
+  node "Contenedor Nginx\n(puerto 80)" as nginx_container <<contenedor Docker>> {
     artifact "Nginx" as nginx_art
-    artifact "Static Frontend" as frontend_art
+    artifact "Frontend estático" as frontend_art
   }
 
-  node "Rasa Container\n(port 5005)" as rasa_container <<Docker container>> <<custom image>> {
+  node "Contenedor Rasa\n(puerto 5005)" as rasa_container <<contenedor Docker>> <<imagen propia>> {
     artifact "Rasa Core 3.6.21" as rasa_art
     artifact "spaCy +\nes_core_news_md" as spacy_art
-    artifact "NLU Model\n(.tar.gz)" as nlu_model
-    artifact "Dialog Policies" as policies
+    artifact "Modelo NLU\n(.tar.gz)" as nlu_model
+    artifact "Políticas de diálogo" as policies
   }
 
-  node "Action Server Container\n(port 5055)" as action_container <<Docker container>> {
+  node "Contenedor Action Server\n(puerto 5055)" as action_container <<contenedor Docker>> {
     artifact "Rasa SDK" as sdk_art
-    artifact "Action Modules" as action_modules
-    artifact "RAG Retriever" as rag_art
+    artifact "Módulos de acciones" as action_modules
+    artifact "Recuperador RAG" as rag_art
   }
 
-  node "Admin Container\n(port 5050)" as admin_container <<Docker container>> {
-    artifact "Flask Admin API" as admin_art
-    artifact "Sevius / us.es\nScrapers" as scrapers_art
+  node "Contenedor de administración\n(puerto 5050)" as admin_container <<contenedor Docker>> {
+    artifact "API Flask de administración" as admin_art
+    artifact "Scrapers Sevius / us.es" as scrapers_art
   }
 }
 
 ' ─── Servicios externos ──────────────────────────────────────────────────────
-cloud "Supabase (Cloud)" as supabase <<external service>> {
-  node "PostgreSQL 15\n(port 6543)" as pg <<database server>> {
-    database "Relational\nschema" as db_rel
-    database "pgvector\nschema" as db_vec
+cloud "Supabase (Cloud)" as supabase <<servicio externo>> {
+  node "PostgreSQL 15\n(puerto 6543)" as pg <<servidor BD>> {
+    database "Esquema\nrelacional" as db_rel
+    database "Esquema\npgvector" as db_vec
   }
 }
 
-cloud "Google Cloud" as gcloud <<external service>> {
-  node "Gemini API" as gemini <<API service>> {
+cloud "Google Cloud" as gcloud <<servicio externo>> {
+  node "API Gemini" as gemini <<servicio API>> {
     artifact "Gemma-3-27b-it" as gemini_llm
     artifact "text-embedding-004" as gemini_emb
   }
 }
 
 ' ─── Pipeline CI/CD ──────────────────────────────────────────────────────────
-cloud "GitHub" as github <<external service>> {
+cloud "GitHub" as github <<servicio externo>> {
   node "GitHub Actions" as gha <<CI/CD>> {
     artifact "deploy.yml" as deploy_wf
   }
@@ -74,6 +74,6 @@ admin_container --> supabase : <<TCP/TLS>>
 admin_container --> gcloud : <<HTTPS>>
 
 ' ─── Pipeline de despliegue ──────────────────────────────────────────────────
-gha ..> droplet : <<deploy>>\nSSH
+gha ..> droplet : <<despliegue>>\nSSH
 
 @enduml

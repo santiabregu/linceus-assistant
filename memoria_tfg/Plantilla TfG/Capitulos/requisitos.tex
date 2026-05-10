@@ -12,7 +12,7 @@ El sistema atiende a tres tipos de usuarios bien diferenciados, que justifican l
 
 El \textbf{estudiante} es el usuario principal del prototipo. Comprende tanto al alumnado matriculado en la ETSII como al alumnado de nuevo ingreso o internacional que utiliza el sistema antes de iniciar el curso. Interactúa con el bot a través del \textit{widget} integrado en la página principal, sin necesidad de autenticación, y formula consultas en español natural sobre asignaturas, horarios y profesorado.
 
-El \textbf{administrador del sistema} es el perfil técnico encargado de mantener actualizada la base de conocimiento. Su interacción se realiza exclusivamente a través del panel de administración (puerto 5050), e incluye la sincronización de centros, titulaciones y asignaturas desde Sevius, la vectorización de planes docentes en el módulo RAG y la auditoría de las conversaciones registradas durante el piloto. La existencia del panel obedece principalmente a un requisito de \textbf{mantenibilidad y escalabilidad}: el sistema debe poder ser asumido por otra persona tras el cierre del TFG sin necesidad de manipular directamente la base de datos.
+El \textbf{administrador del sistema} es el perfil técnico encargado de mantener actualizada la base de conocimiento. Su interacción se realiza exclusivamente a través del panel de administración, e incluye la sincronización de centros, titulaciones y asignaturas desde Sevius, la vectorización de planes docentes en el módulo RAG y la auditoría de las conversaciones registradas durante el piloto. La existencia del panel obedece principalmente a un requisito de \textbf{mantenibilidad y escalabilidad}: el sistema debe poder ser asumido por otra persona tras el cierre del TFG sin necesidad de manipular directamente la base de datos.
 
 El \textbf{desarrollador} es el perfil destinado a continuar el proyecto en futuras iteraciones. Consume el repositorio, las convenciones documentadas y los registros de decisiones técnicas para incorporar nuevas intenciones, ampliar el dominio o modificar las acciones existentes. Sus requisitos se materializan en buenas prácticas y trazabilidad, no en funcionalidades específicas del producto.
 
@@ -32,10 +32,9 @@ Los requisitos funcionales se agrupan por dominio. La columna \textit{Pruebas} d
 RF-A1 & El sistema debe responder con la ficha completa de una asignatura cuando el usuario la nombra de forma explícita o mediante alias o acrónimo (ADDA, FP, IISSI2). & Alta & E-P01..E-P12 \\ \hline
 RF-A2 & El sistema debe devolver listados de asignaturas filtrados por curso, cuatrimestre, tipo (formación básica, obligatoria, optativa) o créditos. & Alta & L-P01..L-P10 \\ \hline
 RF-A3 & El sistema debe responder al conteo de asignaturas que cumplan un criterio dado. & Media & C-P01..C-T02 \\ \hline
-RF-A4 & El sistema debe recuperar información del plan docente (criterios de evaluación, profesorado, bloques, idioma, tribunales) mediante el módulo RAG. & Alta & §\ref{subsec:rag-profundidad} \\ \hline
+RF-A4 & El sistema debe recuperar información del plan docente (criterios de evaluación, profesorado, bloques, idioma, tribunales) mediante el módulo RAG. & Alta & RAG-P01..RAG-P74 \\ \hline
 RF-A5 & El sistema debe heredar el contexto cuando una consulta elíptica (``y cuántos créditos tiene?'') se refiere a la última asignatura mencionada. & Media & E-S01..E-S03 \\ \hline
-RF-A6 & El sistema debe resolver consultas multi-asignatura en un único turno (``cómo se evalúan DP1 y PSG2''). & Media & E-M01 \\ \hline
-RF-A7 & El sistema debe distinguir entre la pregunta ``qué es X'' (ficha) y ``cuándo es X'' (horario), aun cuando ambas comparten léxico. & Alta & E-P09, HA-P01 \\ \hline
+RF-A6 & El sistema debe distinguir entre la pregunta ``qué es X'' (ficha) y ``cuándo es X'' (horario), aun cuando ambas comparten léxico. & Alta & E-P09, HA-P01 \\ \hline
 \end{tabular}
 \end{table}
 
@@ -118,7 +117,23 @@ RF-AD7 & El panel debe agregar el \textit{feedback} explícito por turno aportad
 
 \section{Requisitos de información}\label{sec:req-informacion}
 
-El modelo de información del sistema se estructura en torno a tres bloques. El primero recoge los datos de \textbf{dominio académico} consumidos por el bot, que son la fuente de verdad para responder a las consultas del usuario. El segundo recoge los datos del \textbf{módulo RAG}, esto es, los fragmentos vectorizados de los planes docentes con sus respectivos \textit{embeddings}. El tercero recoge los datos de \textbf{operación}, es decir, las conversaciones registradas durante el piloto y el \textit{feedback} explícito asociado.
+El modelo de información del sistema se estructura en torno a tres bloques: los datos de \textbf{dominio académico} consumidos por el bot, los fragmentos vectorizados del \textbf{módulo RAG} y los datos de \textbf{operación} generados durante el uso del sistema. La Tabla~\ref{tab:ri} resume los requisitos de información del sistema; las subsecciones siguientes detallan las entidades de cada bloque.
+
+\begin{table}[hbtp]
+\centering
+\small
+\caption{Requisitos de información del sistema.}\label{tab:ri}
+\begin{tabular}{|p{1.1cm}|p{3.5cm}|p{6.8cm}|p{1.0cm}|}
+\hline
+\textbf{ID} & \textbf{Dato} & \textbf{Descripción} & \textbf{Prio.} \\ \hline
+RI-1 & Catálogo académico & Centros, titulaciones, asignaturas (código, créditos, curso, cuatrimestre, tipo). Fuente: Sevius. & Alta \\ \hline
+RI-2 & Directorio de profesorado & Nombre, email, despacho, teléfono, departamento y relación con asignaturas (rol: titular, coordinador, suplente). Fuente: \texttt{us.es} PDI. & Alta \\ \hline
+RI-3 & Horarios docentes & Sesiones por grupo y aula, con día, franja horaria, cuatrimestre y tipo (teoría/laboratorio). Fuente: PDF oficial ETSII. & Alta \\ \hline
+RI-4 & Corpus RAG & Fragmentos textuales (\textit{chunks}) de planes docentes, con \textit{embedding} vectorial y metadatos (asignatura, sección, curso). Fuente: planes docentes PDF/HTML. & Alta \\ \hline
+RI-5 & Registro de conversaciones & Turno a turno: sesión anónima, mensaje, \textit{intent}, \textit{slots}, respuesta, marca temporal. Sin PII. & Media \\ \hline
+RI-6 & \textit{Feedback} de usuarios & Valoración explícita por turno (aprobación/rechazo) vinculada a la sesión anónima. & Media \\ \hline
+\end{tabular}
+\end{table}
 
 \subsection{Entidades de dominio}\label{subsec:ri-dominio}
 
@@ -154,7 +169,7 @@ La operación del sistema en producción registra dos entidades. La tabla \textt
 
 \section{Requisitos no funcionales}\label{sec:req-no-funcionales}
 
-Los requisitos no funcionales se enuncian en términos medibles y se cruzan con la evidencia recogida en el Capítulo~\ref{cap:pruebas}. Los umbrales son los que el equipo del TFG considera aceptables para un prototipo de fase 1 desplegable a la población de la ETSII; se han ajustado durante el desarrollo a la luz de las cifras observadas durante el piloto.
+Los requisitos no funcionales se enuncian en términos medibles y se cruzan con la evidencia recogida en el Capítulo~\ref{cap:pruebas}. Los umbrales son los que el autor considera aceptables para un prototipo de fase 1 desplegable a la población de la ETSII; se han ajustado durante el desarrollo a la luz de las cifras observadas durante el piloto.
 
 \begin{table}[hbtp]
 \centering
@@ -163,22 +178,22 @@ Los requisitos no funcionales se enuncian en términos medibles y se cruzan con 
 \begin{tabular}{|p{1.4cm}|p{4.5cm}|p{4.0cm}|p{2.5cm}|}
 \hline
 \textbf{ID} & \textbf{Descripción} & \textbf{Umbral} & \textbf{Evidencia} \\ \hline
-RNF-1 & Latencia mediana de respuesta extremo a extremo. & p50 $\leq$ 4~s & §\ref{subsec:no-funcional-latencia} (3,4~s) \\ \hline
-RNF-2 & Latencia en cola larga. & p95 $\leq$ 12~s & §\ref{subsec:no-funcional-latencia} (10,5~s) \\ \hline
-RNF-3 & Coste medio por turno (servicio Gemini). & $\leq$ 0,05 cts & §\ref{subsec:no-funcional-coste} (0,012~cts) \\ \hline
-RNF-4 & Tasa de éxito en suite de aceptación E2E. & $\geq$ 90~\% & §\ref{sec:pruebas-e2e} (94,3~\%) \\ \hline
-RNF-5 & Tasa de éxito sobre tráfico real post-despliegue. & $\geq$ 85~\% & §\ref{sec:pruebas-trafico} (98,3~\%) \\ \hline
+RNF-1 & Latencia mediana de respuesta extremo a extremo. & p50 $\leq$ 4~s & Cap.~\ref{cap:pruebas} (3,4~s) \\ \hline
+RNF-2 & Latencia en cola larga. & p95 $\leq$ 12~s & Cap.~\ref{cap:pruebas} (10,5~s) \\ \hline
+RNF-3 & Coste medio por turno (servicio Gemini). & $\leq$ 0,05~cts & Cap.~\ref{cap:pruebas} (0,012~cts) \\ \hline
+RNF-4 & Tasa de éxito en suite de aceptación E2E. & $\geq$ 90~\% & Cap.~\ref{cap:pruebas} (94,3~\%) \\ \hline
+RNF-5 & Tasa de éxito sobre tráfico real post-despliegue. & $\geq$ 85~\% & Cap.~\ref{cap:pruebas} (98,3~\%) \\ \hline
 RNF-6 & Disponibilidad del servicio. & $\geq$ 99~\% mensual & Pendiente fase 2 \\ \hline
 RNF-7 & Idioma soportado. & Español peninsular & Validado en piloto \\ \hline
 RNF-8 & Compatibilidad de navegadores. & Chrome, Firefox, Edge y Safari modernos. & Verificado manualmente \\ \hline
 RNF-9 & Diseño \textit{responsive} en dispositivos móviles. & Funcional en pantallas $\geq$ 320~px. & Verificado manualmente \\ \hline
 RNF-10 & Anonimato del usuario y ausencia de PII. & Sesiones identificadas mediante UUID anónimo. & Por diseño \\ \hline
-RNF-11 & Reproducibilidad del despliegue. & \textit{Stack} levantable mediante \texttt{docker compose up}. & §\ref{sec:manual-despliegue} \\ \hline
+RNF-11 & Reproducibilidad del despliegue. & \textit{Stack} levantable mediante \texttt{docker compose up}. & Cap.~\ref{cap:manuales} \\ \hline
 RNF-12 & Trazabilidad de decisiones técnicas. & Registro en \texttt{docs/sprints/}. & Sprints S2--S7 \\ \hline
 \end{tabular}
 \end{table}
 
-Conviene comentar dos requisitos en particular. El cumplimiento de la \textbf{normativa de protección de datos} (RNF-10) se materializa por construcción más que por restricciones de despliegue: el sistema no requiere autenticación, no almacena datos personales identificables, y los datos académicos consultados (planes docentes, horarios, directorio de profesorado) son de carácter público y proceden de fuentes oficiales (Sevius, \texttt{us.es}). La propuesta inicial contemplaba un despliegue \textit{on-premise} como mecanismo de garantía adicional; en la implementación final, dado que la información tratada no incluye datos sensibles, se ha optado por un despliegue en infraestructura externa (DigitalOcean y Supabase) que simplifica la operación sin comprometer la privacidad del usuario.
+Conviene comentar dos requisitos en particular. El cumplimiento de la \textbf{normativa de protección de datos} (RNF-10) se materializa por construcción más que por restricciones de despliegue: el sistema no requiere autenticación, no almacena datos personales identificables, y los datos académicos consultados (planes docentes, horarios, directorio de profesorado) son de carácter público y proceden de fuentes oficiales (Sevius, \texttt{us.es}). La propuesta inicial contemplaba un despliegue \textit{on-premise} (en servidores propios de la universidad) como mecanismo de garantía adicional de privacidad; en la implementación final, dado que la información tratada no incluye datos sensibles, se ha optado por un despliegue en infraestructura externa (DigitalOcean y Supabase) que simplifica la operación sin comprometer la privacidad del usuario.
 
 El requisito de \textbf{soporte multilingüe}, que figuraba como funcional en la propuesta original, se ha reformulado y aplazado: el corpus académico está mayoritariamente redactado en español, los modelos de \textit{embeddings} y de generación se han ajustado al castellano y la dotación de tiempo del prototipo no permitía abrir un segundo flujo de pruebas para el inglés. La sección~\ref{sec:req-evolucion} lo recoge entre las funcionalidades aplazadas a fase 2.
 
@@ -188,35 +203,33 @@ El prototipo no se ha apoyado en herramientas de \textit{wireframing} (Figma o s
 
 A continuación se recogen las capturas de las dos interfaces principales. Su inserción definitiva queda como tarea de redacción final de la memoria.
 
-% TODO: añadir capturas reales del widget en distintos estados.
 \begin{figure}[hbtp]
 \centering
-\fbox{\parbox{0.7\textwidth}{\centering \vspace{2cm} \textit{[Placeholder: captura del \textit{widget} de chat con un turno típico, mostrando el selector de titulación y un par de mensajes de ejemplo.]} \vspace{2cm}}}
+\includegraphics[width=\linewidth]{img/conversacion_ejemplo.png}
 \caption{Widget conversacional accesible para el estudiante.}\label{fig:widget-chat}
 \end{figure}
 
-% TODO: capturas del panel admin: vista jerárquica de asignaturas, conversaciones, horarios, profesores.
 \begin{figure}[hbtp]
 \centering
-\fbox{\parbox{0.7\textwidth}{\centering \vspace{2cm} \textit{[Placeholder: captura del panel de administración mostrando la vista jerárquica Centro $\rightarrow$ Titulación $\rightarrow$ Asignatura.]} \vspace{2cm}}}
+\includegraphics[width=\linewidth]{img/admin_home.png}
 \caption{Panel de administración: gestión de asignaturas.}\label{fig:admin-asignaturas}
 \end{figure}
 
 \begin{figure}[hbtp]
 \centering
-\fbox{\parbox{0.7\textwidth}{\centering \vspace{2cm} \textit{[Placeholder: captura del panel de administración mostrando la auditoría de conversaciones y \textit{feedback}.]} \vspace{2cm}}}
+\includegraphics[width=\linewidth]{img/admin_conversaciones.png}
 \caption{Panel de administración: auditoría de conversaciones.}\label{fig:admin-conversaciones}
 \end{figure}
 
 \begin{figure}[hbtp]
 \centering
-\fbox{\parbox{0.7\textwidth}{\centering \vspace{2cm} \textit{[Placeholder: captura del panel de administración mostrando la vista de horarios cargados por curso y grupo.]} \vspace{2cm}}}
+\includegraphics[width=\linewidth]{img/admin_horarios.png}
 \caption{Panel de administración: gestión de horarios.}\label{fig:admin-horarios}
 \end{figure}
 
 \begin{figure}[hbtp]
 \centering
-\fbox{\parbox{0.7\textwidth}{\centering \vspace{2cm} \textit{[Placeholder: captura del panel de administración mostrando la vista jerárquica Centro $\rightarrow$ Departamento $\rightarrow$ Profesor.]} \vspace{2cm}}}
+\includegraphics[width=\linewidth]{img/admin_profesores.png}
 \caption{Panel de administración: gestión de profesorado.}\label{fig:admin-profesorado}
 \end{figure}
 

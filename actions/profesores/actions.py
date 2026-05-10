@@ -224,8 +224,9 @@ def _construir_historial(tracker: Tracker, max_turnos: int = 4) -> str:
 
 # ─── Clasificador RAG ───────────────────────────────────────────────────────
 
-# Roles no modelados en `profesor_asignatura`: cuando el usuario los menciona
-# explícitamente, RAG vectorial es la única fuente de verdad.
+# Roles (coordinador/suplente) cuya columna `profesor_asignatura.es_coordinador`
+# existe pero no se puebla desde el directorio us.es: cuando el usuario los
+# menciona explícitamente, el plan docente vía RAG es la única fuente de verdad.
 _PALABRAS_SOLO_RAG = (
     'coordinador', 'coordinadora', 'coordina', 'coordinan',
     'suplente', 'suplentes',
@@ -588,8 +589,9 @@ class ActionConsultaProfesor(Action):
 
         if not resultados:
             # Último recurso: RAG vectorial sobre el plan docente. Cubre los
-            # casos en que `profesor_asignatura` está vacía o no cuadra con el
-            # nombre parcial que dio el usuario.
+            # casos en que `profesor_asignatura` no contiene la asignación
+            # buscada (todavía no sincronizada, o el nombre parcial que dio
+            # el usuario no matchea ninguna fila del JOIN).
             if codigo_asignatura:
                 print(f"  → Fallback RAG vectorial: plan docente de '{nombre_asignatura}'")
                 chunks = _rag_chunks_plan_docente(

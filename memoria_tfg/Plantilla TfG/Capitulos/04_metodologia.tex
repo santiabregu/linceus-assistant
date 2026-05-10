@@ -25,14 +25,14 @@ Linceus Assistant es un proyecto desarrollado por una sola persona, lo que hace 
 
     \item \textbf{Sprint Planning al final de la Review.} La planificación del sprint siguiente se integra en la sesión de revisión del sprint anterior. Una vez evaluado el incremento entregado y ajustado el backlog, se definen directamente los objetivos del próximo sprint. El flujo real es, por tanto: \textit{Review del sprint} $\rightarrow$ \textit{Actualización del backlog} $\rightarrow$ \textit{Definición de objetivos} $\rightarrow$ \textit{Descomposición en tareas}.
 
-    \item \textbf{Rol único con supervisión académica.} Al no haber equipo, los tres roles de Scrum (Product Owner, Scrum Master, Developer) los asume la misma persona. Las funciones propias del Product Owner —definir prioridades, validar el incremento y orientar el alcance del producto— se ejercen en colaboración con el tutor académico, cuyas aportaciones quedan recogidas en la Bitácora de Reuniones descrita en la Sección~\ref{sec:gestion-trabajo}.
+    \item \textbf{Rol único con supervisión académica.} Al no haber equipo, los tres roles de Scrum (Product Owner, Scrum Master, Developer) los asume la misma persona. Las funciones propias del Product Owner (definir prioridades, validar el incremento y orientar el alcance del producto) se ejercen en colaboración con el tutor académico, cuyas aportaciones quedan recogidas en la Bitácora de Reuniones descrita en la Sección~\ref{sec:gestion-trabajo}.
 \end{itemize}
 
-\subsection{Sprints y duración}
+\subsection{Sprints, número y duración}
 
-Los sprints tienen una duración de \textbf{3 a 4 semanas}, ajustada según la carga lectiva del cuatrimestre y la complejidad de la épica en curso. Cada sprint cierra con un incremento funcional verificable y un breve registro de decisiones técnicas (fichero \texttt{docs/sprints/sprint-N.md}) que documenta los cambios de diseño no triviales realizados durante la iteración.
+El proyecto se ha organizado en \textbf{8 sprints} a lo largo de aproximadamente diez meses (julio de 2025 a mayo de 2026), con una duración nominal de \textbf{3 a 4 semanas} por sprint. La duración real de cada iteración se ajustó en función de la carga lectiva del cuatrimestre y de la complejidad de la épica en curso, lo que dio lugar a sprints más cortos durante los periodos de exámenes y a un sprint largo (S7, aproximadamente seis semanas) en el que se concentraron las épicas finales, el panel de administración, el despliegue y el piloto con usuarios. La cadencia y la duración aproximada de cada sprint, junto con los objetivos asociados y las horas registradas, se recogen en la Tabla~\ref{tab:sprints} del Capítulo~\ref{cap:planificacion}.
 
-La correspondencia entre sprints y épicas del backlog se detalla en el Capítulo~\ref{cap:planificacion}.
+Cada sprint cierra con un incremento funcional verificable y un breve registro de decisiones técnicas (fichero \texttt{docs/sprints/sprint-N.md}) que documenta los cambios de diseño no triviales realizados durante la iteración. La correspondencia entre sprints y épicas del backlog se detalla en el Capítulo~\ref{cap:planificacion}.
 
 % =====================================================
 \section{Gestión del código fuente}
@@ -43,15 +43,15 @@ El control de versiones del proyecto se gestiona con \textbf{Git}, y el reposito
 
 \subsection{Política de ramas}
 
-El repositorio sigue una política de dos ramas principales:
+El repositorio mantiene en todo momento exactamente dos ramas activas: \texttt{main} y una rama de trabajo efímera. Esta restricción deliberada simplifica la gestión del historial y evita la acumulación de ramas obsoletas.
 
 \begin{itemize}
-    \item \textbf{\texttt{main}}: rama de producción. Solo recibe merges procedentes de \texttt{testing} una vez que el incremento ha superado las pruebas de aceptación y el sistema está listo para desplegarse. Todo merge a \texttt{main} dispara automáticamente el pipeline de GitHub Actions que despliega la nueva versión en el servidor de DigitalOcean.
+    \item \textbf{\texttt{main}}: rama permanente y de producción. Todo merge a \texttt{main} dispara automáticamente el pipeline de GitHub Actions que despliega la nueva versión en el servidor de DigitalOcean.
 
-    \item \textbf{\texttt{testing}}: rama de integración y validación. Recibe el trabajo de desarrollo, se usa para ejecutar las suites de pruebas y se mantiene como línea estable entre sprints.
+    \item \textbf{Rama de trabajo}: efímera, con nombre descriptivo del tipo \texttt{feature/\allowbreak<épica>} o \texttt{fix/\allowbreak<ámbito>} durante el desarrollo activo de una épica (por ejemplo, \texttt{feature/\allowbreak rag-pipeline} o \texttt{fix/\allowbreak horarios-slot}). Al finalizar la épica se crea una rama \texttt{test} puntual para ejecutar la suite de validación completa; una vez superadas las pruebas, se hace merge a \texttt{main} y la rama se elimina. En ningún momento coexisten más de dos ramas.
 \end{itemize}
 
-El desarrollo de cada épica o tarea de cierta envergadura se realiza en una \textbf{rama de feature} con nombre descriptivo (por ejemplo, \texttt{feature/rag-pipeline} o \texttt{fix/horarios-slot}), que se integra en \texttt{testing} mediante un merge directo una vez finalizada y probada localmente.
+El ciclo completo de una épica es, por tanto: \texttt{main} → \texttt{feature/X} (desarrollo) → \texttt{test} (validación) → \texttt{main} (merge y despliegue).
 
 \subsection{Convenciones de commits}
 
@@ -62,13 +62,60 @@ Los mensajes de commit siguen el estándar \textbf{Conventional Commits}~\cite{c
 \label{sec:estandares}
 % =====================================================
 
-El código Python del proyecto se ajusta a la guía de estilo \textbf{PEP~8}~\cite{pep8}, verificada automáticamente mediante dos herramientas complementarias: \textbf{pylint}~\cite{pylint} y \textbf{flake8}~\cite{flake8}.
+El código Python del proyecto se ajusta a la guía de estilo \textbf{PEP~8}~\cite{pep8}, verificada automáticamente mediante dos herramientas complementarias: \textbf{pylint}~\cite{pylint} y \textbf{flake8}~\cite{flake8}. Pylint cubre el análisis semántico (detección de errores reales, variables no definidas, llamadas incorrectas) mientras que flake8 se centra en la conformidad de estilo: espacios sobrantes, imports no utilizados, longitud de línea e indentación. Ambas herramientas se configuran con un límite de 120 caracteres por línea, valor que equilibra legibilidad y practicidad para un proyecto con prompts al LLM y consultas SQL que no admiten partición arbitraria.
 
-Pylint se configura en \texttt{.pylintrc} con una longitud máxima de línea de 120 caracteres y supresión de los errores de importación propios del entorno Rasa (paquetes como \texttt{rasa\_sdk} o \texttt{rapidfuzz} residen en el entorno virtualizado y no son accesibles desde el intérprete de análisis estático). Se ejecuta sobre \texttt{actions/} y \texttt{admin/} con el flag \texttt{--errors-only} para detectar errores reales antes de integrar cambios en la rama principal.
-
-Flake8 amplía la cobertura de estilo con verificaciones que pylint no contempla: espacios en blanco sobrantes, imports no utilizados, f-strings sin marcadores de sustitución, longitud de línea e indentación de continuación. Se ejecuta con \texttt{--max-line-length=120} sobre los directorios \texttt{actions/}, \texttt{admin/} y \texttt{rag/}. Las líneas que superan el límite por contener cadenas de texto largas no partibles (prompts al LLM, URLs de constantes, sentencias SQL) se suprimen con la directiva \texttt{\# noqa: E501}; los imports que son re-exportaciones intencionadas en ficheros \texttt{\_\_init\_\_.py} se suprimen con \texttt{\# noqa: F401}; y las instrucciones dobles en una sola línea que forman un par semántico indivisible (\texttt{conds.append}~/~\texttt{params.append}) se suprimen con \texttt{\# noqa: E702}. Los imports posteriores a \texttt{sys.path.insert} —necesarios para que los scripts del pipeline RAG y el módulo de profesores sean ejecutables de forma autónoma fuera del paquete— se suprimen con \texttt{\# noqa: E402}. El resto del código cumple PEP~8 sin supresiones.
+En los casos en que una desviación de estilo es intencionada (un import que actúa como re-exportación pública, una línea larga que contiene una cadena de texto no partible, o un par de instrucciones que forman una unidad semántica indivisible) se documenta explícitamente con una directiva de supresión en la propia línea. Esto hace que las excepciones sean visibles y razonadas, en lugar de silenciosas.
 
 Para el código JavaScript del widget de chat (\texttt{frontend/}), se aplica \textbf{ESLint 8}~\cite{eslint} con la configuración \texttt{eslint:recommended}, extendida con reglas de estilo básicas (comillas simples, punto y coma obligatorio). La configuración se almacena en \texttt{.eslintrc.json} en la raíz del repositorio y se ejecuta con \texttt{npm run lint}, que lanza \texttt{eslint frontend/} sobre los tres ficheros del directorio (\texttt{chatbot-widget.js}, \texttt{admin.js}, \texttt{login.js}).
+
+% =====================================================
+\section{Política de delegación al modelo de lenguaje}
+\label{sec:politica-llm}
+% =====================================================
+
+A lo largo del proyecto se ha tomado de forma sistemática una decisión transversal que, sin estar atada a ninguna épica concreta, condiciona la implementación de prácticamente todas: \textbf{cuándo resolver una subtarea con una heurística determinista (regex, diccionario, fuzzy matching) y cuándo delegar en el modelo de lenguaje}. Esta sección explicita el criterio aplicado, porque condiciona también el comportamiento, el coste y la fiabilidad del sistema en producción.
+
+\subsection{Criterio: heurísticas baratas primero, LLM cuando aporta}
+
+El criterio operativo es jerárquico. Para cada subtarea (clasificar una pregunta, extraer una entidad, normalizar un nombre, decidir una rama de pipeline) se aplica el siguiente orden:
+
+\begin{enumerate}
+    \item \textbf{Diccionarios y regex} cuando el espacio de entrada es cerrado o casi cerrado (lista finita de alias, conjunto pequeño de palabras clave, patrones léxicos identificables como \textit{``grupo N''} o \textit{``coordinador''}).
+    \item \textbf{Fuzzy matching} (\texttt{rapidfuzz}, \texttt{SequenceMatcher}) cuando el espacio de entrada es cerrado pero admite errores tipográficos o variantes morfológicas (nombres de profesor en BD, tokens de tutorías con typos).
+    \item \textbf{LLM} solo cuando el espacio de entrada es abierto (generar SQL a partir de lenguaje natural, redactar respuesta natural a partir de \textit{chunks}) o cuando una heurística previa no ha sido concluyente y el coste del LLM se justifica.
+\end{enumerate}
+
+Esta jerarquía no es una preferencia estética: responde a tres restricciones concretas del proyecto. Primero, el \textbf{coste por turno}: cada llamada al modelo cuenta hacia la cuota mensual de Gemini, y multiplicarla por dos o tres llamadas en cada turno conversacional convierte un sistema económico en uno difícil de mantener. Segundo, la \textbf{latencia percibida}: una llamada al modelo añade entre 800~ms y 2~s al turno, y el usuario percibe esa latencia incluso cuando la pregunta era trivial. Tercero, y probablemente más importante, las \textbf{alucinaciones}: cada vez que se delega una decisión binaria al LLM hay una probabilidad no nula de que invente un valor o lo interprete fuera del rango esperado, lo que en un asistente académico puede traducirse en información incorrecta entregada con tono autoritario.
+
+\subsection{Aplicación en el sistema}
+
+El criterio se materializa en patrones recurrentes a lo largo del código. La Tabla~\ref{tab:politica-llm} resume las cuatro variantes principales y dónde aparecen. En todas ellas, la elección entre heurística y LLM no fue casual: respondió a la naturaleza concreta de la subtarea y al balance entre los tres factores anteriores.
+
+\begin{table}[hbtp]
+\centering
+\small
+\begin{tabular}{|p{3.4cm}|p{4.5cm}|p{6cm}|}
+\hline
+\textbf{Patrón} & \textbf{Subtarea típica} & \textbf{Ejemplo en el proyecto} \\
+\hline
+Solo heurística & Detección de patrones léxicos cerrados & \texttt{\_detectar\_grupo()} (regex \texttt{grupo N / gN}); \texttt{\_pregunta\_menciona\_rol\_rag()} (lista de seis palabras clave); \texttt{\_RE\_CONTINUACION\_TODOS\_GRUPOS} (regex de continuación elíptica) \\
+\hline
+Heurística + fuzzy & Resolución de un nombre contra un catálogo finito & Cascada de \texttt{resolver\_asignatura()} (alias $\rightarrow$ regex $\rightarrow$ fuzzy BD); filtrado por similitud en profesores (\texttt{nombre\_normalizado}, umbrales 0,30 y 0,60) \\
+\hline
+Heurística + LLM como respaldo & Clasificación binaria con casos triviales y ambiguos & Clasificador RAG en \texttt{ActionConsultaEspecifica}: primero palabras clave (\textit{evalúa}, \textit{temario}); si no concluye, LLM a temperatura cero \\
+\hline
+LLM directo & Espacio de entrada o salida abierto & \textit{Text-to-SQL} (generación de SELECT); redacción natural de la respuesta final; extracción del nombre de profesor cuando NLU falla y hay asignatura como contexto \\
+\hline
+\end{tabular}
+\caption{Patrones de delegación al LLM aplicados en Linceus Assistant.}
+\label{tab:politica-llm}
+\end{table}
+
+Un ejemplo ilustrativo del segundo patrón es la normalización de la titulación en \texttt{ActionCambiarContexto} (Sección~\ref{sec:impl-contexto}): coincidencia exacta sobre un diccionario, \textit{guard} de tokens discriminantes y, solo si nada de lo anterior funciona, fuzzy matching con umbral conservador. La opción de delegar la normalización al LLM se descartó deliberadamente: un fallo en la titulación contamina toda la sesión inyectando un \texttt{titulacion\_id} incorrecto en consultas posteriores, y el coste de una alucinación silenciosa supera con creces el coste de un fallo de heurística (que el usuario percibe como \textit{``no te he entendido''} y reformula).
+
+\subsection{Limitaciones conocidas}
+
+El precio de esta política es la \textbf{rigidez frente a fraseos atípicos y la dependencia del idioma}. Las heurísticas léxicas (palabras clave, regex de continuación, pronombres demostrativos para invertir prioridades de seguimiento) están escritas en español y no cubren formulaciones que se aparten del registro común del estudiantado. Si el sistema se internacionalizara o se quisiera atender a un público con vocabulario más diverso, varias de estas heurísticas tendrían que migrar a alternativas más flexibles: diccionarios por idioma, similitud semántica con \textit{embeddings} multilingües, o clasificación por LLM a coste de la latencia y de las alucinaciones que actualmente se evitan. Esta tensión se aborda en el Capítulo~\ref{cap:conclusiones} como línea de trabajo futura.
 
 % =====================================================
 \section{Gestión del trabajo}
@@ -77,9 +124,11 @@ Para el código JavaScript del widget de chat (\texttt{frontend/}), se aplica \t
 
 El seguimiento del proyecto se articula en torno a la \textbf{Bitácora de Reuniones}, un documento estructurado que recoge de forma acumulativa el desarrollo de cada reunión con el tutor y los objetivos acordados para el sprint siguiente. Tras cada reunión, la bitácora se actualiza a partir de la transcripción de la sesión, extrayendo los puntos más relevantes (decisiones tomadas, problemas detectados, cambios de prioridad) y registrando las tareas pendientes para el siguiente ciclo. Este documento actúa de facto como el \textit{product backlog} del proyecto: la lista de tareas pendientes refleja en todo momento el estado acordado con el tutor, sin necesidad de herramientas adicionales de gestión.
 
-Complementariamente, las decisiones técnicas no triviales tomadas durante el desarrollo se documentan en los registros de decisiones de sprint (\texttt{docs/sprints/SN/Registro\_decisiones.md}), que mantienen trazabilidad entre el código y el razonamiento que lo originó.
+Las reuniones de seguimiento se celebraron por \textbf{Microsoft Teams}, con una duración aproximada de 30~minutos cada una, al inicio de cada sprint. En total se documentan \textbf{8 reuniones de sprint} en el Apéndice~\ref{ap:actas}, además de una reunión inicial de toma de contacto con el tutor (anterior a la adjudicación oficial del TFG) en la que se acordó el ámbito general del trabajo. Esta cadencia, ligada uno a uno con los sprints, garantiza que la priorización del backlog y la dirección del proyecto se revisen de forma sistemática.
 
-El tiempo dedicado al proyecto no se mide con herramientas de \textit{time tracking} formales, sino que se estima a partir de la frecuencia de commits y del contenido de los registros de sprint.
+Complementariamente, las decisiones técnicas no triviales tomadas durante el desarrollo se documentan en los registros de decisiones de sprint (\texttt{docs/\allowbreak sprints/\allowbreak SN/\allowbreak Registro\_decisiones.md}), que mantienen trazabilidad entre el código y el razonamiento que lo originó.
+
+El tiempo dedicado al proyecto se registra con \textbf{Clockify}, donde cada entrada recibe el nombre \texttt{SX} seguido de un guion y la descripción de la tarea (siendo \texttt{X} el número de sprint), lo que permite agrupar el esfuerzo por sprint y correlacionarlo con el backlog sin necesidad de herramientas adicionales.
 
 % =====================================================
 \section{Versionado del sistema}

@@ -2,9 +2,9 @@
 
 \chapter{Pruebas y Validación}\label{cap:pruebas}
 
-Este capítulo recoge la estrategia de pruebas seguida durante el desarrollo de Linceus Assistant y los resultados obtenidos en la fase de validación previa al cierre del prototipo. La evaluación de un sistema conversacional basado en modelos de lenguaje plantea retos que no se resuelven con una única batería de pruebas: el comportamiento del bot depende del clasificador NLU, de las acciones que consultan la base de datos, del módulo de recuperación semántica y del modelo generativo que produce la respuesta final, de modo que un fallo puede originarse en cualquiera de esas capas. Por ese motivo, la validación se ha organizado en cinco capas independientes que aíslan riesgos distintos y, en conjunto, ofrecen una imagen razonablemente completa del estado del sistema.
+Este capítulo recoge la estrategia de pruebas seguida durante el desarrollo de Linceus Assistant y los resultados obtenidos en la fase de validación previa al cierre del prototipo. La evaluación de un sistema conversacional basado en modelos de lenguaje plantea retos que no se resuelven con una única batería de pruebas: el comportamiento del bot depende del clasificador NLU, de las acciones que consultan la base de datos, del módulo de recuperación semántica y del modelo generativo que produce la respuesta final, de modo que un fallo puede originarse en cualquiera de esas capas. Por ese motivo, la validación se ha organizado en cinco capas funcionales independientes que aíslan riesgos distintos y, en conjunto, ofrecen una imagen razonablemente completa del estado del sistema, complementadas con una sexta capa de pruebas automatizadas sobre la API del panel de administración.
 
-El alcance de las pruebas cubre las tres épicas funcionales que conforman el prototipo (asignaturas, horarios y profesorado), el flujo transversal de cambio de titulación, la gestión de seguimiento conversacional y la respuesta del bot ante consultas fuera de ámbito o intentos de manipulación del prompt. Quedan fuera de este capítulo las pruebas de las importaciones del panel de administración (sincronización con Sevius, vectorización de documentos y carga de horarios), que se enmarcan como trabajo de la siguiente fase, y la validación subjetiva mediante encuesta SUS, que requiere una segunda iteración con usuarios reales.
+El alcance de las pruebas cubre las tres épicas funcionales que conforman el prototipo (asignaturas, horarios y profesorado), el flujo transversal de cambio de titulación, la gestión de seguimiento conversacional, la respuesta del bot ante consultas fuera de ámbito o intentos de manipulación del \textit{prompt} y la API de administración. Esta última se valida exclusivamente sobre los \textit{endpoints} de lectura, validación de parámetros y los flujos de extracción de Sevius mediante \textit{mocks} (Sección~\ref{sec:pruebas-admin}); las operaciones de escritura destructiva sobre el dominio de horarios y el resto de importaciones masivas quedan fuera del alcance, por el riesgo de dejar la base de datos en estado inconsistente al no disponer de un entorno de \textit{staging} aislado. La validación subjetiva mediante escalas estandarizadas como SUS también queda fuera, dado que requiere una segunda iteración con usuarios reales.
 
 \section{Estrategia general}\label{sec:pruebas-estrategia}
 
@@ -180,11 +180,11 @@ Máximo observado & 14{,}1 \\
 
 El coste se calcula aplicando las tarifas públicas equivalentes a Gemini Flash Lite (0,075~USD por millón de \textit{tokens} de entrada y 0,30~USD por millón de \textit{tokens} de salida) y un tipo de cambio de 0,92~EUR/USD. Sobre 216 llamadas medidas, el coste medio por turno se sitúa en \textbf{0,012~céntimos de euro}, con un coste mediano de 0,008 céntimos y un percentil 95 de 0,036 céntimos. El turno más caro de la suite alcanzó 0,064 céntimos.
 
-Para extrapolar este coste al despliegue completo del prototipo en la ETSII (con una población estimada de 700 alumnos del Grado en Ingeniería Informática) se han considerado tres escenarios de intensidad de uso, recogidos en la Tabla~\ref{tab:coste-extrapolado}. En el escenario más conservador, propio de un periodo lectivo normal, el coste anual queda por debajo de 9~euros; en el escenario pico, propio de los periodos de matrícula y exámenes, ronda los 50~euros anuales. En cualquiera de los tres casos, la cifra queda dos órdenes de magnitud por debajo de cualquier suscripción comercial equivalente, lo que respalda la viabilidad económica del despliegue.
+Para extrapolar este coste al despliegue completo del prototipo en la ETSII (con una población estimada de 700 alumnos del Grado en Ingeniería Informática) se han considerado tres escenarios de intensidad de uso, recogidos en la Tabla~\ref{tab:coste-extrapolado}. La cifra extrapolada corresponde \emph{únicamente} al coste hipotético de las llamadas al modelo de lenguaje en una tarifa de pago equivalente: en el despliegue actual, este coste es nulo porque el sistema utiliza el plan gratuito de Gemma. La cifra mostrada sirve para acotar la magnitud económica del componente LLM frente a alternativas comerciales, no como coste total de operación.
 
 \begin{table}[hbtp]
 \centering
-\caption{Extrapolación del coste anual a 700 alumnos según intensidad de uso.}\label{tab:coste-extrapolado}
+\caption{Extrapolación del coste hipotético del LLM a 700 alumnos según intensidad de uso.}\label{tab:coste-extrapolado}
 \begin{tabular}{lrrrr}
 \hline
 \textbf{Escenario} & \textbf{Turnos/alumno/mes} & \textbf{Turnos/mes} & \textbf{Coste/mes} & \textbf{Coste/año} \\
@@ -196,13 +196,15 @@ Pico (exámenes) & 50 & 35\,000 & 4,20~EUR & 50,40~EUR \\
 \end{tabular}
 \end{table}
 
+El coste total de explotación del sistema en producción incluye, además, el alojamiento (Droplet de DigitalOcean de 12\,\$/mes, necesario por el consumo de RAM del modelo Rasa) y la base de datos gestionada Supabase (gratuita en plan Free hasta 5\,000 usuarios mensuales activos, 25\,\$/mes en plan Pro a partir de ahí). El desglose completo, incluyendo escenarios de escalado a 5\,000 y 70\,000 usuarios, se presenta en la Sección~\ref{sec:costes} del Capítulo~\ref{cap:planificacion}: el coste anual real para el escenario actual de 700 alumnos asciende aproximadamente a \textbf{132\,€/año}. Aunque esta cifra es un orden de magnitud superior al coste extrapolado del LLM aislado, sigue siendo dos órdenes de magnitud inferior al de cualquier suscripción comercial equivalente, lo que respalda la viabilidad económica del despliegue.
+
 \section{Visión integrada y discusión}\label{sec:pruebas-discusion}
 
-La Tabla~\ref{tab:visiongeneral} agrega los resultados de las cinco capas funcionales junto con su umbral académico de referencia. Las cinco superan dicho umbral, lo cual permite afirmar que el sistema no presenta un único punto de fallo concentrado y que los errores residuales son conocidos, aislados y gestionables como trabajo futuro.
+La Tabla~\ref{tab:visiongeneral} agrega los resultados de las seis capas de validación junto con su umbral académico de referencia. Las cinco capas funcionales superan su umbral, y la suite automática del panel de administración pasa los 24 casos definidos. Esta lectura permite afirmar que el sistema no presenta un único punto de fallo concentrado y que los errores residuales son conocidos, aislados y gestionables como trabajo futuro.
 
 \begin{table}[hbtp]
 \centering
-\caption{Visión integrada de las cinco capas de validación funcional.}\label{tab:visiongeneral}
+\caption{Visión integrada de las seis capas de validación.}\label{tab:visiongeneral}
 \begin{tabular}{lrrrll}
 \hline
 \textbf{Capa} & \textbf{N} & \textbf{PASS} & \textbf{\%} & \textbf{Umbral} & \textbf{Veredicto} \\
@@ -212,16 +214,73 @@ RAG \textit{baseline} (\S\ref{subsec:rag-baseline}) & 50 & 47 & 94,0 & $\geq$ 85
 RAG profundidad (\S\ref{subsec:rag-profundidad}) & 74 & 68 & 91,9 & $\geq$ 85\,\% \cite{es2024ragas} & Supera \\
 NLU + Policy (\S\ref{sec:pruebas-nlu}) & 158 & 158 & 100 & $\geq$ 85\,\% \cite{bocklisch2020diet} & Supera \\
 Tráfico real (\S\ref{sec:pruebas-trafico}) & 59 & 58 & 98,3 & $\geq$ 70\,\% \cite{casas2020trends} & Supera \\
+Admin pytest (\S\ref{sec:pruebas-admin}) & 24 & 24 & 100 & --- & Supera \\
 \hline
 \end{tabular}
 \end{table}
 
-La comparación con chatbots universitarios publicados refuerza esta lectura. Los cuatro sistemas tomados como referencia (AdmitBot, EDUBOT, Ranoliya y Dibya--Sahoo) reportan cifras de exactitud comprendidas entre el 78\,\% y el 85\,\%; Linceus Assistant supera con holgura ese rango en las tres capas comparables (94,3\,\% en E2E, 91,9\,\% en RAG de profundidad y 98,3\,\% en tráfico real). La distancia es, en cualquier caso, prudente: la metodología de evaluación, el corpus utilizado y la naturaleza del dominio difieren entre proyectos y no permiten una comparación estrictamente cuantitativa.
+La comparación con chatbots universitarios publicados refuerza esta lectura. Los cuatro sistemas tomados como referencia (AdmitBot, EDUBOT, Ranoliya y Dibya--Sahoo) reportan cifras de exactitud comprendidas entre el 78\,\% y el 85\,\%; Linceus Assistant supera con claridad ese rango en las tres capas comparables (94,3\,\% en E2E, 91,9\,\% en RAG de profundidad y 98,3\,\% en tráfico real). La distancia es, en cualquier caso, prudente: la metodología de evaluación, el corpus utilizado y la naturaleza del dominio difieren entre proyectos y no permiten una comparación estrictamente cuantitativa.
 
 \subsection{Cumplimiento del criterio de cierre}\label{subsec:pruebas-cierre}
 
-Se considera que la fase de validación del prototipo queda cerrada en el momento en que se cumplen, de manera simultánea, los siguientes criterios: las cinco capas funcionales superan su umbral académico de referencia, la metodología empleada está documentada y respaldada por bibliografía, los fallos residuales han sido identificados, categorizados y justificados, y se demuestra mediante medición directa que el coste y la latencia son compatibles con un despliegue real. Todos los criterios anteriores se cumplen a fecha de 26 de abril de 2026.
+Se considera que la fase de validación del prototipo queda cerrada en el momento en que se cumplen, de manera simultánea, los siguientes criterios: las cinco capas funcionales superan su umbral académico de referencia, la suite automática del panel de administración pasa íntegra, la metodología empleada está documentada y respaldada por bibliografía, los fallos residuales han sido identificados, categorizados y justificados, y se demuestra mediante medición directa que el coste y la latencia son compatibles con un despliegue real. Todos los criterios anteriores se cumplen a fecha de 26 de abril de 2026.
 
 \subsection{Limitaciones y trabajo futuro}\label{subsec:pruebas-limitaciones}
 
-La validación realizada no agota la evaluación posible del sistema. Quedan fuera de su alcance la medición de la experiencia subjetiva del usuario mediante una escala estandarizada como SUS, la evaluación de la disponibilidad sostenida del servicio en producción mediante un acuerdo de nivel de servicio, y la suite automática para los \textit{endpoints} del panel de administración. Estos tres frentes se abordarán en una segunda iteración, junto con un conjunto de palancas técnicas identificadas durante la ejecución de las pruebas: la elección de modelo Gemini en función del tipo de llamada (clasificación, \textit{Text-to-SQL} o renderizado natural), la sustitución de heurísticas por expresiones regulares por clasificadores ligeros basados en LLM, la introducción de una memoria caché de respuestas para las consultas más frecuentes, la instrumentación de métricas de monitorización en producción y la persistencia de la última intención específica como \textit{slot} consultable para resolver el seguimiento conversacional entre sub-\textit{intents}.
+La validación realizada no agota la evaluación posible del sistema. Quedan fuera de su alcance la medición de la experiencia subjetiva del usuario mediante una escala estandarizada como SUS, la evaluación de la disponibilidad sostenida del servicio en producción mediante un acuerdo de nivel de servicio, y la cobertura automática de las operaciones de escritura destructiva del panel de administración (\textit{horarios/generar} con \texttt{limpiar=true} y \texttt{DELETE /horarios}), que requieren un entorno de \textit{staging} aislado para no comprometer los datos de producción. Estos tres frentes se abordarán en una segunda iteración, junto con un conjunto de palancas técnicas identificadas durante la ejecución de las pruebas: la elección de modelo Gemini en función del tipo de llamada (clasificación, \textit{Text-to-SQL} o renderizado natural), la sustitución de heurísticas por expresiones regulares por clasificadores ligeros basados en LLM, la introducción de una memoria caché de respuestas para las consultas más frecuentes, la instrumentación de métricas de monitorización en producción y la persistencia de la última intención específica como \textit{slot} consultable para resolver el seguimiento conversacional entre sub-\textit{intents}.
+
+% =====================================================
+\section{Pruebas automatizadas del panel de administración}\label{sec:pruebas-admin}
+% =====================================================
+
+El panel de administración se valida mediante una suite de pruebas automatizadas con \textbf{pytest} y el cliente de test integrado de Flask, ubicada en \texttt{tests/test\_admin.py}. La suite se ejecuta con el comando \texttt{pytest tests/test\_admin.py -v} y no requiere infraestructura adicional.
+
+La estrategia combina tres bloques con objetivos distintos: los \textit{tests de lectura} ejercitan los endpoints GET contra la base de datos de producción sin ningún efecto secundario; los \textit{tests de validación} comprueban que los endpoints de escritura rechazan correctamente los parámetros inválidos antes de llegar a la base de datos; y los \textit{tests con mock} verifican la lógica de extracción de Sevius sustituyendo el scraper por un doble de prueba, lo que permite cubrir los flujos de error y los invariantes de inserción sin modificar los datos de producción.
+
+\subsection{Resultados}\label{subsec:admin-resultados}
+
+La Tabla~\ref{tab:admin-resultados} recoge los 24 casos ejecutados el 26 de abril de 2026, junto con su clasificación y veredicto.
+
+\begin{table}[hbtp]
+\centering
+\caption{Resultados de la suite \texttt{test\_admin.py} (pytest, 26/04/2026).}\label{tab:admin-resultados}
+\small
+\begin{tabular}{p{0.6cm}p{1.4cm}p{10.0cm}p{0.8cm}}
+\hline
+\textbf{ID} & \textbf{Bloque} & \textbf{Qué verifica} & \textbf{Res.} \\
+\hline
+A01 & GET & Servidor activo y BD accesible (\texttt{/health}) & PASS \\
+A02 & GET & \texttt{/stats} devuelve las 10 claves con valores $\geq$ 0 & PASS \\
+A03 & GET & \texttt{/centros} lista no vacía con campos requeridos & PASS \\
+A04 & GET & \texttt{/asignaturas} devuelve todas las asignaturas activas & PASS \\
+A05 & GET & \texttt{/asignaturas?titulacion\_id} filtra correctamente & PASS \\
+A06 & GET & \texttt{/profesores} lista con campos de contacto & PASS \\
+A07 & GET & \texttt{/profesores/<id>} devuelve perfil completo & PASS \\
+A08 & GET & \texttt{/profesores/<uuid-falso>} devuelve 404 & PASS \\
+A09 & GET & \texttt{/horarios?titulacion\_id} devuelve franjas con campos completos & PASS \\
+A10 & GET & \texttt{/conversaciones} devuelve \texttt{total} y \texttt{rows} & PASS \\
+A11 & GET & \texttt{/conversaciones/sesiones} devuelve \texttt{session\_id} y conteo & PASS \\
+A12 & GET & \texttt{/titulaciones?centro\_id} devuelve titulaciones con conteos & PASS \\
+A13 & GET & \texttt{/horarios/extractores} lista centros con extracción soportada & PASS \\
+\hline
+A14 & 400 & \texttt{POST /asignaturas/sync} sin body devuelve 400 & PASS \\
+A15 & 400 & \texttt{POST /asignaturas/sync} sin \texttt{titulacion\_id} devuelve 400 & PASS \\
+A16 & 400 & \texttt{POST /asignaturas/sync} con UUID inexistente devuelve 404 & PASS \\
+A17 & 400 & \texttt{POST /horarios/generar} sin \texttt{centro\_id} devuelve 400 & PASS \\
+A18 & 400 & \texttt{POST /horarios/generar} con UUID inexistente devuelve 404 & PASS \\
+A19 & 400 & \texttt{GET /horarios/titulaciones} sin \texttt{centro\_id} devuelve 400 & PASS \\
+A20 & 400 & \texttt{DELETE /horarios} sin \texttt{centro\_id} devuelve 400 & PASS \\
+\hline
+A21 & mock & Catálogo vacío de Sevius produce 404 & PASS \\
+A22 & mock & Excepción en Sevius produce 502 con mensaje descriptivo & PASS \\
+A23 & mock & Asignaturas ya existentes no se reinsertan & PASS \\
+A24 & mock & INSERT invocado con \texttt{titulacion\_id} correcto & PASS \\
+\hline
+\multicolumn{3}{l}{\textbf{Total}} & \textbf{24/24} \\
+\hline
+\end{tabular}
+\end{table}
+
+Los 24 casos pasan en 16,86 segundos. El bloque GET confirma la integridad de los datos en producción y la ausencia de regresiones en los endpoints de lectura. El bloque 400 verifica que la capa de validación rechaza las solicitudes malformadas antes de ejecutar cualquier operación en la base de datos. El bloque mock demuestra que la lógica de extracción de Sevius maneja correctamente los tres escenarios críticos: error de red, catálogo vacío y catálogo con elementos ya presentes, sin insertar duplicados en ningún caso.
+
+Las operaciones de escritura destructiva (\texttt{horarios/generar} con \texttt{limpiar=true} y \texttt{DELETE /horarios}) quedan fuera de la suite por el riesgo de dejar la base de datos en estado inconsistente al no disponer de un entorno de \textit{staging} aislado, tal como se documenta en la Sección~\ref{subsec:pruebas-limitaciones}.

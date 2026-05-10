@@ -77,7 +77,7 @@
         numbers=left,
         numberstyle=\tiny,
         breaklines=true,
-        backgroundcolor=\color{hellgelb},
+        backgroundcolor=\color{white},
         breakautoindent=true,
         captionpos=b
 }
@@ -312,6 +312,9 @@
 \filright}
 [\vspace{2ex}
 \titlerule]
+% Reducimos el espacio enorme por defecto de titlesec sobre el titulo del capitulo.
+% Antes: 50pt; despues: 30pt arriba, 20pt abajo. Aplicable tambien a \chapter*.
+\titlespacing*{\chapter}{0pt}{30pt}{20pt}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

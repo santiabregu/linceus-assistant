@@ -4,22 +4,39 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Estructura de Descomposición del Trabajo (EDT) — fases y paquetes de trabajo.}}{37}{}%
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Estructura de Descomposición del Trabajo (EDT): fases y paquetes de trabajo.}}{47}{figure.5.1}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {6.1}{\ignorespaces Widget conversacional accesible para el estudiante.}}{50}{}%
-\contentsline {figure}{\numberline {6.2}{\ignorespaces Panel de administración: gestión de asignaturas.}}{51}{}%
-\contentsline {figure}{\numberline {6.3}{\ignorespaces Panel de administración: auditoría de conversaciones.}}{51}{}%
-\contentsline {figure}{\numberline {6.4}{\ignorespaces Panel de administración: gestión de horarios.}}{51}{}%
-\contentsline {figure}{\numberline {6.5}{\ignorespaces Panel de administración: gestión de profesorado.}}{51}{}%
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Widget conversacional accesible para el estudiante.}}{67}{figure.6.1}%
+\contentsline {figure}{\numberline {6.2}{\ignorespaces Panel de administración: gestión de asignaturas.}}{67}{figure.6.2}%
+\contentsline {figure}{\numberline {6.3}{\ignorespaces Panel de administración: auditoría de conversaciones.}}{68}{figure.6.3}%
+\contentsline {figure}{\numberline {6.4}{\ignorespaces Panel de administración: gestión de horarios.}}{68}{figure.6.4}%
+\contentsline {figure}{\numberline {6.5}{\ignorespaces Panel de administración: gestión de profesorado.}}{68}{figure.6.5}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {7.1}{\ignorespaces Diagrama de componentes del sistema Linceus.}}{55}{}%
-\contentsline {figure}{\numberline {7.2}{\ignorespaces Diagrama de despliegue del sistema Linceus en DigitalOcean (Ubuntu 24.04 LTS) con el pipeline de despliegue automatizado vía GitHub Actions.}}{62}{}%
-\addvspace {10\p@ }
-\addvspace {10\p@ }
+\contentsline {figure}{\numberline {7.1}{\ignorespaces Diagrama de componentes del sistema Linceus. El componente \textit {multi-intent} aparece con trazo discontinuo porque su código permanece en el repositorio como referencia pero está desactivado en el modelo de diálogo del prototipo (ver Sección~\ref {sec:impl-multi-intent}).}}{72}{figure.7.1}%
+\contentsline {figure}{\numberline {7.2}{\ignorespaces Diagrama de despliegue del sistema Linceus en DigitalOcean (Ubuntu 24.04 LTS) con el pipeline de despliegue automatizado vía GitHub Actions.}}{74}{figure.7.2}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {11.1}{\ignorespaces Pipeline de \texttt {ActionConsultaEspecifica}. La caja \textit {Resolver asignatura} encapsula la cascada de cinco estrategias detallada en el Listado~\ref {lst:asig-cascada}.}}{102}{figure.11.1}%
+\contentsline {figure}{\numberline {11.2}{\ignorespaces Pipeline de listado y conteo (\textit {text-to-SQL}).}}{104}{figure.11.2}%
+\contentsline {figure}{\numberline {11.3}{\ignorespaces Pipeline de \texttt {ActionConsultaProfesor}. Tres puntos de decisión derivan al RAG: rol (\textit {coordinador}/\textit {suplente}), grupo concreto, o resultado SQL vacío como último recurso.}}{106}{figure.11.3}%
+\contentsline {figure}{\numberline {11.4}{\ignorespaces Pipeline de \texttt {ActionConsultaHorario}.}}{108}{figure.11.4}%
+\contentsline {figure}{\numberline {11.5}{\ignorespaces Pipeline de \texttt {ActionSmartFallback}.}}{109}{figure.11.5}%
+\contentsline {figure}{\numberline {11.6}{\ignorespaces Pantalla de inicio del panel de administración. Cada tarjeta representa un centro con el número de titulaciones que gestiona.}}{112}{figure.11.6}%
+\contentsline {figure}{\numberline {11.7}{\ignorespaces Vista de profesores del Departamento de Lenguajes y Sistemas Informáticos. La columna \textit {Enriquecer desde us.es} lanza el scraper de directorio para actualizar los datos del PDI.}}{112}{figure.11.7}%
+\contentsline {figure}{\numberline {11.8}{\ignorespaces Vista de conversaciones agrupadas por sesión. La fila en verde indica una sesión marcada como revisada. El botón \textit {Exportar esta página} vuelca las sesiones seleccionadas en CSV.}}{113}{figure.11.8}%
+\contentsline {figure}{\numberline {11.9}{\ignorespaces Panel de estadísticas generales. Los contadores se calculan en tiempo real contra Supabase. En el momento de la captura el sistema contaba con 244~asignaturas, 268~profesores, 157~planes docentes vectorizados y 1352~\textit {chunks} RAG.}}{113}{figure.11.9}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {13.1}{\ignorespaces Página principal del prototipo con el \textit {widget} de chat cerrado.}}{126}{figure.13.1}%
+\contentsline {figure}{\numberline {13.2}{\ignorespaces \textit {Widget} desplegado con mensaje de bienvenida y selector de titulación.}}{126}{figure.13.2}%
+\contentsline {figure}{\numberline {13.3}{\ignorespaces Ejemplo de sesión con seguimiento conversacional y cambio de contexto.}}{128}{figure.13.3}%
+\contentsline {figure}{\numberline {13.4}{\ignorespaces Panel de administración: vista de centros y titulaciones.}}{128}{figure.13.4}%
+\contentsline {figure}{\numberline {13.5}{\ignorespaces Panel de administración: gestión del profesorado.}}{129}{figure.13.5}%
+\contentsline {figure}{\numberline {13.6}{\ignorespaces Panel de administración: vista de horarios.}}{129}{figure.13.6}%
+\contentsline {figure}{\numberline {13.7}{\ignorespaces Panel de administración: registro de conversaciones anonimizadas.}}{130}{figure.13.7}%
+\contentsline {figure}{\numberline {13.8}{\ignorespaces Panel de administración: estadísticas de uso del sistema.}}{130}{figure.13.8}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

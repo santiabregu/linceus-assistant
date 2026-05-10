@@ -1,28 +1,115 @@
 \chapter{Conceptos iniciales}
 \label{cap:conceptos}
 
-% Marco conceptual y terminología fundamental del proyecto
+Este capítulo presenta la terminología fundamental sobre la que se construye el sistema. El objetivo no es reproducir la documentación oficial de cada tecnología, sino establecer un marco conceptual propio del proyecto, coherente con las decisiones de diseño adoptadas y con la forma en que cada componente aparece en el resto de la memoria.
 
-\section{Sistema conversacional y componentes de Rasa}
+\section{Sistema conversacional}
+\label{sec:sistema-conversacional}
+
+Un sistema conversacional es una aplicación software diseñada para interactuar con usuarios mediante lenguaje natural. El sistema interpreta cada entrada textual, mantiene el estado del diálogo a lo largo del tiempo y genera respuestas coherentes en función del contexto y de los objetivos definidos.
+
+En el caso de Linceus Assistant, el sistema se especializa en consultas académicas del ámbito de la ETSII: horarios, información de asignaturas, datos de contacto del profesorado y normativa universitaria. Esta especialización condiciona tanto el diseño del modelo de lenguaje como la estructura de la base de datos.
+
+\section{Componentes del sistema conversacional con Rasa}
 \label{sec:conceptos-rasa}
 
-% Definición de términos clave basados en el diccionario del sistema
-% - Intents, entities, slots
-% - NLU vs Dialogue Management
-% - Actions, forms, fallbacks
-% - Estructura de archivos (domain.yml, nlu.yml, stories.yml, rules.yml)
+El framework Rasa organiza el sistema en dos capas bien diferenciadas: la comprensión del lenguaje natural (NLU) y la gestión del diálogo. Cada capa opera con sus propios mecanismos y se configura en archivos separados.
 
-\section{Procesamiento del lenguaje natural}
-\label{sec:nlu}
+\subsection{Comprensión del lenguaje natural (NLU)}
 
-% Conceptos fundamentales de NLU aplicados al proyecto
+El módulo NLU procesa cada mensaje del usuario para extraer dos tipos de información: la intención que expresa y las entidades que contiene.
 
-\section{Gestión del diálogo}
-\label{sec:gestion-dialogo}
+\paragraph{Intent}
 
-% Políticas, flujos conversacionales y gestión del estado
+Un intent representa el propósito o el objetivo del mensaje del usuario. Cada entrada se clasifica en una única intención que determina el tipo de acción que debe ejecutar el asistente. En el proyecto se definen intents específicos para cada dominio funcional: consulta de horarios, búsqueda de profesores, información sobre asignaturas o preguntas sobre normativa.
+
+\paragraph{Entity}
+
+Una entidad es un fragmento de información concreta extraído del mensaje que completa la intención detectada. Por ejemplo, en la frase \textit{``¿Cuándo es la clase de Bases de Datos del grupo 2?''}, el intent es \texttt{consultar\_horario}, la entidad \texttt{nombre\_asignatura} toma el valor \textit{Bases de Datos} y la entidad \texttt{grupo} toma el valor \textit{2}. Las entidades se definen en el archivo \texttt{domain.yml} y se anotan en los ejemplos de entrenamiento dentro de \texttt{data/nlu.yml}.
+
+\subsection{Gestión del diálogo}
+
+Una vez que el NLU ha identificado el intent y las entidades, el gestor de diálogo decide qué acción ejecutar a continuación. Este componente trabaja con tres elementos principales: slots, el tracker y las políticas de diálogo.
+
+\paragraph{Slot}
+
+Un slot es una variable de memoria que persiste durante toda la conversación. Mientras que una entidad se extrae del mensaje actual y se descarta al siguiente turno, un slot conserva el valor extraído para que esté disponible en acciones posteriores. En Rasa, los slots se declaran en \texttt{domain.yml} y se tipan según el dato que almacenan: texto, número, valor booleano o valor categórico.
+
+\paragraph{Tracker}
+
+El tracker es la estructura interna que almacena el estado completo de la conversación en cada instante. Contiene el historial de mensajes del usuario, los intents detectados, las entidades extraídas, los valores actuales de los slots y las acciones ya ejecutadas. Las custom actions acceden al tracker para leer el contexto de la conversación antes de generar una respuesta.
+
+\subsection{Mecanismos de respuesta: actions}
+
+Las acciones son las operaciones que ejecuta el asistente como respuesta a cada turno de conversación. Rasa distingue dos tipos:
+
+\begin{itemize}
+    \item \textbf{Respuestas predefinidas (\texttt{utter\_*})}: respuestas de texto estático declaradas en la sección \texttt{responses} del \texttt{domain.yml}. Se usan para saludos, despedidas y mensajes fijos.
+    \item \textbf{Custom actions (\texttt{action\_*})}: clases Python definidas en \texttt{actions/actions.py} que implementan lógica personalizada. En este proyecto se emplean para consultar la base de datos, invocar la API de Gemini y construir respuestas dinámicas.
+\end{itemize}
+
+\subsection{Formularios}
+
+Un formulario es un mecanismo que permite recopilar varios datos del usuario de forma secuencial antes de ejecutar una acción. Si el usuario no proporciona todos los campos necesarios en un solo mensaje, el formulario los solicita uno a uno hasta completarlos. En el proyecto se utilizan formularios en aquellas consultas que requieren asignatura y grupo simultáneamente para devolver un resultado concreto.
+
+\subsection{Fallback}
+
+El fallback es el comportamiento de recuperación que se activa cuando el sistema no es capaz de clasificar el mensaje con confianza suficiente, o cuando no existe ninguna acción definida para la situación actual. En lugar de devolver un error o un silencio, el mecanismo de fallback responde al usuario con un mensaje de disculpa y, opcionalmente, le redirige a un recurso externo relacionado con el tema detectado.
+
+\section{Archivos de configuración de Rasa}
+\label{sec:archivos-rasa}
+
+La configuración del sistema se distribuye en varios archivos, cada uno con una responsabilidad bien definida. La tabla~\ref{tab:archivos-rasa} resume su función dentro del proyecto.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{|l|p{9cm}|}
+\hline
+\textbf{Archivo} & \textbf{Función} \\ \hline
+\texttt{domain.yml}         & Definición central del asistente: intents, entities, slots, respuestas y lista de acciones. \\ \hline
+\texttt{data/nlu.yml}       & Ejemplos de frases anotadas para entrenar el modelo NLU. \\ \hline
+\texttt{data/stories.yml}   & Flujos de conversación de varios turnos usados como ejemplos de entrenamiento. \\ \hline
+\texttt{data/rules.yml}     & Comportamientos deterministas que se aplican siempre, independientemente del contexto. \\ \hline
+\texttt{config.yml}         & Pipeline de componentes NLU y políticas de diálogo. \\ \hline
+\texttt{endpoints.yml}      & URL del servidor de acciones y configuración del tracker store. \\ \hline
+\texttt{actions/actions.py} & Implementación Python de las custom actions. \\ \hline
+\end{tabular}
+\caption{Archivos de configuración principales del sistema Rasa}
+\label{tab:archivos-rasa}
+\end{table}
+
+La distinción entre \texttt{stories.yml} y \texttt{rules.yml} es relevante para el diseño: las stories son ejemplos de los que el modelo aprende a generalizar, mientras que las rules son restricciones absolutas. Para el proyecto, los saludos, las despedidas y los fallbacks se gestionan mediante rules; los flujos que dependen del contexto acumulado en la conversación se modelan con stories.
+
+\section{Flujo de procesamiento de un mensaje}
+\label{sec:flujo-procesamiento}
+
+Cuando el usuario envía un mensaje al asistente, el sistema lo procesa en tres etapas consecutivas:
+
+\begin{enumerate}
+    \item \textbf{NLU}: el texto se tokeniza, se vectoriza y se clasifica para obtener el intent y las entidades. En el proyecto, esta etapa combina el clasificador DIET de Rasa con una llamada opcional a la API de Gemini para los casos en que la confianza del clasificador local no supera el umbral definido.
+    \item \textbf{Gestión del diálogo}: el gestor consulta las rules y las stories para decidir la siguiente acción. El tracker se actualiza con el nuevo mensaje y los valores de los slots modificados.
+    \item \textbf{Ejecución de la acción}: si la acción es una respuesta predefinida, se envía directamente. Si es una custom action, se ejecuta el código Python correspondiente, que puede consultar la base de datos, llamar a la API de Gemini o construir una respuesta RAG.
+\end{enumerate}
+
+\section{Generación aumentada por recuperación (RAG)}
+\label{sec:rag}
+
+La generación aumentada por recuperación (RAG, del inglés \textit{Retrieval Augmented Generation}) es una técnica que combina la búsqueda de información en una base de conocimiento con la generación de texto mediante un modelo de lenguaje~\cite{lewis2020retrieval}. El objetivo es reducir las alucinaciones propias de los modelos generativos proporcionándoles contexto factual relevante antes de generar la respuesta.
+
+En Linceus Assistant, el pipeline RAG opera en tres pasos. Primero, la consulta del usuario se transforma en un vector de alta dimensión mediante un modelo de embeddings. Segundo, ese vector se compara con los fragmentos almacenados en la base de datos vectorial para recuperar los más similares semánticamente. Tercero, los fragmentos recuperados se incorporan al prompt que se envía a Gemini, que genera la respuesta final fundamentada en esos contenidos.
 
 \section{Backend y persistencia de datos}
 \label{sec:backend}
 
-% Supabase, PostgreSQL, pgvector y almacenamiento de información
+\subsection{Supabase y PostgreSQL}
+
+Supabase es una plataforma de backend basada en PostgreSQL que ofrece base de datos relacional, autenticación, API REST y soporte para la extensión pgvector~\cite{supabasedocs}. En el proyecto, Supabase centraliza dos tipos de información: los datos estructurados del dominio académico (asignaturas, profesores, horarios, normativa) y los vectores semánticos del sistema RAG.
+
+\subsection{pgvector}
+
+pgvector es una extensión de PostgreSQL que permite almacenar vectores numéricos como columnas de una tabla relacional y realizar búsquedas de similitud sobre ellos de forma eficiente~\cite{pgvectorgithub}. Su ventaja en este proyecto es que evita la necesidad de mantener un motor vectorial independiente: los embeddings y los datos estructurados conviven en la misma base de datos, simplificando las consultas y el despliegue.
+
+\subsection{Embeddings}
+
+Un embedding es una representación numérica de un texto en un espacio vectorial de alta dimensión. Textos semánticamente similares producen vectores próximos según alguna métrica de distancia, como el coseno o la distancia euclídea. En el pipeline RAG del proyecto, los fragmentos de documentación académica se convierten en embeddings al ingestar los datos, y las consultas del usuario se transforman en embeddings en tiempo de ejecución para recuperar los fragmentos más relevantes.

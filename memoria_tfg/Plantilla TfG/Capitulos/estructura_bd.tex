@@ -56,6 +56,8 @@ Los centros representan las escuelas y facultades de cada universidad (e.g., ETS
 id & uuid & Identificador único (PK) \\ \hline
 universidad\_id & uuid & Referencia a UNIVERSIDADES (FK) \\ \hline
 codigo & varchar & Código del centro (e.g., "ETSII") \\ \hline
+codigo\_sevius & varchar & Código del centro en Sevius \\ \hline
+codigo\_us & varchar & Código oficial del centro en la US \\ \hline
 nombre & varchar & Nombre completo del centro \\ \hline
 nombre\_corto & varchar & Nombre abreviado \\ \hline
 direccion & varchar & Dirección física del centro \\ \hline
@@ -63,6 +65,8 @@ telefono & varchar & Teléfono de contacto \\ \hline
 email & varchar & Email de contacto \\ \hline
 web & varchar & URL del sitio web del centro \\ \hline
 activo & boolean & Indica si está operativo \\ \hline
+created\_at & timestamptz & Fecha de creación del registro \\ \hline
+updated\_at & timestamptz & Fecha de última actualización \\ \hline
 }
 
 \subsection{Departamentos}
@@ -73,12 +77,16 @@ Los departamentos son unidades organizativas que agrupan profesores e imparten a
 \textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} \\ \hline
 id & uuid & Identificador único (PK) \\ \hline
 universidad\_id & uuid & Referencia a UNIVERSIDADES (FK) \\ \hline
+centro\_id & uuid & Referencia a CENTROS (FK) \\ \hline
 codigo & varchar & Código del departamento \\ \hline
+codigo\_us & varchar & Código oficial del departamento en la US \\ \hline
 nombre & varchar & Nombre completo \\ \hline
 siglas & varchar & Siglas del departamento (e.g., "LSI") \\ \hline
 email & varchar & Email de contacto \\ \hline
 web & varchar & URL del sitio web \\ \hline
 activo & boolean & Indica si está operativo \\ \hline
+created\_at & timestamptz & Fecha de creación del registro \\ \hline
+updated\_at & timestamptz & Fecha de última actualización \\ \hline
 }
 
 \subsection{Titulaciones}
@@ -99,6 +107,8 @@ creditos\_totales & int & Créditos ECTS totales \\ \hline
 duracion\_anios & int & Duración en años \\ \hline
 requisito\_idioma & varchar & Nivel de idioma requerido (e.g., "B1") \\ \hline
 activa & boolean & Indica si está vigente \\ \hline
+created\_at & timestamptz & Fecha de creación del registro \\ \hline
+updated\_at & timestamptz & Fecha de última actualización \\ \hline
 }
 
 \subsection{Asignaturas}
@@ -121,6 +131,8 @@ es\_optativa & boolean & Si es optativa \\ \hline
 nombre\_normalizado & varchar & Nombre sin tildes ni mayúsculas \\ \hline
 palabras\_clave & text[] & Array de palabras clave \\ \hline
 activa & boolean & Indica si está vigente \\ \hline
+created\_at & timestamptz & Fecha de creación del registro \\ \hline
+updated\_at & timestamptz & Fecha de última actualización \\ \hline
 }
 
 El campo \texttt{nombre\_normalizado} facilita la búsqueda tolerante a errores, mientras que \texttt{palabras\_clave} permite búsquedas por términos relacionados.
@@ -133,18 +145,23 @@ La tabla de profesores almacena la información del personal docente.
 \textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} \\ \hline
 id & uuid & Identificador único (PK) \\ \hline
 departamento\_id & uuid & Referencia a DEPARTAMENTOS (FK) \\ \hline
+centro\_id & uuid & Referencia a CENTROS (FK) \\ \hline
 nombre & varchar & Nombre del profesor \\ \hline
 apellidos & varchar & Apellidos del profesor \\ \hline
 nombre\_completo & varchar & Nombre completo (generado) \\ \hline
 nombre\_normalizado & varchar & Versión normalizada para búsqueda \\ \hline
+categoria\_academica & varchar & Catedrático, Titular, Contratado Doctor, etc. \\ \hline
 email & varchar & Email de contacto \\ \hline
 telefono & varchar & Teléfono de contacto \\ \hline
 despacho & varchar & Número de despacho (e.g., "F1.45") \\ \hline
 edificio & varchar & Edificio donde se ubica \\ \hline
 planta & varchar & Planta del despacho \\ \hline
 web\_personal & varchar & URL de página personal \\ \hline
+enlace\_perfil & varchar & URL del perfil en la web del departamento \\ \hline
 orcid & varchar & Identificador ORCID \\ \hline
 activo & boolean & Indica si está en activo \\ \hline
+created\_at & timestamptz & Fecha de creación del registro \\ \hline
+updated\_at & timestamptz & Fecha de última actualización \\ \hline
 }
 
 \subsection{Horarios}
@@ -162,8 +179,11 @@ hora\_inicio & time & Hora de inicio de la clase \\ \hline
 hora\_fin & time & Hora de fin de la clase \\ \hline
 fecha\_inicio & date & Fecha de inicio del periodo \\ \hline
 fecha\_fin & date & Fecha de fin del periodo \\ \hline
+cuatrimestre & varchar & Cuatrimestre académico (C1, C2 o anual) \\ \hline
 notas & text & Observaciones \\ \hline
 activo & boolean & Indica si está vigente \\ \hline
+created\_at & timestamptz & Fecha de creación del registro \\ \hline
+updated\_at & timestamptz & Fecha de última actualización \\ \hline
 }
 
 \section{Tablas de vectorización (RAG)}\label{sec:vectorizacion}
@@ -185,6 +205,7 @@ coordinador\_nombre & varchar & Nombre del coordinador \\ \hline
 estado\_rag & varchar & pendiente, procesando, completado, error \\ \hline
 fecha\_procesamiento & timestamptz & Fecha de procesamiento \\ \hline
 error\_procesamiento & text & Mensaje de error si lo hay \\ \hline
+created\_at & timestamptz & Fecha de creación del registro \\ \hline
 updated\_at & timestamptz & Última actualización \\ \hline
 }
 
@@ -196,11 +217,12 @@ id & uuid & Identificador único (PK) \\ \hline
 plan\_docente\_id & uuid & Referencia a PLANES\_DOCENTES (FK) \\ \hline
 contenido & text & Texto del fragmento \\ \hline
 embedding & vector & Vector de 768 dimensiones \\ \hline
-seccion & varchar & Sección del documento (e.g., "Evaluación") \\ \hline
+seccion & varchar & Sección del documento (e.g., ``Evaluación'') \\ \hline
 subseccion & varchar & Subsección si aplica \\ \hline
 numero\_pagina & int & Número de página del PDF \\ \hline
 orden\_chunk & int & Orden del chunk en el documento \\ \hline
 metadata & jsonb & Metadatos adicionales en formato JSON \\ \hline
+created\_at & timestamptz & Fecha de creación del registro \\ \hline
 updated\_at & timestamptz & Última actualización \\ \hline
 }
 
@@ -218,34 +240,36 @@ LIMIT 5;
 Las principales relaciones del modelo son:
 
 \begin{itemize}
-    \item Una \textbf{universidad} tiene múltiples \textbf{centros} y \textbf{departamentos}
-    \item Un \textbf{centro} ofrece múltiples \textbf{titulaciones} y tiene múltiples \textbf{aulas}
-    \item Una \textbf{titulación} contiene múltiples \textbf{asignaturas}
-    \item Una \textbf{asignatura} es impartida por un \textbf{departamento} y tiene múltiples \textbf{planes docentes} y \textbf{grupos de clase}
-    \item Un \textbf{departamento} agrupa a múltiples \textbf{profesores}
-    \item Un \textbf{profesor} imparte múltiples \textbf{asignaturas} y está asignado a \textbf{horarios}
-    \item Un \textbf{grupo de clase} tiene un conjunto de \textbf{horarios} asociados
-    \item Un \textbf{horario} relaciona un \textbf{grupo}, un \textbf{aula} y un \textbf{profesor}
+    \item Una \textbf{universidad} agrupa múltiples \textbf{centros} y \textbf{departamentos} (FK \texttt{universidad\_id} en ambos).
+    \item Un \textbf{centro} ofrece múltiples \textbf{titulaciones} (FK \texttt{centro\_id} en \textsc{titulaciones}) y aloja múltiples \textbf{aulas}. Adicionalmente, un departamento queda adscrito a un centro a través de la FK \texttt{centro\_id} en \textsc{departamentos}.
+    \item Una \textbf{titulación} contiene múltiples \textbf{asignaturas} (FK \texttt{titulacion\_id}).
+    \item Una \textbf{asignatura} es impartida por un \textbf{departamento} (FK \texttt{departamento\_id}) y tiene múltiples \textbf{planes docentes} (FK \texttt{asignatura\_id} en \textsc{planes\_docentes}) y \textbf{grupos de clase}.
+    \item Un \textbf{departamento} agrupa a múltiples \textbf{profesores} (FK \texttt{departamento\_id}). El profesor también queda asociado a un \textbf{centro} mediante la FK \texttt{centro\_id} en \textsc{profesores}, lo que facilita las consultas que filtran por escuela sin tener que recorrer el departamento.
+    \item Un \textbf{profesor} imparte múltiples \textbf{asignaturas} y está asignado a \textbf{horarios} (FK \texttt{profesor\_id} en \textsc{horarios}).
+    \item Un \textbf{grupo de clase} tiene un conjunto de \textbf{horarios} asociados (FK \texttt{grupo\_id}).
+    \item Un \textbf{horario} relaciona un \textbf{grupo} (FK \texttt{grupo\_id}), un \textbf{aula} (FK \texttt{aula\_id}) y un \textbf{profesor} (FK \texttt{profesor\_id}), e incluye el \texttt{cuatrimestre} para distinguir las sesiones del mismo grupo en periodos académicos distintos.
+    \item Un \textbf{plan docente} se descompone en múltiples \textbf{chunks} para vectorización (FK \texttt{plan\_docente\_id} en \textsc{planes\_docentes\_chunks}, con \texttt{ON DELETE CASCADE}).
 \end{itemize}
+
+Todas las tablas principales registran además \texttt{created\_at} y \texttt{updated\_at} (\texttt{timestamptz}) para auditar la trazabilidad temporal de cada registro, en línea con el principio enunciado en la Sección~\ref{sec:diseno-conceptual}.
 
 \section{Índices y optimización}\label{sec:indices}
 
-Para garantizar un rendimiento óptimo en las consultas, se han creado los siguientes índices:
+La estrategia de indexación cubre tres tipos de acceso según el patrón de consulta:
 
 \begin{itemize}
-    \item \textbf{Índices B-tree}: En todas las claves primarias y foráneas
-    \item \textbf{Índices de texto}: En campos \texttt{nombre\_normalizado} para búsquedas rápidas
-    \item \textbf{Índices GIN}: En campos de array (\texttt{palabras\_clave}) y JSONB (\texttt{metadata})
-    \item \textbf{Índices IVFFlat}: En campos \texttt{embedding} para búsquedas de similitud vectorial
+    \item \textbf{B-tree (PKs y FKs)}: Índices únicos en todas las claves primarias (\texttt{\_pkey}) y en las claves foráneas más consultadas (\texttt{titulacion\_id}, \texttt{grupo\_id}, \texttt{profesor\_id}, \texttt{departamento\_id}, etc.), más índices adicionales sobre campos de filtrado frecuente como \texttt{codigo}, \texttt{curso}, \texttt{dia\_semana} o \texttt{estado\_rag}.
+    \item \textbf{GIN trigrama}: El campo \texttt{nombre\_normalizado} de \textsc{asignaturas} lleva un índice \texttt{gin\_trgm\_ops} además del B-tree, lo que permite búsquedas \texttt{ILIKE} eficientes sin exploración secuencial. Este índice es la base del \textit{fallback} por palabras clave del pipeline RAG (Sección~\ref{subsec:dd-fallback}).
+    \item \textbf{HNSW}: El campo \texttt{embedding} de \textsc{planes\_docentes\_chunks} usa un índice \textit{Hierarchical Navigable Small World}~\cite{malkov2018hnsw} con parámetros $m=16$ y $ef\_construction=64$ (Sección~\ref{subsec:dd-embeddings}), que ofrece búsqueda aproximada de vecinos más cercanos en tiempo sub-lineal.
 \end{itemize}
 
-Ejemplo de creación de índice vectorial:
+El índice HNSW sobre los chunks de planes docentes se crea así:
 
 \begin{verbatim}
-CREATE INDEX idx_planes_chunks_embedding
+CREATE INDEX idx_chunks_embedding_hnsw
 ON planes_docentes_chunks
-USING ivfflat (embedding vector_cosine_ops)
-WITH (lists = 100);
+USING hnsw (embedding vector_cosine_ops)
+WITH (m = 16, ef_construction = 64);
 \end{verbatim}
 
 \section{Integridad referencial}\label{sec:integridad}

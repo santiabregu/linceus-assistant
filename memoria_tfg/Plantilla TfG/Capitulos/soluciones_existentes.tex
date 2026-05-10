@@ -38,18 +38,28 @@ La Tabla~\ref{tab:soluciones-comparativa} resume las principales soluciones iden
 \centering
 \small
 \caption{Comparativa de soluciones existentes frente a Linceus Assistant.}\label{tab:soluciones-comparativa}
-\begin{tabular}{p{2.4cm}p{2.4cm}p{2.4cm}p{2.0cm}p{2.6cm}}
+\begin{tabular}{|p{2.4cm}|p{2.4cm}|p{2.4cm}|p{2.0cm}|p{2.6cm}|}
 \hline
+\rowcolor{black!10}
 \textbf{Sistema} & \textbf{Dominio} & \textbf{Tecnología} & \textbf{Acceso} & \textbf{Diferenciación} \\
 \hline
 CATi (US)~\cite{usCati} & Acceso, admisión, matrícula, becas & 1MillionBot (NLP propietario) & Web institucional & Menús guiados; cobertura de FAQ ($\sim$160 preguntas) \\
+\hline
 Lola (UMU)~\cite{umuLola} & Acceso y matrícula nuevo ingreso & DialogFlow + 1MillionBot & Web y app DURM & Pionero (2018); 91,67\,\% acierto \\
+\hline
 Alhe (UGR)~\cite{ugrAlhe} & Oferta educativa y servicios & 1MillionBot & Web y Telegram & 91\,\% acierto en primer año \\
+\hline
 LUCA (UCA)~\cite{ucaLuca} & Información a futuro estudiante & 1MillionBot & Web institucional & Disponibilidad 24/7 \\
+\hline
 Isidra (UAH)~\cite{uahIsidra} & Información institucional & 1MillionBot & Web institucional & $>$90\,\% precisión declarada \\
+\hline
 UniBuddy~\cite{unibuddy} & Captación y admisión & GPT (OpenAI) & SaaS multi-canal & Mensajería P2P + IA \\
+\hline
 Hubert~\cite{hubert} & \textit{Feedback} de cursos & NLP propietario & Web y enlaces & Encuesta conversacional \\
+\hline
 AdmitBot~\cite{gupta2019admitbot} & Admisión universitaria (académico) & NLU clásico & Prototipo & 82\,\% \textit{intent accuracy} \\
+\hline
+\rowcolor{usteal!12}
 \textbf{Linceus} & Asignaturas, horarios y profesorado ETSII & Rasa 3.6 + Gemini + RAG (\textit{pgvector}) & Web (\textit{widget}) & RAG sobre planes docentes; código abierto; validación cuantitativa \\
 \hline
 \end{tabular}
@@ -57,12 +67,18 @@ AdmitBot~\cite{gupta2019admitbot} & Admisión universitaria (académico) & NLU c
 
 A la vista de la comparativa pueden destacarse cuatro ejes diferenciales del proyecto Linceus Assistant frente al panorama existente.
 
-El primero es el \textbf{tipo de información cubierta}. Los asistentes institucionales españoles (CATi, Lola, Alhe, LUCA, Isidra) se concentran fundamentalmente en el ciclo de captación, acceso y matrícula, es decir, en información de tipo administrativo dirigida a estudiantes potenciales o de nuevo ingreso. Linceus Assistant, en cambio, atiende al estudiante ya matriculado en su día a día académico: consulta de asignaturas con su plan docente, horarios por curso y grupo, e información de contacto del profesorado. Es un dominio menos atendido por las soluciones comerciales y, por tanto, con un nicho funcional propio.
+El primero, y probablemente el más relevante, es el \textbf{tipo de información cubierta}. Los asistentes institucionales españoles (CATi, Lola, Alhe, LUCA, Isidra) se concentran fundamentalmente en el ciclo de captación, acceso y matrícula, es decir, en información de tipo administrativo orientada a estudiantes potenciales o que aún no han comenzado sus estudios. Una vez el alumno se matricula, esos asistentes dejan de cubrir el grueso de las preguntas que pasan a ser pertinentes: qué se imparte en cada asignatura, en qué aula y horario tiene clase un determinado grupo, quién coordina una asignatura concreta o cómo se evalúa.
 
-El segundo es el \textbf{modelo conversacional}. La interacción real con CATi expuesta al inicio de esta sección demuestra que la mayoría de los asistentes universitarios españoles desplegados a fecha de hoy combinan una primera capa NLU con un \textit{flujo guiado por menús} en los turnos posteriores. Esta arquitectura limita la cobertura efectiva al conjunto cerrado de preguntas predefinidas. Linceus Assistant adopta un planteamiento distinto: emplea un módulo de recuperación aumentada por generación (RAG) sobre los documentos oficiales, lo que le permite responder a preguntas no anticipadas en el guion siempre que la información figure en el corpus indexado. La validación recogida en el Capítulo~\ref{cap:pruebas} muestra que el sistema responde correctamente al 91,9\,\% de un conjunto de 74 preguntas reales extraídas de los planes docentes oficiales, lo que excede el rango habitual de \textit{exact-match} reportado para sistemas RAG de dominio cerrado en la literatura.
+Linceus Assistant cubre exactamente ese hueco. El sistema atiende al estudiante en su día a día académico mediante tres dominios funcionales (asignaturas con su plan docente completo, horarios por curso y grupo, e información de contacto del profesorado) sin renunciar a ser útil también al estudiante de nuevo ingreso, que en sus primeras semanas necesita justamente este tipo de información para orientarse: localizar el aula del primer día, identificar al coordinador de una asignatura o entender el sistema de evaluación. La herramienta no excluye, por tanto, al perfil que cubren CATi y similares, sino que extiende la cobertura más allá del momento de la matrícula.
+
+Esta diferencia no es solo de alcance, sino de naturaleza del dato. Las consultas administrativas que cubren los asistentes existentes se resuelven con un conjunto cerrado de respuestas tipificadas; las consultas académicas que cubre Linceus se basan en documentación viva (planes docentes que cambian curso a curso, horarios que se publican cada cuatrimestre, asignaciones de profesorado revisables). Para que la información se mantenga al día sin intervención técnica, el sistema incorpora un \textbf{panel de administración conectado directamente a la base de datos}, desde el que el personal autorizado puede actualizar asignaturas, horarios, profesorado y planes docentes a través de la propia interfaz web. Cualquier cambio queda inmediatamente disponible para el chatbot, sin necesidad de regenerar el modelo ni de recurrir al proveedor. Las soluciones comerciales basadas en plataformas SaaS no suelen ofrecer este grado de control directo sobre el corpus.
+
+El segundo es el \textbf{modelo conversacional}. La interacción real con CATi expuesta al inicio de esta sección permite documentar de forma directa que el asistente combina una primera capa NLU con un flujo guiado por menús en los turnos posteriores. El resto de asistentes españoles citados (Lola, Alhe, LUCA, Isidra) se construyen sobre tecnologías equivalentes (1MillionBot y DialogFlow), basadas también en clasificación de intención sin componente generativo abierto, y la documentación pública de cada uno de ellos describe su funcionamiento como un emparejamiento entre la pregunta del usuario y un conjunto cerrado de respuestas tipificadas. El patrón dominante en el ecosistema español es, por tanto, NLU clásico con menús cerrados o respuestas predefinidas, sin recuperación abierta sobre documentación.
+
+Linceus Assistant adopta un planteamiento distinto: emplea un módulo de recuperación aumentada por generación (RAG) sobre los documentos oficiales, lo que le permite responder a preguntas no anticipadas en el guion siempre que la información figure en el corpus indexado. La validación recogida en el Capítulo~\ref{cap:pruebas} muestra que el sistema responde correctamente al 91,9\,\% de un conjunto de 74 preguntas reales extraídas de los planes docentes oficiales, lo que excede el rango habitual de \textit{exact-match} reportado para sistemas RAG de dominio cerrado en la literatura.
 
 El tercero es el \textbf{modelo de licencia y despliegue}. Las soluciones comerciales identificadas (1MillionBot, UniBuddy, Hubert) son productos cerrados ofrecidos como servicio (SaaS). Linceus Assistant es un sistema desarrollado en el ámbito académico, abierto en su código y desplegable en la infraestructura de la propia universidad mediante Docker Compose. Esta diferencia tiene consecuencias en términos de control sobre los datos, ausencia de coste de licencia y posibilidad de adaptación funcional sin dependencia de proveedor.
 
 El cuarto es la \textbf{validación cuantitativa}. Las cifras publicadas por las soluciones comerciales españolas suelen consistir en una tasa de acierto agregada (entre el 91\,\% y el 98\,\%), sin desagregar por tipo de consulta ni acompañar de la metodología empleada para el cómputo. Linceus Assistant aporta un esquema de validación en cinco capas independientes (E2E, RAG \textit{baseline}, RAG de profundidad, NLU y \textit{policy}, tráfico real post-despliegue) cuya metodología y resultados se documentan exhaustivamente en el Capítulo~\ref{cap:pruebas}, con trazabilidad completa frente a umbrales académicos publicados.
 
-En conjunto, el panorama revisado muestra que existe espacio para una propuesta como la presente: enfocada al estudiante matriculado, abierta en su tecnología, basada en RAG sobre documentación oficial real y validada con un esquema cuantitativo reproducible.
+En conjunto, el panorama revisado muestra que existe espacio para una propuesta como la presente: orientada al estudiante en su día a día académico (tanto el ya matriculado como el de nuevo ingreso una vez comienza el curso), abierta en su tecnología, basada en RAG sobre documentación oficial real, con un panel de administración que permite mantener el corpus al día sin intervención técnica y validada con un esquema cuantitativo reproducible.
