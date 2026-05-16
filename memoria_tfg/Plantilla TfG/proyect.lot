@@ -63,36 +63,36 @@
 \contentsline {table}{\numberline {10.9}{\ignorespaces Estructura de la tabla PLANES\_DOCENTES\_CHUNKS}}{111}{table.10.9}%
 \addvspace {10\p@ }
 \contentsline {table}{\numberline {11.1}{\ignorespaces Tabla \texttt {RERANK\_WEIGHTS}: bonificación aditiva por sección según el tipo de consulta detectado.}}{129}{table.11.1}%
-\contentsline {table}{\numberline {11.2}{\ignorespaces Operaciones del panel de administración por pestaña. Todos los \textit {endpoints} van prefijados por \texttt {/api/admin}.}}{133}{table.11.2}%
+\contentsline {table}{\numberline {11.2}{\ignorespaces Operaciones del panel de administración por pestaña. Todos los \textit {endpoints} van prefijados por \texttt {/api/admin}.}}{132}{table.11.2}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {12.1}{\ignorespaces Resultados por categoría de la suite E2E (revisión manual, 26/04/2026).}}{138}{table.12.1}%
-\contentsline {table}{\numberline {12.2}{\ignorespaces Cobertura de la capa de profundidad RAG por curso.}}{139}{table.12.2}%
-\contentsline {table}{\numberline {12.3}{\ignorespaces Resultados de la capa NLU y Policy.}}{139}{table.12.3}%
-\contentsline {table}{\numberline {12.4}{\ignorespaces Resultados de la reproducción de tráfico real.}}{140}{table.12.4}%
-\contentsline {table}{\numberline {12.5}{\ignorespaces Síntesis de los casos fallidos por patrón de causa raíz.}}{142}{table.12.5}%
-\contentsline {table}{\numberline {12.6}{\ignorespaces Latencia extremo a extremo (segundos).}}{142}{table.12.6}%
-\contentsline {table}{\numberline {12.7}{\ignorespaces Extrapolación del coste hipotético del LLM a 700 alumnos según intensidad de uso.}}{143}{table.12.7}%
-\contentsline {table}{\numberline {12.8}{\ignorespaces Visión integrada de las seis capas de validación.}}{143}{table.12.8}%
-\contentsline {table}{\numberline {12.9}{\ignorespaces Resultados de la suite \texttt {test\_admin.py} (pytest, 26/04/2026).}}{146}{table.12.9}%
+\contentsline {table}{\numberline {12.1}{\ignorespaces Resultados por categoría de la suite E2E (revisión manual, 26/04/2026).}}{137}{table.12.1}%
+\contentsline {table}{\numberline {12.2}{\ignorespaces Cobertura de la capa de profundidad RAG por curso.}}{138}{table.12.2}%
+\contentsline {table}{\numberline {12.3}{\ignorespaces Resultados de la capa NLU y Policy.}}{138}{table.12.3}%
+\contentsline {table}{\numberline {12.4}{\ignorespaces Resultados de la reproducción de tráfico real.}}{139}{table.12.4}%
+\contentsline {table}{\numberline {12.5}{\ignorespaces Síntesis de los casos fallidos por patrón de causa raíz.}}{141}{table.12.5}%
+\contentsline {table}{\numberline {12.6}{\ignorespaces Latencia extremo a extremo (segundos).}}{141}{table.12.6}%
+\contentsline {table}{\numberline {12.7}{\ignorespaces Extrapolación del coste hipotético del LLM a 700 alumnos según intensidad de uso.}}{142}{table.12.7}%
+\contentsline {table}{\numberline {12.8}{\ignorespaces Visión integrada de las seis capas de validación.}}{142}{table.12.8}%
+\contentsline {table}{\numberline {12.9}{\ignorespaces Resultados de la suite \texttt {test\_admin.py} (pytest, 26/04/2026).}}{145}{table.12.9}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {13.1}{\ignorespaces Tipos de consulta soportados por el prototipo.}}{149}{table.13.1}%
-\contentsline {table}{\numberline {13.2}{\ignorespaces Acciones de la pestaña \textit {Centros}.}}{154}{table.13.2}%
-\contentsline {table}{\numberline {13.3}{\ignorespaces Acciones de la pestaña \textit {Asignaturas}.}}{155}{table.13.3}%
-\contentsline {table}{\numberline {13.4}{\ignorespaces Acciones de la pestaña \textit {Profesores}.}}{155}{table.13.4}%
-\contentsline {table}{\numberline {13.5}{\ignorespaces Acciones de la pestaña \textit {Horarios}.}}{156}{table.13.5}%
-\contentsline {table}{\numberline {13.6}{\ignorespaces Acciones de la pestaña \textit {Conversaciones}.}}{157}{table.13.6}%
-\contentsline {table}{\numberline {13.7}{\ignorespaces Secuencia recomendada para la carga inicial del catálogo de un centro.}}{158}{table.13.7}%
-\contentsline {table}{\numberline {13.8}{\ignorespaces Requisitos mínimos del entorno de despliegue.}}{159}{table.13.8}%
-\contentsline {table}{\numberline {13.9}{\ignorespaces Contenedores del despliegue y responsabilidad de cada uno.}}{160}{table.13.9}%
-\contentsline {table}{\numberline {13.10}{\ignorespaces Estructura del repositorio Linceus Assistant.}}{161}{table.13.10}%
-\contentsline {table}{\numberline {13.11}{\ignorespaces Etapas del ciclo de incorporación de cambios.}}{162}{table.13.11}%
+\contentsline {table}{\numberline {13.1}{\ignorespaces Tipos de consulta soportados por el prototipo.}}{148}{table.13.1}%
+\contentsline {table}{\numberline {13.2}{\ignorespaces Acciones de la pestaña \textit {Centros}.}}{153}{table.13.2}%
+\contentsline {table}{\numberline {13.3}{\ignorespaces Acciones de la pestaña \textit {Asignaturas}.}}{154}{table.13.3}%
+\contentsline {table}{\numberline {13.4}{\ignorespaces Acciones de la pestaña \textit {Profesores}.}}{154}{table.13.4}%
+\contentsline {table}{\numberline {13.5}{\ignorespaces Acciones de la pestaña \textit {Horarios}.}}{155}{table.13.5}%
+\contentsline {table}{\numberline {13.6}{\ignorespaces Acciones de la pestaña \textit {Conversaciones}.}}{156}{table.13.6}%
+\contentsline {table}{\numberline {13.7}{\ignorespaces Secuencia recomendada para la carga inicial del catálogo de un centro.}}{157}{table.13.7}%
+\contentsline {table}{\numberline {13.8}{\ignorespaces Requisitos mínimos del entorno de despliegue.}}{158}{table.13.8}%
+\contentsline {table}{\numberline {13.9}{\ignorespaces Contenedores del despliegue y responsabilidad de cada uno.}}{159}{table.13.9}%
+\contentsline {table}{\numberline {13.10}{\ignorespaces Estructura del repositorio Linceus Assistant.}}{160}{table.13.10}%
+\contentsline {table}{\numberline {13.11}{\ignorespaces Etapas del ciclo de incorporación de cambios.}}{161}{table.13.11}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {14.1}{\ignorespaces Indicadores cuantitativos de Linceus Assistant al cierre del prototipo (26/04/2026).}}{166}{table.14.1}%
-\contentsline {table}{\numberline {14.2}{\ignorespaces Cruce entre objetivos técnicos y evidencia obtenida.}}{167}{table.14.2}%
+\contentsline {table}{\numberline {14.1}{\ignorespaces Indicadores cuantitativos de Linceus Assistant al cierre del prototipo (26/04/2026).}}{165}{table.14.1}%
+\contentsline {table}{\numberline {14.2}{\ignorespaces Cruce entre objetivos técnicos y evidencia obtenida.}}{166}{table.14.2}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {16.1}{\ignorespaces Sucesión de escenas del vídeo demostración.}}{176}{table.16.1}%
+\contentsline {table}{\numberline {16.1}{\ignorespaces Sucesión de escenas del vídeo demostración.}}{175}{table.16.1}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {.2}{\ignorespaces Distribución del tiempo por categoría de actividad (Clockify, 02/05/2026).}}{181}{table.Alph0.2}%
-\contentsline {table}{\numberline {.3}{\ignorespaces Horas registradas por sprint (Clockify, 02/05/2026).}}{181}{table.Alph0.3}%
+\contentsline {table}{\numberline {.2}{\ignorespaces Distribución del tiempo por categoría de actividad (Clockify, 02/05/2026).}}{180}{table.Alph0.2}%
+\contentsline {table}{\numberline {.3}{\ignorespaces Horas registradas por sprint (Clockify, 02/05/2026).}}{180}{table.Alph0.3}%
 \contentsfinish 

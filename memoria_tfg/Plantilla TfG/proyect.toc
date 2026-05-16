@@ -279,7 +279,7 @@
 \contentsline {paragraph}{Calibración de temperatura por caso de uso.}{126}{paragraph*.82}%
 \contentsline {subsection}{\numberline {11.8.2}Conexión a base de datos}{126}{subsection.11.8.2}%
 \contentsline {subsection}{\numberline {11.8.3}Matching difuso de nombres}{126}{subsection.11.8.3}%
-\contentsline {paragraph}{Calibración empírica de los umbrales.}{126}{paragraph*.83}%
+\contentsline {paragraph}{Ajuste iterativo de los umbrales.}{126}{paragraph*.83}%
 \contentsline {subsection}{\numberline {11.8.4}Resolución de afirmación con inyección de entidades sintéticas}{127}{subsection.11.8.4}%
 \contentsline {section}{\numberline {11.9}Pipeline RAG: chunking, embeddings y búsqueda}{127}{section.11.9}%
 \contentsline {subsection}{\numberline {11.9.1}Chunking por secciones con deduplicación de cabeceras}{128}{subsection.11.9.1}%
@@ -288,103 +288,103 @@
 \contentsline {paragraph}{Fallback por palabras clave.}{129}{paragraph*.84}%
 \contentsline {paragraph}{Tolerancia a variantes de nombre de grupo.}{129}{paragraph*.85}%
 \contentsline {section}{\numberline {11.10}Panel de administración}{129}{section.11.10}%
-\contentsline {subsection}{\numberline {11.10.1}Estructura de la API}{129}{subsection.11.10.1}%
-\contentsline {subsection}{\numberline {11.10.2}Operaciones del panel}{132}{subsection.11.10.2}%
-\contentsline {subsection}{\numberline {11.10.3}Pipeline de vectorización}{132}{subsection.11.10.3}%
-\contentsline {part}{IV\hspace {1em}Validación y Cierre}{135}{part.4}%
-\contentsline {chapter}{\numberline {12}Pruebas y Validación}{136}{chapter.12}%
-\contentsline {section}{\numberline {12.1}Estrategia general}{136}{section.12.1}%
-\contentsline {subsection}{\numberline {12.1.1}Marco metodológico}{136}{subsection.12.1.1}%
-\contentsline {subsection}{\numberline {12.1.2}Política de exclusión por trabajo futuro}{137}{subsection.12.1.2}%
-\contentsline {subsection}{\numberline {12.1.3}Ejecución y registro}{137}{subsection.12.1.3}%
-\contentsline {section}{\numberline {12.2}Ejecución funcional extremo a extremo}{137}{section.12.2}%
-\contentsline {subsection}{\numberline {12.2.1}Alcance}{137}{subsection.12.2.1}%
-\contentsline {subsection}{\numberline {12.2.2}Lectura frente a la literatura}{138}{subsection.12.2.2}%
-\contentsline {section}{\numberline {12.3}Recuperación aumentada por generación}{138}{section.12.3}%
-\contentsline {subsection}{\numberline {12.3.1}Capa baseline}{138}{subsection.12.3.1}%
-\contentsline {subsection}{\numberline {12.3.2}Capa de profundidad}{138}{subsection.12.3.2}%
-\contentsline {section}{\numberline {12.4}Clasificación NLU y política de diálogo}{139}{section.12.4}%
-\contentsline {section}{\numberline {12.5}Reproducción de tráfico real tras el despliegue}{140}{section.12.5}%
-\contentsline {subsection}{\numberline {12.5.1}Metodología de revisión}{140}{subsection.12.5.1}%
-\contentsline {subsection}{\numberline {12.5.2}Resultados}{140}{subsection.12.5.2}%
-\contentsline {section}{\numberline {12.6}Análisis de los casos fallidos}{140}{section.12.6}%
-\contentsline {paragraph}{Patrón 1: ambigüedad léxica entre intenciones cercanas.}{141}{paragraph*.86}%
-\contentsline {paragraph}{Patrón 2: cobertura insuficiente de la base de datos relacional para el dominio profesorado.}{141}{paragraph*.87}%
-\contentsline {paragraph}{Patrón 3: respuestas parcialmente correctas del RAG por contexto recuperado incompleto.}{141}{paragraph*.88}%
-\contentsline {paragraph}{Patrón 4: brechas de cobertura funcional no previstas.}{141}{paragraph*.89}%
-\contentsline {section}{\numberline {12.7}Métricas no funcionales: latencia y coste}{142}{section.12.7}%
-\contentsline {subsection}{\numberline {12.7.1}Latencia}{142}{subsection.12.7.1}%
-\contentsline {subsection}{\numberline {12.7.2}Coste por turno}{142}{subsection.12.7.2}%
-\contentsline {section}{\numberline {12.8}Visión integrada y discusión}{143}{section.12.8}%
-\contentsline {subsection}{\numberline {12.8.1}Cumplimiento del criterio de cierre}{144}{subsection.12.8.1}%
-\contentsline {subsection}{\numberline {12.8.2}Amenazas a la validez}{144}{subsection.12.8.2}%
-\contentsline {paragraph}{Validez interna.}{144}{paragraph*.90}%
-\contentsline {paragraph}{Validez de constructo.}{144}{paragraph*.91}%
-\contentsline {paragraph}{Validez externa.}{144}{paragraph*.92}%
-\contentsline {paragraph}{Validez de conclusión.}{144}{paragraph*.93}%
-\contentsline {subsection}{\numberline {12.8.3}Limitaciones y trabajo futuro}{145}{subsection.12.8.3}%
-\contentsline {section}{\numberline {12.9}Pruebas automatizadas del panel de administración}{145}{section.12.9}%
-\contentsline {subsection}{\numberline {12.9.1}Resultados}{145}{subsection.12.9.1}%
-\contentsline {chapter}{\numberline {13}Manuales}{147}{chapter.13}%
-\contentsline {section}{\numberline {13.1}Manual de usuario}{147}{section.13.1}%
-\contentsline {subsection}{\numberline {13.1.1}Acceso a la aplicación}{147}{subsection.13.1.1}%
-\contentsline {subsection}{\numberline {13.1.2}Modelo conversacional}{149}{subsection.13.1.2}%
-\contentsline {subsection}{\numberline {13.1.3}Funcionalidades disponibles}{149}{subsection.13.1.3}%
-\contentsline {subsection}{\numberline {13.1.4}Recomendaciones de uso}{149}{subsection.13.1.4}%
-\contentsline {section}{\numberline {13.2}Manual de administrador}{153}{section.13.2}%
-\contentsline {subsection}{\numberline {13.2.1}Acceso e interfaz general}{153}{subsection.13.2.1}%
-\contentsline {subsection}{\numberline {13.2.2}Pestaña Centros}{154}{subsection.13.2.2}%
-\contentsline {subsection}{\numberline {13.2.3}Pestaña Asignaturas}{154}{subsection.13.2.3}%
-\contentsline {subsection}{\numberline {13.2.4}Pestaña Profesores}{155}{subsection.13.2.4}%
-\contentsline {subsection}{\numberline {13.2.5}Pestaña Horarios}{156}{subsection.13.2.5}%
-\contentsline {subsection}{\numberline {13.2.6}Pestaña Conversaciones y feedback}{156}{subsection.13.2.6}%
-\contentsline {subsection}{\numberline {13.2.7}Pestaña Estadísticas}{157}{subsection.13.2.7}%
-\contentsline {subsection}{\numberline {13.2.8}Procedimiento recomendado de carga inicial}{157}{subsection.13.2.8}%
-\contentsline {section}{\numberline {13.3}Manual de despliegue}{159}{section.13.3}%
-\contentsline {subsection}{\numberline {13.3.1}Requisitos previos}{159}{subsection.13.3.1}%
-\contentsline {subsection}{\numberline {13.3.2}Instalación}{159}{subsection.13.3.2}%
-\contentsline {subsection}{\numberline {13.3.3}Arquitectura del despliegue}{160}{subsection.13.3.3}%
-\contentsline {subsection}{\numberline {13.3.4}Verificación del despliegue}{160}{subsection.13.3.4}%
-\contentsline {subsection}{\numberline {13.3.5}Operaciones habituales}{160}{subsection.13.3.5}%
-\contentsline {section}{\numberline {13.4}Manual de desarrollo}{161}{section.13.4}%
-\contentsline {subsection}{\numberline {13.4.1}Estructura del repositorio}{161}{subsection.13.4.1}%
-\contentsline {subsection}{\numberline {13.4.2}Entorno de desarrollo}{161}{subsection.13.4.2}%
-\contentsline {subsection}{\numberline {13.4.3}Ciclo de incorporación de cambios}{162}{subsection.13.4.3}%
-\contentsline {subsection}{\numberline {13.4.4}Cómo añadir una nueva intención}{163}{subsection.13.4.4}%
-\contentsline {subsection}{\numberline {13.4.5}Buenas prácticas y convenciones}{163}{subsection.13.4.5}%
-\contentsline {chapter}{\numberline {14}Conclusiones y desarrollos futuros}{165}{chapter.14}%
-\contentsline {section}{\numberline {14.1}Linceus en números}{165}{section.14.1}%
-\contentsline {section}{\numberline {14.2}Cumplimiento de objetivos}{165}{section.14.2}%
-\contentsline {subsection}{\numberline {14.2.1}Objetivo general}{165}{subsection.14.2.1}%
-\contentsline {subsection}{\numberline {14.2.2}Objetivos técnicos}{167}{subsection.14.2.2}%
-\contentsline {subsection}{\numberline {14.2.3}Objetivos académicos y personales}{167}{subsection.14.2.3}%
-\contentsline {section}{\numberline {14.3}Lecciones aprendidas}{167}{section.14.3}%
-\contentsline {section}{\numberline {14.4}Análisis de desviación}{168}{section.14.4}%
-\contentsline {section}{\numberline {14.5}Desarrollos futuros}{168}{section.14.5}%
-\contentsline {subsection}{\numberline {14.5.1}Optimización del sistema actual}{169}{subsection.14.5.1}%
-\contentsline {subsection}{\numberline {14.5.2}Ampliación funcional}{170}{subsection.14.5.2}%
-\contentsline {subsection}{\numberline {14.5.3}Validación reforzada}{170}{subsection.14.5.3}%
-\contentsline {section}{\numberline {14.6}Contribución al estado del arte}{170}{section.14.6}%
-\contentsline {paragraph}{Calibración empírica documentada en lugar de umbrales por convención.}{170}{paragraph*.94}%
+\contentsline {subsection}{\numberline {11.10.1}Estructura de la API}{130}{subsection.11.10.1}%
+\contentsline {subsection}{\numberline {11.10.2}Operaciones del panel}{130}{subsection.11.10.2}%
+\contentsline {subsection}{\numberline {11.10.3}Pipeline de vectorización}{133}{subsection.11.10.3}%
+\contentsline {part}{IV\hspace {1em}Validación y Cierre}{134}{part.4}%
+\contentsline {chapter}{\numberline {12}Pruebas y Validación}{135}{chapter.12}%
+\contentsline {section}{\numberline {12.1}Estrategia general}{135}{section.12.1}%
+\contentsline {subsection}{\numberline {12.1.1}Marco metodológico}{135}{subsection.12.1.1}%
+\contentsline {subsection}{\numberline {12.1.2}Política de exclusión por trabajo futuro}{136}{subsection.12.1.2}%
+\contentsline {subsection}{\numberline {12.1.3}Ejecución y registro}{136}{subsection.12.1.3}%
+\contentsline {section}{\numberline {12.2}Ejecución funcional extremo a extremo}{136}{section.12.2}%
+\contentsline {subsection}{\numberline {12.2.1}Alcance}{136}{subsection.12.2.1}%
+\contentsline {subsection}{\numberline {12.2.2}Lectura frente a la literatura}{137}{subsection.12.2.2}%
+\contentsline {section}{\numberline {12.3}Recuperación aumentada por generación}{137}{section.12.3}%
+\contentsline {subsection}{\numberline {12.3.1}Capa baseline}{137}{subsection.12.3.1}%
+\contentsline {subsection}{\numberline {12.3.2}Capa de profundidad}{137}{subsection.12.3.2}%
+\contentsline {section}{\numberline {12.4}Clasificación NLU y política de diálogo}{138}{section.12.4}%
+\contentsline {section}{\numberline {12.5}Reproducción de tráfico real tras el despliegue}{139}{section.12.5}%
+\contentsline {subsection}{\numberline {12.5.1}Metodología de revisión}{139}{subsection.12.5.1}%
+\contentsline {subsection}{\numberline {12.5.2}Resultados}{139}{subsection.12.5.2}%
+\contentsline {section}{\numberline {12.6}Análisis de los casos fallidos}{139}{section.12.6}%
+\contentsline {paragraph}{Patrón 1: ambigüedad léxica entre intenciones cercanas.}{140}{paragraph*.86}%
+\contentsline {paragraph}{Patrón 2: cobertura insuficiente de la base de datos relacional para el dominio profesorado.}{140}{paragraph*.87}%
+\contentsline {paragraph}{Patrón 3: respuestas parcialmente correctas del RAG por contexto recuperado incompleto.}{140}{paragraph*.88}%
+\contentsline {paragraph}{Patrón 4: brechas de cobertura funcional no previstas.}{140}{paragraph*.89}%
+\contentsline {section}{\numberline {12.7}Métricas no funcionales: latencia y coste}{141}{section.12.7}%
+\contentsline {subsection}{\numberline {12.7.1}Latencia}{141}{subsection.12.7.1}%
+\contentsline {subsection}{\numberline {12.7.2}Coste por turno}{141}{subsection.12.7.2}%
+\contentsline {section}{\numberline {12.8}Visión integrada y discusión}{142}{section.12.8}%
+\contentsline {subsection}{\numberline {12.8.1}Cumplimiento del criterio de cierre}{143}{subsection.12.8.1}%
+\contentsline {subsection}{\numberline {12.8.2}Amenazas a la validez}{143}{subsection.12.8.2}%
+\contentsline {paragraph}{Validez interna.}{143}{paragraph*.90}%
+\contentsline {paragraph}{Validez de constructo.}{143}{paragraph*.91}%
+\contentsline {paragraph}{Validez externa.}{143}{paragraph*.92}%
+\contentsline {paragraph}{Validez de conclusión.}{143}{paragraph*.93}%
+\contentsline {subsection}{\numberline {12.8.3}Limitaciones y trabajo futuro}{144}{subsection.12.8.3}%
+\contentsline {section}{\numberline {12.9}Pruebas automatizadas del panel de administración}{144}{section.12.9}%
+\contentsline {subsection}{\numberline {12.9.1}Resultados}{144}{subsection.12.9.1}%
+\contentsline {chapter}{\numberline {13}Manuales}{146}{chapter.13}%
+\contentsline {section}{\numberline {13.1}Manual de usuario}{146}{section.13.1}%
+\contentsline {subsection}{\numberline {13.1.1}Acceso a la aplicación}{146}{subsection.13.1.1}%
+\contentsline {subsection}{\numberline {13.1.2}Modelo conversacional}{148}{subsection.13.1.2}%
+\contentsline {subsection}{\numberline {13.1.3}Funcionalidades disponibles}{148}{subsection.13.1.3}%
+\contentsline {subsection}{\numberline {13.1.4}Recomendaciones de uso}{148}{subsection.13.1.4}%
+\contentsline {section}{\numberline {13.2}Manual de administrador}{152}{section.13.2}%
+\contentsline {subsection}{\numberline {13.2.1}Acceso e interfaz general}{152}{subsection.13.2.1}%
+\contentsline {subsection}{\numberline {13.2.2}Pestaña Centros}{153}{subsection.13.2.2}%
+\contentsline {subsection}{\numberline {13.2.3}Pestaña Asignaturas}{153}{subsection.13.2.3}%
+\contentsline {subsection}{\numberline {13.2.4}Pestaña Profesores}{154}{subsection.13.2.4}%
+\contentsline {subsection}{\numberline {13.2.5}Pestaña Horarios}{155}{subsection.13.2.5}%
+\contentsline {subsection}{\numberline {13.2.6}Pestaña Conversaciones y feedback}{155}{subsection.13.2.6}%
+\contentsline {subsection}{\numberline {13.2.7}Pestaña Estadísticas}{156}{subsection.13.2.7}%
+\contentsline {subsection}{\numberline {13.2.8}Procedimiento recomendado de carga inicial}{156}{subsection.13.2.8}%
+\contentsline {section}{\numberline {13.3}Manual de despliegue}{158}{section.13.3}%
+\contentsline {subsection}{\numberline {13.3.1}Requisitos previos}{158}{subsection.13.3.1}%
+\contentsline {subsection}{\numberline {13.3.2}Instalación}{158}{subsection.13.3.2}%
+\contentsline {subsection}{\numberline {13.3.3}Arquitectura del despliegue}{159}{subsection.13.3.3}%
+\contentsline {subsection}{\numberline {13.3.4}Verificación del despliegue}{159}{subsection.13.3.4}%
+\contentsline {subsection}{\numberline {13.3.5}Operaciones habituales}{159}{subsection.13.3.5}%
+\contentsline {section}{\numberline {13.4}Manual de desarrollo}{160}{section.13.4}%
+\contentsline {subsection}{\numberline {13.4.1}Estructura del repositorio}{160}{subsection.13.4.1}%
+\contentsline {subsection}{\numberline {13.4.2}Entorno de desarrollo}{160}{subsection.13.4.2}%
+\contentsline {subsection}{\numberline {13.4.3}Ciclo de incorporación de cambios}{161}{subsection.13.4.3}%
+\contentsline {subsection}{\numberline {13.4.4}Cómo añadir una nueva intención}{162}{subsection.13.4.4}%
+\contentsline {subsection}{\numberline {13.4.5}Buenas prácticas y convenciones}{162}{subsection.13.4.5}%
+\contentsline {chapter}{\numberline {14}Conclusiones y desarrollos futuros}{164}{chapter.14}%
+\contentsline {section}{\numberline {14.1}Linceus en números}{164}{section.14.1}%
+\contentsline {section}{\numberline {14.2}Cumplimiento de objetivos}{164}{section.14.2}%
+\contentsline {subsection}{\numberline {14.2.1}Objetivo general}{164}{subsection.14.2.1}%
+\contentsline {subsection}{\numberline {14.2.2}Objetivos técnicos}{166}{subsection.14.2.2}%
+\contentsline {subsection}{\numberline {14.2.3}Objetivos académicos y personales}{166}{subsection.14.2.3}%
+\contentsline {section}{\numberline {14.3}Lecciones aprendidas}{166}{section.14.3}%
+\contentsline {section}{\numberline {14.4}Análisis de desviación}{167}{section.14.4}%
+\contentsline {section}{\numberline {14.5}Desarrollos futuros}{167}{section.14.5}%
+\contentsline {subsection}{\numberline {14.5.1}Optimización del sistema actual}{168}{subsection.14.5.1}%
+\contentsline {subsection}{\numberline {14.5.2}Ampliación funcional}{169}{subsection.14.5.2}%
+\contentsline {subsection}{\numberline {14.5.3}Validación reforzada}{169}{subsection.14.5.3}%
+\contentsline {section}{\numberline {14.6}Contribución al estado del arte}{169}{section.14.6}%
+\contentsline {paragraph}{Ajuste iterativo y documentado en lugar de umbrales por convención.}{169}{paragraph*.94}%
 \contentsline {paragraph}{Arquitectura híbrida NLU + RAG con dos vías de resolución por dominio.}{170}{paragraph*.95}%
-\contentsline {paragraph}{Cierre del ciclo de vida del corpus mediante un panel sin código.}{171}{paragraph*.96}%
-\contentsline {section}{\numberline {14.7}Consideraciones éticas}{171}{section.14.7}%
-\contentsline {paragraph}{Veracidad de la información y riesgo de inducir decisiones erróneas.}{171}{paragraph*.97}%
-\contentsline {paragraph}{Privacidad y protección de datos.}{171}{paragraph*.98}%
-\contentsline {paragraph}{Sesgo en los datos de entrenamiento.}{172}{paragraph*.99}%
-\contentsline {paragraph}{Dependencia tecnológica y degradación responsable.}{172}{paragraph*.100}%
-\contentsline {section}{\numberline {14.8}Reflexión final}{172}{section.14.8}%
-\contentsline {chapter}{\numberline {15}Uso de Inteligencia Artificial}{173}{chapter.15}%
-\contentsline {section}{\numberline {15.1}Herramientas utilizadas}{173}{section.15.1}%
-\contentsline {section}{\numberline {15.2}Uso de IA en el desarrollo del código}{173}{section.15.2}%
-\contentsline {section}{\numberline {15.3}Uso de IA en la redacción de la memoria}{174}{section.15.3}%
-\contentsline {section}{\numberline {15.4}Limitaciones y responsabilidad del autor}{174}{section.15.4}%
-\contentsline {chapter}{\numberline {16}Vídeo demostración}{175}{chapter.16}%
-\contentsline {section}{\numberline {16.1}Vídeo demostración}{175}{section.16.1}%
-\contentsline {subsection}{\numberline {16.1.1}Estructura del vídeo}{175}{subsection.16.1.1}%
-\contentsline {subsection}{\numberline {16.1.2}Notas sobre la producción}{176}{subsection.16.1.2}%
-\contentsline {chapter}{Apéndices}{177}{appendix*.101}%
-\contentsline {section}{\numberline {.1}Actas de reuniones con el tutor}{177}{section.Alph0.1}%
-\contentsline {section}{\numberline {.2}Informe de tiempo invertido}{180}{section.Alph0.2}%
-\contentsline {chapter}{Bibliograf\'{\i }a}{182}{section*.103}%
+\contentsline {paragraph}{Cierre del ciclo de vida del corpus mediante un panel sin código.}{170}{paragraph*.96}%
+\contentsline {section}{\numberline {14.7}Consideraciones éticas}{170}{section.14.7}%
+\contentsline {paragraph}{Veracidad de la información y riesgo de inducir decisiones erróneas.}{170}{paragraph*.97}%
+\contentsline {paragraph}{Privacidad y protección de datos.}{170}{paragraph*.98}%
+\contentsline {paragraph}{Sesgo en los datos de entrenamiento.}{171}{paragraph*.99}%
+\contentsline {paragraph}{Dependencia tecnológica y degradación responsable.}{171}{paragraph*.100}%
+\contentsline {section}{\numberline {14.8}Reflexión final}{171}{section.14.8}%
+\contentsline {chapter}{\numberline {15}Uso de Inteligencia Artificial}{172}{chapter.15}%
+\contentsline {section}{\numberline {15.1}Herramientas utilizadas}{172}{section.15.1}%
+\contentsline {section}{\numberline {15.2}Uso de IA en el desarrollo del código}{172}{section.15.2}%
+\contentsline {section}{\numberline {15.3}Uso de IA en la redacción de la memoria}{173}{section.15.3}%
+\contentsline {section}{\numberline {15.4}Limitaciones y responsabilidad del autor}{173}{section.15.4}%
+\contentsline {chapter}{\numberline {16}Vídeo demostración}{174}{chapter.16}%
+\contentsline {section}{\numberline {16.1}Vídeo demostración}{174}{section.16.1}%
+\contentsline {subsection}{\numberline {16.1.1}Estructura del vídeo}{174}{subsection.16.1.1}%
+\contentsline {subsection}{\numberline {16.1.2}Notas sobre la producción}{175}{subsection.16.1.2}%
+\contentsline {chapter}{Apéndices}{176}{appendix*.101}%
+\contentsline {section}{\numberline {.1}Actas de reuniones con el tutor}{176}{section.Alph0.1}%
+\contentsline {section}{\numberline {.2}Informe de tiempo invertido}{179}{section.Alph0.2}%
+\contentsline {chapter}{Bibliograf\'{\i }a}{181}{section*.103}%
 \contentsfinish 

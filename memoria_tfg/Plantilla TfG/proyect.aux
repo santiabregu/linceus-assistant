@@ -714,7 +714,7 @@
 \@writefile{toc}{\contentsline {paragraph}{Calibración de temperatura por caso de uso.}{126}{paragraph*.82}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {11.8.2}Conexión a base de datos}{126}{subsection.11.8.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {11.8.3}Matching difuso de nombres}{126}{subsection.11.8.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Calibración empírica de los umbrales.}{126}{paragraph*.83}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Ajuste iterativo de los umbrales.}{126}{paragraph*.83}\protected@file@percent }
 \citation{lewis2020retrieval}
 \@writefile{toc}{\contentsline {subsection}{\numberline {11.8.4}Resolución de afirmación con inyección de entidades sintéticas}{127}{subsection.11.8.4}\protected@file@percent }
 \newlabel{subsec:impl-resolver-afirmacion}{{11.8.4}{127}{Resolución de afirmación con inyección de entidades sintéticas}{subsection.11.8.4}{}}
@@ -731,323 +731,323 @@
 \@writefile{toc}{\contentsline {paragraph}{Tolerancia a variantes de nombre de grupo.}{129}{paragraph*.85}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {11.10}Panel de administración}{129}{section.11.10}\protected@file@percent }
 \newlabel{sec:impl-admin}{{11.10}{129}{Panel de administración}{section.11.10}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {11.10.1}Estructura de la API}{129}{subsection.11.10.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {11.6}{\ignorespaces Pantalla de inicio del panel de administración. Cada tarjeta representa un centro con el número de titulaciones que gestiona.}}{130}{figure.11.6}\protected@file@percent }
-\newlabel{fig:impl-admin-home}{{11.6}{130}{Pantalla de inicio del panel de administración. Cada tarjeta representa un centro con el número de titulaciones que gestiona}{figure.11.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.10.1}Estructura de la API}{130}{subsection.11.10.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.10.2}Operaciones del panel}{130}{subsection.11.10.2}\protected@file@percent }
+\newlabel{subsec:impl-admin-operaciones}{{11.10.2}{130}{Operaciones del panel}{subsection.11.10.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {11.6}{\ignorespaces Pantalla de inicio del panel de administración. Cada tarjeta representa un centro con el número de titulaciones que gestiona.}}{131}{figure.11.6}\protected@file@percent }
+\newlabel{fig:impl-admin-home}{{11.6}{131}{Pantalla de inicio del panel de administración. Cada tarjeta representa un centro con el número de titulaciones que gestiona}{figure.11.6}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {11.7}{\ignorespaces Vista de profesores del Departamento de Lenguajes y Sistemas Informáticos. La columna \textit  {Enriquecer desde us.es} lanza el scraper de directorio para actualizar los datos del PDI.}}{131}{figure.11.7}\protected@file@percent }
 \newlabel{fig:impl-admin-profesores}{{11.7}{131}{Vista de profesores del Departamento de Lenguajes y Sistemas Informáticos. La columna \textit {Enriquecer desde us.es} lanza el scraper de directorio para actualizar los datos del PDI}{figure.11.7}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {11.8}{\ignorespaces Vista de conversaciones agrupadas por sesión. La fila en verde indica una sesión marcada como revisada. El botón \textit  {Exportar esta página} vuelca las sesiones seleccionadas en CSV.}}{131}{figure.11.8}\protected@file@percent }
 \newlabel{fig:impl-admin-conversaciones}{{11.8}{131}{Vista de conversaciones agrupadas por sesión. La fila en verde indica una sesión marcada como revisada. El botón \textit {Exportar esta página} vuelca las sesiones seleccionadas en CSV}{figure.11.8}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {11.9}{\ignorespaces Panel de estadísticas generales. Los contadores se calculan en tiempo real contra Supabase. En el momento de la captura el sistema contaba con 244~asignaturas, 268~profesores, 157~planes docentes vectorizados y 1352~\textit  {chunks} RAG.}}{132}{figure.11.9}\protected@file@percent }
-\newlabel{fig:impl-admin-stats}{{11.9}{132}{Panel de estadísticas generales. Los contadores se calculan en tiempo real contra Supabase. En el momento de la captura el sistema contaba con 244~asignaturas, 268~profesores, 157~planes docentes vectorizados y 1352~\textit {chunks} RAG}{figure.11.9}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {11.10.2}Operaciones del panel}{132}{subsection.11.10.2}\protected@file@percent }
-\newlabel{subsec:impl-admin-operaciones}{{11.10.2}{132}{Operaciones del panel}{subsection.11.10.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {11.10.3}Pipeline de vectorización}{132}{subsection.11.10.3}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {11.2}{\ignorespaces Operaciones del panel de administración por pestaña. Todos los \textit  {endpoints} van prefijados por \texttt  {/api/admin}.}}{133}{table.11.2}\protected@file@percent }
-\newlabel{tab:impl-admin-operaciones}{{11.2}{133}{Operaciones del panel de administración por pestaña. Todos los \textit {endpoints} van prefijados por \texttt {/api/admin}}{table.11.2}{}}
-\@writefile{toc}{\contentsline {part}{IV\hspace  {1em}Validación y Cierre}{135}{part.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {11.2}{\ignorespaces Operaciones del panel de administración por pestaña. Todos los \textit  {endpoints} van prefijados por \texttt  {/api/admin}.}}{132}{table.11.2}\protected@file@percent }
+\newlabel{tab:impl-admin-operaciones}{{11.2}{132}{Operaciones del panel de administración por pestaña. Todos los \textit {endpoints} van prefijados por \texttt {/api/admin}}{table.11.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {11.9}{\ignorespaces Panel de estadísticas generales. Los contadores se calculan en tiempo real contra Supabase. En el momento de la captura el sistema contaba con 244~asignaturas, 268~profesores, 157~planes docentes vectorizados y 1352~\textit  {chunks} RAG.}}{133}{figure.11.9}\protected@file@percent }
+\newlabel{fig:impl-admin-stats}{{11.9}{133}{Panel de estadísticas generales. Los contadores se calculan en tiempo real contra Supabase. En el momento de la captura el sistema contaba con 244~asignaturas, 268~profesores, 157~planes docentes vectorizados y 1352~\textit {chunks} RAG}{figure.11.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.10.3}Pipeline de vectorización}{133}{subsection.11.10.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {part}{IV\hspace  {1em}Validación y Cierre}{134}{part.4}\protected@file@percent }
 \citation{iso25010}
 \citation{north2006bdd}
-\@writefile{toc}{\contentsline {chapter}{\numberline {12}Pruebas y Validación}{136}{chapter.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {12}Pruebas y Validación}{135}{chapter.12}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\newlabel{cap:pruebas}{{12}{136}{Pruebas y Validación}{chapter.12}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {12.1}Estrategia general}{136}{section.12.1}\protected@file@percent }
-\newlabel{sec:pruebas-estrategia}{{12.1}{136}{Estrategia general}{section.12.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {12.1.1}Marco metodológico}{136}{subsection.12.1.1}\protected@file@percent }
-\newlabel{subsec:pruebas-marco}{{12.1.1}{136}{Marco metodológico}{subsection.12.1.1}{}}
+\newlabel{cap:pruebas}{{12}{135}{Pruebas y Validación}{chapter.12}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {12.1}Estrategia general}{135}{section.12.1}\protected@file@percent }
+\newlabel{sec:pruebas-estrategia}{{12.1}{135}{Estrategia general}{section.12.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.1.1}Marco metodológico}{135}{subsection.12.1.1}\protected@file@percent }
+\newlabel{subsec:pruebas-marco}{{12.1.1}{135}{Marco metodológico}{subsection.12.1.1}{}}
 \citation{xoriantChatbot}
 \citation{testio}
-\@writefile{toc}{\contentsline {subsection}{\numberline {12.1.2}Política de exclusión por trabajo futuro}{137}{subsection.12.1.2}\protected@file@percent }
-\newlabel{subsec:pruebas-trabajo-futuro}{{12.1.2}{137}{Política de exclusión por trabajo futuro}{subsection.12.1.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {12.1.3}Ejecución y registro}{137}{subsection.12.1.3}\protected@file@percent }
-\newlabel{subsec:pruebas-ejecucion}{{12.1.3}{137}{Ejecución y registro}{subsection.12.1.3}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {12.2}Ejecución funcional extremo a extremo}{137}{section.12.2}\protected@file@percent }
-\newlabel{sec:pruebas-e2e}{{12.2}{137}{Ejecución funcional extremo a extremo}{section.12.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {12.2.1}Alcance}{137}{subsection.12.2.1}\protected@file@percent }
-\newlabel{subsec:e2e-alcance}{{12.2.1}{137}{Alcance}{subsection.12.2.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.1.2}Política de exclusión por trabajo futuro}{136}{subsection.12.1.2}\protected@file@percent }
+\newlabel{subsec:pruebas-trabajo-futuro}{{12.1.2}{136}{Política de exclusión por trabajo futuro}{subsection.12.1.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.1.3}Ejecución y registro}{136}{subsection.12.1.3}\protected@file@percent }
+\newlabel{subsec:pruebas-ejecucion}{{12.1.3}{136}{Ejecución y registro}{subsection.12.1.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {12.2}Ejecución funcional extremo a extremo}{136}{section.12.2}\protected@file@percent }
+\newlabel{sec:pruebas-e2e}{{12.2}{136}{Ejecución funcional extremo a extremo}{section.12.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.2.1}Alcance}{136}{subsection.12.2.1}\protected@file@percent }
+\newlabel{subsec:e2e-alcance}{{12.2.1}{136}{Alcance}{subsection.12.2.1}{}}
 \citation{braun2017evaluating}
 \citation{casanueva2020efficient}
 \citation{gupta2019admitbot}
 \citation{colace2018edubot}
 \citation{ranoliya2017chatbot}
 \citation{dibya2021chatbot}
-\@writefile{lot}{\contentsline {table}{\numberline {12.1}{\ignorespaces Resultados por categoría de la suite E2E (revisión manual, 26/04/2026).}}{138}{table.12.1}\protected@file@percent }
-\newlabel{tab:e2e-categorias}{{12.1}{138}{Resultados por categoría de la suite E2E (revisión manual, 26/04/2026)}{table.12.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {12.2.2}Lectura frente a la literatura}{138}{subsection.12.2.2}\protected@file@percent }
-\newlabel{subsec:e2e-literatura}{{12.2.2}{138}{Lectura frente a la literatura}{subsection.12.2.2}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {12.3}Recuperación aumentada por generación}{138}{section.12.3}\protected@file@percent }
-\newlabel{sec:pruebas-rag}{{12.3}{138}{Recuperación aumentada por generación}{section.12.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {12.3.1}Capa baseline}{138}{subsection.12.3.1}\protected@file@percent }
-\newlabel{subsec:rag-baseline}{{12.3.1}{138}{Capa baseline}{subsection.12.3.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {12.3.2}Capa de profundidad}{138}{subsection.12.3.2}\protected@file@percent }
-\newlabel{subsec:rag-profundidad}{{12.3.2}{138}{Capa de profundidad}{subsection.12.3.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {12.1}{\ignorespaces Resultados por categoría de la suite E2E (revisión manual, 26/04/2026).}}{137}{table.12.1}\protected@file@percent }
+\newlabel{tab:e2e-categorias}{{12.1}{137}{Resultados por categoría de la suite E2E (revisión manual, 26/04/2026)}{table.12.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.2.2}Lectura frente a la literatura}{137}{subsection.12.2.2}\protected@file@percent }
+\newlabel{subsec:e2e-literatura}{{12.2.2}{137}{Lectura frente a la literatura}{subsection.12.2.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {12.3}Recuperación aumentada por generación}{137}{section.12.3}\protected@file@percent }
+\newlabel{sec:pruebas-rag}{{12.3}{137}{Recuperación aumentada por generación}{section.12.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.3.1}Capa baseline}{137}{subsection.12.3.1}\protected@file@percent }
+\newlabel{subsec:rag-baseline}{{12.3.1}{137}{Capa baseline}{subsection.12.3.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.3.2}Capa de profundidad}{137}{subsection.12.3.2}\protected@file@percent }
+\newlabel{subsec:rag-profundidad}{{12.3.2}{137}{Capa de profundidad}{subsection.12.3.2}{}}
 \citation{es2024ragas}
 \citation{lewis2020retrieval}
 \citation{bocklisch2020diet}
 \citation{casanueva2020efficient}
-\@writefile{lot}{\contentsline {table}{\numberline {12.2}{\ignorespaces Cobertura de la capa de profundidad RAG por curso.}}{139}{table.12.2}\protected@file@percent }
-\newlabel{tab:rag-cobertura}{{12.2}{139}{Cobertura de la capa de profundidad RAG por curso}{table.12.2}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {12.4}Clasificación NLU y política de diálogo}{139}{section.12.4}\protected@file@percent }
-\newlabel{sec:pruebas-nlu}{{12.4}{139}{Clasificación NLU y política de diálogo}{section.12.4}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {12.3}{\ignorespaces Resultados de la capa NLU y Policy.}}{139}{table.12.3}\protected@file@percent }
-\newlabel{tab:nlu-resultados}{{12.3}{139}{Resultados de la capa NLU y Policy}{table.12.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {12.2}{\ignorespaces Cobertura de la capa de profundidad RAG por curso.}}{138}{table.12.2}\protected@file@percent }
+\newlabel{tab:rag-cobertura}{{12.2}{138}{Cobertura de la capa de profundidad RAG por curso}{table.12.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {12.4}Clasificación NLU y política de diálogo}{138}{section.12.4}\protected@file@percent }
+\newlabel{sec:pruebas-nlu}{{12.4}{138}{Clasificación NLU y política de diálogo}{section.12.4}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {12.3}{\ignorespaces Resultados de la capa NLU y Policy.}}{138}{table.12.3}\protected@file@percent }
+\newlabel{tab:nlu-resultados}{{12.3}{138}{Resultados de la capa NLU y Policy}{table.12.3}{}}
 \citation{casas2020trends}
 \citation{folstad2020users}
-\@writefile{toc}{\contentsline {section}{\numberline {12.5}Reproducción de tráfico real tras el despliegue}{140}{section.12.5}\protected@file@percent }
-\newlabel{sec:pruebas-trafico}{{12.5}{140}{Reproducción de tráfico real tras el despliegue}{section.12.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {12.5.1}Metodología de revisión}{140}{subsection.12.5.1}\protected@file@percent }
-\newlabel{subsec:trafico-metodologia}{{12.5.1}{140}{Metodología de revisión}{subsection.12.5.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {12.5.2}Resultados}{140}{subsection.12.5.2}\protected@file@percent }
-\newlabel{subsec:trafico-resultados}{{12.5.2}{140}{Resultados}{subsection.12.5.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {12.4}{\ignorespaces Resultados de la reproducción de tráfico real.}}{140}{table.12.4}\protected@file@percent }
-\newlabel{tab:trafico-resultados}{{12.4}{140}{Resultados de la reproducción de tráfico real}{table.12.4}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {12.6}Análisis de los casos fallidos}{140}{section.12.6}\protected@file@percent }
-\newlabel{sec:pruebas-casos-fallidos}{{12.6}{140}{Análisis de los casos fallidos}{section.12.6}{}}
-\@writefile{toc}{\contentsline {paragraph}{Patrón 1: ambigüedad léxica entre intenciones cercanas.}{141}{paragraph*.86}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Patrón 2: cobertura insuficiente de la base de datos relacional para el dominio profesorado.}{141}{paragraph*.87}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Patrón 3: respuestas parcialmente correctas del RAG por contexto recuperado incompleto.}{141}{paragraph*.88}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Patrón 4: brechas de cobertura funcional no previstas.}{141}{paragraph*.89}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {12.5}{\ignorespaces Síntesis de los casos fallidos por patrón de causa raíz.}}{142}{table.12.5}\protected@file@percent }
-\newlabel{tab:casos-fallidos-resumen}{{12.5}{142}{Síntesis de los casos fallidos por patrón de causa raíz}{table.12.5}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {12.7}Métricas no funcionales: latencia y coste}{142}{section.12.7}\protected@file@percent }
-\newlabel{sec:pruebas-no-funcional}{{12.7}{142}{Métricas no funcionales: latencia y coste}{section.12.7}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {12.7.1}Latencia}{142}{subsection.12.7.1}\protected@file@percent }
-\newlabel{subsec:no-funcional-latencia}{{12.7.1}{142}{Latencia}{subsection.12.7.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {12.6}{\ignorespaces Latencia extremo a extremo (segundos).}}{142}{table.12.6}\protected@file@percent }
-\newlabel{tab:latencia}{{12.6}{142}{Latencia extremo a extremo (segundos)}{table.12.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {12.7.2}Coste por turno}{142}{subsection.12.7.2}\protected@file@percent }
-\newlabel{subsec:no-funcional-coste}{{12.7.2}{142}{Coste por turno}{subsection.12.7.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {12.5}Reproducción de tráfico real tras el despliegue}{139}{section.12.5}\protected@file@percent }
+\newlabel{sec:pruebas-trafico}{{12.5}{139}{Reproducción de tráfico real tras el despliegue}{section.12.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.5.1}Metodología de revisión}{139}{subsection.12.5.1}\protected@file@percent }
+\newlabel{subsec:trafico-metodologia}{{12.5.1}{139}{Metodología de revisión}{subsection.12.5.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.5.2}Resultados}{139}{subsection.12.5.2}\protected@file@percent }
+\newlabel{subsec:trafico-resultados}{{12.5.2}{139}{Resultados}{subsection.12.5.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {12.4}{\ignorespaces Resultados de la reproducción de tráfico real.}}{139}{table.12.4}\protected@file@percent }
+\newlabel{tab:trafico-resultados}{{12.4}{139}{Resultados de la reproducción de tráfico real}{table.12.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {12.6}Análisis de los casos fallidos}{139}{section.12.6}\protected@file@percent }
+\newlabel{sec:pruebas-casos-fallidos}{{12.6}{139}{Análisis de los casos fallidos}{section.12.6}{}}
+\@writefile{toc}{\contentsline {paragraph}{Patrón 1: ambigüedad léxica entre intenciones cercanas.}{140}{paragraph*.86}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Patrón 2: cobertura insuficiente de la base de datos relacional para el dominio profesorado.}{140}{paragraph*.87}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Patrón 3: respuestas parcialmente correctas del RAG por contexto recuperado incompleto.}{140}{paragraph*.88}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Patrón 4: brechas de cobertura funcional no previstas.}{140}{paragraph*.89}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {12.5}{\ignorespaces Síntesis de los casos fallidos por patrón de causa raíz.}}{141}{table.12.5}\protected@file@percent }
+\newlabel{tab:casos-fallidos-resumen}{{12.5}{141}{Síntesis de los casos fallidos por patrón de causa raíz}{table.12.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {12.7}Métricas no funcionales: latencia y coste}{141}{section.12.7}\protected@file@percent }
+\newlabel{sec:pruebas-no-funcional}{{12.7}{141}{Métricas no funcionales: latencia y coste}{section.12.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.7.1}Latencia}{141}{subsection.12.7.1}\protected@file@percent }
+\newlabel{subsec:no-funcional-latencia}{{12.7.1}{141}{Latencia}{subsection.12.7.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {12.6}{\ignorespaces Latencia extremo a extremo (segundos).}}{141}{table.12.6}\protected@file@percent }
+\newlabel{tab:latencia}{{12.6}{141}{Latencia extremo a extremo (segundos)}{table.12.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.7.2}Coste por turno}{141}{subsection.12.7.2}\protected@file@percent }
+\newlabel{subsec:no-funcional-coste}{{12.7.2}{141}{Coste por turno}{subsection.12.7.2}{}}
 \citation{braun2017evaluating}
 \citation{lewis2020retrieval}
 \citation{es2024ragas}
 \citation{bocklisch2020diet}
 \citation{casas2020trends}
-\@writefile{lot}{\contentsline {table}{\numberline {12.7}{\ignorespaces Extrapolación del coste hipotético del LLM a 700 alumnos según intensidad de uso.}}{143}{table.12.7}\protected@file@percent }
-\newlabel{tab:coste-extrapolado}{{12.7}{143}{Extrapolación del coste hipotético del LLM a 700 alumnos según intensidad de uso}{table.12.7}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {12.8}Visión integrada y discusión}{143}{section.12.8}\protected@file@percent }
-\newlabel{sec:pruebas-discusion}{{12.8}{143}{Visión integrada y discusión}{section.12.8}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {12.8}{\ignorespaces Visión integrada de las seis capas de validación.}}{143}{table.12.8}\protected@file@percent }
-\newlabel{tab:visiongeneral}{{12.8}{143}{Visión integrada de las seis capas de validación}{table.12.8}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {12.7}{\ignorespaces Extrapolación del coste hipotético del LLM a 700 alumnos según intensidad de uso.}}{142}{table.12.7}\protected@file@percent }
+\newlabel{tab:coste-extrapolado}{{12.7}{142}{Extrapolación del coste hipotético del LLM a 700 alumnos según intensidad de uso}{table.12.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {12.8}Visión integrada y discusión}{142}{section.12.8}\protected@file@percent }
+\newlabel{sec:pruebas-discusion}{{12.8}{142}{Visión integrada y discusión}{section.12.8}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {12.8}{\ignorespaces Visión integrada de las seis capas de validación.}}{142}{table.12.8}\protected@file@percent }
+\newlabel{tab:visiongeneral}{{12.8}{142}{Visión integrada de las seis capas de validación}{table.12.8}{}}
 \citation{wohlin2012experimentation}
-\@writefile{toc}{\contentsline {subsection}{\numberline {12.8.1}Cumplimiento del criterio de cierre}{144}{subsection.12.8.1}\protected@file@percent }
-\newlabel{subsec:pruebas-cierre}{{12.8.1}{144}{Cumplimiento del criterio de cierre}{subsection.12.8.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {12.8.2}Amenazas a la validez}{144}{subsection.12.8.2}\protected@file@percent }
-\newlabel{subsec:pruebas-amenazas}{{12.8.2}{144}{Amenazas a la validez}{subsection.12.8.2}{}}
-\@writefile{toc}{\contentsline {paragraph}{Validez interna.}{144}{paragraph*.90}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Validez de constructo.}{144}{paragraph*.91}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Validez externa.}{144}{paragraph*.92}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Validez de conclusión.}{144}{paragraph*.93}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {12.8.3}Limitaciones y trabajo futuro}{145}{subsection.12.8.3}\protected@file@percent }
-\newlabel{subsec:pruebas-limitaciones}{{12.8.3}{145}{Limitaciones y trabajo futuro}{subsection.12.8.3}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {12.9}Pruebas automatizadas del panel de administración}{145}{section.12.9}\protected@file@percent }
-\newlabel{sec:pruebas-admin}{{12.9}{145}{Pruebas automatizadas del panel de administración}{section.12.9}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {12.9.1}Resultados}{145}{subsection.12.9.1}\protected@file@percent }
-\newlabel{subsec:admin-resultados}{{12.9.1}{145}{Resultados}{subsection.12.9.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {12.9}{\ignorespaces Resultados de la suite \texttt  {test\_admin.py} (pytest, 26/04/2026).}}{146}{table.12.9}\protected@file@percent }
-\newlabel{tab:admin-resultados}{{12.9}{146}{Resultados de la suite \texttt {test\_admin.py} (pytest, 26/04/2026)}{table.12.9}{}}
-\@writefile{toc}{\contentsline {chapter}{\numberline {13}Manuales}{147}{chapter.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.8.1}Cumplimiento del criterio de cierre}{143}{subsection.12.8.1}\protected@file@percent }
+\newlabel{subsec:pruebas-cierre}{{12.8.1}{143}{Cumplimiento del criterio de cierre}{subsection.12.8.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.8.2}Amenazas a la validez}{143}{subsection.12.8.2}\protected@file@percent }
+\newlabel{subsec:pruebas-amenazas}{{12.8.2}{143}{Amenazas a la validez}{subsection.12.8.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{Validez interna.}{143}{paragraph*.90}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Validez de constructo.}{143}{paragraph*.91}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Validez externa.}{143}{paragraph*.92}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Validez de conclusión.}{143}{paragraph*.93}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.8.3}Limitaciones y trabajo futuro}{144}{subsection.12.8.3}\protected@file@percent }
+\newlabel{subsec:pruebas-limitaciones}{{12.8.3}{144}{Limitaciones y trabajo futuro}{subsection.12.8.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {12.9}Pruebas automatizadas del panel de administración}{144}{section.12.9}\protected@file@percent }
+\newlabel{sec:pruebas-admin}{{12.9}{144}{Pruebas automatizadas del panel de administración}{section.12.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.9.1}Resultados}{144}{subsection.12.9.1}\protected@file@percent }
+\newlabel{subsec:admin-resultados}{{12.9.1}{144}{Resultados}{subsection.12.9.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {12.9}{\ignorespaces Resultados de la suite \texttt  {test\_admin.py} (pytest, 26/04/2026).}}{145}{table.12.9}\protected@file@percent }
+\newlabel{tab:admin-resultados}{{12.9}{145}{Resultados de la suite \texttt {test\_admin.py} (pytest, 26/04/2026)}{table.12.9}{}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {13}Manuales}{146}{chapter.13}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\newlabel{cap:manuales}{{13}{147}{Manuales}{chapter.13}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {13.1}Manual de usuario}{147}{section.13.1}\protected@file@percent }
-\newlabel{sec:manual-usuario}{{13.1}{147}{Manual de usuario}{section.13.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {13.1.1}Acceso a la aplicación}{147}{subsection.13.1.1}\protected@file@percent }
-\newlabel{subsec:usuario-acceso}{{13.1.1}{147}{Acceso a la aplicación}{subsection.13.1.1}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {13.1}{\ignorespaces Página principal del prototipo con el \textit  {widget} de chat cerrado.}}{148}{figure.13.1}\protected@file@percent }
-\newlabel{fig:widget-cerrado}{{13.1}{148}{Página principal del prototipo con el \textit {widget} de chat cerrado}{figure.13.1}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {13.2}{\ignorespaces \textit  {Widget} desplegado con mensaje de bienvenida y selector de titulación.}}{148}{figure.13.2}\protected@file@percent }
-\newlabel{fig:widget-abierto}{{13.2}{148}{\textit {Widget} desplegado con mensaje de bienvenida y selector de titulación}{figure.13.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {13.1.2}Modelo conversacional}{149}{subsection.13.1.2}\protected@file@percent }
-\newlabel{subsec:usuario-modelo}{{13.1.2}{149}{Modelo conversacional}{subsection.13.1.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {13.1.3}Funcionalidades disponibles}{149}{subsection.13.1.3}\protected@file@percent }
-\newlabel{subsec:usuario-funcionalidades}{{13.1.3}{149}{Funcionalidades disponibles}{subsection.13.1.3}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {13.1}{\ignorespaces Tipos de consulta soportados por el prototipo.}}{149}{table.13.1}\protected@file@percent }
-\newlabel{tab:funcionalidades-usuario}{{13.1}{149}{Tipos de consulta soportados por el prototipo}{table.13.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {13.1.4}Recomendaciones de uso}{149}{subsection.13.1.4}\protected@file@percent }
-\newlabel{subsec:usuario-recomendaciones}{{13.1.4}{149}{Recomendaciones de uso}{subsection.13.1.4}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {13.3}{\ignorespaces Ejemplo de consulta sobre una asignatura concreta (ficha individual).}}{150}{figure.13.3}\protected@file@percent }
-\newlabel{fig:ejemplo-asignatura}{{13.3}{150}{Ejemplo de consulta sobre una asignatura concreta (ficha individual)}{figure.13.3}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {13.4}{\ignorespaces Ejemplo de consulta de horario con curso y grupo.}}{151}{figure.13.4}\protected@file@percent }
-\newlabel{fig:ejemplo-horario}{{13.4}{151}{Ejemplo de consulta de horario con curso y grupo}{figure.13.4}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {13.5}{\ignorespaces Ejemplo de consulta sobre profesorado.}}{152}{figure.13.5}\protected@file@percent }
-\newlabel{fig:ejemplo-profesor}{{13.5}{152}{Ejemplo de consulta sobre profesorado}{figure.13.5}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {13.2}Manual de administrador}{153}{section.13.2}\protected@file@percent }
-\newlabel{sec:manual-admin}{{13.2}{153}{Manual de administrador}{section.13.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {13.2.1}Acceso e interfaz general}{153}{subsection.13.2.1}\protected@file@percent }
-\newlabel{subsec:admin-acceso}{{13.2.1}{153}{Acceso e interfaz general}{subsection.13.2.1}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {13.6}{\ignorespaces Panel de administración: pantalla de inicio con la jerarquía de centros.}}{153}{figure.13.6}\protected@file@percent }
-\newlabel{fig:admin-home}{{13.6}{153}{Panel de administración: pantalla de inicio con la jerarquía de centros}{figure.13.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {13.2.2}Pestaña Centros}{154}{subsection.13.2.2}\protected@file@percent }
-\newlabel{subsec:admin-centros}{{13.2.2}{154}{Pestaña Centros}{subsection.13.2.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {13.2}{\ignorespaces Acciones de la pestaña \textit  {Centros}.}}{154}{table.13.2}\protected@file@percent }
-\newlabel{tab:admin-centros-acciones}{{13.2}{154}{Acciones de la pestaña \textit {Centros}}{table.13.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {13.2.3}Pestaña Asignaturas}{154}{subsection.13.2.3}\protected@file@percent }
-\newlabel{subsec:admin-asignaturas}{{13.2.3}{154}{Pestaña Asignaturas}{subsection.13.2.3}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {13.7}{\ignorespaces Pestaña \textit  {Asignaturas} con la barra de acciones disponibles para la titulación.}}{154}{figure.13.7}\protected@file@percent }
-\newlabel{fig:man-admin-asignaturas}{{13.7}{154}{Pestaña \textit {Asignaturas} con la barra de acciones disponibles para la titulación}{figure.13.7}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {13.3}{\ignorespaces Acciones de la pestaña \textit  {Asignaturas}.}}{155}{table.13.3}\protected@file@percent }
-\newlabel{tab:admin-asignaturas-acciones}{{13.3}{155}{Acciones de la pestaña \textit {Asignaturas}}{table.13.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {13.2.4}Pestaña Profesores}{155}{subsection.13.2.4}\protected@file@percent }
-\newlabel{subsec:admin-profesores}{{13.2.4}{155}{Pestaña Profesores}{subsection.13.2.4}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {13.8}{\ignorespaces Pestaña \textit  {Profesores} del panel de administración. La columna \textit  {Enriquecer desde us.es} dispara el scraper del directorio PDI para el departamento correspondiente.}}{155}{figure.13.8}\protected@file@percent }
-\newlabel{fig:admin-profesores}{{13.8}{155}{Pestaña \textit {Profesores} del panel de administración. La columna \textit {Enriquecer desde us.es} dispara el scraper del directorio PDI para el departamento correspondiente}{figure.13.8}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {13.4}{\ignorespaces Acciones de la pestaña \textit  {Profesores}.}}{155}{table.13.4}\protected@file@percent }
-\newlabel{tab:admin-profesores-acciones}{{13.4}{155}{Acciones de la pestaña \textit {Profesores}}{table.13.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {13.2.5}Pestaña Horarios}{156}{subsection.13.2.5}\protected@file@percent }
-\newlabel{subsec:admin-horarios}{{13.2.5}{156}{Pestaña Horarios}{subsection.13.2.5}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {13.9}{\ignorespaces Pestaña \textit  {Horarios} con el botón \textit  {Generar horarios} activo para los centros con extractor disponible.}}{156}{figure.13.9}\protected@file@percent }
-\newlabel{fig:man-admin-horarios}{{13.9}{156}{Pestaña \textit {Horarios} con el botón \textit {Generar horarios} activo para los centros con extractor disponible}{figure.13.9}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {13.5}{\ignorespaces Acciones de la pestaña \textit  {Horarios}.}}{156}{table.13.5}\protected@file@percent }
-\newlabel{tab:admin-horarios-acciones}{{13.5}{156}{Acciones de la pestaña \textit {Horarios}}{table.13.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {13.2.6}Pestaña Conversaciones y feedback}{156}{subsection.13.2.6}\protected@file@percent }
-\newlabel{subsec:admin-conversaciones}{{13.2.6}{156}{Pestaña Conversaciones y feedback}{subsection.13.2.6}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {13.10}{\ignorespaces Pestaña \textit  {Conversaciones} con las sesiones agrupadas. La fila resaltada en verde indica una sesión ya revisada por el administrador.}}{157}{figure.13.10}\protected@file@percent }
-\newlabel{fig:man-admin-conversaciones}{{13.10}{157}{Pestaña \textit {Conversaciones} con las sesiones agrupadas. La fila resaltada en verde indica una sesión ya revisada por el administrador}{figure.13.10}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {13.6}{\ignorespaces Acciones de la pestaña \textit  {Conversaciones}.}}{157}{table.13.6}\protected@file@percent }
-\newlabel{tab:admin-conv-acciones}{{13.6}{157}{Acciones de la pestaña \textit {Conversaciones}}{table.13.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {13.2.7}Pestaña Estadísticas}{157}{subsection.13.2.7}\protected@file@percent }
-\newlabel{subsec:admin-stats}{{13.2.7}{157}{Pestaña Estadísticas}{subsection.13.2.7}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {13.2.8}Procedimiento recomendado de carga inicial}{157}{subsection.13.2.8}\protected@file@percent }
-\newlabel{subsec:admin-onboarding}{{13.2.8}{157}{Procedimiento recomendado de carga inicial}{subsection.13.2.8}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {13.11}{\ignorespaces Pestaña \textit  {Estadísticas}: contadores globales del catálogo cargado.}}{158}{figure.13.11}\protected@file@percent }
-\newlabel{fig:admin-stats}{{13.11}{158}{Pestaña \textit {Estadísticas}: contadores globales del catálogo cargado}{figure.13.11}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {13.7}{\ignorespaces Secuencia recomendada para la carga inicial del catálogo de un centro.}}{158}{table.13.7}\protected@file@percent }
-\newlabel{tab:admin-onboarding}{{13.7}{158}{Secuencia recomendada para la carga inicial del catálogo de un centro}{table.13.7}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {13.3}Manual de despliegue}{159}{section.13.3}\protected@file@percent }
-\newlabel{sec:manual-despliegue}{{13.3}{159}{Manual de despliegue}{section.13.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {13.3.1}Requisitos previos}{159}{subsection.13.3.1}\protected@file@percent }
-\newlabel{subsec:despliegue-requisitos}{{13.3.1}{159}{Requisitos previos}{subsection.13.3.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {13.8}{\ignorespaces Requisitos mínimos del entorno de despliegue.}}{159}{table.13.8}\protected@file@percent }
-\newlabel{tab:despliegue-requisitos}{{13.8}{159}{Requisitos mínimos del entorno de despliegue}{table.13.8}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {13.3.2}Instalación}{159}{subsection.13.3.2}\protected@file@percent }
-\newlabel{subsec:despliegue-instalacion}{{13.3.2}{159}{Instalación}{subsection.13.3.2}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {13.1}Levantar la pila completa con Docker Compose.}{159}{lstlisting.13.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {13.3.3}Arquitectura del despliegue}{160}{subsection.13.3.3}\protected@file@percent }
-\newlabel{subsec:despliegue-arquitectura}{{13.3.3}{160}{Arquitectura del despliegue}{subsection.13.3.3}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {13.9}{\ignorespaces Contenedores del despliegue y responsabilidad de cada uno.}}{160}{table.13.9}\protected@file@percent }
-\newlabel{tab:despliegue-contenedores}{{13.9}{160}{Contenedores del despliegue y responsabilidad de cada uno}{table.13.9}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {13.3.4}Verificación del despliegue}{160}{subsection.13.3.4}\protected@file@percent }
-\newlabel{subsec:despliegue-verificacion}{{13.3.4}{160}{Verificación del despliegue}{subsection.13.3.4}{}}
-\newlabel{lst:logs}{{13.2}{160}{Consultar registros de un contenedor}{lstlisting.13.2}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {13.2}Consultar registros de un contenedor.}{160}{lstlisting.13.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {13.3.5}Operaciones habituales}{160}{subsection.13.3.5}\protected@file@percent }
-\newlabel{subsec:despliegue-operaciones}{{13.3.5}{160}{Operaciones habituales}{subsection.13.3.5}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {13.3}Operaciones de mantenimiento habituales.}{161}{lstlisting.13.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {13.4}Manual de desarrollo}{161}{section.13.4}\protected@file@percent }
-\newlabel{sec:manual-desarrollo}{{13.4}{161}{Manual de desarrollo}{section.13.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {13.4.1}Estructura del repositorio}{161}{subsection.13.4.1}\protected@file@percent }
-\newlabel{subsec:desarrollo-estructura}{{13.4.1}{161}{Estructura del repositorio}{subsection.13.4.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {13.10}{\ignorespaces Estructura del repositorio Linceus Assistant.}}{161}{table.13.10}\protected@file@percent }
-\newlabel{tab:desarrollo-estructura}{{13.10}{161}{Estructura del repositorio Linceus Assistant}{table.13.10}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {13.4.2}Entorno de desarrollo}{161}{subsection.13.4.2}\protected@file@percent }
-\newlabel{subsec:desarrollo-entorno}{{13.4.2}{161}{Entorno de desarrollo}{subsection.13.4.2}{}}
-\newlabel{lst:dev-setup}{{13.4}{161}{Preparacion del entorno de desarrollo local}{lstlisting.13.4}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {13.4}Preparacion del entorno de desarrollo local.}{161}{lstlisting.13.4}\protected@file@percent }
-\newlabel{lst:dev-run}{{13.5}{162}{Arranque de los componentes en modo desarrollo}{lstlisting.13.5}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {13.5}Arranque de los componentes en modo desarrollo.}{162}{lstlisting.13.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {13.4.3}Ciclo de incorporación de cambios}{162}{subsection.13.4.3}\protected@file@percent }
-\newlabel{subsec:desarrollo-ciclo}{{13.4.3}{162}{Ciclo de incorporación de cambios}{subsection.13.4.3}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {13.11}{\ignorespaces Etapas del ciclo de incorporación de cambios.}}{162}{table.13.11}\protected@file@percent }
-\newlabel{tab:desarrollo-ciclo}{{13.11}{162}{Etapas del ciclo de incorporación de cambios}{table.13.11}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {13.4.4}Cómo añadir una nueva intención}{163}{subsection.13.4.4}\protected@file@percent }
-\newlabel{subsec:desarrollo-intencion}{{13.4.4}{163}{Cómo añadir una nueva intención}{subsection.13.4.4}{}}
-\newlabel{lst:nlu-intent}{{13.6}{163}{Declaracion de una intencion con ejemplos NLU en \texttt {data/nlu.yml}}{lstlisting.13.6}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {13.6}Declaracion de una intencion con ejemplos NLU en \texttt  {data/nlu.yml}.}{163}{lstlisting.13.6}\protected@file@percent }
-\newlabel{lst:action-estructura}{{13.7}{163}{Estructura minima de una accion personalizada en Rasa}{lstlisting.13.7}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {13.7}Estructura minima de una accion personalizada en Rasa.}{163}{lstlisting.13.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {13.4.5}Buenas prácticas y convenciones}{163}{subsection.13.4.5}\protected@file@percent }
-\newlabel{subsec:desarrollo-convenciones}{{13.4.5}{163}{Buenas prácticas y convenciones}{subsection.13.4.5}{}}
-\newlabel{lst:validar-sql}{{13.8}{164}{Fragmento de \texttt {validar\_sql}: lista de palabras prohibidas y verificacion de tabla}{lstlisting.13.8}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {13.8}Fragmento de \texttt  {validar\_sql}: lista de palabras prohibidas y verificacion de tabla.}{164}{lstlisting.13.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{\numberline {14}Conclusiones y desarrollos futuros}{165}{chapter.14}\protected@file@percent }
+\newlabel{cap:manuales}{{13}{146}{Manuales}{chapter.13}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {13.1}Manual de usuario}{146}{section.13.1}\protected@file@percent }
+\newlabel{sec:manual-usuario}{{13.1}{146}{Manual de usuario}{section.13.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.1.1}Acceso a la aplicación}{146}{subsection.13.1.1}\protected@file@percent }
+\newlabel{subsec:usuario-acceso}{{13.1.1}{146}{Acceso a la aplicación}{subsection.13.1.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {13.1}{\ignorespaces Página principal del prototipo con el \textit  {widget} de chat cerrado.}}{147}{figure.13.1}\protected@file@percent }
+\newlabel{fig:widget-cerrado}{{13.1}{147}{Página principal del prototipo con el \textit {widget} de chat cerrado}{figure.13.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {13.2}{\ignorespaces \textit  {Widget} desplegado con mensaje de bienvenida y selector de titulación.}}{147}{figure.13.2}\protected@file@percent }
+\newlabel{fig:widget-abierto}{{13.2}{147}{\textit {Widget} desplegado con mensaje de bienvenida y selector de titulación}{figure.13.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.1.2}Modelo conversacional}{148}{subsection.13.1.2}\protected@file@percent }
+\newlabel{subsec:usuario-modelo}{{13.1.2}{148}{Modelo conversacional}{subsection.13.1.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.1.3}Funcionalidades disponibles}{148}{subsection.13.1.3}\protected@file@percent }
+\newlabel{subsec:usuario-funcionalidades}{{13.1.3}{148}{Funcionalidades disponibles}{subsection.13.1.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {13.1}{\ignorespaces Tipos de consulta soportados por el prototipo.}}{148}{table.13.1}\protected@file@percent }
+\newlabel{tab:funcionalidades-usuario}{{13.1}{148}{Tipos de consulta soportados por el prototipo}{table.13.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.1.4}Recomendaciones de uso}{148}{subsection.13.1.4}\protected@file@percent }
+\newlabel{subsec:usuario-recomendaciones}{{13.1.4}{148}{Recomendaciones de uso}{subsection.13.1.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {13.3}{\ignorespaces Ejemplo de consulta sobre una asignatura concreta (ficha individual).}}{149}{figure.13.3}\protected@file@percent }
+\newlabel{fig:ejemplo-asignatura}{{13.3}{149}{Ejemplo de consulta sobre una asignatura concreta (ficha individual)}{figure.13.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {13.4}{\ignorespaces Ejemplo de consulta de horario con curso y grupo.}}{150}{figure.13.4}\protected@file@percent }
+\newlabel{fig:ejemplo-horario}{{13.4}{150}{Ejemplo de consulta de horario con curso y grupo}{figure.13.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {13.5}{\ignorespaces Ejemplo de consulta sobre profesorado.}}{151}{figure.13.5}\protected@file@percent }
+\newlabel{fig:ejemplo-profesor}{{13.5}{151}{Ejemplo de consulta sobre profesorado}{figure.13.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {13.2}Manual de administrador}{152}{section.13.2}\protected@file@percent }
+\newlabel{sec:manual-admin}{{13.2}{152}{Manual de administrador}{section.13.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.2.1}Acceso e interfaz general}{152}{subsection.13.2.1}\protected@file@percent }
+\newlabel{subsec:admin-acceso}{{13.2.1}{152}{Acceso e interfaz general}{subsection.13.2.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {13.6}{\ignorespaces Panel de administración: pantalla de inicio con la jerarquía de centros.}}{152}{figure.13.6}\protected@file@percent }
+\newlabel{fig:admin-home}{{13.6}{152}{Panel de administración: pantalla de inicio con la jerarquía de centros}{figure.13.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.2.2}Pestaña Centros}{153}{subsection.13.2.2}\protected@file@percent }
+\newlabel{subsec:admin-centros}{{13.2.2}{153}{Pestaña Centros}{subsection.13.2.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {13.2}{\ignorespaces Acciones de la pestaña \textit  {Centros}.}}{153}{table.13.2}\protected@file@percent }
+\newlabel{tab:admin-centros-acciones}{{13.2}{153}{Acciones de la pestaña \textit {Centros}}{table.13.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.2.3}Pestaña Asignaturas}{153}{subsection.13.2.3}\protected@file@percent }
+\newlabel{subsec:admin-asignaturas}{{13.2.3}{153}{Pestaña Asignaturas}{subsection.13.2.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {13.7}{\ignorespaces Pestaña \textit  {Asignaturas} con la barra de acciones disponibles para la titulación.}}{153}{figure.13.7}\protected@file@percent }
+\newlabel{fig:man-admin-asignaturas}{{13.7}{153}{Pestaña \textit {Asignaturas} con la barra de acciones disponibles para la titulación}{figure.13.7}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {13.3}{\ignorespaces Acciones de la pestaña \textit  {Asignaturas}.}}{154}{table.13.3}\protected@file@percent }
+\newlabel{tab:admin-asignaturas-acciones}{{13.3}{154}{Acciones de la pestaña \textit {Asignaturas}}{table.13.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.2.4}Pestaña Profesores}{154}{subsection.13.2.4}\protected@file@percent }
+\newlabel{subsec:admin-profesores}{{13.2.4}{154}{Pestaña Profesores}{subsection.13.2.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {13.8}{\ignorespaces Pestaña \textit  {Profesores} del panel de administración. La columna \textit  {Enriquecer desde us.es} dispara el scraper del directorio PDI para el departamento correspondiente.}}{154}{figure.13.8}\protected@file@percent }
+\newlabel{fig:admin-profesores}{{13.8}{154}{Pestaña \textit {Profesores} del panel de administración. La columna \textit {Enriquecer desde us.es} dispara el scraper del directorio PDI para el departamento correspondiente}{figure.13.8}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {13.4}{\ignorespaces Acciones de la pestaña \textit  {Profesores}.}}{154}{table.13.4}\protected@file@percent }
+\newlabel{tab:admin-profesores-acciones}{{13.4}{154}{Acciones de la pestaña \textit {Profesores}}{table.13.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.2.5}Pestaña Horarios}{155}{subsection.13.2.5}\protected@file@percent }
+\newlabel{subsec:admin-horarios}{{13.2.5}{155}{Pestaña Horarios}{subsection.13.2.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {13.9}{\ignorespaces Pestaña \textit  {Horarios} con el botón \textit  {Generar horarios} activo para los centros con extractor disponible.}}{155}{figure.13.9}\protected@file@percent }
+\newlabel{fig:man-admin-horarios}{{13.9}{155}{Pestaña \textit {Horarios} con el botón \textit {Generar horarios} activo para los centros con extractor disponible}{figure.13.9}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {13.5}{\ignorespaces Acciones de la pestaña \textit  {Horarios}.}}{155}{table.13.5}\protected@file@percent }
+\newlabel{tab:admin-horarios-acciones}{{13.5}{155}{Acciones de la pestaña \textit {Horarios}}{table.13.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.2.6}Pestaña Conversaciones y feedback}{155}{subsection.13.2.6}\protected@file@percent }
+\newlabel{subsec:admin-conversaciones}{{13.2.6}{155}{Pestaña Conversaciones y feedback}{subsection.13.2.6}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {13.10}{\ignorespaces Pestaña \textit  {Conversaciones} con las sesiones agrupadas. La fila resaltada en verde indica una sesión ya revisada por el administrador.}}{156}{figure.13.10}\protected@file@percent }
+\newlabel{fig:man-admin-conversaciones}{{13.10}{156}{Pestaña \textit {Conversaciones} con las sesiones agrupadas. La fila resaltada en verde indica una sesión ya revisada por el administrador}{figure.13.10}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {13.6}{\ignorespaces Acciones de la pestaña \textit  {Conversaciones}.}}{156}{table.13.6}\protected@file@percent }
+\newlabel{tab:admin-conv-acciones}{{13.6}{156}{Acciones de la pestaña \textit {Conversaciones}}{table.13.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.2.7}Pestaña Estadísticas}{156}{subsection.13.2.7}\protected@file@percent }
+\newlabel{subsec:admin-stats}{{13.2.7}{156}{Pestaña Estadísticas}{subsection.13.2.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.2.8}Procedimiento recomendado de carga inicial}{156}{subsection.13.2.8}\protected@file@percent }
+\newlabel{subsec:admin-onboarding}{{13.2.8}{156}{Procedimiento recomendado de carga inicial}{subsection.13.2.8}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {13.11}{\ignorespaces Pestaña \textit  {Estadísticas}: contadores globales del catálogo cargado.}}{157}{figure.13.11}\protected@file@percent }
+\newlabel{fig:admin-stats}{{13.11}{157}{Pestaña \textit {Estadísticas}: contadores globales del catálogo cargado}{figure.13.11}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {13.7}{\ignorespaces Secuencia recomendada para la carga inicial del catálogo de un centro.}}{157}{table.13.7}\protected@file@percent }
+\newlabel{tab:admin-onboarding}{{13.7}{157}{Secuencia recomendada para la carga inicial del catálogo de un centro}{table.13.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {13.3}Manual de despliegue}{158}{section.13.3}\protected@file@percent }
+\newlabel{sec:manual-despliegue}{{13.3}{158}{Manual de despliegue}{section.13.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.3.1}Requisitos previos}{158}{subsection.13.3.1}\protected@file@percent }
+\newlabel{subsec:despliegue-requisitos}{{13.3.1}{158}{Requisitos previos}{subsection.13.3.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {13.8}{\ignorespaces Requisitos mínimos del entorno de despliegue.}}{158}{table.13.8}\protected@file@percent }
+\newlabel{tab:despliegue-requisitos}{{13.8}{158}{Requisitos mínimos del entorno de despliegue}{table.13.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.3.2}Instalación}{158}{subsection.13.3.2}\protected@file@percent }
+\newlabel{subsec:despliegue-instalacion}{{13.3.2}{158}{Instalación}{subsection.13.3.2}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {13.1}Levantar la pila completa con Docker Compose.}{158}{lstlisting.13.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.3.3}Arquitectura del despliegue}{159}{subsection.13.3.3}\protected@file@percent }
+\newlabel{subsec:despliegue-arquitectura}{{13.3.3}{159}{Arquitectura del despliegue}{subsection.13.3.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {13.9}{\ignorespaces Contenedores del despliegue y responsabilidad de cada uno.}}{159}{table.13.9}\protected@file@percent }
+\newlabel{tab:despliegue-contenedores}{{13.9}{159}{Contenedores del despliegue y responsabilidad de cada uno}{table.13.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.3.4}Verificación del despliegue}{159}{subsection.13.3.4}\protected@file@percent }
+\newlabel{subsec:despliegue-verificacion}{{13.3.4}{159}{Verificación del despliegue}{subsection.13.3.4}{}}
+\newlabel{lst:logs}{{13.2}{159}{Consultar registros de un contenedor}{lstlisting.13.2}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {13.2}Consultar registros de un contenedor.}{159}{lstlisting.13.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.3.5}Operaciones habituales}{159}{subsection.13.3.5}\protected@file@percent }
+\newlabel{subsec:despliegue-operaciones}{{13.3.5}{159}{Operaciones habituales}{subsection.13.3.5}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {13.3}Operaciones de mantenimiento habituales.}{160}{lstlisting.13.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {13.4}Manual de desarrollo}{160}{section.13.4}\protected@file@percent }
+\newlabel{sec:manual-desarrollo}{{13.4}{160}{Manual de desarrollo}{section.13.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.4.1}Estructura del repositorio}{160}{subsection.13.4.1}\protected@file@percent }
+\newlabel{subsec:desarrollo-estructura}{{13.4.1}{160}{Estructura del repositorio}{subsection.13.4.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {13.10}{\ignorespaces Estructura del repositorio Linceus Assistant.}}{160}{table.13.10}\protected@file@percent }
+\newlabel{tab:desarrollo-estructura}{{13.10}{160}{Estructura del repositorio Linceus Assistant}{table.13.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.4.2}Entorno de desarrollo}{160}{subsection.13.4.2}\protected@file@percent }
+\newlabel{subsec:desarrollo-entorno}{{13.4.2}{160}{Entorno de desarrollo}{subsection.13.4.2}{}}
+\newlabel{lst:dev-setup}{{13.4}{160}{Preparacion del entorno de desarrollo local}{lstlisting.13.4}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {13.4}Preparacion del entorno de desarrollo local.}{160}{lstlisting.13.4}\protected@file@percent }
+\newlabel{lst:dev-run}{{13.5}{161}{Arranque de los componentes en modo desarrollo}{lstlisting.13.5}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {13.5}Arranque de los componentes en modo desarrollo.}{161}{lstlisting.13.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.4.3}Ciclo de incorporación de cambios}{161}{subsection.13.4.3}\protected@file@percent }
+\newlabel{subsec:desarrollo-ciclo}{{13.4.3}{161}{Ciclo de incorporación de cambios}{subsection.13.4.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {13.11}{\ignorespaces Etapas del ciclo de incorporación de cambios.}}{161}{table.13.11}\protected@file@percent }
+\newlabel{tab:desarrollo-ciclo}{{13.11}{161}{Etapas del ciclo de incorporación de cambios}{table.13.11}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.4.4}Cómo añadir una nueva intención}{162}{subsection.13.4.4}\protected@file@percent }
+\newlabel{subsec:desarrollo-intencion}{{13.4.4}{162}{Cómo añadir una nueva intención}{subsection.13.4.4}{}}
+\newlabel{lst:nlu-intent}{{13.6}{162}{Declaracion de una intencion con ejemplos NLU en \texttt {data/nlu.yml}}{lstlisting.13.6}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {13.6}Declaracion de una intencion con ejemplos NLU en \texttt  {data/nlu.yml}.}{162}{lstlisting.13.6}\protected@file@percent }
+\newlabel{lst:action-estructura}{{13.7}{162}{Estructura minima de una accion personalizada en Rasa}{lstlisting.13.7}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {13.7}Estructura minima de una accion personalizada en Rasa.}{162}{lstlisting.13.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.4.5}Buenas prácticas y convenciones}{162}{subsection.13.4.5}\protected@file@percent }
+\newlabel{subsec:desarrollo-convenciones}{{13.4.5}{162}{Buenas prácticas y convenciones}{subsection.13.4.5}{}}
+\newlabel{lst:validar-sql}{{13.8}{163}{Fragmento de \texttt {validar\_sql}: lista de palabras prohibidas y verificacion de tabla}{lstlisting.13.8}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {13.8}Fragmento de \texttt  {validar\_sql}: lista de palabras prohibidas y verificacion de tabla.}{163}{lstlisting.13.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {14}Conclusiones y desarrollos futuros}{164}{chapter.14}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\newlabel{cap:conclusiones}{{14}{165}{Conclusiones y desarrollos futuros}{chapter.14}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {14.1}Linceus en números}{165}{section.14.1}\protected@file@percent }
-\newlabel{sec:linceus-numeros}{{14.1}{165}{Linceus en números}{section.14.1}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {14.2}Cumplimiento de objetivos}{165}{section.14.2}\protected@file@percent }
-\newlabel{sec:conc-objetivos}{{14.2}{165}{Cumplimiento de objetivos}{section.14.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {14.2.1}Objetivo general}{165}{subsection.14.2.1}\protected@file@percent }
-\newlabel{subsec:conc-obj-general}{{14.2.1}{165}{Objetivo general}{subsection.14.2.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {14.1}{\ignorespaces Indicadores cuantitativos de Linceus Assistant al cierre del prototipo (26/04/2026).}}{166}{table.14.1}\protected@file@percent }
-\newlabel{tab:linceus-numeros}{{14.1}{166}{Indicadores cuantitativos de Linceus Assistant al cierre del prototipo (26/04/2026)}{table.14.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {14.2.2}Objetivos técnicos}{167}{subsection.14.2.2}\protected@file@percent }
-\newlabel{subsec:conc-obj-tecnicos}{{14.2.2}{167}{Objetivos técnicos}{subsection.14.2.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {14.2}{\ignorespaces Cruce entre objetivos técnicos y evidencia obtenida.}}{167}{table.14.2}\protected@file@percent }
-\newlabel{tab:cumplimiento-tecnico}{{14.2}{167}{Cruce entre objetivos técnicos y evidencia obtenida}{table.14.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {14.2.3}Objetivos académicos y personales}{167}{subsection.14.2.3}\protected@file@percent }
-\newlabel{subsec:conc-obj-academicos}{{14.2.3}{167}{Objetivos académicos y personales}{subsection.14.2.3}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {14.3}Lecciones aprendidas}{167}{section.14.3}\protected@file@percent }
-\newlabel{sec:conc-lecciones}{{14.3}{167}{Lecciones aprendidas}{section.14.3}{}}
+\newlabel{cap:conclusiones}{{14}{164}{Conclusiones y desarrollos futuros}{chapter.14}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {14.1}Linceus en números}{164}{section.14.1}\protected@file@percent }
+\newlabel{sec:linceus-numeros}{{14.1}{164}{Linceus en números}{section.14.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {14.2}Cumplimiento de objetivos}{164}{section.14.2}\protected@file@percent }
+\newlabel{sec:conc-objetivos}{{14.2}{164}{Cumplimiento de objetivos}{section.14.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.2.1}Objetivo general}{164}{subsection.14.2.1}\protected@file@percent }
+\newlabel{subsec:conc-obj-general}{{14.2.1}{164}{Objetivo general}{subsection.14.2.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {14.1}{\ignorespaces Indicadores cuantitativos de Linceus Assistant al cierre del prototipo (26/04/2026).}}{165}{table.14.1}\protected@file@percent }
+\newlabel{tab:linceus-numeros}{{14.1}{165}{Indicadores cuantitativos de Linceus Assistant al cierre del prototipo (26/04/2026)}{table.14.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.2.2}Objetivos técnicos}{166}{subsection.14.2.2}\protected@file@percent }
+\newlabel{subsec:conc-obj-tecnicos}{{14.2.2}{166}{Objetivos técnicos}{subsection.14.2.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {14.2}{\ignorespaces Cruce entre objetivos técnicos y evidencia obtenida.}}{166}{table.14.2}\protected@file@percent }
+\newlabel{tab:cumplimiento-tecnico}{{14.2}{166}{Cruce entre objetivos técnicos y evidencia obtenida}{table.14.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.2.3}Objetivos académicos y personales}{166}{subsection.14.2.3}\protected@file@percent }
+\newlabel{subsec:conc-obj-academicos}{{14.2.3}{166}{Objetivos académicos y personales}{subsection.14.2.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {14.3}Lecciones aprendidas}{166}{section.14.3}\protected@file@percent }
+\newlabel{sec:conc-lecciones}{{14.3}{166}{Lecciones aprendidas}{section.14.3}{}}
 \citation{segura2024guiatfg}
-\@writefile{toc}{\contentsline {section}{\numberline {14.4}Análisis de desviación}{168}{section.14.4}\protected@file@percent }
-\newlabel{sec:conc-desviacion}{{14.4}{168}{Análisis de desviación}{section.14.4}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {14.5}Desarrollos futuros}{168}{section.14.5}\protected@file@percent }
-\newlabel{sec:conc-futuros}{{14.5}{168}{Desarrollos futuros}{section.14.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {14.5.1}Optimización del sistema actual}{169}{subsection.14.5.1}\protected@file@percent }
-\newlabel{subsec:conc-fut-optimizacion}{{14.5.1}{169}{Optimización del sistema actual}{subsection.14.5.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {14.4}Análisis de desviación}{167}{section.14.4}\protected@file@percent }
+\newlabel{sec:conc-desviacion}{{14.4}{167}{Análisis de desviación}{section.14.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {14.5}Desarrollos futuros}{167}{section.14.5}\protected@file@percent }
+\newlabel{sec:conc-futuros}{{14.5}{167}{Desarrollos futuros}{section.14.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.5.1}Optimización del sistema actual}{168}{subsection.14.5.1}\protected@file@percent }
+\newlabel{subsec:conc-fut-optimizacion}{{14.5.1}{168}{Optimización del sistema actual}{subsection.14.5.1}{}}
 \citation{wollny2021survey}
 \citation{gupta2019admitbot}
 \citation{colace2018edubot}
 \citation{ranoliya2017chatbot}
 \citation{dibya2021chatbot}
 \citation{wollny2021survey}
-\@writefile{toc}{\contentsline {subsection}{\numberline {14.5.2}Ampliación funcional}{170}{subsection.14.5.2}\protected@file@percent }
-\newlabel{subsec:conc-fut-ampliacion}{{14.5.2}{170}{Ampliación funcional}{subsection.14.5.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {14.5.3}Validación reforzada}{170}{subsection.14.5.3}\protected@file@percent }
-\newlabel{subsec:conc-fut-validacion}{{14.5.3}{170}{Validación reforzada}{subsection.14.5.3}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {14.6}Contribución al estado del arte}{170}{section.14.6}\protected@file@percent }
-\newlabel{sec:conc-contribucion-arte}{{14.6}{170}{Contribución al estado del arte}{section.14.6}{}}
-\@writefile{toc}{\contentsline {paragraph}{Calibración empírica documentada en lugar de umbrales por convención.}{170}{paragraph*.94}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.5.2}Ampliación funcional}{169}{subsection.14.5.2}\protected@file@percent }
+\newlabel{subsec:conc-fut-ampliacion}{{14.5.2}{169}{Ampliación funcional}{subsection.14.5.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.5.3}Validación reforzada}{169}{subsection.14.5.3}\protected@file@percent }
+\newlabel{subsec:conc-fut-validacion}{{14.5.3}{169}{Validación reforzada}{subsection.14.5.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {14.6}Contribución al estado del arte}{169}{section.14.6}\protected@file@percent }
+\newlabel{sec:conc-contribucion-arte}{{14.6}{169}{Contribución al estado del arte}{section.14.6}{}}
+\@writefile{toc}{\contentsline {paragraph}{Ajuste iterativo y documentado en lugar de umbrales por convención.}{169}{paragraph*.94}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Arquitectura híbrida NLU + RAG con dos vías de resolución por dominio.}{170}{paragraph*.95}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Cierre del ciclo de vida del corpus mediante un panel sin código.}{171}{paragraph*.96}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {14.7}Consideraciones éticas}{171}{section.14.7}\protected@file@percent }
-\newlabel{sec:conc-etica}{{14.7}{171}{Consideraciones éticas}{section.14.7}{}}
-\@writefile{toc}{\contentsline {paragraph}{Veracidad de la información y riesgo de inducir decisiones erróneas.}{171}{paragraph*.97}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Privacidad y protección de datos.}{171}{paragraph*.98}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Sesgo en los datos de entrenamiento.}{172}{paragraph*.99}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Dependencia tecnológica y degradación responsable.}{172}{paragraph*.100}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {14.8}Reflexión final}{172}{section.14.8}\protected@file@percent }
-\newlabel{sec:conc-reflexion}{{14.8}{172}{Reflexión final}{section.14.8}{}}
-\@writefile{toc}{\contentsline {chapter}{\numberline {15}Uso de Inteligencia Artificial}{173}{chapter.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Cierre del ciclo de vida del corpus mediante un panel sin código.}{170}{paragraph*.96}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {14.7}Consideraciones éticas}{170}{section.14.7}\protected@file@percent }
+\newlabel{sec:conc-etica}{{14.7}{170}{Consideraciones éticas}{section.14.7}{}}
+\@writefile{toc}{\contentsline {paragraph}{Veracidad de la información y riesgo de inducir decisiones erróneas.}{170}{paragraph*.97}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Privacidad y protección de datos.}{170}{paragraph*.98}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Sesgo en los datos de entrenamiento.}{171}{paragraph*.99}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Dependencia tecnológica y degradación responsable.}{171}{paragraph*.100}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {14.8}Reflexión final}{171}{section.14.8}\protected@file@percent }
+\newlabel{sec:conc-reflexion}{{14.8}{171}{Reflexión final}{section.14.8}{}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {15}Uso de Inteligencia Artificial}{172}{chapter.15}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\newlabel{cap:uso-ia}{{15}{173}{Uso de Inteligencia Artificial}{chapter.15}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {15.1}Herramientas utilizadas}{173}{section.15.1}\protected@file@percent }
-\newlabel{sec:ia-herramientas}{{15.1}{173}{Herramientas utilizadas}{section.15.1}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {15.2}Uso de IA en el desarrollo del código}{173}{section.15.2}\protected@file@percent }
-\newlabel{sec:ia-codigo}{{15.2}{173}{Uso de IA en el desarrollo del código}{section.15.2}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {15.3}Uso de IA en la redacción de la memoria}{174}{section.15.3}\protected@file@percent }
-\newlabel{sec:ia-memoria}{{15.3}{174}{Uso de IA en la redacción de la memoria}{section.15.3}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {15.4}Limitaciones y responsabilidad del autor}{174}{section.15.4}\protected@file@percent }
-\newlabel{sec:ia-limitaciones}{{15.4}{174}{Limitaciones y responsabilidad del autor}{section.15.4}{}}
-\@writefile{toc}{\contentsline {chapter}{\numberline {16}Vídeo demostración}{175}{chapter.16}\protected@file@percent }
+\newlabel{cap:uso-ia}{{15}{172}{Uso de Inteligencia Artificial}{chapter.15}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {15.1}Herramientas utilizadas}{172}{section.15.1}\protected@file@percent }
+\newlabel{sec:ia-herramientas}{{15.1}{172}{Herramientas utilizadas}{section.15.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {15.2}Uso de IA en el desarrollo del código}{172}{section.15.2}\protected@file@percent }
+\newlabel{sec:ia-codigo}{{15.2}{172}{Uso de IA en el desarrollo del código}{section.15.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {15.3}Uso de IA en la redacción de la memoria}{173}{section.15.3}\protected@file@percent }
+\newlabel{sec:ia-memoria}{{15.3}{173}{Uso de IA en la redacción de la memoria}{section.15.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {15.4}Limitaciones y responsabilidad del autor}{173}{section.15.4}\protected@file@percent }
+\newlabel{sec:ia-limitaciones}{{15.4}{173}{Limitaciones y responsabilidad del autor}{section.15.4}{}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {16}Vídeo demostración}{174}{chapter.16}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\newlabel{cap:video}{{16}{175}{Vídeo demostración}{chapter.16}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {16.1}Vídeo demostración}{175}{section.16.1}\protected@file@percent }
-\newlabel{sec:video}{{16.1}{175}{Vídeo demostración}{section.16.1}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {16.1}{\ignorespaces Miniatura del vídeo demostración alojado en YouTube. La imagen es un enlace activo en la versión PDF.}}{175}{figure.16.1}\protected@file@percent }
-\newlabel{fig:video-thumbnail}{{16.1}{175}{Miniatura del vídeo demostración alojado en YouTube. La imagen es un enlace activo en la versión PDF}{figure.16.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {16.1.1}Estructura del vídeo}{175}{subsection.16.1.1}\protected@file@percent }
-\newlabel{subsec:video-estructura}{{16.1.1}{175}{Estructura del vídeo}{subsection.16.1.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {16.1}{\ignorespaces Sucesión de escenas del vídeo demostración.}}{176}{table.16.1}\protected@file@percent }
-\newlabel{tab:video-estructura}{{16.1}{176}{Sucesión de escenas del vídeo demostración}{table.16.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {16.1.2}Notas sobre la producción}{176}{subsection.16.1.2}\protected@file@percent }
-\newlabel{subsec:video-produccion}{{16.1.2}{176}{Notas sobre la producción}{subsection.16.1.2}{}}
-\@writefile{toc}{\contentsline {chapter}{Apéndices}{177}{appendix*.101}\protected@file@percent }
+\newlabel{cap:video}{{16}{174}{Vídeo demostración}{chapter.16}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {16.1}Vídeo demostración}{174}{section.16.1}\protected@file@percent }
+\newlabel{sec:video}{{16.1}{174}{Vídeo demostración}{section.16.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {16.1}{\ignorespaces Miniatura del vídeo demostración alojado en YouTube. La imagen es un enlace activo en la versión PDF.}}{174}{figure.16.1}\protected@file@percent }
+\newlabel{fig:video-thumbnail}{{16.1}{174}{Miniatura del vídeo demostración alojado en YouTube. La imagen es un enlace activo en la versión PDF}{figure.16.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {16.1.1}Estructura del vídeo}{174}{subsection.16.1.1}\protected@file@percent }
+\newlabel{subsec:video-estructura}{{16.1.1}{174}{Estructura del vídeo}{subsection.16.1.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {16.1}{\ignorespaces Sucesión de escenas del vídeo demostración.}}{175}{table.16.1}\protected@file@percent }
+\newlabel{tab:video-estructura}{{16.1}{175}{Sucesión de escenas del vídeo demostración}{table.16.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {16.1.2}Notas sobre la producción}{175}{subsection.16.1.2}\protected@file@percent }
+\newlabel{subsec:video-produccion}{{16.1.2}{175}{Notas sobre la producción}{subsection.16.1.2}{}}
+\@writefile{toc}{\contentsline {chapter}{Apéndices}{176}{appendix*.101}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\newlabel{cap:apendices}{{16.1.2}{177}{Apéndices}{appendix*.101}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {.1}Actas de reuniones con el tutor}{177}{section.Alph0.1}\protected@file@percent }
-\newlabel{ap:actas}{{.1}{177}{Actas de reuniones con el tutor}{section.Alph0.1}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {.2}Informe de tiempo invertido}{180}{section.Alph0.2}\protected@file@percent }
-\newlabel{ap:tiempo}{{.2}{180}{Informe de tiempo invertido}{section.Alph0.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {.2}{\ignorespaces Distribución del tiempo por categoría de actividad (Clockify, 02/05/2026).}}{181}{table.Alph0.2}\protected@file@percent }
-\newlabel{tab:clockify-categorias}{{.2}{181}{Distribución del tiempo por categoría de actividad (Clockify, 02/05/2026)}{table.Alph0.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {.3}{\ignorespaces Horas registradas por sprint (Clockify, 02/05/2026).}}{181}{table.Alph0.3}\protected@file@percent }
-\newlabel{tab:clockify-sprints}{{.3}{181}{Horas registradas por sprint (Clockify, 02/05/2026)}{table.Alph0.3}{}}
+\newlabel{cap:apendices}{{16.1.2}{176}{Apéndices}{appendix*.101}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {.1}Actas de reuniones con el tutor}{176}{section.Alph0.1}\protected@file@percent }
+\newlabel{ap:actas}{{.1}{176}{Actas de reuniones con el tutor}{section.Alph0.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {.2}Informe de tiempo invertido}{179}{section.Alph0.2}\protected@file@percent }
+\newlabel{ap:tiempo}{{.2}{179}{Informe de tiempo invertido}{section.Alph0.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {.2}{\ignorespaces Distribución del tiempo por categoría de actividad (Clockify, 02/05/2026).}}{180}{table.Alph0.2}\protected@file@percent }
+\newlabel{tab:clockify-categorias}{{.2}{180}{Distribución del tiempo por categoría de actividad (Clockify, 02/05/2026)}{table.Alph0.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {.3}{\ignorespaces Horas registradas por sprint (Clockify, 02/05/2026).}}{180}{table.Alph0.3}\protected@file@percent }
+\newlabel{tab:clockify-sprints}{{.3}{180}{Horas registradas por sprint (Clockify, 02/05/2026)}{table.Alph0.3}{}}
 \bibstyle{ieeetr}
 \bibdata{pfcbib}
 \bibcite{usWeb}{1}
@@ -1065,7 +1065,7 @@
 \bibcite{ugrAlhe}{13}
 \bibcite{millionbotUgr}{14}
 \bibcite{ucaLuca}{15}
-\@writefile{toc}{\contentsline {chapter}{Bibliograf\'{\i }a}{182}{section*.103}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{Bibliograf\'{\i }a}{181}{section*.103}\protected@file@percent }
 \bibcite{uahIsidra}{16}
 \bibcite{uahAiex}{17}
 \bibcite{unibuddy}{18}
@@ -1121,4 +1121,4 @@
 \bibcite{folstad2020users}{68}
 \bibcite{wohlin2012experimentation}{69}
 \ttl@finishall
-\gdef \@abspage@last{187}
+\gdef \@abspage@last{186}
