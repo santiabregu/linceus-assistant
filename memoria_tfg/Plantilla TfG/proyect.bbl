@@ -132,6 +132,12 @@ B.~R. Ranoliya, N.~Raghuwanshi, and S.~Singh, ``Chatbot for university related
 D.~K. Dibya and S.~Sahoo, ``Implementation of a chatbot system using {AI} and
   {NLP},'' in {\em IEEE ICCCNT}, 2021.
 
+\bibitem{wollny2021survey}
+S.~Wollny, J.~Schneider, D.~Di~Mitri, J.~Weidlich, M.~Rittberger, and
+  H.~Drachsler, ``Are we there yet? -- a systematic literature review on
+  chatbots in education,'' {\em Frontiers in Artificial Intelligence}, vol.~4,
+  2021.
+
 \bibitem{bocklisch2017rasa}
 T.~Bocklisch, J.~Faulkner, N.~Pawlowski, and A.~Nichol, ``Rasa: Open source
   language understanding and dialogue management,'' in {\em NIPS 2017
@@ -257,6 +263,31 @@ S.~Segura and A.~Ruiz, ``Guia para proyectos fin de grado sobre desarrollo de
 \newblock Departamento de Lenguajes y Sistemas Informaticos, ETSII, Universidad
   de Sevilla.
 
+\bibitem{north2006bdd}
+D.~North, ``Introducing {BDD}.'' Better Software Magazine, 2006.
+
+\bibitem{bass2021sap}
+L.~Bass, P.~Clements, and R.~Kazman, {\em Software Architecture in Practice}.
+\newblock Addison-Wesley, 4th~ed., 2021.
+
+\bibitem{martin2017clean}
+R.~C. Martin, {\em Clean Architecture: A Craftsman's Guide to Software
+  Structure and Design}.
+\newblock Prentice Hall, 2017.
+
+\bibitem{fielding2000rest}
+R.~T. Fielding, {\em Architectural Styles and the Design of Network-based
+  Software Architectures}.
+\newblock PhD thesis, University of California, Irvine, 2000.
+
+\bibitem{docker2024}
+{Docker Inc.}, ``Docker documentation.'' \url{https://docs.docker.com}, 2024.
+\newblock Consultado en mayo de 2026.
+
+\bibitem{newman2021microservices}
+S.~Newman, {\em Building Microservices: Designing Fine-Grained Systems}.
+\newblock O'Reilly Media, 2nd~ed., 2021.
+
 \bibitem{malkov2018hnsw}
 Y.~A. Malkov and D.~A. Yashunin, ``Efficient and robust approximate nearest
   neighbor search using hierarchical navigable small world graphs,'' {\em IEEE
@@ -282,13 +313,15 @@ I.~Casanueva, T.~Temcinas, D.~Gerz, M.~Henderson, and I.~Vulic, ``Efficient
   intent detection with dual sentence encoders,'' in {\em ACL NLP4ConvAI
   Workshop}, 2020.
 
+\bibitem{gamma1994gof}
+E.~Gamma, R.~Helm, R.~Johnson, and J.~Vlissides, {\em Design Patterns: Elements
+  of Reusable Object-Oriented Software}.
+\newblock Addison-Wesley, 1994.
+
 \bibitem{iso25010}
 {International Organization for Standardization}, ``{ISO/IEC 25010:2023} --
   systems and software engineering -- systems and software quality requirements
   and evaluation ({SQuaRE}) -- product quality model,'' 2023.
-
-\bibitem{north2006bdd}
-D.~North, ``Introducing {BDD}.'' Better Software Magazine, 2006.
 
 \bibitem{xoriantChatbot}
 {Xoriant}, ``A comprehensive guide to chatbot testing.'' White paper, 2020.
@@ -311,5 +344,10 @@ J.~Casas, M.-O. Tricot, O.~Abou~Khaled, E.~Mugellini, and P.~Cudre-Mauroux,
 A.~Folstad and P.~B. Brandtzaeg, ``Users' experiences with chatbots: findings
   from a questionnaire study,'' {\em Quality and User Experience, Springer},
   2020.
+
+\bibitem{wohlin2012experimentation}
+C.~Wohlin, P.~Runeson, M.~H\"ost, M.~C. Ohlsson, B.~Regnell, and A.~Wessl\'en,
+  {\em Experimentation in Software Engineering}.
+\newblock Springer, 2012.
 
 \end{thebibliography}

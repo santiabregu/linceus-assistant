@@ -1,91 +1,98 @@
 \babel@toc {spanish}{}\relax 
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {1.1}{\ignorespaces Comparativa de soluciones existentes frente a Linceus Assistant.}}{21}{table.1.1}%
+\contentsline {table}{\numberline {1.1}{\ignorespaces Comparativa de soluciones existentes frente a Linceus Assistant.}}{22}{table.1.1}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {2.1}{\ignorespaces Comparación de frameworks conversacionales}}{26}{table.2.1}%
-\contentsline {table}{\numberline {2.2}{\ignorespaces Comparación de bases de datos}}{29}{table.2.2}%
-\contentsline {table}{\numberline {2.3}{\ignorespaces Comparación de APIs de LLM}}{32}{table.2.3}%
-\contentsline {table}{\numberline {2.4}{\ignorespaces Componentes tecnológicos del sistema en producción.}}{33}{table.2.4}%
+\contentsline {table}{\numberline {2.1}{\ignorespaces Comparación de frameworks conversacionales}}{28}{table.2.1}%
+\contentsline {table}{\numberline {2.2}{\ignorespaces Comparación de bases de datos}}{31}{table.2.2}%
+\contentsline {table}{\numberline {2.3}{\ignorespaces Comparación de APIs de LLM}}{34}{table.2.3}%
+\contentsline {table}{\numberline {2.4}{\ignorespaces Componentes tecnológicos del sistema en producción.}}{35}{table.2.4}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {3.1}{\ignorespaces Archivos de configuración principales del sistema Rasa}}{39}{table.3.1}%
+\contentsline {table}{\numberline {3.1}{\ignorespaces Archivos de configuración principales del sistema Rasa}}{42}{table.3.1}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {4.1}{\ignorespaces Patrones de delegación al LLM aplicados en Linceus Assistant.}}{45}{table.4.1}%
+\contentsline {table}{\numberline {4.1}{\ignorespaces Patrones de delegación al LLM aplicados en Linceus Assistant.}}{48}{table.4.1}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {5.1}{\ignorespaces Diccionario EDT:1.1: Gestión del proyecto.}}{48}{table.5.1}%
-\contentsline {table}{\numberline {5.2}{\ignorespaces Diccionario EDT:1.2: Investigación tecnológica.}}{48}{table.5.2}%
-\contentsline {table}{\numberline {5.3}{\ignorespaces Diccionario EDT:1.3: Diseño de la arquitectura.}}{49}{table.5.3}%
-\contentsline {table}{\numberline {5.4}{\ignorespaces Diccionario EDT:2.1: Épica Asignaturas.}}{49}{table.5.4}%
-\contentsline {table}{\numberline {5.5}{\ignorespaces Diccionario EDT:2.2: Épica Profesores.}}{50}{table.5.5}%
-\contentsline {table}{\numberline {5.6}{\ignorespaces Diccionario EDT:2.3: Épica Horarios.}}{50}{table.5.6}%
-\contentsline {table}{\numberline {5.7}{\ignorespaces Diccionario EDT:2.4: Pipeline RAG.}}{51}{table.5.7}%
-\contentsline {table}{\numberline {5.8}{\ignorespaces Diccionario EDT:2.5: Panel admin y frontend.}}{51}{table.5.8}%
-\contentsline {table}{\numberline {5.9}{\ignorespaces Diccionario EDT:3.1: Validación y testing.}}{52}{table.5.9}%
-\contentsline {table}{\numberline {5.10}{\ignorespaces Diccionario EDT:3.2: Piloto con usuarios.}}{52}{table.5.10}%
-\contentsline {table}{\numberline {5.11}{\ignorespaces Diccionario EDT:3.3: Despliegue en producción.}}{52}{table.5.11}%
-\contentsline {table}{\numberline {5.12}{\ignorespaces Diccionario EDT:3.4: Memoria del proyecto.}}{53}{table.5.12}%
-\contentsline {table}{\numberline {5.13}{\ignorespaces Resumen cuantitativo de la EDT por fase y paquete de trabajo.}}{53}{table.5.13}%
-\contentsline {table}{\numberline {5.14}{\ignorespaces Priorización del backlog dentro de la fase de Desarrollo.}}{54}{table.5.14}%
-\contentsline {table}{\numberline {5.15}{\ignorespaces Estimación inicial de esfuerzo por fase.}}{54}{table.5.15}%
-\contentsline {table}{\numberline {5.16}{\ignorespaces Horas registradas por sprint (fuente: Clockify).}}{55}{table.5.16}%
-\contentsline {table}{\numberline {5.17}{\ignorespaces Hitos principales del proyecto.}}{55}{table.5.17}%
-\contentsline {table}{\numberline {5.18}{\ignorespaces Coste mensual real del despliegue actual.}}{58}{table.5.18}%
-\contentsline {table}{\numberline {5.19}{\ignorespaces Estimación de coste anual de operación según número de usuarios activos.}}{58}{table.5.19}%
-\contentsline {table}{\numberline {5.20}{\ignorespaces Resumen de costes del proyecto.}}{59}{table.5.20}%
-\contentsline {table}{\numberline {5.21}{\ignorespaces Desviación temporal por fase.}}{59}{table.5.21}%
+\contentsline {table}{\numberline {5.1}{\ignorespaces Diccionario EDT:1.1: Gestión del proyecto.}}{51}{table.5.1}%
+\contentsline {table}{\numberline {5.2}{\ignorespaces Diccionario EDT:1.2: Investigación tecnológica.}}{51}{table.5.2}%
+\contentsline {table}{\numberline {5.3}{\ignorespaces Diccionario EDT:1.3: Diseño de la arquitectura.}}{52}{table.5.3}%
+\contentsline {table}{\numberline {5.4}{\ignorespaces Diccionario EDT:2.1: Épica Asignaturas.}}{52}{table.5.4}%
+\contentsline {table}{\numberline {5.5}{\ignorespaces Diccionario EDT:2.2: Épica Profesores.}}{53}{table.5.5}%
+\contentsline {table}{\numberline {5.6}{\ignorespaces Diccionario EDT:2.3: Épica Horarios.}}{53}{table.5.6}%
+\contentsline {table}{\numberline {5.7}{\ignorespaces Diccionario EDT:2.4: Pipeline RAG.}}{54}{table.5.7}%
+\contentsline {table}{\numberline {5.8}{\ignorespaces Diccionario EDT:2.5: Panel admin y frontend.}}{54}{table.5.8}%
+\contentsline {table}{\numberline {5.9}{\ignorespaces Diccionario EDT:3.1: Validación y testing.}}{55}{table.5.9}%
+\contentsline {table}{\numberline {5.10}{\ignorespaces Diccionario EDT:3.2: Piloto con usuarios.}}{55}{table.5.10}%
+\contentsline {table}{\numberline {5.11}{\ignorespaces Diccionario EDT:3.3: Despliegue en producción.}}{55}{table.5.11}%
+\contentsline {table}{\numberline {5.12}{\ignorespaces Diccionario EDT:3.4: Memoria del proyecto.}}{56}{table.5.12}%
+\contentsline {table}{\numberline {5.13}{\ignorespaces Resumen cuantitativo de la EDT por fase y paquete de trabajo.}}{56}{table.5.13}%
+\contentsline {table}{\numberline {5.14}{\ignorespaces Priorización del backlog dentro de la fase de Desarrollo.}}{57}{table.5.14}%
+\contentsline {table}{\numberline {5.15}{\ignorespaces Estimación inicial de esfuerzo por fase.}}{57}{table.5.15}%
+\contentsline {table}{\numberline {5.16}{\ignorespaces Horas registradas por sprint (fuente: Clockify).}}{58}{table.5.16}%
+\contentsline {table}{\numberline {5.17}{\ignorespaces Hitos principales del proyecto.}}{58}{table.5.17}%
+\contentsline {table}{\numberline {5.18}{\ignorespaces Coste mensual real del despliegue actual.}}{61}{table.5.18}%
+\contentsline {table}{\numberline {5.19}{\ignorespaces Estimación de coste anual de operación según número de usuarios activos.}}{61}{table.5.19}%
+\contentsline {table}{\numberline {5.20}{\ignorespaces Resumen de costes del proyecto.}}{62}{table.5.20}%
+\contentsline {table}{\numberline {5.21}{\ignorespaces Desviación temporal por fase.}}{62}{table.5.21}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {6.1}{\ignorespaces Requisitos funcionales del dominio de asignaturas.}}{63}{table.6.1}%
-\contentsline {table}{\numberline {6.2}{\ignorespaces Requisitos funcionales del dominio de horarios.}}{63}{table.6.2}%
-\contentsline {table}{\numberline {6.3}{\ignorespaces Requisitos funcionales del dominio de profesorado.}}{64}{table.6.3}%
-\contentsline {table}{\numberline {6.4}{\ignorespaces Requisitos funcionales transversales.}}{64}{table.6.4}%
-\contentsline {table}{\numberline {6.5}{\ignorespaces Requisitos funcionales del panel de administración.}}{65}{table.6.5}%
-\contentsline {table}{\numberline {6.6}{\ignorespaces Requisitos de información del sistema.}}{66}{table.6.6}%
-\contentsline {table}{\numberline {6.7}{\ignorespaces Entidades de información del dominio académico.}}{66}{table.6.7}%
-\contentsline {table}{\numberline {6.8}{\ignorespaces Requisitos no funcionales y evidencia.}}{67}{table.6.8}%
-\contentsline {table}{\numberline {6.9}{\ignorespaces Evolución del alcance respecto a la propuesta inicial.}}{70}{table.6.9}%
+\contentsline {table}{\numberline {6.1}{\ignorespaces Requisitos funcionales del dominio de asignaturas.}}{66}{table.6.1}%
+\contentsline {table}{\numberline {6.2}{\ignorespaces Requisitos funcionales del dominio de horarios.}}{67}{table.6.2}%
+\contentsline {table}{\numberline {6.3}{\ignorespaces Requisitos funcionales del dominio de profesorado.}}{67}{table.6.3}%
+\contentsline {table}{\numberline {6.4}{\ignorespaces Requisitos funcionales transversales.}}{68}{table.6.4}%
+\contentsline {table}{\numberline {6.5}{\ignorespaces Requisitos funcionales del panel de administración.}}{68}{table.6.5}%
+\contentsline {table}{\numberline {6.6}{\ignorespaces Criterios de aceptación: selección representativa por dominio.}}{69}{table.6.6}%
+\contentsline {table}{\numberline {6.7}{\ignorespaces Requisitos de información del sistema.}}{70}{table.6.7}%
+\contentsline {table}{\numberline {6.8}{\ignorespaces Entidades de información del dominio académico.}}{70}{table.6.8}%
+\contentsline {table}{\numberline {6.9}{\ignorespaces Requisitos no funcionales, umbrales y valores alcanzados.}}{73}{table.6.9}%
+\contentsline {table}{\numberline {6.10}{\ignorespaces Restricciones, suposiciones y dependencias externas del prototipo.}}{75}{table.6.10}%
+\contentsline {table}{\numberline {6.11}{\ignorespaces Trazabilidad objetivos técnicos -- requisitos funcionales.}}{79}{table.6.11}%
+\contentsline {table}{\numberline {6.12}{\ignorespaces Trazabilidad requisitos funcionales -- cobertura de pruebas por categoría de la suite.}}{80}{table.6.12}%
+\contentsline {table}{\numberline {6.13}{\ignorespaces Evolución del alcance respecto a la propuesta inicial.}}{81}{table.6.13}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {7.1}{\ignorespaces Protocolos y puertos de comunicación entre nodos del sistema.}}{76}{table.7.1}%
+\contentsline {table}{\numberline {7.1}{\ignorespaces Protocolos y puertos de comunicación entre nodos del sistema.}}{86}{table.7.1}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {8.1}{\ignorespaces Stack tecnológico completo del proyecto LinceUS Assistant.}}{87}{table.8.1}%
-\addvspace {10\p@ }
-\addvspace {10\p@ }
-\contentsline {table}{\numberline {10.1}{\ignorespaces Estructura de la tabla UNIVERSIDADES}}{95}{table.10.1}%
-\contentsline {table}{\numberline {10.2}{\ignorespaces Estructura de la tabla CENTROS}}{95}{table.10.2}%
-\contentsline {table}{\numberline {10.3}{\ignorespaces Estructura de la tabla DEPARTAMENTOS}}{96}{table.10.3}%
-\contentsline {table}{\numberline {10.4}{\ignorespaces Estructura de la tabla TITULACIONES}}{96}{table.10.4}%
-\contentsline {table}{\numberline {10.5}{\ignorespaces Estructura de la tabla ASIGNATURAS}}{97}{table.10.5}%
-\contentsline {table}{\numberline {10.6}{\ignorespaces Estructura de la tabla PROFESORES}}{97}{table.10.6}%
-\contentsline {table}{\numberline {10.7}{\ignorespaces Estructura de la tabla HORARIOS}}{98}{table.10.7}%
-\contentsline {table}{\numberline {10.8}{\ignorespaces Estructura de la tabla PLANES\_DOCENTES}}{98}{table.10.8}%
-\contentsline {table}{\numberline {10.9}{\ignorespaces Estructura de la tabla PLANES\_DOCENTES\_CHUNKS}}{99}{table.10.9}%
-\addvspace {10\p@ }
-\contentsline {table}{\numberline {11.1}{\ignorespaces Operaciones del panel de administración por pestaña. Todos los \textit {endpoints} van prefijados por \texttt {/api/admin}.}}{114}{table.11.1}%
-\addvspace {10\p@ }
-\contentsline {table}{\numberline {12.1}{\ignorespaces Resultados por categoría de la suite E2E (revisión manual, 26/04/2026).}}{119}{table.12.1}%
-\contentsline {table}{\numberline {12.2}{\ignorespaces Cobertura de la capa de profundidad RAG por curso.}}{120}{table.12.2}%
-\contentsline {table}{\numberline {12.3}{\ignorespaces Resultados de la capa NLU y Policy.}}{120}{table.12.3}%
-\contentsline {table}{\numberline {12.4}{\ignorespaces Resultados de la reproducción de tráfico real.}}{121}{table.12.4}%
-\contentsline {table}{\numberline {12.5}{\ignorespaces Latencia extremo a extremo (segundos).}}{122}{table.12.5}%
-\contentsline {table}{\numberline {12.6}{\ignorespaces Extrapolación del coste hipotético del LLM a 700 alumnos según intensidad de uso.}}{122}{table.12.6}%
-\contentsline {table}{\numberline {12.7}{\ignorespaces Visión integrada de las seis capas de validación.}}{123}{table.12.7}%
-\contentsline {table}{\numberline {12.8}{\ignorespaces Resultados de la suite \texttt {test\_admin.py} (pytest, 26/04/2026).}}{124}{table.12.8}%
-\addvspace {10\p@ }
-\contentsline {table}{\numberline {13.1}{\ignorespaces Tipos de consulta soportados por el prototipo.}}{128}{table.13.1}%
-\contentsline {table}{\numberline {13.2}{\ignorespaces Acciones de la pestaña \textit {Centros}.}}{133}{table.13.2}%
-\contentsline {table}{\numberline {13.3}{\ignorespaces Acciones de la pestaña \textit {Asignaturas}.}}{134}{table.13.3}%
-\contentsline {table}{\numberline {13.4}{\ignorespaces Acciones de la pestaña \textit {Profesores}.}}{134}{table.13.4}%
-\contentsline {table}{\numberline {13.5}{\ignorespaces Acciones de la pestaña \textit {Horarios}.}}{135}{table.13.5}%
-\contentsline {table}{\numberline {13.6}{\ignorespaces Acciones de la pestaña \textit {Conversaciones}.}}{136}{table.13.6}%
-\contentsline {table}{\numberline {13.7}{\ignorespaces Secuencia recomendada para la carga inicial del catálogo de un centro.}}{137}{table.13.7}%
-\contentsline {table}{\numberline {13.8}{\ignorespaces Requisitos mínimos del entorno de despliegue.}}{138}{table.13.8}%
-\contentsline {table}{\numberline {13.9}{\ignorespaces Contenedores del despliegue y responsabilidad de cada uno.}}{139}{table.13.9}%
-\contentsline {table}{\numberline {13.10}{\ignorespaces Estructura del repositorio Linceus Assistant.}}{140}{table.13.10}%
-\contentsline {table}{\numberline {13.11}{\ignorespaces Etapas del ciclo de incorporación de cambios.}}{141}{table.13.11}%
-\addvspace {10\p@ }
-\contentsline {table}{\numberline {14.1}{\ignorespaces Cruce entre objetivos técnicos y evidencia obtenida.}}{145}{table.14.1}%
+\contentsline {table}{\numberline {8.1}{\ignorespaces Stack tecnológico completo del proyecto LinceUS Assistant.}}{99}{table.8.1}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {16.1}{\ignorespaces Sucesión de escenas del vídeo demostración.}}{152}{table.16.1}%
+\contentsline {table}{\numberline {10.1}{\ignorespaces Estructura de la tabla UNIVERSIDADES}}{107}{table.10.1}%
+\contentsline {table}{\numberline {10.2}{\ignorespaces Estructura de la tabla CENTROS}}{107}{table.10.2}%
+\contentsline {table}{\numberline {10.3}{\ignorespaces Estructura de la tabla DEPARTAMENTOS}}{108}{table.10.3}%
+\contentsline {table}{\numberline {10.4}{\ignorespaces Estructura de la tabla TITULACIONES}}{108}{table.10.4}%
+\contentsline {table}{\numberline {10.5}{\ignorespaces Estructura de la tabla ASIGNATURAS}}{109}{table.10.5}%
+\contentsline {table}{\numberline {10.6}{\ignorespaces Estructura de la tabla PROFESORES}}{109}{table.10.6}%
+\contentsline {table}{\numberline {10.7}{\ignorespaces Estructura de la tabla HORARIOS}}{110}{table.10.7}%
+\contentsline {table}{\numberline {10.8}{\ignorespaces Estructura de la tabla PLANES\_DOCENTES}}{110}{table.10.8}%
+\contentsline {table}{\numberline {10.9}{\ignorespaces Estructura de la tabla PLANES\_DOCENTES\_CHUNKS}}{111}{table.10.9}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {.2}{\ignorespaces Distribución del tiempo por categoría de actividad (Clockify, 02/05/2026).}}{157}{table.Alph0.2}%
-\contentsline {table}{\numberline {.3}{\ignorespaces Horas registradas por sprint (Clockify, 02/05/2026).}}{157}{table.Alph0.3}%
+\contentsline {table}{\numberline {11.1}{\ignorespaces Tabla \texttt {RERANK\_WEIGHTS}: bonificación aditiva por sección según el tipo de consulta detectado.}}{129}{table.11.1}%
+\contentsline {table}{\numberline {11.2}{\ignorespaces Operaciones del panel de administración por pestaña. Todos los \textit {endpoints} van prefijados por \texttt {/api/admin}.}}{133}{table.11.2}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {12.1}{\ignorespaces Resultados por categoría de la suite E2E (revisión manual, 26/04/2026).}}{138}{table.12.1}%
+\contentsline {table}{\numberline {12.2}{\ignorespaces Cobertura de la capa de profundidad RAG por curso.}}{139}{table.12.2}%
+\contentsline {table}{\numberline {12.3}{\ignorespaces Resultados de la capa NLU y Policy.}}{139}{table.12.3}%
+\contentsline {table}{\numberline {12.4}{\ignorespaces Resultados de la reproducción de tráfico real.}}{140}{table.12.4}%
+\contentsline {table}{\numberline {12.5}{\ignorespaces Síntesis de los casos fallidos por patrón de causa raíz.}}{142}{table.12.5}%
+\contentsline {table}{\numberline {12.6}{\ignorespaces Latencia extremo a extremo (segundos).}}{142}{table.12.6}%
+\contentsline {table}{\numberline {12.7}{\ignorespaces Extrapolación del coste hipotético del LLM a 700 alumnos según intensidad de uso.}}{143}{table.12.7}%
+\contentsline {table}{\numberline {12.8}{\ignorespaces Visión integrada de las seis capas de validación.}}{143}{table.12.8}%
+\contentsline {table}{\numberline {12.9}{\ignorespaces Resultados de la suite \texttt {test\_admin.py} (pytest, 26/04/2026).}}{146}{table.12.9}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {13.1}{\ignorespaces Tipos de consulta soportados por el prototipo.}}{149}{table.13.1}%
+\contentsline {table}{\numberline {13.2}{\ignorespaces Acciones de la pestaña \textit {Centros}.}}{154}{table.13.2}%
+\contentsline {table}{\numberline {13.3}{\ignorespaces Acciones de la pestaña \textit {Asignaturas}.}}{155}{table.13.3}%
+\contentsline {table}{\numberline {13.4}{\ignorespaces Acciones de la pestaña \textit {Profesores}.}}{155}{table.13.4}%
+\contentsline {table}{\numberline {13.5}{\ignorespaces Acciones de la pestaña \textit {Horarios}.}}{156}{table.13.5}%
+\contentsline {table}{\numberline {13.6}{\ignorespaces Acciones de la pestaña \textit {Conversaciones}.}}{157}{table.13.6}%
+\contentsline {table}{\numberline {13.7}{\ignorespaces Secuencia recomendada para la carga inicial del catálogo de un centro.}}{158}{table.13.7}%
+\contentsline {table}{\numberline {13.8}{\ignorespaces Requisitos mínimos del entorno de despliegue.}}{159}{table.13.8}%
+\contentsline {table}{\numberline {13.9}{\ignorespaces Contenedores del despliegue y responsabilidad de cada uno.}}{160}{table.13.9}%
+\contentsline {table}{\numberline {13.10}{\ignorespaces Estructura del repositorio Linceus Assistant.}}{161}{table.13.10}%
+\contentsline {table}{\numberline {13.11}{\ignorespaces Etapas del ciclo de incorporación de cambios.}}{162}{table.13.11}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {14.1}{\ignorespaces Indicadores cuantitativos de Linceus Assistant al cierre del prototipo (26/04/2026).}}{166}{table.14.1}%
+\contentsline {table}{\numberline {14.2}{\ignorespaces Cruce entre objetivos técnicos y evidencia obtenida.}}{167}{table.14.2}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {16.1}{\ignorespaces Sucesión de escenas del vídeo demostración.}}{176}{table.16.1}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {.2}{\ignorespaces Distribución del tiempo por categoría de actividad (Clockify, 02/05/2026).}}{181}{table.Alph0.2}%
+\contentsline {table}{\numberline {.3}{\ignorespaces Horas registradas por sprint (Clockify, 02/05/2026).}}{181}{table.Alph0.3}%
 \contentsfinish 

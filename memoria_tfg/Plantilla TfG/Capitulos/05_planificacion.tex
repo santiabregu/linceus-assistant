@@ -258,7 +258,7 @@ Infraestructura transversal de \textit{Retrieval Augmented Generation} sobre los
 \hline
 \textbf{ID} & \textbf{Tarea} & \textbf{Descripción y entregables} & \textbf{Est.} \\ \hline
 2.4.1 & Extracción y \textit{chunking} & Parseo de planes docentes (HTML/PDF), \textit{chunking} semántico con metadatos (asignatura, sección, año). \textit{Entregable: pipeline.} & M \\ \hline
-2.4.2 & Embeddings y \texttt{pgvector} & Generación con \texttt{text-embedding-004} y almacenamiento en pgvector con índices HNSW; función SQL \texttt{buscar\_plan\_docente()}. \textit{Entregable: pipeline de vectorización.} & M \\ \hline
+2.4.2 & Embeddings y \texttt{pgvector} & Generación con \texttt{gemini-embedding-001} (2\,000 dimensiones) y almacenamiento en pgvector con índices HNSW; función SQL \texttt{buscar\_plan\_docente()}. \textit{Entregable: pipeline de vectorización.} & M \\ \hline
 2.4.3 & Action RAG & Acción que combina retrieval semántico con re-ranking por sección y umbral de similitud; respuesta con citas. \textit{Entregable: módulo RAG en \texttt{actions/}.} & L \\ \hline
 2.4.4 & Anti-alucinación & Prompts reforzados que prohíben inventar nombres, emails o aulas no presentes en los chunks. \textit{Entregable: prompts revisados.} & M \\ \hline
 \end{tabular}

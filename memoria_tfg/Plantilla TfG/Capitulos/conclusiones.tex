@@ -2,7 +2,49 @@
 
 \chapter{Conclusiones y desarrollos futuros}\label{cap:conclusiones}
 
-Este capítulo cierra la memoria del trabajo. Tras un proyecto extenso conviene levantar la vista del detalle técnico y revisar qué se planteó al inicio, qué ha quedado efectivamente construido y qué queda por hacer. La estructura del capítulo reproduce ese orden: se contrastan los objetivos enunciados en el Capítulo~\ref{cap:introduccion} con la evidencia recogida durante la validación, se recopilan las lecciones aprendidas a lo largo del desarrollo, se analiza la desviación de la planificación inicial, se enumeran las líneas de evolución previstas para una segunda iteración del sistema y se cierra con una reflexión personal sobre la experiencia.
+Este capítulo cierra la memoria del trabajo. Tras un proyecto extenso conviene levantar la vista del detalle técnico y revisar qué se planteó al inicio, qué ha quedado efectivamente construido y qué queda por hacer. La estructura del capítulo reproduce ese orden: se sintetiza el estado final del sistema con un cuadro de indicadores, se contrastan los objetivos enunciados en el Capítulo~\ref{cap:introduccion} con la evidencia recogida durante la validación, se recopilan las lecciones aprendidas a lo largo del desarrollo, se analiza la desviación de la planificación inicial, se enumeran las líneas de evolución previstas para una segunda iteración del sistema, se discuten las consideraciones éticas y se cierra con una reflexión personal sobre la experiencia.
+
+\section{Linceus en números}\label{sec:linceus-numeros}
+
+Antes de revisar el cumplimiento de objetivos conviene fijar el tamaño y la cobertura efectiva del sistema en el momento del cierre. La Tabla~\ref{tab:linceus-numeros} agrupa los indicadores principales en cuatro bloques (alcance funcional, validación, métricas no funcionales y proceso de desarrollo). Todas las cifras son trazables al artefacto de origen citado en la columna derecha.
+
+\begin{table}[hbtp]
+\centering
+\small
+\caption{Indicadores cuantitativos de Linceus Assistant al cierre del prototipo (26/04/2026).}\label{tab:linceus-numeros}
+\begin{tabular}{|p{5.4cm}|p{2.0cm}|p{4.6cm}|}
+\hline
+\textbf{Indicador} & \textbf{Valor} & \textbf{Fuente} \\ \hline
+\multicolumn{3}{|l|}{\textit{Alcance funcional}} \\ \hline
+Intenciones NLU definidas (activas) & 36 (34) & \texttt{domain.yml} \\ \hline
+Entidades NLU & 10 & \texttt{domain.yml} \\ \hline
+\textit{Stories} de entrenamiento & 37 & \texttt{data/stories.yml} \\ \hline
+Reglas activas & 20 & \texttt{data/rules.yml} \\ \hline
+\textit{Custom actions} activas & 14 & \texttt{actions/} \\ \hline
+Archivos NLU por dominio & 5 & \texttt{data/nlu/} \\ \hline
+Titulaciones soportadas & 3 (GII-IS, IC, TI) & Sección~\ref{sec:req-actores} \\ \hline
+\multicolumn{3}{|l|}{\textit{Validación funcional}} \\ \hline
+Casos E2E (PASS / total) & 150 / 159 (94,3~\%) & Tabla~\ref{tab:e2e-categorias} \\ \hline
+RAG \textit{baseline} (PASS / total) & 47 / 50 (94,0~\%) & Sección~\ref{subsec:rag-baseline} \\ \hline
+RAG profundidad (OK / total) & 68 / 74 (91,9~\%) & Tabla~\ref{tab:rag-cobertura} \\ \hline
+NLU + Policy (acciones correctas) & 158 / 158 (100~\%) & Tabla~\ref{tab:nlu-resultados} \\ \hline
+Tráfico real piloto (sesiones PASS) & 58 / 59 (98,3~\%) & Tabla~\ref{tab:trafico-resultados} \\ \hline
+Suite admin \textit{pytest} (PASS / total) & 24 / 24 (100~\%) & Tabla~\ref{tab:admin-resultados} \\ \hline
+Turnos auditados en piloto & 201 / 203 & Sección~\ref{subsec:trafico-resultados} \\ \hline
+\multicolumn{3}{|l|}{\textit{Métricas no funcionales}} \\ \hline
+Latencia mediana (p50) & 3,4 s & Tabla~\ref{tab:latencia} \\ \hline
+Latencia p95 & 10,5 s & Tabla~\ref{tab:latencia} \\ \hline
+Coste medio por turno (Gemini) & 0,012 cts & Sección~\ref{subsec:no-funcional-coste} \\ \hline
+Llamadas a Gemini medidas & 216 & Sección~\ref{sec:pruebas-no-funcional} \\ \hline
+Tiempo de cumplimiento RNF-14 (primera consulta) & 28 s (mediana) & Tabla~\ref{tab:rnf} \\ \hline
+\multicolumn{3}{|l|}{\textit{Proceso de desarrollo}} \\ \hline
+\textit{Sprints} completados & 8 & Capítulo~\ref{cap:planificacion} \\ \hline
+Decisiones técnicas documentadas & 72 (D-001 a D-072) & \texttt{docs/sprints/} \\ \hline
+Esfuerzo estimado total & $\sim$300 h & Sección~\ref{sec:conc-desviacion} \\ \hline
+\end{tabular}
+\end{table}
+
+Los porcentajes superan en todas las capas su umbral académico de referencia con un margen razonable y los indicadores de proceso (72 decisiones documentadas, 8 \textit{sprints} cerrados con incremento desplegable) avalan que la cifra de validación es producto de un desarrollo trazable y no de un ajuste \textit{ad hoc} en la fase final.
 
 \section{Cumplimiento de objetivos}\label{sec:conc-objetivos}
 
@@ -83,6 +125,30 @@ El alcance funcional del prototipo puede extenderse en varias direcciones. La m�
 \subsection{Validación reforzada}\label{subsec:conc-fut-validacion}
 
 La validación realizada en la fase 1 cubre cinco capas funcionales y dos métricas no funcionales, pero deja fuera tres aspectos que conviene atender en una segunda iteración. El primero es la medición de la experiencia subjetiva del usuario mediante una escala estandarizada como SUS, que permitiría situar el sistema frente a otras herramientas universitarias. El segundo es la garantía de disponibilidad sostenida del servicio mediante un acuerdo de nivel de servicio y la correspondiente monitorización de uptime. El tercero es la implementación de la suite automática de pruebas para los \textit{endpoints} del panel de administración, cuyo diseño ya consta en el plan de aceptación pero cuyo desarrollo se ha pospuesto.
+
+\section{Contribución al estado del arte}\label{sec:conc-contribucion-arte}
+
+A la luz de los resultados obtenidos y de la revisión sistemática de chatbots educativos recopilada por Wollny et al.~\cite{wollny2021survey}, Linceus Assistant se sitúa en la intersección de dos líneas de investigación activas: los asistentes conversacionales para educación superior y los sistemas RAG sobre documentos de dominio cerrado. Frente a los cuatro sistemas universitarios comparables que han servido de referencia a lo largo de la memoria (AdmitBot~\cite{gupta2019admitbot}, EDUBOT~\cite{colace2018edubot}, Ranoliya~\cite{ranoliya2017chatbot} y Dibya--Sahoo~\cite{dibya2021chatbot}), el sistema se diferencia en tres aspectos concretos que dan forma a su aportación.
+
+\paragraph{Calibración empírica documentada en lugar de umbrales por convención.} Los porcentajes de éxito de los cuatro sistemas comparables se publican sin una descripción del procedimiento por el que se fijaron los umbrales internos del sistema (similitud semántica, fuzzy matching, fallback NLU). En Linceus, la calibración de los tres umbrales críticos se documenta de manera trazable: 120 casos de prueba en tres iteraciones para el matching de profesorado (Sección~\ref{sec:impl-shared}), elevación del umbral de cambio de titulación a 0,85 tras observar cambios silenciosos durante la revisión R3 (Sección~\ref{sec:impl-contexto}) y configuración del par \texttt{threshold = 0,8} / \texttt{ambiguity\_threshold = 0,10} del clasificador de fallback (Sección~\ref{subsec:dd-pipeline}). Esta trazabilidad convierte cada cifra de la suite de pruebas en una decisión reproducible.
+
+\paragraph{Arquitectura híbrida NLU + RAG con dos vías de resolución por dominio.} La revisión de Wollny~\cite{wollny2021survey} señala que la mayoría de chatbots educativos opta por un enfoque puramente conversacional sobre reglas o por una respuesta basada en LLM sin recuperación verificable. Linceus combina dentro de una misma \textit{custom action} una vía estructurada (\textit{Text-to-SQL} sobre Supabase) y una vía semántica (RAG sobre planes docentes con \texttt{pgvector}), con tres puntos de decisión por épica que escogen la rama adecuada en función del contenido de la pregunta (Sección~\ref{sec:impl-profesores}). Esta hibridación permite atender simultáneamente consultas que requieren precisión factual (créditos, horarios) y consultas que requieren interpretación textual (criterios de evaluación, coordinación), sin sacrificar ninguna de las dos.
+
+\paragraph{Cierre del ciclo de vida del corpus mediante un panel sin código.} El tercer aporte responde a una crítica recurrente en la literatura: los prototipos académicos llegan al despliegue pero no a la operación sostenida, porque la actualización de la base de conocimiento exige al desarrollador. El panel Flask descrito en la Sección~\ref{sec:impl-admin} traslada la operación al perfil de mantenimiento, con flujos auditables para sincronizar el catálogo desde Sevius, enriquecer el directorio de profesorado desde \texttt{us.es} y vectorizar planes docentes con su pipeline completo de \textit{chunking}, \textit{embeddings} y \textit{rate limiting}. La suite \textit{pytest} de 24 casos sobre el panel (Sección~\ref{sec:pruebas-admin}) prueba que esa capa es operativa por sí misma, no un complemento decorativo.
+
+Estas tres contribuciones no se publican como aportación al campo en un sentido fuerte, propio de una tesis doctoral, pero sí establecen un patrón concreto y reproducible para el desarrollo de asistentes universitarios. La distancia respecto a los prototipos publicados es prudente: la metodología de evaluación, el corpus utilizado y la naturaleza del dominio difieren entre proyectos y la comparación cuantitativa estricta no resulta procedente. Lo que sí cabe afirmar, a la vista de los datos del Capítulo~\ref{cap:pruebas}, es que Linceus alcanza tasas de éxito en los tres aspectos por encima de las cifras reportadas para el conjunto de los sistemas comparables.
+
+\section{Consideraciones éticas}\label{sec:conc-etica}
+
+El desarrollo de un asistente conversacional dirigido a estudiantes plantea responsabilidades que conviene explicitar más allá del simple cumplimiento legal. En el caso de Linceus, cuatro aspectos merecen comentario.
+
+\paragraph{Veracidad de la información y riesgo de inducir decisiones erróneas.} El sistema puede influir, aunque sea de forma indirecta, en decisiones académicas relevantes para el alumno (elección de optativas, planificación de matrícula, identificación del docente coordinador para un trámite). Tres salvaguardas reducen este riesgo. La primera es que las respuestas sobre planes docentes están ancladas a documentos oficiales mediante el módulo RAG, no generadas a partir del conocimiento paramétrico del modelo. La segunda es el flujo de \textit{fallback} inteligente (Sección~\ref{sec:impl-fallback}), que declara explícitamente cuándo el sistema no encuentra información en lugar de inventar contenido. La tercera es la posibilidad de auditar a posteriori todas las conversaciones desde el panel de administración (RF-AD6), lo que permite identificar respuestas incorrectas y corregir el corpus o los \textit{prompts} responsables.
+
+\paragraph{Privacidad y protección de datos.} El sistema se ha diseñado bajo el principio de minimización: la sesión es anónima (UUID generado del lado del cliente), no se solicita ninguna identificación personal del alumno y los datos académicos consultados (planes docentes, horarios y directorio público de profesorado) son de carácter público y proceden de fuentes oficiales (Sevius, \texttt{us.es}). La tabla \texttt{conversation\_log} almacena el contenido de las conversaciones para fines de auditoría y mejora, pero al no contener identificadores personales no constituye tratamiento de datos en el sentido del RGPD. El consentimiento del usuario para esta auditoría está cubierto por el aviso público del sitio donde se integra el \textit{widget}. La cuestión es relevante porque cualquier ampliación que introdujera datos identificables (autenticación universitaria, integración con expediente del alumno) exigiría una revisión completa de la base legal y la incorporación de mecanismos de consentimiento explícito.
+
+\paragraph{Sesgo en los datos de entrenamiento.} El corpus NLU ha sido elaborado manualmente por el autor del trabajo, lo que introduce inevitablemente sesgos en la forma de formular las consultas: vocabulario, registros y patrones léxicos propios. La validación con tráfico real (Sección~\ref{sec:pruebas-trafico}) ha permitido detectar y completar formulaciones que el conjunto sintético no había anticipado, y el reentreno posterior con 117 ejemplos extraídos del piloto (Sección~\ref{sec:pruebas-nlu}) mitiga este sesgo en la versión actual. La diversificación sistemática del corpus mediante técnicas de \textit{data augmentation} (paráfrasis con LLM, inclusión de variantes regionales del español) figura entre las líneas de mejora.
+
+\paragraph{Dependencia tecnológica y degradación responsable.} La fase generativa del sistema depende de la API de Gemini, propiedad de un tercero (Google). En caso de interrupción del servicio o de cambios en los términos de uso, el sistema degrada su comportamiento de forma controlada: el módulo RAG dispone de \textit{fallback} a búsqueda por palabras clave (Sección~\ref{subsec:impl-rag-busqueda}), las consultas estructurales más frecuentes siguen funcionando porque dependen exclusivamente de la base de datos relacional, y el cliente alternativo de Ollama (Sección~\ref{subsec:dd-gemini-ollama}) permite reconfigurar el sistema para una explotación local con un cambio de \textit{import}, sin reescribir la lógica de las acciones. Esta planificación de la degradación responde a la consideración ética de no dejar al alumno sin un servicio que pueda haber asumido como permanente.
 
 \section{Reflexión final}\label{sec:conc-reflexion}
 

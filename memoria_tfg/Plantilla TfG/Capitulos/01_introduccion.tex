@@ -36,7 +36,7 @@ Los objetivos técnicos específicos del proyecto incluyen:
 
 \begin{itemize}
     \item Implementar un sistema conversacional basado en Rasa que permita gestionar flujos de diálogo complejos y contextuales.
-    \item Integrar la API de Gemini para la detección de intenciones y generación de respuestas enriquecidas mediante lenguaje natural.
+    \item Integrar la API de Gemini como capa generativa complementaria al clasificador NLU de Rasa, encargada de las decisiones más finas dentro de cada intención (subclasificación entre datos estructurales y plan docente, generación de \textit{Text-to-SQL} a partir de la consulta del usuario y \textit{smart fallback} cuando la confianza del clasificador es baja) y de la redacción final de las respuestas en lenguaje natural.
     \item Diseñar y desarrollar una base de datos híbrida en Supabase que combine información estructurada (asignaturas, horarios y profesorado) con embeddings vectoriales para búsquedas semánticas sobre los planes docentes.
     \item Desarrollar acciones personalizadas en Python que permitan consultar datos estructurados y realizar búsquedas por similitud en documentación académica.
     \item Implementar un \textit{widget} web ligero (HTML, CSS y JavaScript) que ofrezca una interfaz intuitiva y accesible para la interacción con el chatbot.
@@ -61,6 +61,18 @@ Desde el punto de vista académico y personal, este proyecto permite:
 \end{itemize}
 
 \input{Capitulos/soluciones_existentes}
+
+\section{Contribución de este trabajo}\label{sec:contribucion}
+
+Frente al estado del arte de asistentes universitarios revisado en la sección anterior y sintetizado en revisiones sistemáticas recientes~\cite{wollny2021survey}, Linceus Assistant aporta tres contribuciones diferenciales que, en conjunto, justifican su valor más allá del de un prototipo de uso interno.
+
+\begin{enumerate}
+    \item \textbf{Arquitectura híbrida NLU + RAG con dos vías de resolución por dominio.} El sistema combina, dentro de una misma \textit{custom action}, una vía estructurada (\textit{Text-to-SQL} sobre Supabase) y una vía semántica (RAG sobre planes docentes con \texttt{pgvector} e índice HNSW). Las dos vías no son alternativas en cascada sino estrategias seleccionadas por el contenido de la pregunta: la épica de profesores, por ejemplo, decide entre SQL y RAG en tres puntos del flujo en función de qué columnas necesita (Sección~\ref{sec:impl-profesores}). Esta hibridación va más allá del patrón habitual ``RAG sobre LLM'' descrito en la literatura reciente y atiende a una limitación práctica del dominio universitario: la información estructural (créditos, horarios) vive en bases de datos relacionales y la información cualitativa (criterios de evaluación, profesorado por grupo) vive en planes docentes que solo existen como PDF.
+    \item \textbf{Calibración empírica y trazable de los umbrales del sistema.} Los tres umbrales que determinan la calidad de las respuestas (umbral de fallback NLU, umbrales firme y de sugerencia del \textit{fuzzy matching}, umbral de similitud coseno del RAG) se han calibrado empíricamente sobre conjuntos de prueba reales, no se han fijado por convención. El procedimiento más representativo, descrito en la Sección~\ref{sec:impl-shared}, evaluó 120 casos de profesorado a lo largo de tres iteraciones del sprint S4 hasta seleccionar la combinación 0,60 / 0,30 que alcanza \textit{precision} 92~\% y \textit{recall} 88~\%. El registro completo de la calibración figura en \texttt{docs/sprints/} y es la base que permite defender los porcentajes del Capítulo~\ref{cap:pruebas} como decisiones reproducibles y no como ajustes ad hoc.
+    \item \textbf{Panel de administración sin código que cierra el ciclo de vida del corpus.} El panel Flask descrito en la Sección~\ref{sec:impl-admin} permite a una persona no técnica sincronizar centros, titulaciones y asignaturas desde Sevius, enriquecer el directorio de profesorado desde el PDI de \texttt{us.es} y vectorizar planes docentes (con su pipeline de \textit{chunking}, \textit{embeddings} y \textit{rate limiting}) sin tocar línea de código ni reentrenar el modelo. Esta capa cubre una brecha repetidamente señalada en la literatura sobre chatbots educativos~\cite{wollny2021survey}: la mayoría de prototipos académicos llegan al despliegue pero no a la operación sostenida, porque la actualización de la base de conocimiento exige al desarrollador. El panel de Linceus traslada esa operación al perfil de mantenimiento (Sección~\ref{sec:req-actores}) y la documenta con un manual reproducible (Capítulo~\ref{cap:manuales}).
+\end{enumerate}
+
+Las tres contribuciones se materializan en código operativo, están cubiertas por suites de prueba con métricas reportadas en el Capítulo~\ref{cap:pruebas}, y se acompañan de un registro de 72 decisiones técnicas (D-001 a D-072) que permite reconstruir el camino seguido (RNF-12).
 
 \section{Estructura de la memoria}
 \label{sec:estructura-memoria}

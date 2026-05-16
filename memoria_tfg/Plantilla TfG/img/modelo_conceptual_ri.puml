@@ -1,0 +1,158 @@
+@startuml modelo_conceptual_ri
+
+' Modelo conceptual de los requisitos de informacion del prototipo
+' Solo entidades y cardinalidades. Tipos y restricciones detalladas
+' figuran en el capitulo de estructura de base de datos.
+
+hide methods
+hide stereotype
+skinparam linetype ortho
+skinparam shadowing false
+skinparam classFontSize 12
+skinparam classAttributeFontSize 11
+
+skinparam class {
+  BackgroundColor<<dominio>>    #FDECEC
+  BorderColor<<dominio>>        #B91C1C
+  BackgroundColor<<rag>>        #E0F2FE
+  BorderColor<<rag>>            #0369A1
+  BackgroundColor<<operacion>>  #F0FDF4
+  BorderColor<<operacion>>      #166534
+}
+
+' === DOMINIO ACADEMICO ===
+class Centro <<dominio>> {
+  codigo
+  nombre
+}
+
+class Titulacion <<dominio>> {
+  codigo
+  nombre
+  tipo
+  creditos_totales
+}
+
+class Asignatura <<dominio>> {
+  codigo
+  nombre
+  curso
+  creditos
+  duracion
+  tipologia
+}
+
+class Departamento <<dominio>> {
+  codigo
+  nombre
+  siglas
+}
+
+class Profesor <<dominio>> {
+  nombre_completo
+  email
+  despacho
+  categoria
+}
+
+class ProfesorAsignatura <<dominio>> {
+  curso_academico
+  grupo
+  rol (titular | coordinador | suplente)
+}
+
+class GrupoClase <<dominio>> {
+  codigo
+  tipo (teoria | laboratorio)
+}
+
+class Aula <<dominio>> {
+  codigo
+  capacidad
+  tipo (A: teoria | resto: laboratorio)
+}
+
+class Horario <<dominio>> {
+  dia_semana
+  hora_inicio
+  hora_fin
+  cuatrimestre
+}
+
+class Tutoria <<dominio>> {
+  dia_semana
+  hora_inicio
+  hora_fin
+  modalidad
+  nota: deliberadamente vacia (D-061)
+}
+
+' === MODULO RAG ===
+class PlanDocente <<rag>> {
+  curso_academico
+  grupo
+  hash_sha256
+  estado_rag (pendiente | en_proceso | completado | error)
+}
+
+class PlanDocenteChunk <<rag>> {
+  contenido (texto)
+  embedding (vector 2000 dims)
+  seccion
+  orden
+}
+
+' === OPERACION ===
+class ConversationLog <<operacion>> {
+  session_id (UUID anonimo)
+  user_message
+  bot_response
+  intent
+  confidence
+  timestamp
+}
+
+class Feedback <<operacion>> {
+  session_id (UUID anonimo)
+  rating
+  comment
+  last_user_message
+  last_bot_response
+  timestamp
+}
+
+' === RELACIONES ===
+Centro "1" --> "*" Titulacion : ofrece
+Centro "1" --> "*" Aula : alberga
+Titulacion "1" --> "*" Asignatura : contiene
+Departamento "1" --> "*" Profesor : agrupa
+Departamento "1" --> "*" Asignatura : adscrita_a
+
+Asignatura "1" --> "*" GrupoClase : se_imparte_en
+Asignatura "1" --> "*" PlanDocente : tiene
+Asignatura "1" --> "*" ProfesorAsignatura
+Profesor    "1" --> "*" ProfesorAsignatura
+Profesor    "1" --> "*" Tutoria
+
+GrupoClase "1" --> "*" Horario
+Aula       "1" --> "*" Horario
+
+PlanDocente "1" --> "*" PlanDocenteChunk : vectorizado
+
+ConversationLog "*" .. "0..*" Feedback : misma_session_id
+
+note bottom of Tutoria
+  La tabla existe en el esquema pero
+  se decidio no poblarla: las consultas
+  de tutorias redirigen al email del
+  profesor (RF-P4, decision D-061).
+end note
+
+note right of PlanDocenteChunk
+  Indice HNSW sobre `embedding`
+  (m=16, ef_construction=64,
+  metrica coseno) para busqueda
+  semantica del RAG.
+end note
+
+@enduml

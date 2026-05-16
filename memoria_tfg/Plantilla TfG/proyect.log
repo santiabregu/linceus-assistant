@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.4.26)  16 MAY 2026 11:50
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.4.26)  16 MAY 2026 18:33
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -961,7 +961,7 @@ Package hyperref Info: Link coloring OFF on input line 80.
 \@outlinefile=\write4
 \openout4 = `proyect.out'.
 
-<img/US_etsii_logo.png, id=1098, 2835.59375pt x 522.95375pt>
+<img/US_etsii_logo.png, id=1170, 2835.59375pt x 522.95375pt>
 File: img/US_etsii_logo.png Graphic file (type png)
 <use img/US_etsii_logo.png>
 Package pdftex.def Info: img/US_etsii_logo.png  used on input line 89.
@@ -1032,40 +1032,40 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[6] [7] [8] [9])
+[6] [7] [8] [9] [10])
 \tf@toc=\write5
 \openout5 = `proyect.toc'.
 
- [10] (proyect.lof [11
+ [11] (proyect.lof [12
 
 ])
 \tf@lof=\write6
 \openout6 = `proyect.lof'.
 
- [12] (proyect.lot [13
+ [13] (proyect.lot [14
 
 ])
 \tf@lot=\write7
 \openout7 = `proyect.lot'.
 
- [14]
+ [15]
 (proyect.lol)
 \tf@lol=\write8
 \openout8 = `proyect.lol'.
 
- [15
+ [16
 
-] [16
+] [17
 
 
 ] (Capitulos/01_introduccion.tex
 Cap\'{\i }tulo 1.
-[17
+[18
 
 ]
 Package babel Info: 'spanish' activates 'spanish' shorthands.
-(babel)             Reported on input line 54.
- [18] (Capitulos/soluciones_existentes.tex [19] [20]
+(babel)             Reported on input line 45.
+ [19] (Capitulos/soluciones_existentes.tex [20] [21]
 Underfull \hbox (badness 10000) in paragraph at lines 46--46
 []|\OT1/ptm/m/n/10 Acceso, ad-mi-
  []
@@ -1195,33 +1195,33 @@ Underfull \hbox (badness 8038) in paragraph at lines 63--64
 \OT1/ptm/m/n/10 do-cen-tes; c[]odi-go
  []
 
-[21]) [22]) (Capitulos/02_preparacion.tex [23]
+[22]) [23] [24]) (Capitulos/02_preparacion.tex [25]
 Cap\'{\i }tulo 2.
-[24
+[26
 
-] [25] [26] [27] [28] [29
+] [27] [28] [29] [30] [31
 
-] [30
+] [32
 
-] [31] [32] [33] [34]
+] [33] [34] [35] [36]
 Underfull \hbox (badness 1112) in paragraph at lines 389--390
 []\OT1/ptm/m/n/10.95 Escenario ne-ga-ti-vo: el usua-rio pi-de in-for-ma-ci[]on 
 que el plan do-cen-te no con-tem-pla
  []
 
-[35]) (Capitulos/03_conceptos.tex [36]
+[37]) (Capitulos/03_conceptos.tex [38] [39]
 Cap\'{\i }tulo 3.
-[37
+[40
 
 ]
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[38] [39]) [40] [41
+[41] [42]) [43] [44
 
 ] (Capitulos/04_metodologia.tex
 Cap\'{\i }tulo 4.
-[42
+[45
 
 ]
 LaTeX Info: Symbol \textrightarrow not provided by
@@ -1233,7 +1233,7 @@ LaTeX Info: Symbol \textrightarrow not provided by
 LaTeX Info: Symbol \textrightarrow not provided by
             font family ptm in TS1 encoding.
             Default family used instead on input line 54.
- [43] [44]
+ [46] [47]
 Underfull \hbox (badness 10000) in paragraph at lines 101--102
 []|[]\OT1/pcr/m/n/10 detectar[]grupo() \OT1/ptm/m/n/10 (re-
  []
@@ -1307,7 +1307,7 @@ Underfull \hbox (badness 2980) in paragraph at lines 114--115
 ]): coin-ci-den-cia exac-ta so-bre un dic-cio-na-rio,
  []
 
-[45]
+[48]
 Underfull \hbox (badness 2512) in paragraph at lines 129--130
 []\OT1/ptm/m/n/10.95 Complementariamente, las de-ci-sio-nes t[]ecni-cas no tri-
 via-les to-ma-das du-ran-te el de-sa-
@@ -1346,7 +1346,7 @@ Overfull \hbox (15.70636pt too wide) in paragraph at lines 148--2
 o-de-lo (\OT1/pcr/m/n/10.95 models/linceus[]vX.Y.Z.tar.gz\OT1/ptm/m/n/10.95 )
  []
 
-[46]
+[49]
 Cap\'{\i }tulo 5.
 
 Overfull \hbox (2.0086pt too wide) in paragraph at lines 103--104
@@ -1360,9 +1360,9 @@ Overfull \hbox (10.81268pt too wide) in paragraph at lines 150--158
  [][] 
  []
 
-[47
+[50
 
-] [48]
+] [51]
 Underfull \hbox (badness 10000) in paragraph at lines 199--199
 []|\OT1/ptm/m/n/10 Tablas \OT1/pcr/m/n/10 asignaturas\OT1/ptm/m/n/10 , \OT1/pcr
 /m/n/10 titulaciones\OT1/ptm/m/n/10 ,
@@ -1431,7 +1431,28 @@ Underfull \hbox (badness 10000) in paragraph at lines 242--242
 a-ble:
  []
 
-[49]
+[52]
+Underfull \hbox (badness 10000) in paragraph at lines 261--261
+[]|\OT1/ptm/m/n/10 Generaci[]on con \OT1/pcr/m/n/10 gemini-embedding-001
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 261--261
+\OT1/ptm/m/n/10 (2000 di-men-sio-nes) y al-ma-ce-na-mien-to en
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 261--261
+\OT1/ptm/m/n/10 pg-vec-tor con []^^Pndi-ces HNSW; fun-ci[]on SQL
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 261--261
+\OT1/pcr/m/n/10 buscar[]plan[]docente()\OT1/ptm/m/n/10 . \OT1/ptm/m/it/10 En-tr
+e-ga-ble: pi-pe-
+ []
+
+
 Underfull \hbox (badness 1406) in paragraph at lines 262--262
 []|\OT1/ptm/m/n/10 Acci[]on que com-bi-na re-trie-val sem[]anti-co con re-
  []
@@ -1458,7 +1479,7 @@ Underfull \hbox (badness 1394) in paragraph at lines 309--309
 re-ga-bles:
  []
 
-[50] [51]
+[53] [54]
 Underfull \hbox (badness 10000) in paragraph at lines 328--328
 []|\OT1/ptm/m/n/10 Registro de las con-ver-sa-cio-nes pi-lo-to en
  []
@@ -1491,7 +1512,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 367--367
 e:
  []
 
-[52] [53]
+[55] [56]
 Underfull \hbox (badness 3942) in paragraph at lines 489--489
 []|\OT1/ptm/m/n/10 Dic 2025--Ene
  []
@@ -1506,116 +1527,86 @@ Underfull \hbox (badness 10000) in paragraph at lines 513--513
 []|\OT1/ptm/m/n/10 Infraestructura ini-cial (re-po-si-to-rio,
  []
 
-[54] [55] [56] [57] [58] [59]) [60] [61
+[57] [58] [59] [60] [61] [62]) [63] [64
 
 ] (Capitulos/requisitos.tex
 Cap\'{\i }tulo 6.
-[62
+[65
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 35--35
+Underfull \hbox (badness 10000) in paragraph at lines 41--41
 []|\OT1/ptm/m/n/10 RAG-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 35--35
+Underfull \hbox (badness 10000) in paragraph at lines 41--41
 \OT1/ptm/m/n/10 P01..RAG-
  []
 
 
-Underfull \hbox (badness 1259) in paragraph at lines 37--37
+Underfull \hbox (badness 1259) in paragraph at lines 43--43
 []|\OT1/ptm/m/n/10 El sis-te-ma de-be dis-tin-guir en-tre la pre-gun-ta ``qu[]e
  es
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 37--37
+Underfull \hbox (badness 10000) in paragraph at lines 43--43
 []|\OT1/ptm/m/n/10 E-P09, HA-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 50--50
+Underfull \hbox (badness 10000) in paragraph at lines 56--56
 []|\OT1/ptm/m/n/10 H-P01..H-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 52--52
+Underfull \hbox (badness 10000) in paragraph at lines 58--58
 []|\OT1/ptm/m/n/10 H-PC01..H-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 53--53
+Underfull \hbox (badness 10000) in paragraph at lines 59--59
 []|\OT1/ptm/m/n/10 HA-P01..HA-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 56--56
+Underfull \hbox (badness 10000) in paragraph at lines 62--62
 []|\OT1/ptm/m/n/10 H-N01, H-
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 70--70
+[66]
+Underfull \hbox (badness 10000) in paragraph at lines 76--76
 []|\OT1/ptm/m/n/10 P-PA01..P-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 71--71
+Underfull \hbox (badness 10000) in paragraph at lines 77--77
 []|\OT1/ptm/m/n/10 P-PA05..P-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 74--74
+Underfull \hbox (badness 10000) in paragraph at lines 80--80
 []|\OT1/ptm/m/n/10 P-W01..P-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 75--75
+Underfull \hbox (badness 10000) in paragraph at lines 81--81
 []|\OT1/ptm/m/n/10 P-N01..P-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 88--88
+Underfull \hbox (badness 10000) in paragraph at lines 94--94
 []|\OT1/ptm/m/n/10 CC-P01..CC-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 92--92
+Underfull \hbox (badness 10000) in paragraph at lines 98--98
 []|\OT1/ptm/m/n/10 El sis-te-ma de-be ofre-cer un men-sa-je de bien-ve-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 92--92
+Underfull \hbox (badness 10000) in paragraph at lines 98--98
 \OT1/ptm/m/n/10 ni-da y so-por-tar la pre-gun-ta meta-conversacional
- []
-
-[63] [64]
-Underfull \hbox (badness 10000) in paragraph at lines 108--108
-[]|\OT1/ptm/m/n/10 RF-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 109--109
-[]|\OT1/ptm/m/n/10 RF-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 110--110
-[]|\OT1/ptm/m/n/10 RF-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 111--111
-[]|\OT1/ptm/m/n/10 RF-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 112--112
-[]|\OT1/ptm/m/n/10 RF-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 113--113
-[]|\OT1/ptm/m/n/10 RF-
  []
 
 
@@ -1624,111 +1615,492 @@ Underfull \hbox (badness 10000) in paragraph at lines 114--114
  []
 
 
-Underfull \hbox (badness 1286) in paragraph at lines 131--131
+Underfull \hbox (badness 10000) in paragraph at lines 114--114
+[]|\OT1/ptm/m/n/10 A03--A05,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 115--115
+[]|\OT1/ptm/m/n/10 RF-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 115--115
+[]|\OT1/ptm/m/n/10 A14--A16,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--116
+[]|\OT1/ptm/m/n/10 RF-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--116
+[]|\OT1/ptm/m/n/10 Manual (cri-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--116
+\OT1/ptm/m/n/10 te-rio en Ta-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--116
+\OT1/ptm/m/n/10 de la sui-te
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--116
+\OT1/ptm/m/it/10 py-test \OT1/ptm/m/n/10 por
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--116
+\OT1/ptm/m/n/10 ser ope-ra-ci[]on
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--116
+\OT1/ptm/m/n/10 de es-cri-tu-ra
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--116
+\OT1/ptm/m/n/10 des-truc-ti-va
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 117--117
+[]|\OT1/ptm/m/n/10 RF-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 118--118
+[]|\OT1/ptm/m/n/10 RF-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 119--119
+[]|\OT1/ptm/m/n/10 RF-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 120--120
+[]|\OT1/ptm/m/n/10 RF-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 120--120
+[]|\OT1/ptm/m/n/10 FB-01 (ma-
+ []
+
+[67] [68]
+Underfull \hbox (badness 10000) in paragraph at lines 140--140
+[]|\OT1/ptm/m/n/10 RF-
+ []
+
+
+Underfull \hbox (badness 1286) in paragraph at lines 157--157
 \OT1/ptm/m/n/10 ra-ria, cua-tri-mes-tre y ti-po (teor[]^^Pa/-la-bo-ra-to-rio).
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 154--154
+Underfull \hbox (badness 10000) in paragraph at lines 180--180
 []|\OT1/ptm/m/n/10 Profesor-
  []
 
-
-Overfull \hbox (0.9653pt too wide) in paragraph at lines 168--169
+[69] [70]
+Overfull \hbox (0.9653pt too wide) in paragraph at lines 194--195
 []\OT1/ptm/m/n/10.95 La ope-ra-ci[]on del sis-te-ma en pro-duc-ci[]on re-gis-tr
 a dos en-ti-da-des. La ta-bla \OT1/pcr/m/n/10.95 conversation[]log
  []
 
-[65] [66]
-Underfull \hbox (badness 10000) in paragraph at lines 183--183
-[]|\OT1/ptm/m/n/10 Cap. []12[]
+<img/modelo_conceptual_ri.png, id=2319, 829.0975pt x 786.94pt>
+File: img/modelo_conceptual_ri.png Graphic file (type png)
+<use img/modelo_conceptual_ri.png>
+Package pdftex.def Info: img/modelo_conceptual_ri.png  used on input line 202.
+(pdftex.def)             Requested size: 426.79135pt x 405.0805pt.
+
+Underfull \hbox (badness 2245) in paragraph at lines 221--221
+[]|\OT1/ptm/m/n/10 Coste me-dio por turno
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 188--188
+Underfull \hbox (badness 2103) in paragraph at lines 222--222
+[]|\OT1/ptm/m/n/10 Tasa de []exi-to en sui-te
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 222--222
+[]|\OT1/ptm/b/n/10 94,3$ $%
+ []
+
+
+Underfull \hbox (badness 3312) in paragraph at lines 223--223
+[]|\OT1/ptm/b/n/10 98,3$ $% \OT1/ptm/m/n/10 (58/59
+ []
+
+
+Underfull \hbox (badness 1874) in paragraph at lines 225--225
+[]|\OT1/ptm/b/n/10 100$ $% \OT1/ptm/m/n/10 con-sul-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--226
+[]|\OT1/ptm/m/n/10 Compatibilidad na-ve-ga-
+ []
+
+
+Underfull \hbox (badness 7099) in paragraph at lines 226--226
+[]|\OT1/ptm/b/n/10 4/4 \OT1/ptm/m/n/10 na-ve-ga-do-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--226
 []|\OT1/ptm/m/n/10 Verificado ma-
  []
 
 
-Underfull \hbox (badness 2717) in paragraph at lines 189--189
-[]|\OT1/ptm/m/n/10 Funcional en pan-ta-llas $\OMS/cmsy/m/n/10 ^^U$
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 189--189
+Underfull \hbox (badness 10000) in paragraph at lines 227--227
 []|\OT1/ptm/m/n/10 Verificado ma-
  []
 
 
-Underfull \hbox (badness 1694) in paragraph at lines 190--190
-[]|\OT1/ptm/m/n/10 Sesiones iden-ti-fi-ca-das me-
+Underfull \hbox (badness 10000) in paragraph at lines 228--228
+[]|\OT1/ptm/m/n/10 RNF-
  []
 
 
-Underfull \hbox (badness 3396) in paragraph at lines 191--191
-[]|\OT1/ptm/m/n/10 Reproducibilidad del des-plie-
+Underfull \hbox (badness 6220) in paragraph at lines 228--228
+[]|\OT1/ptm/m/n/10 UUID an[]oni-mo, sin
  []
 
 
-Underfull \hbox (badness 3612) in paragraph at lines 191--191
-[]|\OT1/ptm/m/it/10 Stack \OT1/ptm/m/n/10 le-van-ta-ble me-dian-te
+Underfull \hbox (badness 1859) in paragraph at lines 228--228
+[]|\OT1/ptm/b/n/10 Cumplido \OT1/ptm/m/n/10 por
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 192--192
-[]|\OT1/ptm/m/n/10 Trazabilidad de de-ci-sio-nes
+Underfull \hbox (badness 10000) in paragraph at lines 229--229
+[]|\OT1/ptm/m/n/10 RNF-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 192--192
+Underfull \hbox (badness 10000) in paragraph at lines 229--229
+[]|\OT1/pcr/m/n/10 docker compose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 229--229
+[]|\OT1/ptm/b/n/10 Cumplido
+ []
+
+
+Underfull \hbox (badness 2635) in paragraph at lines 229--229
+\OT1/ptm/m/n/10 (Ubun-tu 24.04
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 230--230
+[]|\OT1/ptm/m/n/10 RNF-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 230--230
 []|\OT1/ptm/m/n/10 Registro en
  []
 
-[67]
-<img/conversacion_ejemplo.png, id=2163, 1426.57968pt x 620.3175pt>
+
+Underfull \hbox (badness 10000) in paragraph at lines 231--231
+[]|\OT1/ptm/m/n/10 RNF-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 231--231
+\OT1/ptm/m/n/10 (e-mail+contrase[]na)
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 231--231
+\OT1/ptm/m/n/10 re-di-rec-ci[]on a
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 231--231
+[]|\OT1/ptm/b/n/10 Cumplido
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 231--231
+\OT1/ptm/m/n/10 (Su-pa-ba-se
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 231--231
+[]|\OT1/ptm/m/n/10 Verificado
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 231--231
+\OT1/ptm/m/n/10 ma-nual; v[]ease
+ []
+
+
+Overfull \hbox (33.71356pt too wide) in paragraph at lines 231--231
+\OT1/pcr/m/n/10 frontend/login.js
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 231--231
+\OT1/ptm/m/n/10 y la com-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 231--231
+\OT1/ptm/m/n/10 pro-ba-ci[]on
+ []
+
+
+Overfull \hbox (3.71356pt too wide) in paragraph at lines 231--231
+\OT1/pcr/m/n/10 getSession()
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 231--231
+\OT1/ptm/m/n/10 en
+ []
+
+
+Overfull \hbox (33.71356pt too wide) in paragraph at lines 231--231
+\OT1/pcr/m/n/10 frontend/admin.js| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 232--232
+[]|\OT1/ptm/m/n/10 RNF-
+ []
+
+
+Underfull \hbox (badness 3503) in paragraph at lines 232--232
+[]|\OT1/ptm/b/n/10 28 s \OT1/ptm/m/n/10 me-dia-na
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 233--233
+[]|\OT1/ptm/m/n/10 RNF-
+ []
+
+
+Underfull \hbox (badness 2261) in paragraph at lines 233--233
+[]|\OT1/ptm/m/n/10 Escalabilidad: nue-va ti-
+ []
+
+
+Underfull \hbox (badness 1968) in paragraph at lines 233--233
+\OT1/ptm/m/n/10 tu-la-ci[]on sin cam-bio de
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 233--233
+[]|\OT1/ptm/b/n/10 Cumplido
+ []
+
+[71] [72 <./img/modelo_conceptual_ri.png (PNG copy)>] [73]
+Underfull \hbox (badness 10000) in paragraph at lines 263--263
+[]|\OT1/ptm/m/n/10 Supabase (Post-greSQL
+ []
+
+<img/conversacion_ejemplo.png, id=2347, 1426.57968pt x 620.3175pt>
 File: img/conversacion_ejemplo.png Graphic file (type png)
 <use img/conversacion_ejemplo.png>
-Package pdftex.def Info: img/conversacion_ejemplo.png  used on input line 208.
+Package pdftex.def Info: img/conversacion_ejemplo.png  used on input line 277.
 (pdftex.def)             Requested size: 426.79135pt x 185.5761pt.
-<img/admin_home.png, id=2164, 1443.14156pt x 621.82312pt>
+[74 <./img/conversacion_ejemplo.png>] [75]
+<img/admin_home.png, id=2358, 1443.14156pt x 621.82312pt>
 File: img/admin_home.png Graphic file (type png)
 <use img/admin_home.png>
-Package pdftex.def Info: img/admin_home.png  used on input line 214.
+Package pdftex.def Info: img/admin_home.png  used on input line 285.
 (pdftex.def)             Requested size: 426.79135pt x 183.89166pt.
-<img/admin_conversaciones.png, id=2165, 1428.08531pt x 620.3175pt>
-File: img/admin_conversaciones.png Graphic file (type png)
-<use img/admin_conversaciones.png>
-Package pdftex.def Info: img/admin_conversaciones.png  used on input line 220.
-(pdftex.def)             Requested size: 426.79135pt x 185.3868pt.
-<img/admin_horarios.png, id=2166, 1425.82687pt x 620.3175pt>
+<img/admin_horarios.png, id=2361, 1425.82687pt x 620.3175pt>
 File: img/admin_horarios.png Graphic file (type png)
 <use img/admin_horarios.png>
-Package pdftex.def Info: img/admin_horarios.png  used on input line 226.
+Package pdftex.def Info: img/admin_horarios.png  used on input line 293.
 (pdftex.def)             Requested size: 426.79135pt x 185.6802pt.
-<img/admin_profesores.png, id=2167, 1425.82687pt x 620.3175pt>
+<img/admin_profesores.png, id=2363, 1425.82687pt x 620.3175pt>
 File: img/admin_profesores.png Graphic file (type png)
 <use img/admin_profesores.png>
-Package pdftex.def Info: img/admin_profesores.png  used on input line 232.
+Package pdftex.def Info: img/admin_profesores.png  used on input line 301.
 (pdftex.def)             Requested size: 426.79135pt x 185.6802pt.
- [68 <./img/conversacion_ejemplo.png> <./img/admin_home.png>] [69 <./img/admin_
-conversaciones.png> <./img/admin_horarios.png> <./img/admin_profesores.png>]
-Underfull \hbox (badness 5274) in paragraph at lines 249--249
+ [76 <./img/admin_home.png>] [77 <./img/admin_horarios.png> <./img/admin_profes
+ores.png>]
+<img/admin_conversaciones.png, id=2376, 1428.08531pt x 620.3175pt>
+File: img/admin_conversaciones.png Graphic file (type png)
+<use img/admin_conversaciones.png>
+Package pdftex.def Info: img/admin_conversaciones.png  used on input line 309.
+(pdftex.def)             Requested size: 426.79135pt x 185.3868pt.
+
+Underfull \hbox (badness 2343) in paragraph at lines 330--330
+[]|\OT1/ptm/m/n/10 Sistema con-ver-sa-cio-nal Ra-sa (flu-jos
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 361--361
+[]|\OT1/ptm/m/n/10 22/22 PASS
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 362--362
+[]|\OT1/ptm/m/n/10 15/15 PASS
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 363--363
+[]|\OT1/ptm/m/n/10 10/10 PASS
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 364--364
+[]|\OT1/ptm/m/n/10 RF-H1, RF-H2,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 364--364
+\OT1/ptm/m/n/10 RF-H3, RF-H6,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 364--364
+[]|\OT1/ptm/m/n/10 26/27 PASS
+ []
+
+
+Overfull \hbox (8.86082pt too wide) in paragraph at lines 365--365
+[]|\OT1/pcr/m/n/10 horario[]asignatura| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 365--365
+[]|\OT1/ptm/m/n/10 18/18 PASS
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 366--366
+[]|\OT1/ptm/m/n/10 37/43 PASS
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 367--367
+[]|\OT1/ptm/m/n/10 12/13 PASS
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 368--368
+[]|\OT1/ptm/m/n/10 RF-T3, RF-T4,
+ []
+
+
+Underfull \hbox (badness 2582) in paragraph at lines 369--369
+[]|\OT1/ptm/m/n/10 transversal (he-re-
+ []
+
+
+Overfull \hbox (42.46083pt too wide) in paragraph at lines 370--370
+[]|\OT1/pcr/m/n/10 seguimiento[]cross[]intent| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\OT1/ptm/m/n/10 RF-A1--A6,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+\OT1/ptm/m/n/10 RF-H1--H7, RF-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\OT1/ptm/b/n/10 150/159 PASS
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 373--373
+[]|\OT1/ptm/m/n/10 RF-A4 (so-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 373--373
+\OT1/ptm/m/n/10 bre asig-na-tu-ras
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 373--373
+[]|\OT1/ptm/m/n/10 47/50 PASS
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 374--374
+[]|\OT1/ptm/m/n/10 RF-A4, RF-P3
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 374--374
+\OT1/ptm/m/n/10 (plan do-cen-te
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 374--374
+[]|\OT1/ptm/m/n/10 68/74 OK
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 375--375
+[]|\OT1/ptm/m/n/10 RF-A5, RF-T1
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 375--375
+[]|\OT1/ptm/m/n/10 158/158 PASS
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 376--376
+[]|\OT1/ptm/m/n/10 58/59 PASS
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 377--377
+[]|\OT1/ptm/m/n/10 RF-AD1 -- RF-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 377--377
+[]|\OT1/ptm/m/n/10 24/24 PASS
+ []
+
+[78 <./img/admin_conversaciones.png>]
+Underfull \hbox (badness 5274) in paragraph at lines 396--396
 []|\OT1/ptm/m/n/10 Soporte mul-ti-ling[]ue
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 250--250
+Underfull \hbox (badness 10000) in paragraph at lines 397--397
 []|\OT1/ptm/m/n/10 Despliegue \OT1/ptm/m/it/10 on-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 252--252
+Underfull \hbox (badness 1629) in paragraph at lines 398--398
+[]|\OT1/ptm/m/n/10 Localizaci[]on de es-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 400--400
 []|\OT1/ptm/m/n/10 Integraci[]on con
  []
 
-) (Capitulos/arquitectura_diseno.tex [70]
+) (Capitulos/arquitectura_diseno.tex [79] [80] [81]
 Cap\'{\i }tulo 7.
-[71
+[82
 
 ]
 Underfull \hbox (badness 2111) in paragraph at lines 35--36
@@ -1736,23 +2108,43 @@ Underfull \hbox (badness 2111) in paragraph at lines 35--36
 tm/m/it/10.95 Text-to-SQL\OT1/ptm/m/n/10.95 ) me-dian-te el mo-de-lo
  []
 
-[72]
-<img/diagrama_componentes.png, id=2199, 1854.93pt x 841.1425pt>
+[83]
+<img/diagrama_componentes.png, id=2431, 1854.93pt x 841.1425pt>
 File: img/diagrama_componentes.png Graphic file (type png)
 <use img/diagrama_componentes.png>
 Package pdftex.def Info: img/diagrama_componentes.png  used on input line 60.
 (pdftex.def)             Requested size: 667.64177pt x 302.7469pt.
- [73 <./img/diagrama_componentes.png (PNG copy)>]
-<img/diagrama_despliegue.png, id=2208, 1413.28pt x 1035.87pt>
+ [84 <./img/diagrama_componentes.png (PNG copy)>]
+<img/diagrama_despliegue.png, id=2444, 1436.36626pt x 1035.87pt>
 File: img/diagrama_despliegue.png Graphic file (type png)
 <use img/diagrama_despliegue.png>
 Package pdftex.def Info: img/diagrama_despliegue.png  used on input line 90.
-(pdftex.def)             Requested size: 426.79071pt x 312.81818pt.
- [74
+(pdftex.def)             Requested size: 426.79279pt x 307.79185pt.
+ [85
 
 
-] [75 <./img/diagrama_despliegue.png (PNG copy)>] [76] [77] [78] [79])
-(Capitulos/marco_tecnologico.tex [80] [81]
+] [86]
+Underfull \hbox (badness 10000) in paragraph at lines 161--162
+\OT1/ptm/m/n/10.95 y \OT1/pcr/m/n/10.95 shared/ollama[]client.py \OT1/ptm/m/n/1
+0.95 con \OT1/ptm/b/n/10.95 id[]enti-ca fir-ma \OT1/ptm/m/n/10.95 (\OT1/pcr/m/n
+/10.95 llamar[]gemini(prompt,
+ []
+
+[87] [88]
+Underfull \hbox (badness 3302) in paragraph at lines 245--246
+[]\OT1/ptm/b/n/10.95 Decisi[]on: \OT1/ptm/m/n/10.95 Se con-fi-gur[]o un pi-pe-l
+i-ne de 11 com-po-nen-tes que apo-ya el cla-si-fi-ca-dor
+ []
+
+
+Overfull \hbox (13.00131pt too wide) in paragraph at lines 245--246
+\OT1/pcr/m/n/10.95 DIETClassifier \OT1/ptm/m/n/10.95 so-bre \OT1/ptm/b/n/10.95 
+em-bed-dings pre-en-tre-na-dos de spaCy en es-pa[]nol \OT1/ptm/m/n/10.95 (\OT1/
+pcr/m/n/10.95 es[]core[]news[]md\OT1/ptm/m/n/10.95 )
+ []
+
+[89] [90]) (Capitulos/marco_tecnologico.tex [91] [92] [93 <./img/diagrama_despl
+iegue.png (PNG copy)>]
 Cap\'{\i }tulo 8.
 
 Underfull \hbox (badness 1052) in paragraph at lines 19--20
@@ -1761,7 +2153,7 @@ Underfull \hbox (badness 1052) in paragraph at lines 19--20
 0.95 ,
  []
 
-[82
+[94
 
 ]
 Underfull \hbox (badness 1127) in paragraph at lines 85--86
@@ -1769,13 +2161,13 @@ Underfull \hbox (badness 1127) in paragraph at lines 85--86
 -fe-ren-cia lo-cal op-cio-nal y se uti-liz[]o prin-ci-pal-
  []
 
-[83] [84]
+[95] [96]
 Underfull \hbox (badness 3219) in paragraph at lines 147--148
 []\OT1/ptm/m/n/10.95 Las de-pen-den-cias de Python se fi-jan en \OT1/pcr/m/n/10
 .95 requirements.txt \OT1/ptm/m/n/10.95 (ser-vi-dor Ra-sa) y
  []
 
-[85]
+[97]
 Underfull \hbox (badness 10000) in paragraph at lines 194--194
 []|\OT1/ptm/m/n/10 Nginx (Doc-ker) / Python
  []
@@ -1818,17 +2210,17 @@ Underfull \hbox (badness 10000) in paragraph at lines 207--207
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-) (Capitulos/estructura_proyecto.tex [86] [87]
+) (Capitulos/estructura_proyecto.tex [98] [99]
 Cap\'{\i }tulo 9.
-[88
+[100
 
-] [89]
+] [101]
 Underfull \hbox (badness 2326) in paragraph at lines 138--139
 []\OT1/pcr/m/n/10.95 config.py\OT1/ptm/m/n/10.95 : Car-ga de va-ria-bles de en-
 torno y dic-cio-na-rio de alias y acr[]oni-mos
  []
 
-[90]
+[102]
 Overfull \hbox (27.16486pt too wide) in paragraph at lines 148--149
 []\OT1/pcr/m/n/10.95 routes/\OT1/ptm/m/n/10.95 : Un fi-che-ro por do-mi-nio (\O
 T1/pcr/m/n/10.95 asignaturas.py\OT1/ptm/m/n/10.95 , \OT1/pcr/m/n/10.95 centros.
@@ -1856,7 +2248,7 @@ es.yml\OT1/ptm/m/n/10.95 , \OT1/pcr/m/n/10.95 contexto.yml \OT1/ptm/m/n/10.95 y
  \OT1/pcr/m/n/10.95 general.yml\OT1/ptm/m/n/10.95 . El fi-che-ro
  []
 
-[91]
+[103]
 Underfull \hbox (badness 2970) in paragraph at lines 193--194
 []\OT1/pcr/m/n/10.95 docs/ \OT1/ptm/m/n/10.95 agru-pa la do-cu-men-ta-ci[]on t[
 ]ecni-ca ge-ne-ra-da du-ran-te el de-sa-rro-llo: do-cu-men-
@@ -1868,9 +2260,9 @@ Underfull \hbox (badness 1057) in paragraph at lines 193--194
 de di-se[]no y pla-nes de im-ple-men-ta-ci[]on.
  []
 
-[92]) (Capitulos/estructura_bd.tex [93]
+[104]) (Capitulos/estructura_bd.tex [105]
 Cap\'{\i }tulo 10.
-[94
+[106
 
 ]
 Underfull \hbox (badness 10000) in paragraph at lines 136--136
@@ -1887,7 +2279,7 @@ Underfull \hbox (badness 2393) in paragraph at lines 187--187
 []|\OT1/ptm/m/n/10.95 Cuatrimestre acad[]emi-co (C1, C2 o
  []
 
-[95] [96] [97]
+[107] [108] [109]
 Underfull \hbox (badness 6910) in paragraph at lines 210--210
 []|\OT1/ptm/m/n/10.95 pendiente, pro-ce-san-do, com-ple-ta-do,
  []
@@ -1897,7 +2289,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 227--227
 []|\OT1/ptm/m/n/10.95 Referencia a PLA-
  []
 
-[98] [99]
+[110] [111]
 Underfull \hbox (badness 4467) in paragraph at lines 251--252
 []\OT1/ptm/m/n/10.95 Un \OT1/ptm/b/n/10.95 plan do-cen-te \OT1/ptm/m/n/10.95 se
  des-com-po-ne en m[]ulti-ples \OT1/ptm/b/n/10.95 chunks \OT1/ptm/m/n/10.95 pa-
@@ -1918,7 +2310,7 @@ titulacion[]id\OT1/ptm/m/n/10.95 , \OT1/pcr/m/n/10.95 grupo[]id\OT1/ptm/m/n/10.
 95 , \OT1/pcr/m/n/10.95 profesor[]id\OT1/ptm/m/n/10.95 ,
  []
 
-[100]) (Capitulos/implementacion.tex [101]
+[112]) (Capitulos/implementacion.tex [113]
 Cap\'{\i }tulo 11.
 
 Underfull \hbox (badness 1635) in paragraph at lines 7--8
@@ -1941,7 +2333,7 @@ ul-ta re-quie-re ti-tu-la-ci[]on y el slot \OT1/pcr/m/n/10.95 contexto[]titulac
 ion
  []
 
-[102
+[114
 
 ]
 Underfull \hbox (badness 2080) in paragraph at lines 57--58
@@ -1970,7 +2362,7 @@ m/m/n/10.95 La fun-ci[]on \OT1/pcr/m/n/10.95 resolver[]asignatura() \OT1/ptm/m/
 n/10.95 (en
  []
 
-[103] (lstlang1.sty
+(lstlang1.sty
 File: lstlang1.sty 2004/09/05 1.3 listings language file
 )
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
@@ -2528,6 +2920,7 @@ Package xcolor Warning: Incompatible color definition on input line 114.
 
 Package xcolor Warning: Incompatible color definition on input line 114.
 
+[115]
 
 Package xcolor Warning: Incompatible color definition on input line 115.
 
@@ -2648,126 +3041,64 @@ Package xcolor Warning: Incompatible color definition on input line 120.
 
 Package xcolor Warning: Incompatible color definition on input line 120.
 
-[104] [105]
 
-Package xcolor Warning: Incompatible color definition on input line 210.
+Overfull \hbox (44.66905pt too wide) in paragraph at lines 124--125
+\OT1/ptm/m/n/10.95 ca del va-lor que de-vuel-ve el ex-trac-tor de en-ti-da-des,
+ im-ple-men-ta-da en \OT1/pcr/m/n/10.95 extraer[]nombre[]asignatura()\OT1/ptm/m
+/n/10.95 .
+ []
 
+[116] [117] [118]
 
-Package xcolor Warning: Incompatible color definition on input line 210.
+Package xcolor Warning: Incompatible color definition on input line 220.
 
 
-Package xcolor Warning: Incompatible color definition on input line 210.
-
-
-Package xcolor Warning: Incompatible color definition on input line 210.
-
-
-Package xcolor Warning: Incompatible color definition on input line 211.
-
-
-Package xcolor Warning: Incompatible color definition on input line 211.
-
-
-Package xcolor Warning: Incompatible color definition on input line 211.
-
-
-Package xcolor Warning: Incompatible color definition on input line 211.
-
-
-Package xcolor Warning: Incompatible color definition on input line 211.
-
-
-Package xcolor Warning: Incompatible color definition on input line 211.
-
-
-Package xcolor Warning: Incompatible color definition on input line 211.
-
-
-Package xcolor Warning: Incompatible color definition on input line 211.
-
-
-Package xcolor Warning: Incompatible color definition on input line 211.
-
-
-Package xcolor Warning: Incompatible color definition on input line 211.
-
-
-Package xcolor Warning: Incompatible color definition on input line 211.
-
-
-Package xcolor Warning: Incompatible color definition on input line 211.
-
-
-Package xcolor Warning: Incompatible color definition on input line 211.
-
-
-Package xcolor Warning: Incompatible color definition on input line 211.
-
-
-Package xcolor Warning: Incompatible color definition on input line 211.
-
-
-Package xcolor Warning: Incompatible color definition on input line 211.
-
-
-Package xcolor Warning: Incompatible color definition on input line 211.
-
-
-Package xcolor Warning: Incompatible color definition on input line 212.
-
-
-Package xcolor Warning: Incompatible color definition on input line 212.
-
-
-Package xcolor Warning: Incompatible color definition on input line 212.
-
-
-Package xcolor Warning: Incompatible color definition on input line 212.
-
-
-Package xcolor Warning: Incompatible color definition on input line 212.
-
-
-Package xcolor Warning: Incompatible color definition on input line 213.
-
-
-Package xcolor Warning: Incompatible color definition on input line 213.
-
-
-Package xcolor Warning: Incompatible color definition on input line 214.
-
-
-Package xcolor Warning: Incompatible color definition on input line 214.
-
-
-Package xcolor Warning: Incompatible color definition on input line 214.
-
-
-Package xcolor Warning: Incompatible color definition on input line 216.
-
-
-Package xcolor Warning: Incompatible color definition on input line 216.
-
-
-Package xcolor Warning: Incompatible color definition on input line 217.
-
-
-Package xcolor Warning: Incompatible color definition on input line 217.
-
-
-Package xcolor Warning: Incompatible color definition on input line 218.
-
-
-Package xcolor Warning: Incompatible color definition on input line 218.
-
-
-Package xcolor Warning: Incompatible color definition on input line 218.
+Package xcolor Warning: Incompatible color definition on input line 220.
 
 
 Package xcolor Warning: Incompatible color definition on input line 220.
 
 
 Package xcolor Warning: Incompatible color definition on input line 220.
+
+
+Package xcolor Warning: Incompatible color definition on input line 221.
+
+
+Package xcolor Warning: Incompatible color definition on input line 221.
+
+
+Package xcolor Warning: Incompatible color definition on input line 221.
+
+
+Package xcolor Warning: Incompatible color definition on input line 221.
+
+
+Package xcolor Warning: Incompatible color definition on input line 221.
+
+
+Package xcolor Warning: Incompatible color definition on input line 221.
+
+
+Package xcolor Warning: Incompatible color definition on input line 221.
+
+
+Package xcolor Warning: Incompatible color definition on input line 221.
+
+
+Package xcolor Warning: Incompatible color definition on input line 221.
+
+
+Package xcolor Warning: Incompatible color definition on input line 221.
+
+
+Package xcolor Warning: Incompatible color definition on input line 221.
+
+
+Package xcolor Warning: Incompatible color definition on input line 221.
+
+
+Package xcolor Warning: Incompatible color definition on input line 221.
 
 
 Package xcolor Warning: Incompatible color definition on input line 221.
@@ -2785,7 +3116,16 @@ Package xcolor Warning: Incompatible color definition on input line 221.
 Package xcolor Warning: Incompatible color definition on input line 222.
 
 
-Package xcolor Warning: Incompatible color definition on input line 223.
+Package xcolor Warning: Incompatible color definition on input line 222.
+
+
+Package xcolor Warning: Incompatible color definition on input line 222.
+
+
+Package xcolor Warning: Incompatible color definition on input line 222.
+
+
+Package xcolor Warning: Incompatible color definition on input line 222.
 
 
 Package xcolor Warning: Incompatible color definition on input line 223.
@@ -2794,148 +3134,19 @@ Package xcolor Warning: Incompatible color definition on input line 223.
 Package xcolor Warning: Incompatible color definition on input line 223.
 
 
-Package xcolor Warning: Incompatible color definition on input line 223.
+Package xcolor Warning: Incompatible color definition on input line 224.
 
 
-Package xcolor Warning: Incompatible color definition on input line 223.
+Package xcolor Warning: Incompatible color definition on input line 224.
 
 
-Package xcolor Warning: Incompatible color definition on input line 223.
-
-
-Package xcolor Warning: Incompatible color definition on input line 223.
-
-
-Package xcolor Warning: Incompatible color definition on input line 223.
-
-
-Package xcolor Warning: Incompatible color definition on input line 223.
-
-
-Package xcolor Warning: Incompatible color definition on input line 223.
-
-
-Package xcolor Warning: Incompatible color definition on input line 223.
-
-
-Package xcolor Warning: Incompatible color definition on input line 223.
-
-
-Package xcolor Warning: Incompatible color definition on input line 223.
-
-
-Package xcolor Warning: Incompatible color definition on input line 223.
-
-
-Package xcolor Warning: Incompatible color definition on input line 223.
-
-
-Package xcolor Warning: Incompatible color definition on input line 223.
-
-
-Package xcolor Warning: Incompatible color definition on input line 223.
-
-
-Package xcolor Warning: Incompatible color definition on input line 223.
-
-
-Package xcolor Warning: Incompatible color definition on input line 223.
-
-
-Package xcolor Warning: Incompatible color definition on input line 223.
-
-
-Package xcolor Warning: Incompatible color definition on input line 223.
-
-
-Package xcolor Warning: Incompatible color definition on input line 223.
-
-
-Package xcolor Warning: Incompatible color definition on input line 223.
-
-
-Package xcolor Warning: Incompatible color definition on input line 223.
-
-
-Package xcolor Warning: Incompatible color definition on input line 225.
-
-
-Package xcolor Warning: Incompatible color definition on input line 225.
-
-
-Package xcolor Warning: Incompatible color definition on input line 225.
-
-
-Package xcolor Warning: Incompatible color definition on input line 225.
-
-
-Package xcolor Warning: Incompatible color definition on input line 225.
-
-
-Package xcolor Warning: Incompatible color definition on input line 225.
-
-
-Package xcolor Warning: Incompatible color definition on input line 225.
-
-
-Package xcolor Warning: Incompatible color definition on input line 225.
-
-
-Package xcolor Warning: Incompatible color definition on input line 225.
-
-
-Package xcolor Warning: Incompatible color definition on input line 225.
-
-
-Package xcolor Warning: Incompatible color definition on input line 225.
-
-
-Package xcolor Warning: Incompatible color definition on input line 225.
-
-
-Package xcolor Warning: Incompatible color definition on input line 225.
-
-
-Package xcolor Warning: Incompatible color definition on input line 225.
-
-
-Package xcolor Warning: Incompatible color definition on input line 225.
-
-
-Package xcolor Warning: Incompatible color definition on input line 225.
-
-
-Package xcolor Warning: Incompatible color definition on input line 225.
-
-
-Package xcolor Warning: Incompatible color definition on input line 225.
-
-
-Package xcolor Warning: Incompatible color definition on input line 225.
-
-
-Package xcolor Warning: Incompatible color definition on input line 225.
-
-
-Package xcolor Warning: Incompatible color definition on input line 225.
+Package xcolor Warning: Incompatible color definition on input line 224.
 
 
 Package xcolor Warning: Incompatible color definition on input line 226.
 
 
 Package xcolor Warning: Incompatible color definition on input line 226.
-
-
-Package xcolor Warning: Incompatible color definition on input line 226.
-
-
-Package xcolor Warning: Incompatible color definition on input line 226.
-
-
-Package xcolor Warning: Incompatible color definition on input line 227.
-
-
-Package xcolor Warning: Incompatible color definition on input line 227.
 
 
 Package xcolor Warning: Incompatible color definition on input line 227.
@@ -2949,54 +3160,14 @@ Package xcolor Warning: Incompatible color definition on input line 228.
 
 Package xcolor Warning: Incompatible color definition on input line 228.
 
-[106] [107]
 
-Package xcolor Warning: Incompatible color definition on input line 229.
-
-
-Package xcolor Warning: Incompatible color definition on input line 229.
+Package xcolor Warning: Incompatible color definition on input line 228.
 
 
-Package xcolor Warning: Incompatible color definition on input line 229.
+Package xcolor Warning: Incompatible color definition on input line 230.
 
 
-Package xcolor Warning: Incompatible color definition on input line 231.
-
-
-Package xcolor Warning: Incompatible color definition on input line 231.
-
-
-Package xcolor Warning: Incompatible color definition on input line 231.
-
-
-Package xcolor Warning: Incompatible color definition on input line 231.
-
-
-Package xcolor Warning: Incompatible color definition on input line 231.
-
-
-Package xcolor Warning: Incompatible color definition on input line 231.
-
-
-Package xcolor Warning: Incompatible color definition on input line 231.
-
-
-Package xcolor Warning: Incompatible color definition on input line 231.
-
-
-Package xcolor Warning: Incompatible color definition on input line 231.
-
-
-Package xcolor Warning: Incompatible color definition on input line 231.
-
-
-Package xcolor Warning: Incompatible color definition on input line 231.
-
-
-Package xcolor Warning: Incompatible color definition on input line 231.
-
-
-Package xcolor Warning: Incompatible color definition on input line 231.
+Package xcolor Warning: Incompatible color definition on input line 230.
 
 
 Package xcolor Warning: Incompatible color definition on input line 231.
@@ -3014,156 +3185,448 @@ Package xcolor Warning: Incompatible color definition on input line 231.
 Package xcolor Warning: Incompatible color definition on input line 232.
 
 
-Package xcolor Warning: Incompatible color definition on input line 232.
+Package xcolor Warning: Incompatible color definition on input line 233.
 
 
-Package xcolor Warning: Incompatible color definition on input line 232.
+Package xcolor Warning: Incompatible color definition on input line 233.
 
 
-Overfull \hbox (13.95132pt too wide) in paragraph at lines 269--270
+Package xcolor Warning: Incompatible color definition on input line 233.
+
+
+Package xcolor Warning: Incompatible color definition on input line 233.
+
+
+Package xcolor Warning: Incompatible color definition on input line 233.
+
+
+Package xcolor Warning: Incompatible color definition on input line 233.
+
+
+Package xcolor Warning: Incompatible color definition on input line 233.
+
+
+Package xcolor Warning: Incompatible color definition on input line 233.
+
+
+Package xcolor Warning: Incompatible color definition on input line 233.
+
+
+Package xcolor Warning: Incompatible color definition on input line 233.
+
+
+Package xcolor Warning: Incompatible color definition on input line 233.
+
+
+Package xcolor Warning: Incompatible color definition on input line 233.
+
+
+Package xcolor Warning: Incompatible color definition on input line 233.
+
+
+Package xcolor Warning: Incompatible color definition on input line 233.
+
+
+Package xcolor Warning: Incompatible color definition on input line 233.
+
+
+Package xcolor Warning: Incompatible color definition on input line 233.
+
+
+Package xcolor Warning: Incompatible color definition on input line 233.
+
+
+Package xcolor Warning: Incompatible color definition on input line 233.
+
+
+Package xcolor Warning: Incompatible color definition on input line 233.
+
+
+Package xcolor Warning: Incompatible color definition on input line 233.
+
+
+Package xcolor Warning: Incompatible color definition on input line 233.
+
+
+Package xcolor Warning: Incompatible color definition on input line 233.
+
+
+Package xcolor Warning: Incompatible color definition on input line 233.
+
+
+Package xcolor Warning: Incompatible color definition on input line 233.
+
+
+Package xcolor Warning: Incompatible color definition on input line 235.
+
+
+Package xcolor Warning: Incompatible color definition on input line 235.
+
+
+Package xcolor Warning: Incompatible color definition on input line 235.
+
+
+Package xcolor Warning: Incompatible color definition on input line 235.
+
+
+Package xcolor Warning: Incompatible color definition on input line 235.
+
+
+Package xcolor Warning: Incompatible color definition on input line 235.
+
+
+Package xcolor Warning: Incompatible color definition on input line 235.
+
+
+Package xcolor Warning: Incompatible color definition on input line 235.
+
+
+Package xcolor Warning: Incompatible color definition on input line 235.
+
+
+Package xcolor Warning: Incompatible color definition on input line 235.
+
+
+Package xcolor Warning: Incompatible color definition on input line 235.
+
+
+Package xcolor Warning: Incompatible color definition on input line 235.
+
+
+Package xcolor Warning: Incompatible color definition on input line 235.
+
+
+Package xcolor Warning: Incompatible color definition on input line 235.
+
+
+Package xcolor Warning: Incompatible color definition on input line 235.
+
+
+Package xcolor Warning: Incompatible color definition on input line 235.
+
+
+Package xcolor Warning: Incompatible color definition on input line 235.
+
+
+Package xcolor Warning: Incompatible color definition on input line 235.
+
+
+Package xcolor Warning: Incompatible color definition on input line 235.
+
+
+Package xcolor Warning: Incompatible color definition on input line 235.
+
+
+Package xcolor Warning: Incompatible color definition on input line 235.
+
+
+Package xcolor Warning: Incompatible color definition on input line 236.
+
+
+Package xcolor Warning: Incompatible color definition on input line 236.
+
+
+Package xcolor Warning: Incompatible color definition on input line 236.
+
+
+Package xcolor Warning: Incompatible color definition on input line 236.
+
+
+Package xcolor Warning: Incompatible color definition on input line 237.
+
+
+Package xcolor Warning: Incompatible color definition on input line 237.
+
+
+Package xcolor Warning: Incompatible color definition on input line 237.
+
+
+Package xcolor Warning: Incompatible color definition on input line 237.
+
+
+Package xcolor Warning: Incompatible color definition on input line 238.
+
+
+Package xcolor Warning: Incompatible color definition on input line 238.
+
+[119] [120]
+
+Package xcolor Warning: Incompatible color definition on input line 239.
+
+
+Package xcolor Warning: Incompatible color definition on input line 239.
+
+
+Package xcolor Warning: Incompatible color definition on input line 239.
+
+
+Package xcolor Warning: Incompatible color definition on input line 241.
+
+
+Package xcolor Warning: Incompatible color definition on input line 241.
+
+
+Package xcolor Warning: Incompatible color definition on input line 241.
+
+
+Package xcolor Warning: Incompatible color definition on input line 241.
+
+
+Package xcolor Warning: Incompatible color definition on input line 241.
+
+
+Package xcolor Warning: Incompatible color definition on input line 241.
+
+
+Package xcolor Warning: Incompatible color definition on input line 241.
+
+
+Package xcolor Warning: Incompatible color definition on input line 241.
+
+
+Package xcolor Warning: Incompatible color definition on input line 241.
+
+
+Package xcolor Warning: Incompatible color definition on input line 241.
+
+
+Package xcolor Warning: Incompatible color definition on input line 241.
+
+
+Package xcolor Warning: Incompatible color definition on input line 241.
+
+
+Package xcolor Warning: Incompatible color definition on input line 241.
+
+
+Package xcolor Warning: Incompatible color definition on input line 241.
+
+
+Package xcolor Warning: Incompatible color definition on input line 241.
+
+
+Package xcolor Warning: Incompatible color definition on input line 241.
+
+
+Package xcolor Warning: Incompatible color definition on input line 241.
+
+
+Package xcolor Warning: Incompatible color definition on input line 242.
+
+
+Package xcolor Warning: Incompatible color definition on input line 242.
+
+
+Package xcolor Warning: Incompatible color definition on input line 242.
+
+
+Overfull \hbox (13.95132pt too wide) in paragraph at lines 281--282
  [][] 
  []
 
-
-Underfull \hbox (badness 3189) in paragraph at lines 276--277
-[]\OT1/ptm/m/n/10.95 La con-sul-ta SQL ha-ce \OT1/pcr/m/n/10.95 JOIN \OT1/ptm/m
-/n/10.95 en-tre \OT1/pcr/m/n/10.95 horarios\OT1/ptm/m/n/10.95 , \OT1/pcr/m/n/10
-.95 grupos[]clase\OT1/ptm/m/n/10.95 , \OT1/pcr/m/n/10.95 asignaturas\OT1/ptm/m/
-n/10.95 ,
+[121] [122]
+Underfull \hbox (badness 7468) in paragraph at lines 290--291
+\OT1/ptm/m/n/10.95 La cl[]ausu-la \OT1/pcr/m/n/10.95 GROUP BY (dia[]semana, hor
+a[]inicio, hora[]fin, asignatura,
  []
 
-[108] [109] [110]
-Underfull \hbox (badness 2662) in paragraph at lines 331--332
+[123] [124]
+Underfull \hbox (badness 2662) in paragraph at lines 345--346
 []\OT1/pcr/m/n/10.95 ActionMultiIntent \OT1/ptm/m/n/10.95 fue di-se[]nada pa-ra
  cu-brir men-sa-jes que com-bi-nan un cam-
  []
 
 
-Underfull \hbox (badness 2772) in paragraph at lines 331--332
+Underfull \hbox (badness 2772) in paragraph at lines 345--346
 \OT1/ptm/m/n/10.95 bio de con-tex-to y una con-sul-ta en una so-la fra-se: \OT1
 /ptm/m/it/10.95 ``soy de In-ge-nier[]^^Pa del Soft-wa-re,
  []
 
 
-Underfull \hbox (badness 1275) in paragraph at lines 331--332
+Underfull \hbox (badness 1275) in paragraph at lines 345--346
 \OT1/ptm/m/it/10.95 ?`qu[]e ho-ra-rio ten-go en se-gun-do gru-po 2?'' \OT1/ptm/
 m/n/10.95 se iden-ti-fi-ca-ba con un in-tent com-pues-to del
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 331--332
+Underfull \hbox (badness 10000) in paragraph at lines 345--346
 \OT1/ptm/m/n/10.95 ti-po \OT1/pcr/m/n/10.95 cambiar[]contexto[]academico+consul
 ta[]horario\OT1/ptm/m/n/10.95 , que se se-pa-ra-ba en
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 344--345
+Underfull \hbox (badness 10000) in paragraph at lines 366--367
 []\OT1/pcr/m/n/10.95 shared/gemini[]client.py \OT1/ptm/m/n/10.95 ex-po-ne una f
 un-ci[]on \OT1/pcr/m/n/10.95 llamar[]gemini(prompt,
  []
 
 
-Underfull \hbox (badness 1552) in paragraph at lines 344--345
-\OT1/pcr/m/n/10.95 context \OT1/ptm/m/n/10.95 (\OT1/ptm/m/it/10.95 ``asig-na-tu
--ras.text[]to[]sql''\OT1/ptm/m/n/10.95 , \OT1/ptm/m/it/10.95 ``pro-fe-so-res.re
-spuesta''\OT1/ptm/m/n/10.95 , etc.). Es-te re-gis-tro fue cla-ve
+Underfull \hbox (badness 1742) in paragraph at lines 366--367
+\OT1/ptm/m/n/10.95 p. ej. \OT1/pcr/m/n/10.95 .[]signaturas.text[]to[]sql" \OT1/
+ptm/m/n/10.95 o \OT1/pcr/m/n/10.95 "profesores.respuesta"\OT1/ptm/m/n/10.95 ), 
+re-cuen-tos de
  []
 
-
-Overfull \hbox (8.26706pt too wide) in paragraph at lines 352--353
+[125]
+Overfull \hbox (8.26706pt too wide) in paragraph at lines 376--377
 []\OT1/pcr/m/n/10.95 shared/matching.py \OT1/ptm/m/n/10.95 im-ple-men-ta la fun
 -ci[]on \OT1/pcr/m/n/10.95 score[]por[]normalizado(consulta,
  []
 
-[111]
-Overfull \hbox (0.31166pt too wide) in paragraph at lines 371--372
+[126]
+Underfull \hbox (badness 1286) in paragraph at lines 383--384
+[]\OT1/ptm/m/n/10.95 Con um-bral fir-me en \OT1/ptm/b/n/10.95 0,60 \OT1/ptm/m/n
+/10.95 y su-ge-ren-cias des-de \OT1/ptm/b/n/10.95 0,30\OT1/ptm/m/n/10.95 : \OT1
+/ptm/m/it/10.95 pre-ci-sion \OT1/ptm/m/n/10.95 92$ $%, \OT1/ptm/m/it/10.95 re-c
+all \OT1/ptm/m/n/10.95 88$ $%.
+ []
+
+
+Underfull \hbox (badness 2435) in paragraph at lines 383--384
+\OT1/ptm/m/n/10.95 ce la op-ci[]on con ma-yor pun-tua-ci[]on y es-pe-ra con-fir
+-ma-ci[]on del usua-rio me-dian-te
+ []
+
+
+Underfull \hbox (badness 1325) in paragraph at lines 390--391
+\OT1/ptm/m/n/10.95 pre-gun-ta. La im-ple-men-ta-ci[]on re-uti-li-za la ac-ci[]o
+n ori-gi-nal (\OT1/pcr/m/n/10.95 ActionConsultaProfesor\OT1/ptm/m/n/10.95 ,
+ []
+
+[127]
+LaTeX Font Info:    Trying to load font information for OMS+pcr on input line 4
+07.
+ (C:\Program Files\MiKTeX\tex/latex/psnfss\omspcr.fd
+File: omspcr.fd 
+)
+LaTeX Font Info:    Font shape `OMS/pcr/m/n' in size <10.95> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 407.
+
+Underfull \hbox (badness 1424) in paragraph at lines 407--408
+[]\OT1/ptm/m/n/10.95 Solo den-tro de ca-da sec-ci[]on se apli-ca la di-vi-si[]o
+n por ta-ma[]no, con tres par[]ame-tros:
+ []
+
+[128] [129]
+Overfull \hbox (0.31166pt too wide) in paragraph at lines 465--466
 \OT1/ptm/m/n/10.95 do RAG en un []uni-co \OT1/ptm/m/it/10.95 end-point \OT1/pcr
 /m/n/10.95 POST /api/admin/planes[]docentes/vectorize\OT1/ptm/m/n/10.95 .
  []
 
 File: img/admin_home.png Graphic file (type png)
 <use img/admin_home.png>
-Package pdftex.def Info: img/admin_home.png  used on input line 378.
+Package pdftex.def Info: img/admin_home.png  used on input line 472.
 (pdftex.def)             Requested size: 426.79135pt x 183.89166pt.
 File: img/admin_profesores.png Graphic file (type png)
 <use img/admin_profesores.png>
-Package pdftex.def Info: img/admin_profesores.png  used on input line 385.
+Package pdftex.def Info: img/admin_profesores.png  used on input line 479.
 (pdftex.def)             Requested size: 426.79135pt x 185.6802pt.
 File: img/admin_conversaciones.png Graphic file (type png)
 <use img/admin_conversaciones.png>
-Package pdftex.def Info: img/admin_conversaciones.png  used on input line 392.
+Package pdftex.def Info: img/admin_conversaciones.png  used on input line 486.
 (pdftex.def)             Requested size: 426.79135pt x 185.3868pt.
-<img/admin_stats.png, id=2544, 1442.38875pt x 621.07031pt>
+<img/admin_stats.png, id=2849, 1442.38875pt x 621.07031pt>
 File: img/admin_stats.png Graphic file (type png)
 <use img/admin_stats.png>
-Package pdftex.def Info: img/admin_stats.png  used on input line 399.
+Package pdftex.def Info: img/admin_stats.png  used on input line 493.
 (pdftex.def)             Requested size: 426.79135pt x 183.7638pt.
-[112] [113] [114]
-Underfull \hbox (badness 1297) in paragraph at lines 465--466
-[]\OT1/ptm/m/n/10.95 El pi-pe-li-ne RAG di-vi-de el PDF en sec-cio-nes seg[]un 
-los en-ca-be-za-dos del do-cu-men-to
+[130] [131] [132 <./img/admin_stats.png>] [133]) [134] [135
+
+]
+(Capitulos/pruebas.tex
+Cap\'{\i }tulo 12.
+[136
+
+] [137] [138] [139] [140]
+Underfull \hbox (badness 10000) in paragraph at lines 178--178
+[]|\OT1/ptm/m/n/10 E-T02,
  []
 
-) [115 <./img/admin_stats.png>] [116
 
-] (Capitulos/pruebas.tex
-Cap\'{\i }tulo 12.
-[117
+Underfull \hbox (badness 10000) in paragraph at lines 178--178
+\OT1/ptm/m/n/10 E-T04,
+ []
 
-] [118] [119] [120] [121] [122] [123]) (Capitulos/manual.tex [124] [125]
+
+Underfull \hbox (badness 10000) in paragraph at lines 179--179
+[]|\OT1/ptm/m/n/10 5 en
+ []
+
+
+Overfull \hbox (2.47542pt too wide) in paragraph at lines 179--179
+\OT1/pcr/m/n/10 profesor| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 180--180
+[]|\OT1/ptm/m/n/10 5
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 180--180
+\OT1/pcr/m/n/10 PARCIAL
+ []
+
+
+Overfull \hbox (24.20695pt too wide) in paragraph at lines 181--181
+[]|\OT1/ptm/m/n/10 Nuevo flu-jo \OT1/pcr/m/n/10 consulta[]titulacion[]por[]tema
+
+ []
+
+[141] [142] [143] [144]) (Capitulos/manual.tex [145] [146]
 Cap\'{\i }tulo 13.
-<img/widget_cerrado.png, id=2655, 1427.3325pt x 622.57594pt>
+<img/widget_cerrado.png, id=2992, 1427.3325pt x 622.57594pt>
 File: img/widget_cerrado.png Graphic file (type png)
 <use img/widget_cerrado.png>
 Package pdftex.def Info: img/widget_cerrado.png  used on input line 25.
 (pdftex.def)             Requested size: 426.79135pt x 186.15674pt.
-<img/widget_abierto.png, id=2657, 1425.82687pt x 621.07031pt>
+<img/widget_abierto.png, id=2994, 1425.82687pt x 621.07031pt>
 File: img/widget_abierto.png Graphic file (type png)
 <use img/widget_abierto.png>
 Package pdftex.def Info: img/widget_abierto.png  used on input line 37.
 (pdftex.def)             Requested size: 426.79135pt x 185.90555pt.
-[126
+[147
 
-] [127 <./img/widget_cerrado.png> <./img/widget_abierto.png>]
-<img/ejemplo_asignatura.png, id=2672, 365.86688pt x 496.85625pt>
+] [148 <./img/widget_cerrado.png> <./img/widget_abierto.png>]
+<img/ejemplo_asignatura.png, id=3008, 365.86688pt x 496.85625pt>
 File: img/ejemplo_asignatura.png Graphic file (type png)
 <use img/ejemplo_asignatura.png>
 Package pdftex.def Info: img/ejemplo_asignatura.png  used on input line 85.
 (pdftex.def)             Requested size: 362.77525pt x 492.68524pt.
-<img/ejemplo_horario.png, id=2673, 351.56343pt x 489.32813pt>
+<img/ejemplo_horario.png, id=3009, 351.56343pt x 489.32813pt>
 File: img/ejemplo_horario.png Graphic file (type png)
 <use img/ejemplo_horario.png>
 Package pdftex.def Info: img/ejemplo_horario.png  used on input line 95.
 (pdftex.def)             Requested size: 362.77525pt x 504.93198pt.
-<img/ejemplo_profesor.png, id=2674, 353.06906pt x 494.59781pt>
+<img/ejemplo_profesor.png, id=3010, 353.06906pt x 494.59781pt>
 File: img/ejemplo_profesor.png Graphic file (type png)
 <use img/ejemplo_profesor.png>
 Package pdftex.def Info: img/ejemplo_profesor.png  used on input line 105.
 (pdftex.def)             Requested size: 362.77525pt x 508.19618pt.
- [128]
-[129 <./img/ejemplo_asignatura.png>] [130 <./img/ejemplo_horario.png>] [131 <./
+ [149]
+[150 <./img/ejemplo_asignatura.png>] [151 <./img/ejemplo_horario.png>] [152 <./
 img/ejemplo_profesor.png>]
 File: img/admin_home.png Graphic file (type png)
 <use img/admin_home.png>
 Package pdftex.def Info: img/admin_home.png  used on input line 129.
 (pdftex.def)             Requested size: 426.79135pt x 183.89166pt.
- [132]
+ [153]
 Underfull \hbox (badness 3635) in paragraph at lines 150--150
 []|\OT1/ptm/m/n/10.95 Sincronizar ti-tu-la-cio-nes des-de
  []
 
-<img/admin_asignaturas.png, id=2704, 1428.83812pt x 620.3175pt>
+<img/admin_asignaturas.png, id=3040, 1428.83812pt x 620.3175pt>
 File: img/admin_asignaturas.png Graphic file (type png)
 <use img/admin_asignaturas.png>
 Package pdftex.def Info: img/admin_asignaturas.png  used on input line 165.
 (pdftex.def)             Requested size: 426.79135pt x 185.28267pt.
-[133 <./img/admin_asignaturas.png>]
+[154 <./img/admin_asignaturas.png>]
 File: img/admin_profesores.png Graphic file (type png)
 <use img/admin_profesores.png>
 Package pdftex.def Info: img/admin_profesores.png  used on input line 193.
 (pdftex.def)             Requested size: 426.79135pt x 185.6802pt.
- [134]
-<img/admin_horarios_con_boton_generar_horarios.png, id=2718, 1441.63594pt x 621
+ [155]
+<img/admin_horarios_con_boton_generar_horarios.png, id=3054, 1441.63594pt x 621
 .07031pt>
 File: img/admin_horarios_con_boton_generar_horarios.png Graphic file (type png)
 
@@ -3175,7 +3638,7 @@ File: img/admin_conversaciones.png Graphic file (type png)
 <use img/admin_conversaciones.png>
 Package pdftex.def Info: img/admin_conversaciones.png  used on input line 248.
 (pdftex.def)             Requested size: 426.79135pt x 185.3868pt.
- [135 <./img/admin_horarios_con_boton_generar_horarios.png>]
+ [156 <./img/admin_horarios_con_boton_generar_horarios.png>]
 File: img/admin_stats.png Graphic file (type png)
 <use img/admin_stats.png>
 Package pdftex.def Info: img/admin_stats.png  used on input line 274.
@@ -3185,7 +3648,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 292--292
 []|\OT1/ptm/m/n/10.95 Asignaturas / \OT1/ptm/m/it/10.95 Sin-cro-ni-zar
  []
 
-[136] [137] (lstlang1.sty
+[157] [158] (lstlang1.sty
 File: lstlang1.sty 2004/09/05 1.3 listings language file
 ) (lstlang1.sty
 File: lstlang1.sty 2004/09/05 1.3 listings language file
@@ -3292,7 +3755,7 @@ Package xcolor Warning: Incompatible color definition on input line 344.
 
 Package xcolor Warning: Incompatible color definition on input line 344.
 
-[138]
+[159]
 Underfull \hbox (badness 10000) in paragraph at lines 363--363
 []|\OT1/pcr/m/n/9 python:3.10.14-
  []
@@ -3443,7 +3906,7 @@ Package xcolor Warning: Incompatible color definition on input line 381.
 
 Package xcolor Warning: Incompatible color definition on input line 381.
 
-[139]
+[160]
 
 Package xcolor Warning: Incompatible color definition on input line 387.
 
@@ -3863,7 +4326,7 @@ Package xcolor Warning: Incompatible color definition on input line 440.
 
 Package xcolor Warning: Incompatible color definition on input line 440.
 
-[140]
+[161]
 
 Package xcolor Warning: Incompatible color definition on input line 444.
 
@@ -4137,7 +4600,7 @@ Underfull \hbox (badness 7047) in paragraph at lines 473--474
 /m/n/10.95 pa-ra la pol[]^^Pti-ca,
  []
 
-[141]
+[162]
 
 Package xcolor Warning: Incompatible color definition on input line 486.
 
@@ -4530,7 +4993,7 @@ n/10.95 (\OT1/pcr/m/n/10.95 ultimo[]nombre[]asignatura\OT1/ptm/m/n/10.95 , \OT1
 /pcr/m/n/10.95 ultimo[]profesor[]consultado\OT1/ptm/m/n/10.95 ).
  []
 
-[142]
+[163]
 
 Package xcolor Warning: Incompatible color definition on input line 525.
 
@@ -4960,52 +5423,97 @@ Package xcolor Warning: Incompatible color definition on input line 545.
 
 Package xcolor Warning: Incompatible color definition on input line 545.
 
-) (Capitulos/conclusiones.tex [143]
+) (Capitulos/conclusiones.tex [164]
 Cap\'{\i }tulo 14.
 
-Underfull \hbox (badness 1137) in paragraph at lines 27--27
+Underfull \hbox (badness 10000) in paragraph at lines 27--27
+[]|\OT1/ptm/m/n/10 150 / 159
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 28--28
+[]|\OT1/ptm/m/n/10 47 / 50
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 29--29
+[]|\OT1/ptm/m/n/10 68 / 74
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 30--30
+[]|\OT1/ptm/m/n/10 158 / 158
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 31--31
+[]|\OT1/ptm/m/n/10 58 / 59
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 32--32
+[]|\OT1/ptm/m/n/10 24 / 24
+ []
+
+
+Underfull \hbox (badness 5985) in paragraph at lines 39--39
+[]|\OT1/ptm/m/n/10 Tiempo de cum-pli-mien-to RNF-14
+ []
+
+
+Underfull \hbox (badness 1221) in paragraph at lines 39--39
+[]|\OT1/ptm/m/n/10 28 s (me-dia-
+ []
+
+
+Underfull \hbox (badness 2334) in paragraph at lines 42--42
+[]|\OT1/ptm/m/n/10 72 (D-001 a
+ []
+
+[165
+
+] [166]
+Underfull \hbox (badness 1137) in paragraph at lines 69--69
 []|\OT1/ptm/m/n/10 Sistema con-ver-sa-cio-nal Ra-sa con flu-jos
  []
 
 
-Underfull \hbox (badness 2318) in paragraph at lines 29--30
+Underfull \hbox (badness 2318) in paragraph at lines 71--72
 \OT1/ptm/m/n/10 pa RAG va-li-da-da al 91,9$ $% de pro-fun-di-dad
  []
 
-[144
-
-] [145] [146]
-Underfull \hbox (badness 1303) in paragraph at lines 77--78
+[167] [168]
+Underfull \hbox (badness 1303) in paragraph at lines 119--120
 \OT1/pcr/m/n/10.95 ultimo[]profesor[]consultado \OT1/ptm/m/n/10.95 o \OT1/pcr/m
 /n/10.95 ultimo[]nombre[]asignatura \OT1/ptm/m/n/10.95 con una re-gla de
  []
 
 
-Underfull \hbox (badness 1810) in paragraph at lines 77--78
+Underfull \hbox (badness 1810) in paragraph at lines 119--120
 \OT1/ptm/m/n/10.95 he-re-da \OT1/pcr/m/n/10.95 ultimo[]curso[]consultado \OT1/p
 tm/m/n/10.95 y \OT1/pcr/m/n/10.95 ultimo[]grupo[]consultado\OT1/ptm/m/n/10.95 ,
  y cuan-do so-lo
  []
 
-[147]) (Capitulos/uso_ia.tex [148]
+[169] [170] [171]) (Capitulos/uso_ia.tex [172]
 Cap\'{\i }tulo 15.
-[149
+[173
 
-]) (Capitulos/video_presentacion.tex [150]
+]) (Capitulos/video_presentacion.tex [174]
 Cap\'{\i }tulo 16.
-<img/youtube-demo-thumbnail.png, id=2896, 2762.32pt x 1541.76pt>
+<img/youtube-demo-thumbnail.png, id=3287, 2762.32pt x 1541.76pt>
 File: img/youtube-demo-thumbnail.png Graphic file (type png)
 <use img/youtube-demo-thumbnail.png>
 Package pdftex.def Info: img/youtube-demo-thumbnail.png  used on input line 30.
 
 (pdftex.def)             Requested size: 362.77525pt x 202.45901pt.
-[151
+[175
 
- <./img/youtube-demo-thumbnail.png>]) [152] (Capitulos/apendices.tex
-[153
+ <./img/youtube-demo-thumbnail.png>]) [176] (Capitulos/apendices.tex
+[177
 
 
-] [154] [155]) [156] [157] (proyect.bbl [158
+] [178] [179]) [180] [181] (proyect.bbl [182
 
 
 ]
@@ -5015,25 +5523,25 @@ Package Fancyhdr Warning: \headheight is too small (13.59999pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[159]
+[183] [184]
 LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <10.95> not available
-(Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 186.
- [160]) [161] (proyect.aux)
+(Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 304.
+ [185]) [186] (proyect.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
 Package rerunfilecheck Info: File `proyect.out' has not changed.
-(rerunfilecheck)             Checksum: 06DB2391F31CF2D570F38484FED87C31;53219.
+(rerunfilecheck)             Checksum: 874912139CA8E2D70000E2EC2ED75244;57851.
  ) 
 Here is how much of TeX's memory you used:
- 29169 strings out of 467871
- 528827 string characters out of 5418376
- 1168425 words of memory out of 5000000
- 56576 multiletter control sequences out of 15000+600000
- 705724 words of font info for 189 fonts, out of 8000000 for 9000
+ 29456 strings out of 467871
+ 533204 string characters out of 5418376
+ 1139906 words of memory out of 5000000
+ 56756 multiletter control sequences out of 15000+600000
+ 714067 words of font info for 205 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,13n,94p,1926b,2083s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,15n,94p,1926b,2125s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\santi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm
 1095.pk><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
 ts/cm/cmbx10.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/publ
@@ -5042,25 +5550,26 @@ ype1/public/amsfonts/cm/cmmi8.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX
 /fonts/type1/public/amsfonts/cm/cmmi9.pfb><C:/Users/santi/AppData/Local/Program
 s/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/santi/AppData/Local
 /Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/santi/AppD
-ata/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users/sa
-nti/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/
-Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.
+ata/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy5.pfb><C:/Users/sa
+nti/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/
+Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.
 pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/c
-m/cmsy9.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/urw/couri
-er/ucrb8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/urw/cou
-rier/ucrr8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/urw/c
-ourier/ucrro8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/ur
-w/helvetic/uhvb8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1
-/urw/helvetic/uhvr8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/ty
-pe1/urw/helvetic/uhvro8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/font
-s/type1/urw/times/utmb8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/font
-s/type1/urw/times/utmb8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/font
-s/type1/urw/times/utmbi8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fon
-ts/type1/urw/times/utmr8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fon
-ts/type1/urw/times/utmri8a.pfb>
-Output written on proyect.pdf (162 pages, 4644123 bytes).
+m/cmsy8.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/public/am
+sfonts/cm/cmsy9.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/u
+rw/courier/ucrb8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1
+/urw/courier/ucrr8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/typ
+e1/urw/courier/ucrro8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/
+type1/urw/helvetic/uhvb8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fon
+ts/type1/urw/helvetic/uhvr8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/
+fonts/type1/urw/helvetic/uhvro8a.pfb><C:/Users/santi/AppData/Local/Programs/MiK
+TeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/santi/AppData/Local/Programs/MiK
+TeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/santi/AppData/Local/Programs/MiK
+TeX/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/santi/AppData/Local/Programs/Mi
+KTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/santi/AppData/Local/Programs/Mi
+KTeX/fonts/type1/urw/times/utmri8a.pfb>
+Output written on proyect.pdf (187 pages, 4878669 bytes).
 PDF statistics:
- 3293 PDF objects out of 3580 (max. 8388607)
- 838 named destinations out of 1000 (max. 500000)
- 2282 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 3714 PDF objects out of 4296 (max. 8388607)
+ 935 named destinations out of 1000 (max. 500000)
+ 2431 words of extra memory for PDF output out of 10000 (max. 10000000)
 
