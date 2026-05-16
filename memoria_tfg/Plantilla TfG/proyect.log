@@ -1,13 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.4.26)  10 MAY 2026 22:12
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.4.26)  16 MAY 2026 11:50
 entering extended mode
  restricted \write18 enabled.
- file:line:error style messages enabled.
  %&-line parsing enabled.
-**"c:/Users/santi/Desktop/cuarto/TFG/linceus-assistant/memoria_tfg/Plantilla Tf
-G/proyect.tex"
-
-(c:/Users/santi/Desktop/cuarto/TFG/linceus-assistant/memoria_tfg/Plantilla TfG/
-proyect.tex
+**./proyect.tex
+(proyect.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
 (pclass.cls
@@ -864,8 +860,8 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 (C:\Program Files\MiKTeX\tex/latex/xurl\xurl.sty
 Package: xurl 2022/01/09 v 0.10 modify URL breaks
 )
-LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 4
-7.
+LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 8
+0.
 
 (C:\Program Files\MiKTeX\tex/latex/psnfss\ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
@@ -880,24 +876,24 @@ Package babel Info: 'spanish' activates 'spanish' shorthands.
 )
 \openout1 = `proyect.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 80.
+LaTeX Font Info:    ... okay on input line 80.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 80.
+LaTeX Font Info:    ... okay on input line 80.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 80.
+LaTeX Font Info:    ... okay on input line 80.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 80.
+LaTeX Font Info:    ... okay on input line 80.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 80.
+LaTeX Font Info:    ... okay on input line 80.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 80.
+LaTeX Font Info:    ... okay on input line 80.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 80.
+LaTeX Font Info:    ... okay on input line 80.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 80.
+LaTeX Font Info:    ... okay on input line 80.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 80.
+LaTeX Font Info:    ... okay on input line 80.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -960,46 +956,45 @@ fg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
 \c@lstlisting=\count362
-Package hyperref Info: Link coloring OFF on input line 47.
+Package hyperref Info: Link coloring OFF on input line 80.
  (proyect.out) (proyect.out)
 \@outlinefile=\write4
 \openout4 = `proyect.out'.
 
-<img/us.jpg, id=1098, 36.135pt x 36.135pt>
-File: img/us.jpg Graphic file (type jpg)
-<use img/us.jpg>
-Package pdftex.def Info: img/us.jpg  used on input line 56.
-(pdftex.def)             Requested size: 90.33722pt x 90.33722pt.
-LaTeX Font Info:    Trying to load font information for OT1+phv on input line 5
-6.
+<img/US_etsii_logo.png, id=1098, 2835.59375pt x 522.95375pt>
+File: img/US_etsii_logo.png Graphic file (type png)
+<use img/US_etsii_logo.png>
+Package pdftex.def Info: img/US_etsii_logo.png  used on input line 89.
+(pdftex.def)             Requested size: 307.29028pt x 56.67126pt.
+LaTeX Font Info:    Trying to load font information for OT1+phv on input line 8
+9.
 
 (C:\Program Files\MiKTeX\tex/latex/psnfss\ot1phv.fd
 File: ot1phv.fd 2020/03/25 scalable font definitions for OT1/phv.
-) [1
-
-
-{C:/Users/santi/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/sant
-i/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <./img/us.jpg>] (t
-ocdef.tex)
-(Capitulos/cita.tex
-LaTeX Font Info:    Trying to load font information for U+msa on input line 13.
+)
+LaTeX Font Info:    Trying to load font information for U+msa on input line 89.
 
 
 (C:\Users\santi\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 13.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 89.
 
 
 (C:\Users\santi\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Trying to load font information for U+lasy on input line 13
+LaTeX Font Info:    Trying to load font information for U+lasy on input line 89
 .
 
 (C:\Users\santi\AppData\Local\Programs\MiKTeX\tex/latex/base\ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
-)
+) [1
+
+
+{C:/Users/santi/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/sant
+i/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <./img/US_etsii_lo
+go.png>] (tocdef.tex) (Capitulos/cita.tex
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
 been already used, duplicate ignored
 <to be read again> 
@@ -1690,27 +1685,27 @@ Underfull \hbox (badness 10000) in paragraph at lines 192--192
  []
 
 [67]
-<img/conversacion_ejemplo.png, id=2158, 1426.57968pt x 620.3175pt>
+<img/conversacion_ejemplo.png, id=2163, 1426.57968pt x 620.3175pt>
 File: img/conversacion_ejemplo.png Graphic file (type png)
 <use img/conversacion_ejemplo.png>
 Package pdftex.def Info: img/conversacion_ejemplo.png  used on input line 208.
 (pdftex.def)             Requested size: 426.79135pt x 185.5761pt.
-<img/admin_home.png, id=2160, 1443.14156pt x 621.82312pt>
+<img/admin_home.png, id=2164, 1443.14156pt x 621.82312pt>
 File: img/admin_home.png Graphic file (type png)
 <use img/admin_home.png>
 Package pdftex.def Info: img/admin_home.png  used on input line 214.
 (pdftex.def)             Requested size: 426.79135pt x 183.89166pt.
-<img/admin_conversaciones.png, id=2161, 1428.08531pt x 620.3175pt>
+<img/admin_conversaciones.png, id=2165, 1428.08531pt x 620.3175pt>
 File: img/admin_conversaciones.png Graphic file (type png)
 <use img/admin_conversaciones.png>
 Package pdftex.def Info: img/admin_conversaciones.png  used on input line 220.
 (pdftex.def)             Requested size: 426.79135pt x 185.3868pt.
-<img/admin_horarios.png, id=2162, 1425.82687pt x 620.3175pt>
+<img/admin_horarios.png, id=2166, 1425.82687pt x 620.3175pt>
 File: img/admin_horarios.png Graphic file (type png)
 <use img/admin_horarios.png>
 Package pdftex.def Info: img/admin_horarios.png  used on input line 226.
 (pdftex.def)             Requested size: 426.79135pt x 185.6802pt.
-<img/admin_profesores.png, id=2163, 1425.82687pt x 620.3175pt>
+<img/admin_profesores.png, id=2167, 1425.82687pt x 620.3175pt>
 File: img/admin_profesores.png Graphic file (type png)
 <use img/admin_profesores.png>
 Package pdftex.def Info: img/admin_profesores.png  used on input line 232.
@@ -1742,13 +1737,13 @@ tm/m/it/10.95 Text-to-SQL\OT1/ptm/m/n/10.95 ) me-dian-te el mo-de-lo
  []
 
 [72]
-<img/diagrama_componentes.png, id=2195, 1854.93pt x 841.1425pt>
+<img/diagrama_componentes.png, id=2199, 1854.93pt x 841.1425pt>
 File: img/diagrama_componentes.png Graphic file (type png)
 <use img/diagrama_componentes.png>
 Package pdftex.def Info: img/diagrama_componentes.png  used on input line 60.
 (pdftex.def)             Requested size: 667.64177pt x 302.7469pt.
  [73 <./img/diagrama_componentes.png (PNG copy)>]
-<img/diagrama_despliegue.png, id=2204, 1413.28pt x 1035.87pt>
+<img/diagrama_despliegue.png, id=2208, 1413.28pt x 1035.87pt>
 File: img/diagrama_despliegue.png Graphic file (type png)
 <use img/diagrama_despliegue.png>
 Package pdftex.def Info: img/diagrama_despliegue.png  used on input line 90.
@@ -3098,7 +3093,7 @@ File: img/admin_conversaciones.png Graphic file (type png)
 <use img/admin_conversaciones.png>
 Package pdftex.def Info: img/admin_conversaciones.png  used on input line 392.
 (pdftex.def)             Requested size: 426.79135pt x 185.3868pt.
-<img/admin_stats.png, id=2540, 1442.38875pt x 621.07031pt>
+<img/admin_stats.png, id=2544, 1442.38875pt x 621.07031pt>
 File: img/admin_stats.png Graphic file (type png)
 <use img/admin_stats.png>
 Package pdftex.def Info: img/admin_stats.png  used on input line 399.
@@ -3117,12 +3112,12 @@ Cap\'{\i }tulo 12.
 
 ] [118] [119] [120] [121] [122] [123]) (Capitulos/manual.tex [124] [125]
 Cap\'{\i }tulo 13.
-<img/widget_cerrado.png, id=2651, 1427.3325pt x 622.57594pt>
+<img/widget_cerrado.png, id=2655, 1427.3325pt x 622.57594pt>
 File: img/widget_cerrado.png Graphic file (type png)
 <use img/widget_cerrado.png>
 Package pdftex.def Info: img/widget_cerrado.png  used on input line 25.
 (pdftex.def)             Requested size: 426.79135pt x 186.15674pt.
-<img/widget_abierto.png, id=2653, 1425.82687pt x 621.07031pt>
+<img/widget_abierto.png, id=2657, 1425.82687pt x 621.07031pt>
 File: img/widget_abierto.png Graphic file (type png)
 <use img/widget_abierto.png>
 Package pdftex.def Info: img/widget_abierto.png  used on input line 37.
@@ -3130,17 +3125,17 @@ Package pdftex.def Info: img/widget_abierto.png  used on input line 37.
 [126
 
 ] [127 <./img/widget_cerrado.png> <./img/widget_abierto.png>]
-<img/ejemplo_asignatura.png, id=2668, 365.86688pt x 496.85625pt>
+<img/ejemplo_asignatura.png, id=2672, 365.86688pt x 496.85625pt>
 File: img/ejemplo_asignatura.png Graphic file (type png)
 <use img/ejemplo_asignatura.png>
 Package pdftex.def Info: img/ejemplo_asignatura.png  used on input line 85.
 (pdftex.def)             Requested size: 362.77525pt x 492.68524pt.
-<img/ejemplo_horario.png, id=2669, 351.56343pt x 489.32813pt>
+<img/ejemplo_horario.png, id=2673, 351.56343pt x 489.32813pt>
 File: img/ejemplo_horario.png Graphic file (type png)
 <use img/ejemplo_horario.png>
 Package pdftex.def Info: img/ejemplo_horario.png  used on input line 95.
 (pdftex.def)             Requested size: 362.77525pt x 504.93198pt.
-<img/ejemplo_profesor.png, id=2670, 353.06906pt x 494.59781pt>
+<img/ejemplo_profesor.png, id=2674, 353.06906pt x 494.59781pt>
 File: img/ejemplo_profesor.png Graphic file (type png)
 <use img/ejemplo_profesor.png>
 Package pdftex.def Info: img/ejemplo_profesor.png  used on input line 105.
@@ -3157,7 +3152,7 @@ Underfull \hbox (badness 3635) in paragraph at lines 150--150
 []|\OT1/ptm/m/n/10.95 Sincronizar ti-tu-la-cio-nes des-de
  []
 
-<img/admin_asignaturas.png, id=2700, 1428.83812pt x 620.3175pt>
+<img/admin_asignaturas.png, id=2704, 1428.83812pt x 620.3175pt>
 File: img/admin_asignaturas.png Graphic file (type png)
 <use img/admin_asignaturas.png>
 Package pdftex.def Info: img/admin_asignaturas.png  used on input line 165.
@@ -3168,7 +3163,7 @@ File: img/admin_profesores.png Graphic file (type png)
 Package pdftex.def Info: img/admin_profesores.png  used on input line 193.
 (pdftex.def)             Requested size: 426.79135pt x 185.6802pt.
  [134]
-<img/admin_horarios_con_boton_generar_horarios.png, id=2714, 1441.63594pt x 621
+<img/admin_horarios_con_boton_generar_horarios.png, id=2718, 1441.63594pt x 621
 .07031pt>
 File: img/admin_horarios_con_boton_generar_horarios.png Graphic file (type png)
 
@@ -4998,7 +4993,7 @@ Cap\'{\i }tulo 15.
 
 ]) (Capitulos/video_presentacion.tex [150]
 Cap\'{\i }tulo 16.
-<img/youtube-demo-thumbnail.png, id=2892, 2762.32pt x 1541.76pt>
+<img/youtube-demo-thumbnail.png, id=2896, 2762.32pt x 1541.76pt>
 File: img/youtube-demo-thumbnail.png Graphic file (type png)
 <use img/youtube-demo-thumbnail.png>
 Package pdftex.def Info: img/youtube-demo-thumbnail.png  used on input line 30.
@@ -5029,16 +5024,16 @@ LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
 Package rerunfilecheck Info: File `proyect.out' has not changed.
-(rerunfilecheck)             Checksum: 8190A9E1403C10208F16C5B944F3C375;53219.
+(rerunfilecheck)             Checksum: 06DB2391F31CF2D570F38484FED87C31;53219.
  ) 
 Here is how much of TeX's memory you used:
- 29166 strings out of 467871
- 528875 string characters out of 5418376
- 1168352 words of memory out of 5000000
- 56573 multiletter control sequences out of 15000+600000
- 702822 words of font info for 185 fonts, out of 8000000 for 9000
+ 29169 strings out of 467871
+ 528827 string characters out of 5418376
+ 1168425 words of memory out of 5000000
+ 56576 multiletter control sequences out of 15000+600000
+ 705724 words of font info for 189 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,13n,94p,2004b,2083s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,13n,94p,1926b,2083s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\santi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm
 1095.pk><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
 ts/cm/cmbx10.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/publ
@@ -5063,9 +5058,9 @@ s/type1/urw/times/utmb8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/font
 s/type1/urw/times/utmbi8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fon
 ts/type1/urw/times/utmr8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fon
 ts/type1/urw/times/utmri8a.pfb>
-Output written on proyect.pdf (162 pages, 4545335 bytes).
+Output written on proyect.pdf (162 pages, 4644123 bytes).
 PDF statistics:
- 3288 PDF objects out of 3580 (max. 8388607)
- 837 named destinations out of 1000 (max. 500000)
+ 3293 PDF objects out of 3580 (max. 8388607)
+ 838 named destinations out of 1000 (max. 500000)
  2282 words of extra memory for PDF output out of 10000 (max. 10000000)
 

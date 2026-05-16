@@ -10,7 +10,7 @@ Este capítulo describe la arquitectura del sistema LinceUS Assistant, las decis
 
 \section{Arquitectura general}\label{sec:arq-general}
 
-LinceUS Assistant sigue una \textbf{arquitectura por capas} (\textit{layered architecture}) con tres niveles claramente diferenciados: capa de presentación, capa de procesamiento conversacional y capa de datos. Esta separación permite que cada capa evolucione de forma independiente y que los cambios en una no afecten directamente a las demás, siempre que se respeten las interfaces definidas entre ellas.
+LinceUS Assistant sigue una \textbf{arquitectura por capas} (\textit{layered architecture})~\cite{bass2021sap} con tres niveles claramente diferenciados: capa de presentación, capa de procesamiento conversacional y capa de datos. Esta separación permite que cada capa evolucione de forma independiente y que los cambios en una no afecten directamente a las demás, siempre que se respeten las interfaces definidas entre ellas~\cite{martin2017clean}.
 
 \subsection{Capa de presentación}\label{subsec:capa-presentacion}
 
@@ -20,7 +20,7 @@ Las principales características de esta capa son:
 
 \begin{itemize}
     \item \textbf{Independencia tecnológica}: El widget no depende de frameworks como React o Angular; se implementa con JavaScript estándar (ES6+), lo que minimiza las dependencias y facilita su integración en páginas web existentes mediante una única etiqueta \texttt{<script>}.
-    \item \textbf{Comunicación REST}: El widget se comunica con el servidor Rasa mediante peticiones HTTP POST al endpoint \texttt{/webhooks/rest/webhook}, enviando mensajes del usuario y recibiendo las respuestas del asistente en formato JSON.
+    \item \textbf{Comunicación REST}: El widget se comunica con el servidor Rasa mediante peticiones HTTP POST al endpoint \texttt{/webhooks/rest/webhook}, enviando mensajes del usuario y recibiendo las respuestas del asistente en formato JSON. El estilo arquitectónico REST, definido por Fielding~\cite{fielding2000rest}, garantiza la ausencia de estado en el servidor y la interoperabilidad con cualquier cliente HTTP.
     \item \textbf{Renderizado enriquecido}: Soporta formato Markdown en las respuestas del bot, incluyendo tablas, enlaces y listas, para presentar la información académica de forma clara y estructurada.
     \item \textbf{Diseño institucional}: Emplea la identidad visual de la Universidad de Sevilla (colores corporativos, logotipo) para integrarse visualmente en el entorno universitario.
 \end{itemize}
@@ -83,7 +83,7 @@ A continuación se describe la responsabilidad de cada componente y las interfac
 
 \section{Diagrama de despliegue}\label{sec:diagrama-despliegue}
 
-El diagrama de despliegue describe la distribución física de los componentes del sistema en nodos de ejecución y las conexiones de red entre ellos. La Figura~\ref{fig:despliegue} muestra esta configuración.
+El diagrama de despliegue describe la distribución física de los componentes del sistema en nodos de ejecución y las conexiones de red entre ellos~\cite{bass2021sap}. El sistema utiliza contenedores Docker~\cite{docker2024} orquestados mediante Docker Compose, lo que proporciona reproducibilidad del entorno y separación de responsabilidades entre servicios siguiendo el patrón de despliegue de microservicios independientes~\cite{newman2021microservices}. La Figura~\ref{fig:despliegue} muestra esta configuración.
 
 \begin{figure}[p]
 \centering

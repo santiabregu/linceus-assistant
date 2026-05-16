@@ -43,10 +43,43 @@
 % Permite partir URLs largas en la bibliografia en cualquier caracter.
 \usepackage{xurl}
 
+% Portada: logo combinado US+ETSII, líneas decorativas en rojo US y mayor
+% jerarquía tipográfica. makeatletter necesario para acceder a los @-comandos de pclass.
+\makeatletter
+\renewcommand{\hacerportada}{%
+  \begin{titlepage}
+  \centering
+  \includegraphics[width=0.72\linewidth]{img/US_etsii_logo}
+
+  \par\vspace{0.9cm}
+  {\color{usred}\rule{\linewidth}{1.2pt}}
+  \par\vspace{1.4cm}
+
+  \begin{center}\sffamily
+    {\large Trabajo fin de \@tipo{}}\\[0.5cm]
+    {\large \@titulacion{}}\\[1.8cm]
+    \parbox{\linewidth}{\centering\fontsize{17}{36}\selectfont\bfseries \@titulopro{}\par}\\[2cm]
+    {\large Realizado por}\\[0.35cm]
+    {\large\bfseries \@autorUno{}}\\[1.6cm]
+    {\large Dirigido por}\\[0.35cm]
+    {\large\bfseries \@tutor}\\[1.4cm]
+    {\large Departamento}\\[0.2cm]
+    {\large \@departamento}
+  \end{center}
+
+  \vfill
+  {\color{usred}\rule{\linewidth}{1.2pt}}\\[0.5cm]
+  \begin{flushright}
+    \sffamily{\large Sevilla,\ \@diad}
+  \end{flushright}
+  \end{titlepage}
+  {\pagestyle{empty}\cleardoublepage}%
+}
+\makeatother
 
 \begin{document}
 \tipo{Grado}
-\titulopro{Linceus Assistant: chatbot universitario con RAG para el alumnado de la ETSII}
+\titulopro{Linceus Assistant: asistente conversacional con RAG para la orientación académica universitaria}
 \tutor{Jos\'e Antonio Parejo Maestre}
 \departamento{Lenguajes y Sistemas Inform\'aticos}
 \autores{Santia Bregu}{{\ }}
@@ -105,9 +138,9 @@
      \input{Capitulos/05_planificacion}
 
 % =====================================================
-% PARTE III: DISEÑO E IMPLEMENTACIÓN
+% PARTE III: ANÁLISIS, DISEÑO E IMPLEMENTACIÓN
 % =====================================================
-\part{Diseño e Implementación}
+\part{Análisis, Diseño e Implementación}
 
      \input{Capitulos/requisitos}
      \input{Capitulos/arquitectura_diseno}

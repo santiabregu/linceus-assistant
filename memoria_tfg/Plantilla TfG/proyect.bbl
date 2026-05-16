@@ -212,10 +212,14 @@ G.~van Rossum, B.~Warsaw, and N.~Coghlan, ``{PEP 8} -- style guide for {P}ython
   \url{https://eslint.org/}, 2013.
 \newblock Consultado en abril de 2026.
 
-\bibitem{infojobs2025}
-{InfoJobs}, ``Salario medio de un desarrollador j{\'u}nior en {E}spa{\~n}a
-  (informe 2025).'' \url{https://www.infojobs.net/}, 2025.
-\newblock Consultado en mayo de 2026.
+\bibitem{jdaPreciosTIC2018}
+{Junta de Andaluc{\'i}a}, ``Informe final sobre la consulta preliminar del
+  mercado: perfiles profesionales {\'a}mbito inform{\'a}tico.''
+  \url{https://juntadeandalucia.es/temas/contratacion-publica/perfiles-licitaciones/consultas-preliminares/detalle/000000078484.html},
+  2018.
+\newblock Consultado en mayo de 2026. Tarifa de referencia para el perfil
+  ``Analista programador J2EE/Web (Junior)'': 28,37 €/h sin IVA (media
+  acotada todos los valores).
 
 \bibitem{rasaForumMemory}
 {Rasa Community}, ``{R}educing memory usage for {R}asa {O}pen {S}ource (foro

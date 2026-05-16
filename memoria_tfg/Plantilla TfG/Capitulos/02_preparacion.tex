@@ -248,7 +248,7 @@ Estudios comparativos muestran que Gemini compite con GPT-4 en comprensión y ge
 La integración y el soporte técnico se refieren a la \textbf{facilidad con la que un LLM puede incorporarse en el stack tecnológico existente} y al nivel de recursos disponibles para resolver problemas durante el desarrollo. Factores como la existencia de \textbf{SDKs oficiales, librerías en distintos lenguajes, ejemplos prácticos y documentación clara} determinan la rapidez de adopción. Además, contar con un ecosistema sólido y acuerdos institucionales (como convenios académicos) puede simplificar la integración y asegurar \textbf{mayor estabilidad a largo plazo}. Esta característica es clave, ya que permite centrar el esfuerzo en el desarrollo del chatbot sin tener que invertir demasiado tiempo en resolver barreras técnicas de conexión con el modelo.
 
 \begin{itemize}
-    \item Gemini ofrece SDKs y buena integración en Python/JavaScript, lo que encaja perfectamente con tu stack (Python + React).
+    \item Gemini ofrece SDKs oficiales para Python y JavaScript, lo que encaja con el stack técnico del proyecto (Python para el servidor de acciones y el panel de administración, JavaScript vanilla para el widget frontend).
     \item GPT también tiene SDKs muy maduros, aunque con la barrera de costes.
     \item DeepSeek todavía no cuenta con ecosistema sólido.
     \item Hugging Face API es flexible pero requiere seleccionar y mantener modelos específicos.
@@ -441,4 +441,48 @@ Este caso cubre las preguntas cuyo dato vive dentro del plan docente oficial de 
     \item Escenario positivo: el usuario pregunta \textit{``¿Quién da Fundamentos de Programación?''} o \textit{``Profesores del Departamento de Lenguajes y Sistemas Informáticos''} y el asistente devuelve la lista correspondiente con sus datos de contacto.
     \item Escenario negativo: el usuario pide profesorado de una asignatura o departamento que no figura en la base de datos y el asistente informa del error.
 \end{itemize}
+
+\subsection{Diagrama de casos de uso}\label{subsec:cu-diagrama}
+
+La Figura~\ref{fig:use-case-diagram} presenta el diagrama de casos de uso UML que sintetiza los casos descritos en las secciones anteriores. Los dos actores identificados en la Sección~\ref{sec:req-actores} del Capítulo~\ref{cap:requisitos} aparecen fuera del límite del sistema: el \textbf{Estudiante} agrupa los cuatro dominios funcionales de consulta, y el \textbf{Administrador} concentra las operaciones de mantenimiento del corpus. La separación física de ambos actores refleja que sus flujos de trabajo no se solapan: el panel de administración está protegido por autenticación y no es accesible desde el widget del alumno.
+
+\begin{figure}[hbtp]
+\centering
+\begin{tikzpicture}[
+  uc/.style={ellipse, draw=usteal!70, fill=usteal!8, text width=3.4cm,
+             align=center, font=\small\sffamily, minimum height=1.0cm},
+  actor/.style={rectangle, draw=black!55, fill=black!5, rounded corners=3pt,
+                minimum width=2.5cm, minimum height=0.8cm,
+                align=center, font=\small\sffamily\bfseries}
+]
+% --- System boundary ---
+\draw[dashed, rounded corners=6pt, thick, black!35]
+  (2.0, 0.4) rectangle (8.5, -9.2);
+\node[font=\small\sffamily\bfseries] at (5.25, 0.75)
+  {Linceus Assistant};
+
+% --- Use cases ---
+\node[uc] (uc1) at (5.25, -0.7)  {Gestionar contexto académico};
+\node[uc] (uc2) at (5.25, -2.4)  {Consultar asignaturas};
+\node[uc] (uc3) at (5.25, -4.1)  {Consultar horarios};
+\node[uc] (uc4) at (5.25, -5.8)  {Consultar profesorado};
+\node[uc] (uc5) at (5.25, -8.2)  {Gestionar panel de administración};
+
+% --- Actors ---
+\node[actor] (est) at (-0.2, -3.25) {Estudiante};
+\node[actor] (adm) at (10.7, -8.2)  {Administrador};
+
+% --- Asociaciones Estudiante ---
+\draw[thick] (est.east) -- (uc1.west);
+\draw[thick] (est.east) -- (uc2.west);
+\draw[thick] (est.east) -- (uc3.west);
+\draw[thick] (est.east) -- (uc4.west);
+
+% --- Asociación Administrador ---
+\draw[thick] (adm.west) -- (uc5.east);
+\end{tikzpicture}
+\caption{Diagrama de casos de uso UML del sistema Linceus Assistant.
+Los actores se sitúan fuera del límite del sistema (línea discontinua).}
+\label{fig:use-case-diagram}
+\end{figure}
 

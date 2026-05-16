@@ -116,7 +116,7 @@ La extensión \textbf{pgvector}~\cite{pgvectorgithub} añade el tipo \texttt{vec
 
 \section{Tecnologías de frontend}\label{sec:frontend}
 
-El frontend del proyecto está formado por dos piezas: el \textbf{widget de chat} embebible en cualquier página de la US y el \textbf{panel de administración} que da acceso a las importaciones de datos y a las conversaciones registradas. Ambas son aplicaciones estáticas (HTML, CSS y JavaScript ES6+ sin \textit{frameworks} reactivos) servidas por Nginx en producción y por el servidor HTTP de Python en desarrollo.
+El frontend del proyecto está formado por dos piezas: el \textbf{widget de chat} embebible en cualquier página de la US y el \textbf{panel de administración} que da acceso a las importaciones de datos y a las conversaciones registradas. Ambas son aplicaciones estáticas (HTML, CSS y JavaScript ES6+ sin \textit{frameworks} reactivos) servidas por Nginx en producción y por el servidor HTTP de Python en desarrollo. La separación entre el widget del usuario, el panel de administración, el servidor conversacional y el servidor de acciones sigue los principios de desacoplamiento propios de las arquitecturas de microservicios~\cite{newman2021microservices}.
 
 \subsection{Widget de chat}
 

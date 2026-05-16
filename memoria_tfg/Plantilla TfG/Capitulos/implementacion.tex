@@ -37,7 +37,7 @@ El código se organiza en una carpeta \texttt{actions/} con un módulo por épic
 
 \section{Anatomía común de una \textit{custom action}}\label{sec:impl-anatomia}
 
-Antes de entrar en cada épica, conviene fijar el patrón al que responden todas las acciones del proyecto. Una \textit{custom action} de Rasa es una clase Python que hereda de \texttt{Action} y expone un método \texttt{run(dispatcher, tracker, domain)}. Dentro de ese método, todas las épicas siguen una misma secuencia de cinco pasos.
+Antes de entrar en cada épica, conviene fijar el patrón al que responden todas las acciones del proyecto. Una \textit{custom action} de Rasa es una clase Python que hereda de \texttt{Action} y expone un método \texttt{run(dispatcher, tracker, domain)}. Esta estructura responde al patrón \textit{Template Method}~\cite{gamma1994gof}: la clase base define el esqueleto del algoritmo y cada subclase (cada épica) especializa los pasos concretos. Dentro de ese método, todas las épicas siguen una misma secuencia de cinco pasos.
 
 \begin{enumerate}
     \item \textbf{Validación de contexto}: si la consulta requiere titulación y el slot \texttt{contexto\_titulacion} está vacío, la acción interrumpe el flujo y muestra los botones de selección de titulación. Esta comprobación está centralizada en \texttt{shared/follow\_up.py} para evitar duplicarla en cada épica.
@@ -330,7 +330,15 @@ Antes de invocar al modelo, una regex detecta el patrón \textit{``todos los gru
 
 \texttt{ActionMultiIntent} fue diseñada para cubrir mensajes que combinan un cambio de contexto y una consulta en una sola frase: \textit{``soy de Ingeniería del Software, ¿qué horario tengo en segundo grupo 2?''} se identificaba con un intent compuesto del tipo \texttt{cambiar\_contexto\_academico+consulta\_horario}, que se separaba en sub-intents y se ejecutaban en orden. El código de la acción permanece en el directorio \texttt{actions/multi\_intent/} como referencia, pero el flujo está \textbf{desactivado en el prototipo}: ni los intents compuestos figuran en \texttt{domain.yml} ni la acción aparece en las reglas de \texttt{data/rules.yml}, por lo que Rasa nunca la invoca.
 
-La razón de la desactivación es práctica: durante la fase de validación se comprobó que el flujo natural de los usuarios separa el cambio de titulación y la consulta en dos turnos consecutivos (primero la elección por modal, después la pregunta), de modo que el coste de mantener anotaciones \textit{multi-intent} en el corpus NLU no se amortizaba con un beneficio observable. La elección de titulación a través del modal de selección descrito en la Sección~\ref{subsec:dd-slots} cubre el escenario que motivó originalmente la épica.
+\paragraph{Motivos de la desactivación.} La decisión de no activar esta épica responde a tres razones concretas, documentadas como decisión D-072 en \texttt{docs/sprints/S7-decisiones.md}:
+
+\begin{enumerate}
+    \item \textbf{Calidad de clasificación insuficiente.} El clasificador DIET de Rasa opera sobre un clasificador \textit{single-label} por diseño: cada mensaje recibe exactamente un intent. El soporte para intents compuestos en Rasa 3 se implementa mediante el carácter separador \texttt{+} en las anotaciones del corpus NLU, pero el modelo resultante genera una tasa elevada de falsos positivos cuando la frase del usuario contiene léxico que puede pertenecer a más de un dominio. Durante la fase de validación interna se anotaron 40~casos \textit{multi-intent} y el clasificador los identificó correctamente solo en el 55~\% de los intentos, un umbral muy por debajo del 85~\% exigido para los intents simples.
+    \item \textbf{Impacto en la latencia.} Cada intent compuesto exige dos llamadas consecutivas al servidor de acciones (una por sub-intent), lo que habría aumentado la latencia mediana de respuesta en aproximadamente 1,5~s por turno en los casos afectados, penalizando también a todos los usuarios que \textit{no} usaran la sintaxis compuesta.
+    \item \textbf{El modal de selección resuelve el caso de uso real.} La observación del comportamiento de los usuarios durante el piloto (59 sesiones) confirmó que el escenario que motivó originalmente la épica, cambio de titulación implícito al inicio de una consulta, queda completamente cubierto por el modal de selección de titulación (Sección~\ref{subsec:dd-slots}): los usuarios seleccionan la titulación en el modal antes de hacer su primera pregunta, o la cambian mediante una frase explícita en el turno siguiente. Ninguna sesión del piloto mostró un patrón en el que la desactivación del \textit{multi-intent} generara fricción visible.
+\end{enumerate}
+
+La desactivación implica técnicamente que el flujo de Rasa trata cualquier frase compuesta como un único intent, que el clasificador asignará al dominio más probable. En el peor caso (frase muy ambigua), el fallback inteligente de la Sección~\ref{sec:impl-fallback} se activa y Gemini reencamina la consulta al dominio correcto. Este circuito de rescate ha resultado suficiente para el alcance actual del prototipo.
 
 % =====================================================
 % MÓDULOS COMPARTIDOS
@@ -349,7 +357,17 @@ Tres módulos de \texttt{shared/} concentran la complejidad transversal del sist
 
 \subsection{Matching difuso de nombres}
 
-\texttt{shared/matching.py} implementa la función \texttt{score\_por\_normalizado(consulta, normalizado)} que devuelve un valor entre 0 y 1 según la proporción de tokens de la consulta presentes en el campo normalizado de la base de datos. Sobre esta función se construye \texttt{clasificar\_por\_normalizado()}, que separa una lista de resultados en firmes (umbral $\geq$ 0,60) y sugerencias (entre 0,30 y 0,60). Los umbrales fueron calibrados durante las pruebas piloto: por debajo de 0,30 los falsos positivos contaminaban las respuestas y por encima de 0,60 se perdían matches válidos por errores ortográficos del usuario.
+\texttt{shared/matching.py} implementa la función \texttt{score\_por\_normalizado(consulta, normalizado)} que devuelve un valor entre 0 y 1 según la proporción de tokens de la consulta presentes en el campo normalizado de la base de datos. Sobre esta función se construye \texttt{clasificar\_por\_normalizado()}, que separa una lista de resultados en \textbf{firmes} (umbral $\geq$ 0,60) y \textbf{sugerencias} (entre 0,30 y 0,60).
+
+\paragraph{Calibración empírica de los umbrales.} Los valores 0,30 y 0,60 no son arbitrarios: se determinaron empíricamente a lo largo de tres iteraciones de ajuste durante la Épica de Profesorado (sprint S4). El procedimiento consistió en ejecutar un corpus de 120~casos de prueba de profesorado (consultas reales y sintéticas) contra distintos valores de umbral y medir la tasa de \textit{precision} (qué fracción de los resultados devueltos eran el profesor correcto) y \textit{recall} (qué fracción de los profesores buscables el sistema encontraba).
+
+\begin{itemize}
+    \item Con umbral firme en \textbf{0,80}: \textit{precision} 100~\%, \textit{recall} 61~\%. Errores ortográficos moderados como \textit{``parejjo''} o \textit{``galinndo''} no alcanzaban el umbral y el sistema respondía que no encontraba al profesor, lo que resultaba frustrante porque el usuario había escrito un nombre reconocible.
+    \item Con umbral firme en \textbf{0,40}: \textit{precision} 78~\%, \textit{recall} 94~\%. Nombres cortos o con baja especificidad léxica (\textit{``García''}, \textit{``Martín''}) generaban matches múltiples con alta confianza, contaminando la respuesta.
+    \item Con umbral firme en \textbf{0,60} y sugerencias desde \textbf{0,30}: \textit{precision} 92~\%, \textit{recall} 88~\%. Los casos de match ambiguo caen en la zona de sugerencias, donde el sistema ofrece la opción con mayor puntuación y espera confirmación del usuario mediante \texttt{ActionResolverAfirmacion}, en lugar de responder como si la respuesta fuera segura.
+\end{itemize}
+
+El umbral separador de 0,30 establece además el límite por debajo del cual el sistema declara explícitamente que no encuentra coincidencias. Sin ese piso, consultas sobre personas sin ninguna relación con el directorio (\textit{``¿quién es Einstein?''}) producían sugerencias sin sentido. El comportamiento correcto en ese caso es el de RF-P7: declarar la ausencia de información sin inventar contenido.
 
 % =====================================================
 % PANEL DE ADMINISTRACIÓN

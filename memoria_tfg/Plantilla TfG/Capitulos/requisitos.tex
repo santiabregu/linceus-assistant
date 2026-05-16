@@ -174,22 +174,25 @@ Los requisitos no funcionales se enuncian en términos medibles y se cruzan con 
 \begin{table}[hbtp]
 \centering
 \small
-\caption{Requisitos no funcionales y evidencia.}\label{tab:rnf}
-\begin{tabular}{|p{1.4cm}|p{4.5cm}|p{4.0cm}|p{2.5cm}|}
+\caption{Requisitos no funcionales, umbrales y valores alcanzados.}\label{tab:rnf}
+\begin{tabular}{|p{1.0cm}|p{3.6cm}|p{3.2cm}|p{2.2cm}|p{2.4cm}|}
 \hline
-\textbf{ID} & \textbf{Descripción} & \textbf{Umbral} & \textbf{Evidencia} \\ \hline
-RNF-1 & Latencia mediana de respuesta extremo a extremo. & p50 $\leq$ 4~s & Cap.~\ref{cap:pruebas} (3,4~s) \\ \hline
-RNF-2 & Latencia en cola larga. & p95 $\leq$ 12~s & Cap.~\ref{cap:pruebas} (10,5~s) \\ \hline
-RNF-3 & Coste medio por turno (servicio Gemini). & $\leq$ 0,05~cts & Cap.~\ref{cap:pruebas} (0,012~cts) \\ \hline
-RNF-4 & Tasa de éxito en suite de aceptación E2E. & $\geq$ 90~\% & Cap.~\ref{cap:pruebas} (94,3~\%) \\ \hline
-RNF-5 & Tasa de éxito sobre tráfico real post-despliegue. & $\geq$ 85~\% & Cap.~\ref{cap:pruebas} (98,3~\%) \\ \hline
-RNF-6 & Disponibilidad del servicio. & $\geq$ 99~\% mensual & Pendiente fase 2 \\ \hline
-RNF-7 & Idioma soportado. & Español peninsular & Validado en piloto \\ \hline
-RNF-8 & Compatibilidad de navegadores. & Chrome, Firefox, Edge y Safari modernos. & Verificado manualmente \\ \hline
-RNF-9 & Diseño \textit{responsive} en dispositivos móviles. & Funcional en pantallas $\geq$ 320~px. & Verificado manualmente \\ \hline
-RNF-10 & Anonimato del usuario y ausencia de PII. & Sesiones identificadas mediante UUID anónimo. & Por diseño \\ \hline
-RNF-11 & Reproducibilidad del despliegue. & \textit{Stack} levantable mediante \texttt{docker compose up}. & Cap.~\ref{cap:manuales} \\ \hline
-RNF-12 & Trazabilidad de decisiones técnicas. & Registro en \texttt{docs/sprints/}. & Sprints S2--S7 \\ \hline
+\textbf{ID} & \textbf{Descripción} & \textbf{Umbral} & \textbf{Valor alcanzado} & \textbf{Evidencia} \\ \hline
+RNF-1 & Latencia mediana extremo a extremo. & p50 $\leq$ 4~s & \textbf{3,4~s} & \S\ref{subsec:no-funcional-latencia} \\ \hline
+RNF-2 & Latencia en cola larga. & p95 $\leq$ 12~s & \textbf{10,5~s} & \S\ref{subsec:no-funcional-latencia} \\ \hline
+RNF-3 & Coste medio por turno (Gemini). & $\leq$ 0,05~cts & \textbf{0,012~cts} & \S\ref{subsec:no-funcional-coste} \\ \hline
+RNF-4 & Tasa de éxito en suite E2E. & $\geq$ 90~\% & \textbf{94,3~\%} (150/159) & \S\ref{sec:pruebas-e2e} \\ \hline
+RNF-5 & Tasa de éxito en tráfico real. & $\geq$ 85~\% & \textbf{98,3~\%} (58/59 sesiones) & \S\ref{sec:pruebas-trafico} \\ \hline
+RNF-6 & Disponibilidad del servicio. & $\geq$ 99~\% mensual & No medido (fase 2) & Pendiente \\ \hline
+RNF-7 & Idioma soportado. & Español peninsular & \textbf{100~\%} consultas en es & Piloto (59 sesiones) \\ \hline
+RNF-8 & Compatibilidad navegadores. & Chrome, Firefox, Edge, Safari modernos & \textbf{4/4} navegadores & Verificado manual \\ \hline
+RNF-9 & Diseño \textit{responsive}. & $\geq$ 320~px & \textbf{320~px} (iPhone SE) & Verificado manual \\ \hline
+RNF-10 & Anonimato y ausencia de PII. & UUID anónimo, sin datos pers. & \textbf{Cumplido} por diseño & Auditoría de esquema BD \\ \hline
+RNF-11 & Reproducibilidad del despliegue. & \texttt{docker compose up} & \textbf{Cumplido} (Ubuntu 24.04 + Win 11) & Cap.~\ref{cap:manuales} \\ \hline
+RNF-12 & Trazabilidad de decisiones. & Registro en \texttt{docs/sprints/} & \textbf{72 entradas} D-xxx (S2--S7) & Sprints S2--S7 \\ \hline
+RNF-13 & Seguridad panel admin (Basic Auth HTTPS). & HTTP~401 sin credencial en \texttt{/api/admin/*} & \textbf{Cumplido} (HTTP 401) & Verificado manual en despliegue \\ \hline
+RNF-14 & Usabilidad: primera consulta sin formación previa. & $\leq$ 60~s primera consulta exitosa & \textbf{28~s} mediana (piloto) & Piloto (59 sesiones) \\ \hline
+RNF-15 & Escalabilidad: nueva titulación sin cambio de código. & Solo carga de datos en panel & \textbf{Cumplido} (GII-TI, GII-IC añadidos) & Cap.~\ref{cap:manuales} \\ \hline
 \end{tabular}
 \end{table}
 
@@ -233,6 +236,60 @@ A continuación se recogen las capturas de las dos interfaces principales. Su in
 \caption{Panel de administración: gestión de profesorado.}\label{fig:admin-profesorado}
 \end{figure}
 
+\section{Matrices de trazabilidad}\label{sec:req-trazabilidad}
+
+Las matrices de trazabilidad permiten verificar que los requisitos cubren los objetivos del proyecto y que cada requisito está validado por al menos un caso de prueba. Se presentan dos matrices: la primera cruza los objetivos técnicos del Capítulo~\ref{cap:introduccion} con los requisitos funcionales, y la segunda muestra cómo los requisitos funcionales se validan en el Capítulo~\ref{cap:pruebas}.
+
+\subsection{Objetivos técnicos \texorpdfstring{$\leftrightarrow$}{--} Requisitos funcionales}\label{subsec:traz-obj-rf}
+
+La Tabla~\ref{tab:traz-obj-rf} cruza cada objetivo técnico de la Sección~\ref{subsec:objetivos-tecnicos} con los requisitos funcionales que lo materializan.
+
+\begin{table}[hbtp]
+\centering
+\small
+\caption{Trazabilidad objetivos técnicos -- requisitos funcionales.}\label{tab:traz-obj-rf}
+\begin{tabular}{|p{5.5cm}|p{7.5cm}|}
+\hline
+\textbf{Objetivo técnico} & \textbf{Requisitos funcionales} \\ \hline
+Sistema conversacional Rasa (flujos contextuales) &
+  RF-A1 -- RF-A6, RF-H1 -- RF-H7, RF-P1 -- RF-P7, RF-T1 -- RF-T6 \\ \hline
+Integrar API Gemini (detección de intenciones y generación de respuestas) &
+  RF-A4, RF-A2 (\textit{text-to-SQL}), RF-AD3 (vectorización) \\ \hline
+BD híbrida Supabase + pgvector (estructurada + vectorial) &
+  RF-AD1 -- RF-AD3, RF-A4, RF-P2, RF-P3 \\ \hline
+Acciones personalizadas Python &
+  RF-A1 -- RF-A6, RF-H1 -- RF-H7, RF-P1 -- RF-P7, RF-T1 -- RF-T4 \\ \hline
+\textit{Widget} web ligero e intuitivo &
+  RF-T5, RF-T6 \\ \hline
+Panel de administración (mantenibilidad sin intervención técnica) &
+  RF-AD1 -- RF-AD7 \\ \hline
+Arquitectura escalable (nuevas titulaciones por carga de datos) &
+  RF-T1, RF-T2, RF-AD1, RF-AD2 \\ \hline
+Cumplimiento normativa de protección de datos &
+  RF-T4, RF-AD6, RF-AD7 \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{Requisitos funcionales \texorpdfstring{$\leftrightarrow$}{--} Casos de prueba}\label{subsec:traz-rf-pruebas}
+
+La columna \textit{Pruebas} de cada tabla de requisitos funcionales (Secciones \ref{subsec:rf-asignaturas}--\ref{subsec:rf-admin}) proporciona la traza directa de cada RF a su conjunto de casos de aceptación. La Tabla~\ref{tab:traz-rf-pruebas} consolida esta información indicando, para cada dominio, el número de casos de prueba y la tasa de éxito obtenida en el Capítulo~\ref{cap:pruebas}.
+
+\begin{table}[hbtp]
+\centering
+\small
+\caption{Trazabilidad requisitos funcionales -- cobertura de pruebas por dominio.}\label{tab:traz-rf-pruebas}
+\begin{tabular}{|p{3.0cm}|p{2.0cm}|p{2.2cm}|p{2.0cm}|p{3.4cm}|}
+\hline
+\textbf{Dominio} & \textbf{RFs} & \textbf{IDs de prueba} & \textbf{N.\textordmasculine{} casos} & \textbf{Resultado} \\ \hline
+Asignaturas & RF-A1 -- RF-A6 & E-P*, L-P*, C-P*, RAG-P*, E-S* & 85 & 80/85 PASS (94,1~\%) \\ \hline
+Horarios & RF-H1 -- RF-H7 & H-P*, H-PC*, H-N*, HA-P* & 35 & 34/35 PASS (97,1~\%) \\ \hline
+Profesorado & RF-P1 -- RF-P7 & P-P*, P-PA*, P-T*, P-W*, P-N*, P-S* & 39 & 36/39 PASS (92,3~\%) \\ \hline
+Transversal & RF-T1 -- RF-T6 & CC-P*, CC-N*, F-0*, R-0* & 16 & 16/16 PASS (100~\%) \\ \hline
+\textbf{Total E2E} & \textbf{RF-A -- RF-T} & --- & \textbf{159} & \textbf{150/159 PASS (94,3~\%)} \\ \hline
+Panel admin. & RF-AD1 -- RF-AD7 & AD-*, SINC-*, PLAN-* & 18 & Cobertura parcial (\S\ref{sec:pruebas-admin}) \\ \hline
+\end{tabular}
+\end{table}
+
 \section{Evolución del alcance respecto a la propuesta inicial}\label{sec:req-evolucion}
 
 La propuesta original del proyecto, recogida en el anteproyecto~\cite{segura2024guiatfg}, contemplaba un alcance superior al efectivamente cubierto por el prototipo. La Tabla~\ref{tab:req-evolucion} resume las desviaciones principales y su justificación. En todos los casos las decisiones se han tomado con el objetivo de \textbf{garantizar la calidad de las funcionalidades implementadas}, antes que de cubrir un alcance amplio con calidad insuficiente, en línea con la recomendación de la guía de referencia.
@@ -248,6 +305,7 @@ La propuesta original del proyecto, recogida en el anteproyecto~\cite{segura2024
 Notificaciones \textit{push} a estudiantes & Aplazado & Sustituido por el \textbf{panel de administración}, que ofrece mayor valor a la persona que continúe el proyecto y materializa los requisitos de mantenibilidad y escalabilidad. \\ \hline
 Soporte multilingüe (inglés) & Aplazado & El corpus académico es mayoritariamente español. Se aplaza a fase 2 cuando el sistema esté estabilizado y exista presupuesto para una segunda suite de pruebas. \\ \hline
 Despliegue \textit{on-premise} & Reformulado & La información tratada es de carácter público y la sesión es anónima, por lo que no requiere despliegue en infraestructura propia. Se ha optado por DigitalOcean + Supabase. \\ \hline
+Localización de espacios universitarios & Aplazado & La funcionalidad requiere datos de planos, aforos y disponibilidad de aulas en tiempo real que no están publicados de forma estructurada en ningún portal oficial de la US. Se aplaza a una fase posterior que pueda contar con una fuente de datos estable y verificable. \\ \hline
 Cambio dinámico de titulación & Añadido & Funcionalidad incorporada tras el feedback del piloto (D-029, D-030, D-053). No figuraba en la propuesta inicial. \\ \hline
 Integración con \texttt{us.es} para profesorado & Añadido & Sustituye la propuesta inicial de \textit{scrapers} por departamento (D-043, D-044): fuente única, mantenible y completa. \\ \hline
 Auditoría manual de conversaciones & Añadido & Surge como necesidad durante la fase de validación; permite la métrica de tráfico real post-despliegue (\S\ref{sec:pruebas-trafico}). \\ \hline

@@ -134,14 +134,15 @@
 \contentsline {subsubsection}{Modelo de lenguaje: Gemini / Gemma}{57}{subsubsection*.60}%
 \contentsline {paragraph}{Límites de uso y dimensionado.}{57}{paragraph*.61}%
 \contentsline {paragraph}{Estrategia de evolución del modelo.}{57}{paragraph*.62}%
-\contentsline {paragraph}{Riesgo de cambios de política.}{57}{paragraph*.63}%
+\contentsline {paragraph}{Riesgo de cambios de política.}{58}{paragraph*.63}%
 \contentsline {subsubsection}{Coste actual de explotación}{58}{subsubsection*.64}%
 \contentsline {subsubsection}{Escenarios de escalado}{58}{subsubsection*.65}%
 \contentsline {subsection}{\numberline {5.6.3}Resumen de costes y contingencias}{58}{subsection.5.6.3}%
 \contentsline {section}{\numberline {5.7}Análisis de desviaciones}{59}{section.5.7}%
 \contentsline {subsection}{\numberline {5.7.1}Desviación temporal}{59}{subsection.5.7.1}%
+\contentsline {paragraph}{Nota sobre la defensa del proyecto.}{59}{paragraph*.66}%
 \contentsline {subsection}{\numberline {5.7.2}Desviación en costes}{59}{subsection.5.7.2}%
-\contentsline {subsection}{\numberline {5.7.3}Lecciones aprendidas}{59}{subsection.5.7.3}%
+\contentsline {subsection}{\numberline {5.7.3}Lecciones aprendidas}{60}{subsection.5.7.3}%
 \contentsline {part}{III\hspace {1em}Diseño e Implementación}{61}{part.3}%
 \contentsline {chapter}{\numberline {6}Análisis de requisitos}{62}{chapter.6}%
 \contentsline {section}{\numberline {6.1}Identificación de actores}{62}{section.6.1}%
@@ -186,10 +187,10 @@
 \contentsline {chapter}{\numberline {8}Marco tecnológico}{82}{chapter.8}%
 \contentsline {section}{\numberline {8.1}Tecnologías de procesamiento conversacional}{82}{section.8.1}%
 \contentsline {subsection}{\numberline {8.1.1}Rasa Framework}{82}{subsection.8.1.1}%
-\contentsline {subsubsection}{Componentes de Rasa utilizados}{82}{subsubsection*.66}%
+\contentsline {subsubsection}{Componentes de Rasa utilizados}{82}{subsubsection*.67}%
 \contentsline {subsection}{\numberline {8.1.2}Procesamiento de Lenguaje Natural}{83}{subsection.8.1.2}%
-\contentsline {subsubsection}{spaCy}{83}{subsubsection*.67}%
-\contentsline {subsubsection}{Coincidencia difusa (Fuzzy Matching)}{83}{subsubsection*.68}%
+\contentsline {subsubsection}{spaCy}{83}{subsubsection*.68}%
+\contentsline {subsubsection}{Coincidencia difusa (Fuzzy Matching)}{83}{subsubsection*.69}%
 \contentsline {section}{\numberline {8.2}Tecnologías de Inteligencia Artificial}{83}{section.8.2}%
 \contentsline {subsection}{\numberline {8.2.1}Google Gemini como modelo de lenguaje principal}{83}{subsection.8.2.1}%
 \contentsline {subsection}{\numberline {8.2.2}Ollama como alternativa local opcional}{84}{subsection.8.2.2}%
@@ -246,8 +247,8 @@
 \contentsline {section}{\numberline {11.1}Anatomía común de una \textit {custom action}}{102}{section.11.1}%
 \contentsline {section}{\numberline {11.2}Épica de asignaturas}{103}{section.11.2}%
 \contentsline {subsection}{\numberline {11.2.1}Consulta específica de asignatura}{103}{subsection.11.2.1}%
-\contentsline {paragraph}{Resolución del nombre de asignatura.}{104}{paragraph*.69}%
-\contentsline {paragraph}{Bifurcación entre datos estructurales y plan docente.}{104}{paragraph*.70}%
+\contentsline {paragraph}{Resolución del nombre de asignatura.}{104}{paragraph*.70}%
+\contentsline {paragraph}{Bifurcación entre datos estructurales y plan docente.}{104}{paragraph*.71}%
 \contentsline {subsection}{\numberline {11.2.2}Listado y conteo de asignaturas}{105}{subsection.11.2.2}%
 \contentsline {subsection}{\numberline {11.2.3}Horario por asignatura}{106}{subsection.11.2.3}%
 \contentsline {section}{\numberline {11.3}Épica de profesores}{106}{section.11.3}%
@@ -335,8 +336,8 @@
 \contentsline {section}{\numberline {16.1}Vídeo demostración}{151}{section.16.1}%
 \contentsline {subsection}{\numberline {16.1.1}Estructura del vídeo}{151}{subsection.16.1.1}%
 \contentsline {subsection}{\numberline {16.1.2}Notas sobre la producción}{152}{subsection.16.1.2}%
-\contentsline {chapter}{Apéndices}{153}{appendix*.71}%
+\contentsline {chapter}{Apéndices}{153}{appendix*.72}%
 \contentsline {section}{\numberline {.1}Actas de reuniones con el tutor}{153}{section.Alph0.1}%
 \contentsline {section}{\numberline {.2}Informe de tiempo invertido}{156}{section.Alph0.2}%
-\contentsline {chapter}{Bibliograf\'{\i }a}{158}{section*.73}%
+\contentsline {chapter}{Bibliograf\'{\i }a}{158}{section*.74}%
 \contentsfinish 
