@@ -1,6 +1,7 @@
 @startuml diagrama_despliegue
 !pragma layout smetana
 skinparam defaultFontSize 13
+skinparam defaultFontName Arial
 skinparam shadowing false
 skinparam nodeStyle rectangle
 

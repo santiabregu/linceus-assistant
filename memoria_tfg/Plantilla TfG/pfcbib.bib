@@ -179,7 +179,7 @@
   title = {Informe final sobre la consulta preliminar del mercado: perfiles profesionales {\'a}mbito inform{\'a}tico},
   author = {{Junta de Andaluc{\'i}a}},
   year = {2018},
-  organization = {Consejer{\'i}a de Agricultura, Pesca y Desarrollo Rural --- Servicio de Inform{\'a}tica},
+  organization = {Consejer{\'i}a de Agricultura, Pesca y Desarrollo Rural, Servicio de Inform{\'a}tica},
   howpublished = {\url{https://juntadeandalucia.es/temas/contratacion-publica/perfiles-licitaciones/consultas-preliminares/detalle/000000078484.html}},
   note = {Consultado en mayo de 2026. Tarifa de referencia para el perfil ``Analista programador J2EE/Web (Junior)'': 28,37 €/h sin IVA (media acotada todos los valores)}
 }
@@ -458,6 +458,33 @@
   year = {2020}
 }
 
+@ARTICLE{bayer1972btree,
+  author = {Bayer, R. and McCreight, E. M.},
+  title = {Organization and Maintenance of Large Ordered Indexes},
+  journal = {Acta Informatica},
+  volume = {1},
+  number = {3},
+  pages = {173--189},
+  year = {1972},
+  doi = {10.1007/BF00288683}
+}
+
+@MISC{postgresBtree,
+  author = {{PostgreSQL Global Development Group}},
+  title = {{PostgreSQL} Documentation: B-Tree Indexes},
+  year = {2024},
+  howpublished = {\url{https://www.postgresql.org/docs/current/btree.html}},
+  note = {Consultado en abril de 2026}
+}
+
+@MISC{postgresPgTrgm,
+  author = {{PostgreSQL Global Development Group}},
+  title = {{PostgreSQL} Documentation: \texttt{pg\_trgm} -- Support for similarity of text using trigram matching},
+  year = {2024},
+  howpublished = {\url{https://www.postgresql.org/docs/current/pgtrgm.html}},
+  note = {Consultado en abril de 2026}
+}
+
 @INPROCEEDINGS{karpukhin2020dpr,
   author = {Karpukhin, V. and O\u{g}uz, B. and Min, S. and Lewis, P. and Wu, L. and Edunov, S. and Chen, D. and Yih, W.},
   title = {Dense Passage Retrieval for Open-Domain Question Answering},
@@ -485,6 +512,16 @@
   title = {Users' experiences with chatbots: findings from a questionnaire study},
   journal = {Quality and User Experience, Springer},
   year = {2020}
+}
+
+@INCOLLECTION{goel2018jillwatson,
+  author = {Goel, A. K. and Polepeddi, L.},
+  title = {Jill Watson: A Virtual Teaching Assistant for Online Education},
+  booktitle = {Learning Engineering for Online Education: Theoretical Contexts and Design-Based Examples},
+  editor = {Dede, C. and Richards, J. and Saxberg, B.},
+  publisher = {Routledge},
+  year = {2018},
+  note = {Reporta del orden de 10\,000 mensajes por semestre con $\sim$300 alumnos en la asignatura KBAI del Georgia Tech OMSCS}
 }
 
 % =====================================================
@@ -606,5 +643,196 @@
   year = {2024},
   howpublished = {\url{https://github.com/ssegura/Guia_TFG}},
   note = {Departamento de Lenguajes y Sistemas Informaticos, ETSII, Universidad de Sevilla}
+}
+
+% =====================================================
+% Referencias acad\'emicas transversales (NLP, patrones, infra, normativa)
+% =====================================================
+
+@BOOK{jurafsky2009speech,
+  author    = {Jurafsky, D. and Martin, J. H.},
+  title     = {Speech and Language Processing: An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition},
+  edition   = {2nd},
+  publisher = {Pearson Prentice Hall},
+  year      = {2009}
+}
+
+@BOOK{manning2008introduction,
+  author    = {Manning, C. D. and Raghavan, P. and Sch{\"u}tze, H.},
+  title     = {Introduction to Information Retrieval},
+  publisher = {Cambridge University Press},
+  year      = {2008}
+}
+
+@INPROCEEDINGS{mikolov2013word2vec,
+  author    = {Mikolov, T. and Sutskever, I. and Chen, K. and Corrado, G. and Dean, J.},
+  title     = {Distributed Representations of Words and Phrases and their Compositionality},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2013}
+}
+
+@MISC{nogueira2019passage,
+  author       = {Nogueira, R. and Cho, K.},
+  title        = {Passage Re-ranking with {BERT}},
+  year         = {2019},
+  howpublished = {arXiv:1901.04085},
+  note         = {Preprint}
+}
+
+@ARTICLE{ji2023survey,
+  author    = {Ji, Z. and Lee, N. and Frieske, R. and Yu, T. and Su, D. and Xu, Y. and Ishii, E. and Bang, Y. J. and Madotto, A. and Fung, P.},
+  title     = {Survey of Hallucination in Natural Language Generation},
+  journal   = {ACM Computing Surveys},
+  volume    = {55},
+  number    = {12},
+  pages     = {1--38},
+  year      = {2023}
+}
+
+@INPROCEEDINGS{holtzman2020curious,
+  author    = {Holtzman, A. and Buys, J. and Du, L. and Forbes, M. and Choi, Y.},
+  title     = {The Curious Case of Neural Text Degeneration},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2020}
+}
+
+@INPROCEEDINGS{yu2018spider,
+  author    = {Yu, T. and Zhang, R. and Yang, K. and Yasunaga, M. and Wang, D. and Li, Z. and Ma, J. and Li, I. and Yao, Q. and Roman, S. and Zhang, Z. and Radev, D.},
+  title     = {{Spider}: A Large-Scale Human-Labeled Dataset for Complex and Cross-Domain Semantic Parsing and {Text-to-SQL} Task},
+  booktitle = {Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+  year      = {2018}
+}
+
+@INPROCEEDINGS{cohen2003comparison,
+  author    = {Cohen, W. W. and Ravikumar, P. and Fienberg, S. E.},
+  title     = {A Comparison of String Distance Metrics for Name-Matching Tasks},
+  booktitle = {Proceedings of the IJCAI-03 Workshop on Information Integration on the Web (IIWeb)},
+  year      = {2003}
+}
+
+@ARTICLE{levenshtein1966binary,
+  author  = {Levenshtein, V. I.},
+  title   = {Binary Codes Capable of Correcting Deletions, Insertions, and Reversals},
+  journal = {Soviet Physics Doklady},
+  volume  = {10},
+  number  = {8},
+  pages   = {707--710},
+  year    = {1966}
+}
+
+@MISC{honnibal2020spacy,
+  author       = {Honnibal, M. and Montani, I. and Van Landeghem, S. and Boyd, A.},
+  title        = {{spaCy}: Industrial-strength Natural Language Processing in {Python}},
+  year         = {2020},
+  howpublished = {\url{https://spacy.io/}},
+  note         = {Software package, versi\'on 3.x; consultado en mayo de 2026}
+}
+
+@BOOK{fowler2002patterns,
+  author    = {Fowler, M.},
+  title     = {Patterns of Enterprise Application Architecture},
+  publisher = {Addison-Wesley},
+  year      = {2002}
+}
+
+@BOOK{humble2010continuous,
+  author    = {Humble, J. and Farley, D.},
+  title     = {Continuous Delivery: Reliable Software Releases through Build, Test, and Deployment Automation},
+  publisher = {Addison-Wesley},
+  year      = {2010}
+}
+
+@ARTICLE{harel1987statecharts,
+  author  = {Harel, D.},
+  title   = {Statecharts: A Visual Formalism for Complex Systems},
+  journal = {Science of Computer Programming},
+  volume  = {8},
+  number  = {3},
+  pages   = {231--274},
+  year    = {1987}
+}
+
+@MISC{owasp2021injection,
+  author       = {{OWASP Foundation}},
+  title        = {{OWASP Top 10:2021} -- A03 Injection},
+  year         = {2021},
+  howpublished = {\url{https://owasp.org/Top10/A03_2021-Injection/}},
+  note         = {Consultado en mayo de 2026}
+}
+
+@MISC{rgpd2016,
+  author       = {{Parlamento Europeo y Consejo de la Uni\'on Europea}},
+  title        = {Reglamento (UE) 2016/679 del Parlamento Europeo y del Consejo, relativo a la protecci\'on de las personas f\'isicas en lo que respecta al tratamiento de datos personales y a la libre circulaci\'on de estos datos ({RGPD})},
+  year         = {2016},
+  howpublished = {Diario Oficial de la Uni\'on Europea, L 119/1, 4 de mayo de 2016},
+  note         = {En vigor desde el 25 de mayo de 2018}
+}
+
+@MISC{beck2001agile,
+  author       = {Beck, K. and Beedle, M. and van Bennekum, A. and Cockburn, A. and Cunningham, W. and Fowler, M. and Grenning, J. and Highsmith, J. and Hunt, A. and Jeffries, R. and Kern, J. and Marick, B. and Martin, R. C. and Mellor, S. and Schwaber, K. and Sutherland, J. and Thomas, D.},
+  title        = {Manifesto for Agile Software Development},
+  year         = {2001},
+  howpublished = {\url{https://agilemanifesto.org/}},
+  note         = {Consultado en mayo de 2026}
+}
+
+@BOOK{chacon2014pro,
+  author    = {Chacon, S. and Straub, B.},
+  title     = {Pro {G}it},
+  edition   = {2nd},
+  publisher = {Apress},
+  year      = {2014}
+}
+
+@ARTICLE{codd1970relational,
+  author  = {Codd, E. F.},
+  title   = {A Relational Model of Data for Large Shared Data Banks},
+  journal = {Communications of the ACM},
+  volume  = {13},
+  number  = {6},
+  pages   = {377--387},
+  year    = {1970}
+}
+
+@ARTICLE{chen1976entityrelationship,
+  author  = {Chen, P. P.-S.},
+  title   = {The Entity-Relationship Model--Toward a Unified View of Data},
+  journal = {ACM Transactions on Database Systems},
+  volume  = {1},
+  number  = {1},
+  pages   = {9--36},
+  year    = {1976}
+}
+
+@INPROCEEDINGS{devlin2019bert,
+  author    = {Devlin, J. and Chang, M.-W. and Lee, K. and Toutanova, K.},
+  title     = {{BERT}: Pre-training of Deep Bidirectional Transformers for Language Understanding},
+  booktitle = {Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics (NAACL)},
+  year      = {2019}
+}
+
+@BOOK{sommerville2015,
+  author    = {Sommerville, I.},
+  title     = {Software Engineering},
+  edition   = {10th},
+  publisher = {Pearson},
+  year      = {2015}
+}
+
+@BOOK{clegg1994case,
+  author    = {Clegg, D. and Barker, R.},
+  title     = {Case Method Fast-Track: A {RAD} Approach},
+  publisher = {Addison-Wesley},
+  year      = {1994}
+}
+
+@INCOLLECTION{brooke1996sus,
+  author    = {Brooke, J.},
+  title     = {{SUS}: A `Quick and Dirty' Usability Scale},
+  booktitle = {Usability Evaluation in Industry},
+  editor    = {Jordan, P. W. and Thomas, B. and Weerdmeester, B. A. and McClelland, I. L.},
+  publisher = {Taylor \& Francis},
+  pages     = {189--194},
+  year      = {1996}
 }
 

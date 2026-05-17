@@ -43,7 +43,7 @@ Las acciones personalizadas permiten al bot ejecutar código Python para:
 
 \subsubsection{spaCy}
 
-spaCy proporciona capacidades avanzadas de NLP en español:
+spaCy~\cite{honnibal2020spacy} proporciona capacidades avanzadas de NLP en español:
 
 \begin{itemize}
     \item \textbf{Tokenización}: Separación del texto en palabras y signos de puntuación
@@ -56,7 +56,7 @@ El modelo \texttt{es\_core\_news\_md} incluye vocabulario específico del españ
 
 \subsubsection{Coincidencia difusa (Fuzzy Matching)}
 
-La librería RapidFuzz implementa algoritmos de distancia de cadenas que permiten:
+La librería RapidFuzz implementa algoritmos de distancia de cadenas~\cite{cohen2003comparison} que permiten:
 
 \begin{itemize}
     \item Tolerar errores ortográficos (e.g., "Fundamnetos de Programacion")
@@ -64,7 +64,7 @@ La librería RapidFuzz implementa algoritmos de distancia de cadenas que permite
     \item Manejar variaciones en la escritura (e.g., mayúsculas, tildes)
 \end{itemize}
 
-Se utiliza el algoritmo de \textit{Levenshtein distance} con un umbral de similitud del 80\% para considerar coincidencias válidas.
+Se utiliza el algoritmo de \textit{Levenshtein distance}~\cite{levenshtein1966binary} con un umbral de similitud del 80\% para considerar coincidencias válidas.
 
 \section{Tecnologías de Inteligencia Artificial}\label{sec:ia}
 
@@ -140,7 +140,7 @@ El panel (\texttt{admin.html}, \texttt{admin.js}, \texttt{admin.css}) es una apl
 
 \subsection{Control de versiones}
 
-\textbf{Git} es el sistema de control de versiones utilizado, con \textbf{GitHub} como plataforma de \textit{hosting}. La estructura concreta del repositorio se detalla en el Capítulo~\ref{cap:estructura-proyecto}; no se reproduce aquí para evitar duplicar información.
+\textbf{Git} es el sistema de control de versiones utilizado, con \textbf{GitHub} como plataforma de \textit{hosting}. La integración continua y el flujo de entrega automatizada que se apoya sobre este repositorio siguen los principios de \textit{continuous delivery}~\cite{humble2010continuous}. La estructura concreta del repositorio se detalla en el Capítulo~\ref{cap:estructura-proyecto}; no se reproduce aquí para evitar duplicar información.
 
 \subsection{Gestión de dependencias}
 
@@ -163,7 +163,7 @@ La librería \texttt{python-dotenv} carga la configuración desde un fichero \te
 \subsection{Validación de entrada}
 
 \begin{itemize}
-    \item Sanitización de consultas SQL para prevenir inyección SQL
+    \item Sanitización de consultas SQL para prevenir inyección SQL, siguiendo las recomendaciones de OWASP~\cite{owasp2021injection}
     \item Validación de tipos de datos en entradas de usuario
     \item Limitación de longitud de mensajes
 \end{itemize}

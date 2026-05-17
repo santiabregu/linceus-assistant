@@ -6,7 +6,7 @@ Este capítulo describe el diseño y la estructura de la base de datos de LinceU
 
 \section{Diseño conceptual}\label{sec:diseno-conceptual}
 
-El diseño de la base de datos se ha estructurado siguiendo el modelo relacional, organizando la información en entidades que representan los elementos principales del dominio universitario: universidades, centros, titulaciones, asignaturas, profesores y horarios.
+El diseño de la base de datos se ha estructurado siguiendo el modelo relacional propuesto por Codd~\cite{codd1970relational}, organizando la información en entidades que representan los elementos principales del dominio universitario: universidades, centros, titulaciones, asignaturas, profesores y horarios.
 
 \subsection{Principios de diseño}
 
@@ -21,6 +21,8 @@ El esquema de base de datos se ha diseñado siguiendo los siguientes principios:
 \end{enumerate}
 
 \section{Modelo entidad-relación}\label{sec:modelo-er}
+
+El modelo entidad-relación~\cite{chen1976entityrelationship} ofrece una representación gráfica del dominio que media entre los requisitos del usuario y el esquema relacional implementado en PostgreSQL.
 
 % El diagrama entidad-relación completo del sistema se muestra en la Figura \ref{fig:diagrama-er}.
 A continuación se detallan las principales entidades y sus relaciones del sistema.
@@ -226,7 +228,7 @@ created\_at & timestamptz & Fecha de creación del registro \\ \hline
 updated\_at & timestamptz & Última actualización \\ \hline
 }
 
-El campo \texttt{embedding} utiliza el tipo \texttt{vector} proporcionado por la extensión pgvector. Los vectores se generan usando modelos de embeddings especializados y permiten búsquedas de similitud semántica mediante consultas como:
+El campo \texttt{embedding} utiliza el tipo \texttt{vector} proporcionado por la extensión pgvector y almacena vectores de 768 dimensiones, valor coherente con los modelos derivados de la familia BERT~\cite{devlin2019bert} que producen representaciones densas en ese tamaño. Los vectores se generan usando modelos de embeddings especializados y permiten búsquedas de similitud semántica mediante consultas como:
 
 \begin{verbatim}
 SELECT contenido, embedding <=> query_vector AS distance
@@ -258,9 +260,9 @@ Todas las tablas principales registran además \texttt{created\_at} y \texttt{up
 La estrategia de indexación cubre tres tipos de acceso según el patrón de consulta:
 
 \begin{itemize}
-    \item \textbf{B-tree (PKs y FKs)}: Índices únicos en todas las claves primarias (\texttt{\_pkey}) y en las claves foráneas más consultadas (\texttt{titulacion\_id}, \texttt{grupo\_id}, \texttt{profesor\_id}, \texttt{departamento\_id}, etc.), más índices adicionales sobre campos de filtrado frecuente como \texttt{codigo}, \texttt{curso}, \texttt{dia\_semana} o \texttt{estado\_rag}.
-    \item \textbf{GIN trigrama}: El campo \texttt{nombre\_normalizado} de \textsc{asignaturas} lleva un índice \texttt{gin\_trgm\_ops} además del B-tree, lo que permite búsquedas \texttt{ILIKE} eficientes sin exploración secuencial. Este índice es la base del \textit{fallback} por palabras clave del pipeline RAG (Sección~\ref{subsec:dd-fallback}).
-    \item \textbf{HNSW}: El campo \texttt{embedding} de \textsc{planes\_docentes\_chunks} usa un índice \textit{Hierarchical Navigable Small World}~\cite{malkov2018hnsw} con parámetros $m=16$ y $ef\_construction=64$ (Sección~\ref{subsec:dd-embeddings}), que ofrece búsqueda aproximada de vecinos más cercanos en tiempo sub-lineal.
+    \item \textbf{B-tree (PKs y FKs)}: Índice de árbol B~\cite{bayer1972btree}, el tipo de índice estándar de PostgreSQL~\cite{postgresBtree} para búsquedas de igualdad, rango y ordenación. Se aplican índices únicos en todas las claves primarias (\texttt{\_pkey}) y en las claves foráneas más consultadas (\texttt{titulacion\_id}, \texttt{grupo\_id}, \texttt{profesor\_id}, \texttt{departamento\_id}, etc.), más índices adicionales sobre campos de filtrado frecuente como \texttt{codigo}, \texttt{curso}, \texttt{dia\_semana} o \texttt{estado\_rag}.
+    \item \textbf{GIN trigrama}: Índice invertido generalizado (\textit{Generalized Inverted Index}) que particiona el texto en trigramas de caracteres y permite localizar coincidencias parciales sin recorrer la tabla completa~\cite{postgresPgTrgm}. El campo \texttt{nombre\_normalizado} de \textsc{asignaturas} lleva un índice \texttt{gin\_trgm\_ops} además del B-tree, lo que permite búsquedas \texttt{ILIKE} eficientes sin exploración secuencial. Este índice es la base del \textit{fallback} por palabras clave del pipeline RAG (Sección~\ref{subsec:dd-fallback}).
+    \item \textbf{HNSW}: Índice \textit{Hierarchical Navigable Small World}~\cite{malkov2018hnsw}, una estructura de grafo multicapa que organiza los vectores según su similitud y permite localizar los vecinos más cercanos recorriendo solo una fracción del espacio. El campo \texttt{embedding} de \textsc{planes\_docentes\_chunks} usa este tipo con parámetros $m=16$ y $ef\_construction=64$ (Sección~\ref{subsec:dd-embeddings}), ofreciendo búsqueda aproximada de vecinos más cercanos en tiempo sub-lineal.
 \end{itemize}
 
 El índice HNSW sobre los chunks de planes docentes se crea así:

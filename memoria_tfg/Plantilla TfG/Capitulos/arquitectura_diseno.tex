@@ -87,7 +87,7 @@ El diagrama de despliegue describe la distribución física de los componentes d
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=\linewidth,height=0.85\textheight,keepaspectratio]{img/diagrama_despliegue.png}
+\includegraphics[width=\linewidth,keepaspectratio]{img/diagrama_despliegue.png}
 \caption{Diagrama de despliegue del sistema Linceus en DigitalOcean (Ubuntu 24.04 LTS) con el pipeline de despliegue automatizado vía GitHub Actions.}
 \label{fig:despliegue}
 \end{figure}
@@ -143,16 +143,16 @@ A lo largo del desarrollo del sistema se han tomado decisiones de diseño que ha
 
 \textbf{Contexto:} El sistema debe responder consultas sobre asignaturas que pueden formularse de formas muy diversas (por nombre, curso, tipología, créditos, duración o combinaciones de estos filtros). Implementar todas las variantes mediante reglas \textit{if-else} o expresiones regulares resultaría en un código excesivamente largo, frágil y difícil de mantener.
 
-\textbf{Decisión:} Se optó por un enfoque \textbf{Text-to-SQL basado en LLM}, donde el modelo Gemini (\texttt{gemma-3-27b-it}) recibe un prompt que incluye el esquema de la tabla \texttt{asignaturas}, las columnas permitidas y la pregunta del usuario, y genera la consulta SQL correspondiente.
+\textbf{Decisión:} Se optó por un enfoque \textbf{Text-to-SQL basado en LLM}~\cite{yu2018spider}, donde el modelo Gemini (\texttt{gemma-3-27b-it}) recibe un prompt que incluye el esquema de la tabla \texttt{asignaturas}, las columnas permitidas y la pregunta del usuario, y genera la consulta SQL correspondiente.
 
 \textbf{Justificación:}
 \begin{itemize}
     \item \textbf{Flexibilidad}: El modelo interpreta preguntas en lenguaje natural sin necesidad de anticipar todas las formulaciones posibles.
     \item \textbf{Mantenibilidad}: Añadir nuevos atributos o filtros solo requiere actualizar el prompt, no reescribir lógica de parsing.
-    \item \textbf{Seguridad}: Se aplican mecanismos de protección como una \textit{whitelist} de columnas permitidas, prohibición de subconsultas e inyección automática del filtro de titulación.
+    \item \textbf{Seguridad}: Se aplican mecanismos de protección como una \textit{whitelist} de columnas permitidas, prohibición de subconsultas e inyección automática del filtro de titulación, en línea con las recomendaciones de OWASP frente a inyección SQL~\cite{owasp2021injection}.
 \end{itemize}
 
-\textbf{Temperatura 0.0:} Se configura el modelo con temperatura cero para obtener respuestas deterministas, crítico para la generación de SQL donde la variabilidad es indeseable.
+\textbf{Temperatura 0.0:} Se configura el modelo con temperatura cero para obtener respuestas deterministas~\cite{holtzman2020curious}, crítico para la generación de SQL donde la variabilidad es indeseable.
 
 \subsection{Gemini como servicio principal con Ollama como alternativa intercambiable}\label{subsec:dd-gemini-ollama}
 
@@ -188,7 +188,7 @@ A lo largo del desarrollo del sistema se han tomado decisiones de diseño que ha
 
 \textbf{Justificación:}
 \begin{itemize}
-    \item 800 caracteres ($\approx$150--200 tokens) es suficiente para capturar un párrafo o sección temática completa, en línea con los valores recomendados por LangChain~\cite{langchainChunking}.
+    \item 800 caracteres ($\approx$150--200 tokens) es suficiente para capturar un párrafo o sección temática completa, en línea con los valores recomendados por LangChain.
     \item El solapamiento del 12,5\,\% mitiga la pérdida de información en los límites de fragmento, técnica habitual en pipelines de RAG~\cite{lewis2020retrieval,karpukhin2020dpr}.
     \item Se aplica detección de secciones por expresiones regulares (``Datos básicos'', ``Objetivos'', ``Contenidos'', ``Evaluación'', ``Bibliografía'') para etiquetar cada fragmento con su sección de origen, una práctica de \textit{metadata-augmented retrieval} que mejora la precisión sobre dominios estructurados~\cite{es2024ragas}.
 \end{itemize}
@@ -210,7 +210,7 @@ A lo largo del desarrollo del sistema se han tomado decisiones de diseño que ha
 
 \textbf{Contexto:} Los usuarios introducen nombres de asignaturas con errores ortográficos, sin tildes, con abreviaturas o con variaciones coloquiales (``FP'' por ``Fundamentos de Programación'', ``ADDA'' por ``Análisis y Diseño de Datos y Algoritmos'').
 
-\textbf{Decisión:} Se integró la librería \textbf{RapidFuzz} con un umbral de similitud del 80\% combinado con una tabla de alias y acrónimos mantenida en el código.
+\textbf{Decisión:} Se integró la librería \textbf{RapidFuzz}, basada en métricas estándar de distancia entre cadenas~\cite{cohen2003comparison}, con un umbral de similitud del 80\% combinado con una tabla de alias y acrónimos mantenida en el código.
 
 \textbf{Justificación:}
 \begin{itemize}
@@ -245,17 +245,17 @@ A lo largo del desarrollo del sistema se han tomado decisiones de diseño que ha
 \textbf{Decisión:} Se configuró un pipeline de 11 componentes que apoya el clasificador \texttt{DIETClassifier} sobre \textbf{embeddings preentrenados de spaCy en español} (\texttt{es\_core\_news\_md}) y combina \textbf{featurización a nivel de palabra} (n-gramas 1--2), \textbf{a nivel de carácter} (n-gramas 2--4) y \textbf{vectores densos de spaCy}, siguiendo el diseño \textit{multi-featurizer} recomendado en la documentación oficial~\cite{rasadocs}:
 
 \begin{enumerate}
-    \item \texttt{SpacyNLP} (modelo \texttt{es\_core\_news\_md})~\cite{rasadocs}: carga del modelo de lenguaje preentrenado en español, base de los \textit{embeddings} léxicos densos.
-    \item \texttt{SpacyTokenizer}~\cite{rasadocs}: tokenización respetando la segmentación morfológica del modelo de español.
-    \item \texttt{RegexFeaturizer}~\cite{rasadocs}: patrones regex para códigos de asignatura y formatos especiales.
-    \item \texttt{LexicalSyntacticFeaturizer}~\cite{rasadocs}: características gramaticales del contexto local.
-    \item \texttt{CountVectorsFeaturizer} (palabra)~\cite{rasadocs}: n-gramas de palabras (1--2).
-    \item \texttt{CountVectorsFeaturizer} (carácter)~\cite{rasadocs}: n-gramas de caracteres (2--4); los n-gramas de un solo carácter se descartaron por aportar ruido sin mejorar la robustez frente a typos.
-    \item \texttt{SpacyFeaturizer}~\cite{rasadocs}: \textit{features} densas derivadas del modelo de spaCy, complementarias a las cuentas léxicas.
+    \item \texttt{SpacyNLP} (modelo \texttt{es\_core\_news\_md}): carga del modelo de lenguaje preentrenado en español, base de los \textit{embeddings} léxicos densos.
+    \item \texttt{SpacyTokenizer}: tokenización respetando la segmentación morfológica del modelo de español.
+    \item \texttt{RegexFeaturizer}: patrones regex para códigos de asignatura y formatos especiales.
+    \item \texttt{LexicalSyntacticFeaturizer}: características gramaticales del contexto local.
+    \item \texttt{CountVectorsFeaturizer} (palabra): n-gramas de palabras (1--2).
+    \item \texttt{CountVectorsFeaturizer} (carácter): n-gramas de caracteres (2--4); los n-gramas de un solo carácter se descartaron por aportar ruido sin mejorar la robustez frente a typos.
+    \item \texttt{SpacyFeaturizer}: \textit{features} densas derivadas del modelo de spaCy, complementarias a las cuentas léxicas.
     \item \texttt{DIETClassifier}~\cite{bocklisch2020diet}: clasificador dual de intenciones y entidades (150 épocas, \textit{dropout} 0,2, \texttt{constrain\_similarities = true}).
-    \item \texttt{EntitySynonymMapper}~\cite{rasadocs}: normalización de sinónimos de entidades.
-    \item \texttt{ResponseSelector}~\cite{rasadocs}: selección de respuestas tipo FAQ (150 épocas).
-    \item \texttt{FallbackClassifier}~\cite{rasadocs}: detección de baja confianza, configurada con \texttt{threshold = 0,8} y \texttt{ambiguity\_threshold = 0,10}.
+    \item \texttt{EntitySynonymMapper}: normalización de sinónimos de entidades.
+    \item \texttt{ResponseSelector}: selección de respuestas tipo FAQ (150 épocas).
+    \item \texttt{FallbackClassifier}: detección de baja confianza, configurada con \texttt{threshold = 0,8} y \texttt{ambiguity\_threshold = 0,10}.
 \end{enumerate}
 
 \textbf{Justificación:}
@@ -305,4 +305,4 @@ El pipeline de vectorización sigue el patrón \textit{Pipeline} (o \textit{Pipe
 
 \subsection{Patrón \textit{Repository} para acceso a datos}
 
-El módulo \texttt{db.py} centraliza todas las operaciones contra la base de datos, proporcionando una abstracción que oculta los detalles de conexión (pool de conexiones psycopg2) y ejecución de consultas al resto del sistema. Esto facilita el testing unitario mediante mocks y permite cambiar la implementación de persistencia sin modificar la lógica de negocio.
+El módulo \texttt{db.py} centraliza todas las operaciones contra la base de datos, siguiendo el patrón \textit{Repository}~\cite{fowler2002patterns} y proporcionando una abstracción que oculta los detalles de conexión (pool de conexiones psycopg2) y ejecución de consultas al resto del sistema. Esto facilita el testing unitario mediante mocks y permite cambiar la implementación de persistencia sin modificar la lógica de negocio.

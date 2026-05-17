@@ -22,7 +22,7 @@ Se han considerado distintos frameworks de chatbot \textbf{open source} que cump
 
 \subsubsection{Comparación detallada}
 
-\paragraph{Flujo conversacional}
+\paragraph{Flujo conversacional.}
 
 El flujo conversacional se refiere a la capacidad del framework para \textbf{definir, controlar y gestionar el diálogo entre el usuario y el sistema}. Incluye cómo se modelan las intenciones, las respuestas, los contextos y la memoria de la conversación, así como el grado de flexibilidad para manejar \textbf{diálogos no lineales, interrupciones o escenarios complejos}. Un buen manejo del flujo conversacional permite que el chatbot no solo siga guiones rígidos, sino que pueda adaptarse dinámicamente a las necesidades del usuario, manteniendo coherencia y contexto a lo largo de la interacción.
 
@@ -34,7 +34,7 @@ El flujo conversacional se refiere a la capacidad del framework para \textbf{def
     \item \textbf{Tock/Botonic} permiten definir historias o rutas conversacionales, pero con menor madurez que Rasa.
 \end{itemize}
 
-\paragraph{Testing}
+\paragraph{Testing.}
 
 La capacidad de testing en un framework de chatbots hace referencia a las \textbf{herramientas disponibles para validar la calidad y el correcto funcionamiento del agente conversacional}. Esto incluye desde pruebas unitarias (validación de intenciones, entidades y respuestas individuales) hasta pruebas end-to-end (que simulan conversaciones completas para comprobar flujos y contextos). Un buen soporte de testing permite \textbf{automatizar la detección de errores, reducir el riesgo de alucinaciones o respuestas incoherentes y asegurar la estabilidad} del sistema a medida que evoluciona. Cuanto más integrado esté el testing en el framework, más fácil será mantener y escalar el chatbot con garantías de calidad.
 
@@ -45,9 +45,9 @@ La capacidad de testing en un framework de chatbots hace referencia a las \textb
     \item \textbf{OpenDialog} y \textbf{Botonic} dependen casi exclusivamente de pruebas manuales.
 \end{itemize}
 
-\paragraph{Compatibilidad con RAG y embeddings}
+\paragraph{Compatibilidad con RAG y embeddings.}
 
-La compatibilidad con \textbf{RAG (Retrieval Augmented Generation)} y el uso de \textbf{embeddings} mide hasta qué punto un framework permite integrar modelos de lenguaje con bases de datos vectoriales para mejorar las respuestas. Esta característica es clave cuando se trabaja con \textbf{información documental extensa o cambiante}. Un buen soporte en este ámbito asegura que el chatbot pueda \textbf{ofrecer respuestas actualizadas, precisas y fundamentadas en datos externos}, reduciendo el riesgo de respuestas inventadas (alucinaciones).
+La compatibilidad con \textbf{RAG (Retrieval Augmented Generation)}~\cite{lewis2020retrieval} y el uso de \textbf{embeddings} mide hasta qué punto un framework permite integrar modelos de lenguaje con bases de datos vectoriales para mejorar las respuestas. Esta característica es clave cuando se trabaja con \textbf{información documental extensa o cambiante}. Un buen soporte en este ámbito asegura que el chatbot pueda \textbf{ofrecer respuestas actualizadas, precisas y fundamentadas en datos externos}, reduciendo el riesgo de respuestas inventadas (alucinaciones)~\cite{ji2023survey}.
 
 \begin{itemize}
     \item \textbf{Rasa} se integra de forma natural con bases vectoriales (pgvector, Qdrant, FAISS), permitiendo retrieval augmented generation.
@@ -56,9 +56,9 @@ La compatibilidad con \textbf{RAG (Retrieval Augmented Generation)} y el uso de 
     \item \textbf{OpenDialog} y \textbf{Botonic} no tienen soporte nativo, siendo necesaria integración externa.
 \end{itemize}
 
-\paragraph{Despliegue local y privacidad}
+\paragraph{Despliegue local y privacidad.}
 
-El despliegue local y la gestión de la privacidad se refieren a la \textbf{posibilidad de ejecutar el framework en entornos controlados (on-premise o en servidores propios)} sin depender necesariamente de servicios en la nube. Esta característica es importante cuando se manejan \textbf{datos sensibles o confidenciales}, ya que permite aplicar políticas de seguridad personalizadas y cumplir con normativas como el RGPD. Además, la facilidad de despliegue (con Docker, instaladores nativos o stacks ligeros) influye directamente en la \textbf{rapidez de la puesta en marcha y en la capacidad de mantener el control total sobre la información del usuario}.
+El despliegue local y la gestión de la privacidad se refieren a la \textbf{posibilidad de ejecutar el framework en entornos controlados (on-premise o en servidores propios)} sin depender necesariamente de servicios en la nube. Esta característica es importante cuando se manejan \textbf{datos sensibles o confidenciales}, ya que permite aplicar políticas de seguridad personalizadas y cumplir con normativas como el Reglamento General de Protección de Datos~\cite{rgpd2016}. Además, la facilidad de despliegue (con Docker~\cite{docker2024}, instaladores nativos o stacks ligeros) influye directamente en la \textbf{rapidez de la puesta en marcha y en la capacidad de mantener el control total sobre la información del usuario}.
 
 \begin{itemize}
     \item \textbf{Rasa} y \textbf{Botpress} son fácilmente desplegables en local mediante Docker o instalación directa.
@@ -67,7 +67,7 @@ El despliegue local y la gestión de la privacidad se refieren a la \textbf{posi
     \item \textbf{Tock} es estable en entornos locales, mientras que Botonic se orienta a proyectos en Node/React.
 \end{itemize}
 
-\paragraph{Comunidad y documentación}
+\paragraph{Comunidad y documentación.}
 
 La comunidad y la documentación de un framework son indicadores clave de su madurez, accesibilidad y sostenibilidad a largo plazo. Una comunidad activa ofrece foros, repositorios y soporte colaborativo que facilitan la resolución de problemas y el intercambio de buenas prácticas. Al mismo tiempo, una documentación clara, actualizada y completa reduce la curva de aprendizaje y permite implementar soluciones más rápido.
 
@@ -124,11 +124,11 @@ Se revisaron diferentes opciones open source para almacenar tanto información e
 
 \subsubsection{Comparación detallada}
 
-\paragraph{Modelo de datos}
+\paragraph{Modelo de datos.}
 
 El modelo de datos define cómo se organiza, almacena y consulta la información dentro de una base de datos o motor de persistencia. Dependiendo de la tecnología, este modelo puede ser relacional (tablas y relaciones SQL), orientado a documentos (estructuras tipo JSON), o especializado en vectores (espacios multidimensionales para embeddings). La elección del modelo es clave para garantizar la eficiencia, flexibilidad y escalabilidad del sistema, ya que influye directamente en cómo se estructuran los datos de los usuarios, los recursos académicos y los embeddings utilizados en búsquedas semánticas o RAG.
 
-\paragraph{Búsqueda vectorial}
+\paragraph{Búsqueda vectorial.}
 
 \begin{itemize}
     \item \textbf{Supabase/Postgres} soportan pgvector, adecuado para corpus medianos.
@@ -137,7 +137,7 @@ El modelo de datos define cómo se organiza, almacena y consulta la información
     \item El resto (Appwrite, PocketBase, Directus, Hasura) carecen de soporte nativo y requieren integraciones manuales.
 \end{itemize}
 
-\paragraph{Despliegue local y facilidad}
+\paragraph{Despliegue local y facilidad.}
 
 El despliegue local y la facilidad de instalación miden la \textbf{complejidad técnica y los recursos necesarios para poner en marcha una base de datos en un entorno controlado}. Algunas soluciones ofrecen entornos ligeros y rápidos de ejecutar (como binarios únicos o imágenes Docker sencillas), mientras que otras requieren stacks más pesados y múltiples dependencias. Esta característica es importante porque impacta directamente en la \textbf{rapidez de la configuración inicial, la curva de aprendizaje y los costes de mantenimiento}.
 
@@ -148,7 +148,7 @@ El despliegue local y la facilidad de instalación miden la \textbf{complejidad 
     \item \textbf{Qdrant/Weaviate/Milvus} añaden complejidad, aunque escalables.
 \end{itemize}
 
-\paragraph{Seguridad y RGPD}
+\paragraph{Seguridad y RGPD.}
 
 La seguridad y el cumplimiento normativo son aspectos fundamentales en la gestión de datos, especialmente cuando se trabaja con información sensible de estudiantes o usuarios. Esta característica evalúa las \textbf{mecanismos nativos de autenticación, autorización y control de acceso} que ofrece cada base de datos, así como la posibilidad de aplicar políticas de privacidad. Tecnologías que incluyen funciones como \textbf{Row-Level Security, roles definidos o autenticación integrada} facilitan el cumplimiento legal y reducen riesgos. En cambio, los motores que carecen de seguridad propia obligan a implementar medidas adicionales en la capa de aplicación, aumentando la complejidad y la responsabilidad del equipo de desarrollo.
 
@@ -159,7 +159,7 @@ La seguridad y el cumplimiento normativo son aspectos fundamentales en la gesti�
     \item \textbf{Motores vectoriales} carecen de autenticación propia, requiriendo protección adicional en la aplicación.
 \end{itemize}
 
-\paragraph{Comunidad y documentación}
+\paragraph{Comunidad y documentación.}
 
 La comunidad y la documentación determinan el \textbf{nivel de soporte, recursos y acompañamiento disponibles para desarrolladores}. Una base de datos con una comunidad amplia y activa facilita la resolución de problemas, la existencia de librerías y la mejora continua del sistema. Al mismo tiempo, una documentación clara, actualizada y con ejemplos prácticos acelera la adopción de la tecnología y reduce la curva de aprendizaje.
 
@@ -217,9 +217,11 @@ Se han considerado diferentes opciones de APIs de modelos de lenguaje de gran ta
     \item \textbf{Cohere y Anthropic (Claude)}
 \end{itemize}
 
+Se evaluó también la inferencia local mediante \textbf{Ollama}, que permite ejecutar modelos open source directamente en el equipo de desarrollo sin depender de una API externa. Esta opción fue descartada en fase temprana por las limitaciones de hardware del entorno local, que hacían que los tiempos de respuesta fueran inviables para un uso interactivo. No obstante, la Universidad de Sevilla dispone de servidores de inferencia compatibles con modelos en formato Ollama, lo que abre una vía de integración institucional futura sin coste de API.
+
 \subsubsection{Comparación detallada}
 
-\paragraph{Coste y accesibilidad}
+\paragraph{Coste y accesibilidad.}
 
 El coste y la accesibilidad hacen referencia a la \textbf{disponibilidad económica y facilidad de uso de los modelos de lenguaje (LLMs)}. En un contexto académico, donde no suele existir presupuesto, es esencial contar con opciones que permitan \textbf{experimentar gratuitamente o con bajos costes iniciales}. Además del precio, influyen factores como los límites de uso en los planes gratuitos, la velocidad de respuesta, la estabilidad del servicio y la facilidad de registro o integración. Esta característica resulta clave para asegurar que el proyecto pueda desarrollarse de forma \textbf{sostenible y realista}, sin que los costes de las llamadas a la API se conviertan en una barrera.
 
@@ -231,7 +233,7 @@ El coste y la accesibilidad hacen referencia a la \textbf{disponibilidad económ
     \item Claude (Anthropic) y Cohere requieren suscripción desde el inicio, menos atractivas en un contexto universitario.
 \end{itemize}
 
-\paragraph{Calidad y rendimiento}
+\paragraph{Calidad y rendimiento.}
 
 La calidad y el rendimiento de un modelo de lenguaje se refieren a su capacidad para \textbf{comprender instrucciones, generar texto coherente y relevante, y mantener el contexto a lo largo de la conversación}. Estos aspectos suelen evaluarse mediante \textbf{pruebas comparativas de comprensión, razonamiento y generación en varios idiomas}. Además, influyen factores prácticos como la \textbf{velocidad de respuesta, la estabilidad del modelo y su habilidad para manejar entradas extensas sin pérdida de coherencia}. Una mayor calidad en este ámbito se traduce en \textbf{respuestas más útiles, precisas y naturales}, lo que resulta fundamental para un chatbot académico que debe manejar información variada con fiabilidad.
 
@@ -243,7 +245,7 @@ Estudios comparativos muestran que Gemini compite con GPT-4 en comprensión y ge
     \item Hugging Face API depende mucho del modelo seleccionado (ej. LLaMA, Mistral, Falcon), pero requieren más trabajo de fine-tuning y optimización para igualar a Gemini/GPT en calidad.
 \end{itemize}
 
-\paragraph{Integración y soporte técnico}
+\paragraph{Integración y soporte técnico.}
 
 La integración y el soporte técnico se refieren a la \textbf{facilidad con la que un LLM puede incorporarse en el stack tecnológico existente} y al nivel de recursos disponibles para resolver problemas durante el desarrollo. Factores como la existencia de \textbf{SDKs oficiales, librerías en distintos lenguajes, ejemplos prácticos y documentación clara} determinan la rapidez de adopción. Además, contar con un ecosistema sólido y acuerdos institucionales (como convenios académicos) puede simplificar la integración y asegurar \textbf{mayor estabilidad a largo plazo}. Esta característica es clave, ya que permite centrar el esfuerzo en el desarrollo del chatbot sin tener que invertir demasiado tiempo en resolver barreras técnicas de conexión con el modelo.
 
@@ -255,7 +257,7 @@ La integración y el soporte técnico se refieren a la \textbf{facilidad con la 
     \item Gemini además está alineado con acuerdos académicos, como el que mantiene la \textbf{Universidad de Sevilla con Google} en diferentes ámbitos, lo que puede facilitar futuras integraciones oficiales del chatbot.
 \end{itemize}
 
-\paragraph{Privacidad y cumplimiento (RGPD)}
+\paragraph{Privacidad y cumplimiento (RGPD).}
 
 La privacidad y el cumplimiento normativo son esenciales al utilizar modelos de lenguaje que procesan datos de usuarios. Esta característica evalúa el \textbf{nivel de control sobre dónde y cómo se almacenan los datos}, si el servicio cumple con estándares legales de protección de información y si existe la opción de \textbf{despliegue on-premise}. Los LLMs en la nube suelen garantizar cumplimiento básico de GDPR, pero limitan el control directo. En cambio, los modelos auto-hospedados ofrecen \textbf{mayor soberanía sobre los datos}, aunque requieren más infraestructura y experiencia técnica. En un contexto universitario, suele ser más relevante encontrar un equilibrio entre \textbf{facilidad de uso, coste cero o reducido y garantías mínimas de privacidad}.
 
@@ -300,11 +302,11 @@ Privacidad y RGPD        & $\star\star$     & $\star\star$     & $\star$        
 
 La infraestructura del sistema se apoya en tecnologías de código abierto y servicios con plan gratuito, lo que permite mantener el coste operativo en niveles compatibles con un proyecto académico. El sistema está actualmente en producción, desplegado en una instancia de DigitalOcean mediante Docker Compose, y se ha utilizado tanto para la fase de pruebas como para el piloto con alumnos reales.
 
-El núcleo conversacional se ejecuta sobre el framework Rasa~3.6 y Python como lenguaje base, tanto para el servidor de diálogo como para las acciones personalizadas. La comprensión del lenguaje natural se reparte entre el clasificador local DIET, entrenado con los ejemplos del corpus propio del proyecto, y la API de Gemini (modelo \texttt{gemma-3-27b-it}), que asume las tareas en las que el clasificador local no es suficiente: clasificación de fallback, generación de SQL a partir de lenguaje natural, decisión RAG/SQL y redacción final de respuestas. La clave de la API se obtiene a través de Google AI Studio, dentro del plan gratuito.
+El núcleo conversacional se ejecuta sobre el framework Rasa~3.6 y Python como lenguaje base, tanto para el servidor de diálogo como para las acciones personalizadas. La comprensión del lenguaje natural se reparte entre el clasificador local DIET~\cite{bocklisch2020diet}, entrenado con los ejemplos del corpus propio del proyecto, y la API de Gemini (modelo \texttt{gemma-3-27b-it}), que asume las tareas en las que el clasificador local no es suficiente: clasificación de fallback, generación de SQL a partir de lenguaje natural, decisión RAG/SQL y redacción final de respuestas. La clave de la API se obtiene a través de Google AI Studio, dentro del plan gratuito.
 
 La capa de datos reside en Supabase, una plataforma gestionada que ofrece PostgreSQL con la extensión \texttt{pgvector} activada de serie. Esta combinación permite mantener en la misma base de datos la información estructurada del dominio académico (asignaturas, horarios, profesorado, titulaciones) y los \textit{embeddings} de los planes docentes utilizados por el pipeline RAG, sin necesidad de un motor vectorial independiente.
 
-La interfaz del usuario final se entrega como un \textit{widget} web ligero, implementado directamente en HTML, CSS y JavaScript sin necesidad de \textit{frameworks} de \textit{front-end}, lo que minimiza el peso del recurso y simplifica la integración en cualquier portal institucional. Junto al \textit{widget} se despliega un panel de administración independiente, construido en Flask, que conecta directamente con la base de datos para permitir al personal autorizado mantener actualizado el corpus sin intervención técnica. Todo el conjunto se sirve a través de un proxy inverso \texttt{nginx} que actúa como punto de entrada único.
+La interfaz del usuario final se entrega como un \textit{widget} web ligero, implementado directamente en HTML, CSS y JavaScript sin necesidad de \textit{frameworks} de \textit{front-end}, lo que minimiza el peso del recurso y simplifica la integración en cualquier portal institucional. Junto al \textit{widget} se despliega un panel de administración independiente, construido en Flask (elegido por su ligereza y su integración natural en el stack Python del proyecto), que conecta directamente con la base de datos para permitir al personal autorizado mantener actualizado el corpus sin intervención técnica. Todo el conjunto se sirve a través de un proxy inverso \texttt{nginx} que actúa como punto de entrada único.
 
 \subsection{Arquitectura del sistema}
 

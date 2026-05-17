@@ -33,6 +33,11 @@
 % Para celdas que abarcan varias filas (resumen EDT por fases)
 \usepackage{multirow}
 
+% Tablas que rompen entre páginas (apéndice de decisiones técnicas).
+% array proporciona \arraybackslash y \raggedright en columnas p{}.
+\usepackage{array}
+\usepackage{longtable}
+
 % Permite a LaTeX estirar levemente el espaciado interpalabra para evitar
 % overfull en palabras largas sin guion (URLs, nombres de clase, etc.).
 \setlength{\emergencystretch}{3em}
@@ -79,7 +84,7 @@
 
 \begin{document}
 \tipo{Grado}
-\titulopro{Linceus Assistant: asistente conversacional con RAG para la orientación académica universitaria}
+\titulopro{Diseño y desarrollo de un chatbot inteligente para la consulta de información académica y administrativa en la Universidad de Sevilla\\[0.4cm]{\normalsize\mdseries\itshape Linceus Assistant}}
 \tutor{Jos\'e Antonio Parejo Maestre}
 \departamento{Lenguajes y Sistemas Inform\'aticos}
 \autores{Santia Bregu}{{\ }}

@@ -1,5 +1,5 @@
-\contentsline {lstlisting}{\numberline {11.1}Cascada de resolucion de \texttt {resolver\_asignatura()}.}{115}{lstlisting.11.1}%
-\contentsline {lstlisting}{\numberline {11.2}Atajos a RAG en \texttt {ActionConsultaProfesor}.}{119}{lstlisting.11.2}%
+\contentsline {lstlisting}{\numberline {11.1}Cascada de resolucion de \texttt {resolver\_asignatura()}.}{114}{lstlisting.11.1}%
+\contentsline {lstlisting}{\numberline {11.2}Atajos a RAG en \texttt {ActionConsultaProfesor}.}{118}{lstlisting.11.2}%
 \contentsline {lstlisting}{\numberline {13.1}Levantar la pila completa con Docker Compose.}{158}{lstlisting.13.1}%
 \contentsline {lstlisting}{\numberline {13.2}Consultar registros de un contenedor.}{159}{lstlisting.13.2}%
 \contentsline {lstlisting}{\numberline {13.3}Operaciones de mantenimiento habituales.}{160}{lstlisting.13.3}%

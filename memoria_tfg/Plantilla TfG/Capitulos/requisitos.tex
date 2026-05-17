@@ -2,9 +2,9 @@
 
 \chapter{Análisis de requisitos}\label{cap:requisitos}
 
-Este capítulo recoge el análisis de requisitos del sistema Linceus Assistant en su versión correspondiente al cierre del prototipo (fase 1). El análisis ha sido un proceso iterativo: la propuesta inicial planteaba un alcance amplio que incluía notificaciones a estudiantes, soporte multilingüe e integraciones en tiempo real con plataformas institucionales, pero la limitación de tiempo propia de un trabajo individual ha obligado a priorizar el núcleo conversacional y el dominio académico, y a aplazar el resto a iteraciones posteriores. La sección~\ref{sec:req-evolucion} cierra el capítulo precisamente con un repaso de cómo ha evolucionado el alcance respecto del documento original, dado que la guía de referencia~\cite{segura2024guiatfg} recomienda dejar trazabilidad de las desviaciones de planificación.
+Este capítulo recoge el análisis de requisitos del sistema Linceus Assistant en su versión correspondiente al cierre del prototipo. El análisis ha sido un proceso iterativo: la propuesta inicial planteaba un alcance amplio que incluía notificaciones a estudiantes, soporte multilingüe e integraciones en tiempo real con plataformas institucionales, pero la limitación de tiempo propia de un trabajo individual ha obligado a priorizar el núcleo conversacional y el dominio académico, y a aplazar el resto a iteraciones posteriores. La sección~\ref{sec:req-evolucion} cierra el capítulo precisamente con un repaso de cómo ha evolucionado el alcance respecto del documento original, dado que la guía de referencia~\cite{segura2024guiatfg} recomienda dejar trazabilidad de las desviaciones de planificación.
 
-Los requisitos se organizan en cuatro tipos siguiendo la práctica habitual en ingeniería del software: requisitos funcionales (qué hace el sistema), requisitos de información (qué datos maneja), requisitos no funcionales (con qué calidad lo hace) y prototipos de interfaz (cómo se muestra al usuario). Cada requisito funcional se acompaña, cuando procede, de los identificadores de los casos de prueba que lo verifican, lo que permite cruzarlo con el Capítulo~\ref{cap:pruebas}.
+Los requisitos se organizan en cuatro tipos siguiendo la práctica habitual en ingeniería del software~\cite{sommerville2015}: requisitos funcionales (qué hace el sistema), requisitos de información (qué datos maneja), requisitos no funcionales (con qué calidad lo hace) y prototipos de interfaz (cómo se muestra al usuario). Cada requisito funcional se acompaña, cuando procede, de los identificadores de los casos de prueba que lo verifican, lo que permite cruzarlo con el Capítulo~\ref{cap:pruebas}.
 
 \section{Identificación de actores}\label{sec:req-actores}
 
@@ -22,11 +22,15 @@ La visión UML de la interacción entre los dos actores operativos (estudiante y
 
 Los requisitos funcionales se agrupan por dominio (asignaturas, horarios, profesorado, transversal y panel de administración). Antes de detallar cada tabla conviene explicitar dos convenciones de redacción que se aplican uniformemente a las cinco subsecciones.
 
+\paragraph{Referencias a decisiones técnicas.} Algunos enunciados de la columna \textit{Descripción} se acompañan de uno o varios códigos del tipo \textbf{D-061}, \textbf{D-037} o \textbf{S5-18}. Estos códigos remiten al \textbf{registro de decisiones técnicas} mantenido en el repositorio bajo \texttt{docs/sprints/} (un fichero \texttt{Registro\_decisiones.md} por sprint) y suman \textbf{113 entradas} a lo largo de los sprints S2 a S7. La numeración se organiza en dos bloques: los códigos D-\textit{nnn} pertenecen a la numeración global iniciada en el sprint S6 y continuada en S7 (D-001 a D-069, con algunos huecos por consolidación de entradas), y los códigos con prefijo de sprint (S2-\textit{nn}, S3-\textit{nn}, S4-\textit{nn}, S5-\textit{nn}) recogen las decisiones de los sprints anteriores, que se documentaron antes de unificar el esquema de codificación. La lista íntegra, con título y sprint de origen para cada entrada, figura en el Apéndice~\ref{ap:decisiones}; cualquier código citado en este capítulo o en los siguientes es localizable allí sin necesidad de consultar el repositorio.
+
 \paragraph{Granularidad.} Cada requisito describe una capacidad coherente del sistema desde el punto de vista del usuario, no una sentencia atómica. Cuando un mismo requisito reúne varias condiciones equivalentes (por ejemplo RF-A1 cubre la consulta por nombre, por alias o por acrónimo de la misma asignatura), se ha optado por mantenerlas en un único enunciado porque la lógica que las atiende es la misma y porque cada condición está cubierta por un caso de aceptación distinto en la columna \textit{Pruebas}. Esta convención facilita la lectura y la trazabilidad, ya que cada caso E-P*, L-P*, P-P*, etc. del Capítulo~\ref{cap:pruebas} mantiene una correspondencia uno a uno con una situación de uso real.
 
-\paragraph{Priorización.} La columna \textit{Prio.} asigna a cada requisito una de dos etiquetas, \textbf{Alta} o \textbf{Media}, siguiendo una versión simplificada del esquema MoSCoW~\cite{north2006bdd}. Los requisitos \textbf{Alta} corresponden a los \emph{Must have} del prototipo de fase~1: cubren los flujos sin los cuales el bot no resuelve su caso de uso principal (ficha de asignatura, horario, datos de profesor, cambio de titulación, fuera de ámbito, mantenibilidad básica del panel). Los requisitos \textbf{Media} son los \emph{Should have}: aportan valor verificado pero su ausencia no impide el uso productivo (filtros adicionales, distinción teoría/laboratorio, departamentos, \textit{feedback}, exportaciones). Los \emph{Could have} y \emph{Won't have} se recogen explícitamente en la Sección~\ref{sec:req-evolucion} como funcionalidades aplazadas o reformuladas. La columna \textit{Pruebas} de cada tabla indica los identificadores de los casos de aceptación que verifican el requisito en el Capítulo~\ref{cap:pruebas}.
+\paragraph{Priorización.} La columna \textit{Prio.} asigna a cada requisito una de dos etiquetas, \textbf{Alta} o \textbf{Media}, siguiendo una versión simplificada del esquema MoSCoW~\cite{clegg1994case}. Los requisitos \textbf{Alta} corresponden a los \emph{Must have} del prototipo de fase~1: cubren los flujos sin los cuales el bot no resuelve su caso de uso principal (ficha de asignatura, horario, datos de profesor, cambio de titulación, fuera de ámbito, mantenibilidad básica del panel). Los requisitos \textbf{Media} son los \emph{Should have}: aportan valor verificado pero su ausencia no impide el uso productivo (filtros adicionales, distinción teoría/laboratorio, departamentos, \textit{feedback}, exportaciones). Los \emph{Could have} y \emph{Won't have} se recogen explícitamente en la Sección~\ref{sec:req-evolucion} como funcionalidades aplazadas o reformuladas. La columna \textit{Pruebas} de cada tabla indica los identificadores de los casos de aceptación que verifican el requisito en el Capítulo~\ref{cap:pruebas}.
 
 \subsection{Dominio de asignaturas}\label{subsec:rf-asignaturas}
+
+La Tabla~\ref{tab:rf-asignaturas} recoge los requisitos asociados a la consulta de información académica sobre asignaturas: ficha completa, listados filtrados, conteos, recuperación de contenido del plan docente, herencia conversacional del nombre de la asignatura y desambiguación entre intenciones próximas (ficha vs.\ horario).
 
 \begin{table}[hbtp]
 \centering
@@ -45,6 +49,8 @@ RF-A6 & El sistema debe distinguir entre la pregunta ``qué es X'' (ficha) y ``c
 \end{table}
 
 \subsection{Dominio de horarios}\label{subsec:rf-horarios}
+
+La Tabla~\ref{tab:rf-horarios} agrupa los requisitos que cubren la consulta del horario oficial publicado por la ETSII para el curso académico vigente, con sus filtros más habituales (curso y grupo, día de la semana, cuatrimestre, asignatura concreta) y la distinción entre aulas de teoría y laboratorio cuando el usuario lo solicita explícitamente.
 
 \begin{table}[hbtp]
 \centering
@@ -65,6 +71,8 @@ RF-H7 & El sistema debe rechazar de manera explícita consultas con curso o grup
 
 \subsection{Dominio de profesorado}\label{subsec:rf-profesorado}
 
+La Tabla~\ref{tab:rf-profesorado} recoge los requisitos del dominio de profesorado: datos de contacto, identificación de coordinador y suplentes mediante recuperación semántica sobre el plan docente, tutorías, filtrado por departamento, tolerancia a errores tipográficos en nombres propios y declaración explícita de ausencia de información cuando el profesor no figura en la base de datos.
+
 \begin{table}[hbtp]
 \centering
 \small
@@ -84,6 +92,8 @@ RF-P7 & El sistema debe declarar explícitamente la ausencia de información cua
 
 \subsection{Comportamientos transversales}\label{subsec:rf-transversal}
 
+La Tabla~\ref{tab:rf-transversal} consolida los requisitos que no pertenecen a un dominio académico concreto sino al comportamiento conversacional del bot en su conjunto: cambio dinámico de titulación, rechazo de titulaciones fuera del alcance ETSII, gestión de consultas fuera de ámbito, defensa frente a \textit{prompt injection} y \textit{jailbreak}, bienvenida y soporte de la pregunta meta-conversacional ``¿qué eres?'', y mecanismo de \textit{feedback} explícito por turno.
+
 \begin{table}[hbtp]
 \centering
 \small
@@ -96,7 +106,7 @@ RF-T2 & El sistema debe rechazar titulaciones fuera del alcance ETSII con un men
 RF-T3 & El sistema debe identificar consultas fuera de ámbito (clima, peticiones generales) y responder de forma cortés sin entrar al pipeline de consulta académica. & Alta & F-01..F-04 \\ \hline
 RF-T4 & El sistema debe bloquear intentos de \textit{prompt injection} y \textit{jailbreak} (``ignora las instrucciones anteriores''). & Alta & R-01..R-04 \\ \hline
 RF-T5 & El sistema debe ofrecer un mensaje de bienvenida y soportar la pregunta meta-conversacional ``¿qué eres?'' redirigiendo a la naturaleza del bot. & Media & R-04 \\ \hline
-RF-T6 & El sistema debe permitir al usuario reportar respuestas incorrectas mediante un mecanismo de \textit{feedback} integrado en el \textit{widget}. & Media & --- \\ \hline
+RF-T6 & El sistema debe permitir al usuario reportar respuestas incorrectas mediante un mecanismo de \textit{feedback} integrado en el \textit{widget}. & Media & -- \\ \hline
 \end{tabular}
 \end{table}
 
@@ -123,7 +133,7 @@ RF-AD7 & El panel debe agregar el \textit{feedback} explícito por turno aportad
 
 \section{Criterios de aceptación}\label{sec:req-aceptacion}
 
-La guía de referencia~\cite{segura2024guiatfg} recomienda que cada requisito funcional vaya acompañado de un criterio de aceptación que pueda materializarse en una prueba. En este trabajo la derivación se realiza de forma sistemática: cada requisito se traduce a uno o varios escenarios escritos en notación \textit{Given--When--Then}~\cite{north2006bdd}, que el \textit{runner} de pruebas (\texttt{tests/run\_test\_plan.py}) convierte mecánicamente en \textit{slot} inicial, mensaje del usuario y condición sobre el \textit{intent} clasificado y el texto de la respuesta. La traza completa requisito--prueba se documenta en la columna \textit{Pruebas} de las Tablas \ref{tab:rf-asignaturas}, \ref{tab:rf-horarios}, \ref{tab:rf-profesorado} y \ref{tab:rf-transversal}, y la metodología detallada en la Sección~\ref{subsec:pruebas-marco}. La Tabla~\ref{tab:criterios-aceptacion} recoge una selección representativa (uno por dominio y uno para el panel) que ilustra el formato y permite al lector reconstruir el resto sin necesidad de inspeccionar cada caso de la suite.
+En este trabajo la derivación se realiza de forma sistemática: cada requisito se traduce a uno o varios escenarios escritos en notación \textit{Given--When--Then}~\cite{north2006bdd}, que el \textit{runner} de pruebas (\texttt{tests/run\_test\_plan.py}) convierte mecánicamente en \textit{slot} inicial, mensaje del usuario y condición sobre el \textit{intent} clasificado y el texto de la respuesta. La traza completa requisito--prueba se documenta en la columna \textit{Pruebas} de las Tablas \ref{tab:rf-asignaturas}, \ref{tab:rf-horarios}, \ref{tab:rf-profesorado} y \ref{tab:rf-transversal}, y la metodología detallada en la Sección~\ref{subsec:pruebas-marco}. La Tabla~\ref{tab:criterios-aceptacion} recoge una selección representativa (uno por dominio y uno para el panel) que ilustra el formato y permite al lector reconstruir el resto sin necesidad de inspeccionar cada caso de la suite.
 
 \begin{table}[hbtp]
 \centering
@@ -195,7 +205,7 @@ La operación del sistema en producción registra dos entidades. La tabla \textt
 
 \subsection{Modelo conceptual}\label{subsec:ri-modelo-conceptual}
 
-La Figura~\ref{fig:modelo-conceptual-ri} sintetiza los requisitos de información del prototipo en un único modelo conceptual de tres bloques: dominio académico (rosa), módulo RAG (azul) y entidades de operación (verde). El diagrama recoge únicamente las entidades, sus atributos esenciales y las cardinalidades necesarias para validar la integridad de los requisitos; las claves primarias, las claves foráneas y los tipos SQL detallados figuran en el Capítulo~\ref{cap:estructura-bd}. La separación visual de los tres bloques sirve además para localizar el origen de cada requisito (RI-1, RI-2 y RI-3 sobre el bloque académico; RI-4 sobre el bloque RAG; RI-5 y RI-6 sobre el bloque de operación).
+La Figura~\ref{fig:modelo-conceptual-ri} sintetiza los requisitos de información del prototipo en un único modelo conceptual organizado en tres bloques semánticamente independientes. El bloque de \textbf{dominio académico} (rosa) agrupa las diez entidades estructuradas del catálogo institucional: \textsc{Centro}, \textsc{Titulación} y \textsc{Asignatura} forman la jerarquía principal del catálogo; \textsc{Departamento} y \textsc{Profesor} con su relación intermedia \textsc{ProfesorAsignatura} capturan el directorio docente y los roles por grupo; \textsc{GrupoDeClase}, \textsc{Aula} y \textsc{Horario} representan la información de impartición; y \textsc{PlanDocente} vincula cada asignatura con el PDF fuente del corpus RAG. El bloque del \textbf{módulo RAG} (azul) recoge la entidad \textsc{Chunk} con su contenido textual, su \textit{embedding} vectorial de 2\,000 dimensiones y los metadatos de sección, materializando el requisito RI-4. El bloque de \textbf{entidades de operación} (verde) comprende \textsc{ConversationLog} y \textsc{Feedback}, ambas sin datos personales identificables, correspondientes a RI-5 y RI-6. El diagrama recoge únicamente los atributos esenciales y las cardinalidades necesarias para validar la integridad de los requisitos; las claves primarias, las claves foráneas y los tipos SQL detallados figuran en el Capítulo~\ref{cap:estructura-bd}.
 
 \begin{figure}[hbtp]
 \centering
@@ -228,7 +238,7 @@ RNF-9 & Diseño \textit{responsive}. & $\geq$ 320~px & \textbf{320~px} (iPhone S
 RNF-10 & Anonimato y ausencia de PII. & UUID anónimo, sin datos pers. & \textbf{Cumplido} por diseño & Auditoría de esquema BD \\ \hline
 RNF-11 & Reproducibilidad del despliegue. & \texttt{docker compose up} & \textbf{Cumplido} (Ubuntu 24.04 + Win 11) & Cap.~\ref{cap:manuales} \\ \hline
 RNF-12 & Trazabilidad de decisiones. & Registro en \texttt{docs/sprints/} & \textbf{72 entradas} D-xxx (S2--S7) & Sprints S2--S7 \\ \hline
-RNF-13 & Acceso autenticado al panel de administración. & Sesión Supabase Auth (e-mail+contraseña) v\'alida antes de acceder a \texttt{admin.html}; redirecci\'on a \texttt{login.html} cuando la sesi\'on no es v\'alida. & \textbf{Cumplido} (Supabase Auth, JWT en \textit{frontend}) & Verificado manual; v\'ease \texttt{frontend/login.js} y la comprobaci\'on \texttt{getSession()} en \texttt{frontend/admin.js} \\ \hline
+RNF-13 & Acceso autenticado al panel de administraci\'on. & Sesi\'on Supabase Auth v\'alida antes de acceder a \texttt{admin.html}; redirecci\'on a \texttt{login.html} si la sesi\'on no existe o ha caducado. & \textbf{Cumplido} (Supabase Auth, JWT) & Verificado manual; \texttt{login.js} y \texttt{admin.js} (funci\'on \texttt{getSession()}) \\ \hline
 RNF-14 & Usabilidad: primera consulta sin formación previa. & $\leq$ 60~s primera consulta exitosa & \textbf{28~s} mediana (piloto) & Piloto (59 sesiones) \\ \hline
 RNF-15 & Escalabilidad: nueva titulación sin cambio de código. & Solo carga de datos en panel & \textbf{Cumplido} (GII-TI, GII-IC añadidos) & Cap.~\ref{cap:manuales} \\ \hline
 \end{tabular}
@@ -259,7 +269,7 @@ SE-2 & Disponibilidad del directorio PDI & La importación de profesorado (RF-AD
 SE-3 & Calendario académico & La inferencia automática del cuatrimestre activo (RF-H3, RF-H4) asume el calendario de la US: primer cuatrimestre de septiembre a enero, segundo de febrero a julio. \\ \hline
 SE-4 & Acceso a través de la web institucional & El \textit{widget} asume que se integra en la página principal de la US o de la ETSII; el modal de selección de titulación se muestra siempre en el primer turno porque no se hereda contexto del usuario autenticado. \\ \hline
 \multicolumn{3}{|l|}{\textit{Dependencias de servicios externos}} \\ \hline
-DE-1 & Gemini API (Google) & La fase generativa (\textit{Text-to-SQL}, redacción, \textit{embeddings}, fallback inteligente) depende del plan gratuito de Gemma~3 y \texttt{gemini-embedding-001}, sujetos a cuota: 100~RPM y 1\,000~RPD por proyecto. El módulo RAG dispone de fallback a búsqueda \texttt{ILIKE} (Sección~\ref{subsec:dd-fallback}); el \textit{Text-to-SQL}, no. \\ \hline
+DE-1 & Gemini API (Google) & La generación de texto (\textit{Text-to-SQL}, redacción, fallback) depende de \texttt{gemma-3-27b-it}: \textbf{15~RPM y 1\,500~RPD} (plan gratuito). Los \textit{embeddings} RAG usan \texttt{gemini-embedding-001}: \textbf{100~RPM y 1\,000~RPD}. El m\'odulo RAG dispone de fallback a b\'usqueda \texttt{ILIKE} (Secci\'on~\ref{subsec:dd-fallback}); el \textit{Text-to-SQL}, no. \\ \hline
 DE-2 & Supabase (PostgreSQL gestionado) & El plan Free admite hasta 5\,000 MAU y 500~MB; superado ese umbral, el coste se documenta en la Sección~\ref{sec:costes} del Capítulo~\ref{cap:planificacion}. \\ \hline
 DE-3 & DigitalOcean (cómputo) & El \textit{droplet} actual cubre el consumo de RAM de Rasa y del \textit{Action Server}. La escalabilidad horizontal queda fuera del alcance del prototipo. \\ \hline
 DE-4 & Cliente local del usuario & Compatibilidad declarada en Chrome, Firefox, Edge y Safari modernos (RNF-8) y resolución mínima 320\,px (RNF-9). \\ \hline
@@ -352,29 +362,29 @@ La columna \textit{Pruebas} de cada tabla de requisitos funcionales (Secciones \
 
 \begin{table}[hbtp]
 \centering
-\small
+\footnotesize
 \caption{Trazabilidad requisitos funcionales -- cobertura de pruebas por categoría de la suite.}\label{tab:traz-rf-pruebas}
-\begin{tabular}{|p{3.4cm}|p{2.6cm}|p{1.4cm}|p{2.6cm}|}
+\begin{tabular}{|p{3.6cm}|p{2.8cm}|p{1.1cm}|p{2.5cm}|}
 \hline
-\textbf{Categoría (suite)} & \textbf{RFs cubiertos} & \textbf{N. casos} & \textbf{Resultado} \\ \hline
-\multicolumn{4}{|l|}{\textit{Capa E2E (\S\ref{sec:pruebas-e2e}) --- 159 casos contables}} \\ \hline
-\texttt{especifica} & RF-A1, RF-A6 & 22 & 22/22 PASS (100~\%) \\ \hline
-\texttt{listado} & RF-A2 & 15 & 15/15 PASS (100~\%) \\ \hline
-\texttt{conteo} & RF-A3 & 10 & 10/10 PASS (100~\%) \\ \hline
-\texttt{horario} & RF-H1, RF-H2, RF-H3, RF-H6, RF-H7 & 27 & 26/27 PASS (96,3~\%) \\ \hline
-\texttt{horario\_asignatura} & RF-H4, RF-H5 & 18 & 18/18 PASS (100~\%) \\ \hline
+\textbf{Categoría (suite)} & \textbf{RFs cubiertos} & \textbf{N.} & \textbf{Resultado} \\ \hline
+\multicolumn{4}{|l|}{\textit{Capa E2E (\S\ref{sec:pruebas-e2e}): 159 casos contables}} \\ \hline
+\texttt{asignatura\_\allowbreak especifica} & RF-A1, RF-A6 & 22 & 22/22 PASS (100~\%) \\ \hline
+\texttt{asignatura\_\allowbreak listado} & RF-A2 & 15 & 15/15 PASS (100~\%) \\ \hline
+\texttt{asignatura\_\allowbreak conteo} & RF-A3 & 10 & 10/10 PASS (100~\%) \\ \hline
+\texttt{horario} & RF-H1--H3, RF-H6, RF-H7 & 27 & 26/27 PASS (96,3~\%) \\ \hline
+\texttt{horario\_\allowbreak asignatura} & RF-H4, RF-H5 & 18 & 18/18 PASS (100~\%) \\ \hline
 \texttt{profesor} & RF-P1 -- RF-P7 & 43 & 37/43 PASS (86,0~\%) \\ \hline
-\texttt{cambiar\_contexto} & RF-T1, RF-T2 & 13 & 12/13 PASS (92,3~\%) \\ \hline
-\texttt{fuera\_ambito} & RF-T3, RF-T4, RF-T5 & 8 & 8/8 PASS (100~\%) \\ \hline
-\texttt{cross\_dominio} & transversal (heredado) & 1 & 1/1 PASS (100~\%) \\ \hline
-\texttt{seguimiento\_cross\_intent} & RF-A5 & 1 & 1/1 PASS (100~\%) \\ \hline
-\textbf{Subtotal E2E} & RF-A1--A6, RF-H1--H7, RF-P1--P7, RF-T1--T5 & \textbf{159} & \textbf{150/159 PASS (94,3~\%)} \\ \hline
-\multicolumn{4}{|l|}{\textit{Otras capas funcionales (\S\ref{sec:pruebas-rag}, \S\ref{sec:pruebas-nlu}, \S\ref{sec:pruebas-trafico}, \S\ref{sec:pruebas-admin})}} \\ \hline
-RAG \textit{baseline} & RF-A4 (sobre asignaturas genéricas) & 50 & 47/50 PASS (94,0~\%) \\ \hline
-RAG profundidad & RF-A4, RF-P3 (plan docente real) & 74 & 68/74 OK (91,9~\%) \\ \hline
-NLU + Policy & RF-A5, RF-T1 (\textit{stories} de seguimiento) & 158 & 158/158 PASS (100~\%) \\ \hline
+\texttt{cambiar\_\allowbreak contexto} & RF-T1, RF-T2 & 13 & 12/13 PASS (92,3~\%) \\ \hline
+\texttt{fuera\_\allowbreak ambito} & RF-T3, RF-T4, RF-T5 & 8 & 8/8 PASS (100~\%) \\ \hline
+\texttt{cross\_\allowbreak dominio} & transversal (heredado) & 1 & 1/1 PASS (100~\%) \\ \hline
+\texttt{seguimiento\_\allowbreak cross\_\allowbreak intent} & RF-A5 & 1 & 1/1 PASS (100~\%) \\ \hline
+\textbf{Subtotal E2E} & RF-A1--A6, RF-H1--H7, RF-P1--P7, RF-T1--T5 & \textbf{159} & \textbf{150/159 (94,3~\%)} \\ \hline
+\multicolumn{4}{|l|}{\textit{Otras capas (\S\ref{sec:pruebas-rag}, \S\ref{sec:pruebas-nlu}, \S\ref{sec:pruebas-trafico}, \S\ref{sec:pruebas-admin})}} \\ \hline
+RAG \textit{baseline} & RF-A4 (asignaturas genéricas) & 50 & 47/50 PASS (94,0~\%) \\ \hline
+RAG profundidad & RF-A4, RF-P3 (plan docente) & 74 & 68/74 OK (91,9~\%) \\ \hline
+NLU + Policy & RF-A5, RF-T1 (\textit{stories}) & 158 & 158/158 PASS (100~\%) \\ \hline
 Tráfico real (piloto) & todos los RF activos & 59 & 58/59 PASS (98,3~\%) \\ \hline
-Panel admin. (pytest) & RF-AD1 -- RF-AD7 & 24 & 24/24 PASS (100~\%) \\ \hline
+Panel admin.\ (pytest) & RF-AD1 -- RF-AD7 & 24 & 24/24 PASS (100~\%) \\ \hline
 \end{tabular}
 \end{table}
 
@@ -391,7 +401,7 @@ La propuesta original del proyecto, recogida en el anteproyecto~\cite{segura2024
 \begin{tabular}{|p{3.0cm}|p{2.0cm}|p{7.5cm}|}
 \hline
 \textbf{Funcionalidad} & \textbf{Estado} & \textbf{Justificación} \\ \hline
-\textit{Frontend} en React & Reformulado & Implementado en HTML/CSS/JavaScript \textit{vanilla} sobre \texttt{nginx}. La inversión de tiempo se ha priorizado en el desarrollo del chatbot, donde el valor añadido del proyecto es mayor. \\ \hline
+\textit{Frontend} en React & Reformulado & Implementado en HTML/CSS/JavaScript \textit{vanilla}, lo que facilita su inserci\'on en cualquier p\'agina existente mediante una \'unica etiqueta \texttt{\textless{}script\textgreater{}}, sin dependencias de \textit{framework}. La inversi\'on en desarrollo se ha concentrado en el n\'ucleo conversacional, donde reside el mayor valor diferencial del proyecto. \\ \hline
 Notificaciones \textit{push} a estudiantes & Aplazado & Sustituido por el \textbf{panel de administración}, que ofrece mayor valor a la persona que continúe el proyecto y materializa los requisitos de mantenibilidad y escalabilidad. \\ \hline
 Soporte multilingüe (inglés) & Aplazado & El corpus académico es mayoritariamente español. Se aplaza a fase 2 cuando el sistema esté estabilizado y exista presupuesto para una segunda suite de pruebas. \\ \hline
 Despliegue \textit{on-premise} & Reformulado & La información tratada es de carácter público y la sesión es anónima, por lo que no requiere despliegue en infraestructura propia. Se ha optado por DigitalOcean + Supabase. \\ \hline
