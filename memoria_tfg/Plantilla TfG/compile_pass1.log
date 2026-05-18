@@ -241,8 +241,7 @@ z/libraries\tikzlibrarycalc.code.tex)
 (C:\Program Files\MiKTeX\tex/latex/xurl\xurl.sty)
 (C:\Program Files\MiKTeX\tex/latex/psnfss\ot1ptm.fd)
 (C:\Users\santi\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
-tex.def)
-No file proyect.aux.
+tex.def) (proyect.aux)
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 
@@ -253,7 +252,8 @@ ii
 (C:\Users\santi\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
 ase.sty
 (C:\Users\santi\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.c
-fg)) (C:\Program Files\MiKTeX\tex/latex/psnfss\ot1phv.fd)
+fg)) (proyect.out) (proyect.out)
+(C:\Program Files\MiKTeX\tex/latex/psnfss\ot1phv.fd)
 (C:\Users\santi\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd)
 (C:\Users\santi\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd)
 (C:\Users\santi\AppData\Local\Programs\MiKTeX\tex/latex/base\ulasy.fd) [1{C:/Us
@@ -267,139 +267,18 @@ been already used, duplicate ignored
 l.16 \clearpage
                 [1]) (Capitulos/agradecimientos.tex [2]) (Capitulos/resumen.tex
 (C:\Program Files\MiKTeX\tex/latex/psnfss\ot1pcr.fd)
-(C:\Program Files\MiKTeX\tex/latex/psnfss\ts1ptm.fd) [3]) [4]
-No file proyect.toc.
+(C:\Program Files\MiKTeX\tex/latex/psnfss\ts1ptm.fd) [3]) [4] (proyect.toc
 [5]
-No file proyect.lof.
-[6]
-No file proyect.lot.
-[7] (proyect.lol) [8] [9] (Capitulos/01_introduccion.tex
-Cap\'{\i }tulo 1.
-
-LaTeX Warning: Citation `jurafsky2009speech' on page 10 undefined on input line
- 4.
-
-
-LaTeX Warning: Citation `lewis2020retrieval' on page 10 undefined on input line
- 4.
-
-
-LaTeX Warning: Citation `usWeb' on page 10 undefined on input line 9.
-
-
-LaTeX Warning: Citation `etsiiWeb' on page 10 undefined on input line 9.
-
-
-LaTeX Warning: Citation `sevius' on page 10 undefined on input line 9.
-
-
-LaTeX Warning: Citation `sevius4' on page 10 undefined on input line 9.
-
-
-LaTeX Warning: Citation `usSecretaria' on page 10 undefined on input line 9.
-
-
-LaTeX Warning: Citation `usMatricula' on page 10 undefined on input line 9.
-
-
-LaTeX Warning: Citation `usPago' on page 10 undefined on input line 9.
-
-[10]
-
-LaTeX Warning: Reference `sec:req-evolucion' on page 11 undefined on input line
- 30.
-
-
-LaTeX Warning: Reference `cap:conclusiones' on page 11 undefined on input line 
-30.
-
-
-LaTeX Warning: Citation `bocklisch2017rasa' on page 11 undefined on input line 
-38.
-
-
-LaTeX Warning: Citation `karpukhin2020dpr' on page 11 undefined on input line 4
-0.
-
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 13.59999pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[11] (Capitulos/soluciones_existentes.tex
-
-LaTeX Warning: Citation `millionbotPlatform' on page 12 undefined on input line
- 9.
-
-
-LaTeX Warning: Citation `usCati' on page 12 undefined on input line 11.
-
-
-LaTeX Warning: Citation `torrejuanaCati' on page 12 undefined on input line 11.
-
-
-[12]
-
-LaTeX Warning: Citation `umuLola' on page 13 undefined on input line 13.
-
-
-LaTeX Warning: Citation `millionbotLola' on page 13 undefined on input line 13.
-
-
-
-LaTeX Warning: Citation `ugrAlhe' on page 13 undefined on input line 15.
-
-
-LaTeX Warning: Citation `millionbotUgr' on page 13 undefined on input line 15.
-
-
-LaTeX Warning: Citation `ucaLuca' on page 13 undefined on input line 17.
-
-
-LaTeX Warning: Citation `uahIsidra' on page 13 undefined on input line 19.
-
-
-LaTeX Warning: Citation `uahAiex' on page 13 undefined on input line 19.
-
-
-LaTeX Warning: Citation `unibuddy' on page 13 undefined on input line 25.
-
-
-LaTeX Warning: Citation `unibuddyAssistant' on page 13 undefined on input line 
-25.
-
-
-LaTeX Warning: Citation `hubert' on page 13 undefined on input line 27.
-
-
-LaTeX Warning: Reference `cap:pruebas' on page 13 undefined on input line 31.
-
-
-LaTeX Warning: Citation `gupta2019admitbot' on page 13 undefined on input line 
-31.
-
-
-LaTeX Warning: Citation `colace2018edubot' on page 13 undefined on input line 3
-1.
-
-
-LaTeX Warning: Citation `ranoliya2017chatbot' on page 13 undefined on input lin
-e 31.
-
-
-LaTeX Warning: Citation `dibya2021chatbot' on page 13 undefined on input line 3
-1.
-
-[13]
-
-LaTeX Warning: Reference `tab:soluciones-comparativa' on page 14 undefined on i
-nput line 35.
-
-
-LaTeX Warning: Citation `usCati' on page 14 undefined on input line 46.
-
-
+[6] [7] [8] [9] [10]) [11] (proyect.lof [12]) [13] (proyect.lot [14]) [15]
+(proyect.lol) [16] [17] (Capitulos/01_introduccion.tex
+Cap\'{\i }tulo 1.
+[18] [19] (Capitulos/soluciones_existentes.tex [20] [21]
 Underfull \hbox (badness 10000) in paragraph at lines 46--46
 []|\OT1/ptm/m/n/10 Acceso, ad-mi-
 
@@ -418,8 +297,8 @@ Underfull \hbox (badness 10000) in paragraph at lines 46--46
 Underfull \hbox (badness 10000) in paragraph at lines 46--47
 []|\OT1/ptm/m/n/10 Men[]us guia-dos;
 
-LaTeX Warning: Citation `umuLola' on page 14 undefined on input line 48.
-
+Underfull \hbox (badness 10000) in paragraph at lines 48--48
+[]|\OT1/ptm/m/n/10 Lola
 
 Underfull \hbox (badness 10000) in paragraph at lines 48--48
 []|\OT1/ptm/m/n/10 Acceso y
@@ -436,17 +315,11 @@ Underfull \hbox (badness 10000) in paragraph at lines 48--48
 Underfull \hbox (badness 10000) in paragraph at lines 48--49
 []|\OT1/ptm/m/n/10 Pionero (2018);
 
-LaTeX Warning: Citation `ugrAlhe' on page 14 undefined on input line 50.
-
-
 Underfull \hbox (badness 2213) in paragraph at lines 50--50
 []|\OT1/ptm/m/n/10 Web y Te-le-
 
 Underfull \hbox (badness 4479) in paragraph at lines 50--51
 []|\OT1/ptm/m/n/10 91$ $% acier-to en
-
-LaTeX Warning: Citation `ucaLuca' on page 14 undefined on input line 52.
-
 
 Underfull \hbox (badness 10000) in paragraph at lines 52--52
 []|\OT1/ptm/m/n/10 LUCA
@@ -460,8 +333,8 @@ Underfull \hbox (badness 10000) in paragraph at lines 52--52
 Underfull \hbox (badness 10000) in paragraph at lines 52--53
 []|\OT1/ptm/m/n/10 Disponibilidad
 
-LaTeX Warning: Citation `uahIsidra' on page 14 undefined on input line 54.
-
+Underfull \hbox (badness 10000) in paragraph at lines 54--54
+[]|\OT1/ptm/m/n/10 Isidra
 
 Underfull \hbox (badness 10000) in paragraph at lines 54--54
 []|\OT1/ptm/m/n/10 Web ins-ti-tu-
@@ -469,21 +342,11 @@ Underfull \hbox (badness 10000) in paragraph at lines 54--54
 Underfull \hbox (badness 4595) in paragraph at lines 54--55
 []|$\OML/cmm/m/it/10 >$\OT1/ptm/m/n/10 90$ $% pre-ci-si[]on
 
-LaTeX Warning: Citation `unibuddy' on page 14 undefined on input line 56.
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 56--56
 []|\OT1/ptm/m/n/10 SaaS multi-
 
-LaTeX Warning: Citation `hubert' on page 14 undefined on input line 58.
-
-
 Underfull \hbox (badness 5161) in paragraph at lines 58--59
 []|\OT1/ptm/m/n/10 Encuesta con-ver-
-
-LaTeX Warning: Citation `gupta2019admitbot' on page 14 undefined on input line 
-60.
-
 
 Underfull \hbox (badness 10000) in paragraph at lines 60--60
 []|\OT1/ptm/m/n/10 Admisi[]on
@@ -493,326 +356,32 @@ Underfull \hbox (badness 10000) in paragraph at lines 60--60
 
 Underfull \hbox (badness 8038) in paragraph at lines 63--64
 \OT1/ptm/m/n/10 do-cen-tes; c[]odi-go
-[14]
-
-LaTeX Warning: Citation `lewis2020retrieval' on page 15 undefined on input line
- 78.
-
-
-LaTeX Warning: Reference `cap:pruebas' on page 15 undefined on input line 78.
-
-
-LaTeX Warning: Citation `lewis2020retrieval' on page 15 undefined on input line
- 78.
-
-
-LaTeX Warning: Citation `es2024ragas' on page 15 undefined on input line 78.
-
-
-LaTeX Warning: Reference `cap:pruebas' on page 15 undefined on input line 82.
-
-)
-
-LaTeX Warning: Citation `wollny2021survey' on page 15 undefined on input line 6
-7.
-
-[15]
-
-LaTeX Warning: Citation `yu2018spider' on page 16 undefined on input line 70.
-
-
-LaTeX Warning: Citation `malkov2018hnsw' on page 16 undefined on input line 70.
-
-
-
-LaTeX Warning: Reference `sec:impl-profesores' on page 16 undefined on input li
-ne 70.
-
-
-LaTeX Warning: Reference `sec:impl-shared' on page 16 undefined on input line 7
-1.
-
-
-LaTeX Warning: Reference `cap:pruebas' on page 16 undefined on input line 71.
-
-
-LaTeX Warning: Reference `sec:impl-admin' on page 16 undefined on input line 72
-.
-
-
-LaTeX Warning: Citation `wollny2021survey' on page 16 undefined on input line 7
-2.
-
-
-LaTeX Warning: Reference `sec:req-actores' on page 16 undefined on input line 7
-2.
-
-
-LaTeX Warning: Reference `cap:manuales' on page 16 undefined on input line 72.
-
-
-LaTeX Warning: Reference `cap:pruebas' on page 16 undefined on input line 75.
-
-
-LaTeX Warning: Reference `ap:decisiones' on page 16 undefined on input line 75.
-
-
-[16]) (Capitulos/02_preparacion.tex [17]
+[22]) [23] [24]) (Capitulos/02_preparacion.tex [25]
 Cap\'{\i }tulo 2.
-
-LaTeX Warning: Citation `bocklisch2017rasa' on page 18 undefined on input line 
-16.
-
-
-LaTeX Warning: Citation `botpressdocs' on page 18 undefined on input line 17.
-
-
-LaTeX Warning: Citation `deeppavlov' on page 18 undefined on input line 18.
-
-[18]
-
-LaTeX Warning: Citation `lewis2020retrieval' on page 19 undefined on input line
- 50.
-
-
-LaTeX Warning: Citation `ji2023survey' on page 19 undefined on input line 50.
-
-
-LaTeX Warning: Citation `rgpd2016' on page 19 undefined on input line 61.
-
-
-LaTeX Warning: Citation `docker2024' on page 19 undefined on input line 61.
-
-[19]
-
-LaTeX Warning: Citation `rasadocs' on page 20 undefined on input line 83.
-
-
-LaTeX Warning: Citation `bocklisch2020diet' on page 20 undefined on input line 
-87.
-
-
-LaTeX Warning: Citation `lewis2020retrieval' on page 20 undefined on input line
- 88.
-
-
-LaTeX Warning: Citation `supabasedocs' on page 20 undefined on input line 119.
-
-
-LaTeX Warning: Citation `pgvectorgithub' on page 20 undefined on input line 119
-.
-
-
-LaTeX Warning: Citation `pgvectorgithub' on page 20 undefined on input line 120
-.
-
-[20]
-
-LaTeX Warning: Citation `qdrantdocs' on page 21 undefined on input line 122.
-
-
-LaTeX Warning: Citation `weaviatedocs' on page 21 undefined on input line 122.
-
-[21]
-
-LaTeX Warning: Citation `supabasedocs' on page 22 undefined on input line 175.
-
-
-LaTeX Warning: Citation `pgvectorgithub' on page 22 undefined on input line 175
-.
-
-
-LaTeX Warning: Citation `lewis2020retrieval' on page 22 undefined on input line
- 178.
-
-
-LaTeX Warning: Citation `supabasedocs' on page 22 undefined on input line 181.
-
-[22] [23]
-
-LaTeX Warning: Citation `geminidocs' on page 24 undefined on input line 213.
-
-
-LaTeX Warning: Citation `openaiPlatform' on page 24 undefined on input line 214
-.
-
-
-LaTeX Warning: Citation `deepseekDocs' on page 24 undefined on input line 215.
-
-
-LaTeX Warning: Citation `huggingfaceInference' on page 24 undefined on input li
-ne 216.
-
-
-LaTeX Warning: Citation `anthropicClaude' on page 24 undefined on input line 21
-7.
-
-[24]
-
-LaTeX Warning: Citation `geminidocs' on page 25 undefined on input line 272.
-
-[25]
-
-LaTeX Warning: Citation `bocklisch2020diet' on page 26 undefined on input line 
-305.
-
-[26]
-
-LaTeX Warning: Reference `tab:tech-stack' on page 27 undefined on input line 31
-9.
-
-[27] [28]
-
-LaTeX Warning: Reference `subsec:cu-tutorias' on page 29 undefined on input lin
-e 387.
-
-
+[26] [27] [28] [29] [30] [31] [32] [33] [34] [35] [36]
 Underfull \hbox (badness 1112) in paragraph at lines 391--392
 []\OT1/ptm/m/n/10.95 Escenario ne-ga-ti-vo: el usua-rio pi-de in-for-ma-ci[]on 
 que el plan do-cen-te no con-tem-pla
-[29]
-
-LaTeX Warning: Reference `fig:use-case-diagram' on page 30 undefined on input l
-ine 449.
-
-
-LaTeX Warning: Reference `sec:req-actores' on page 30 undefined on input line 4
-49.
-
-
-LaTeX Warning: Reference `cap:requisitos' on page 30 undefined on input line 44
-9.
-
-) (Capitulos/03_conceptos.tex [30] [31]
+[37]) (Capitulos/03_conceptos.tex [38] [39]
 Cap\'{\i }tulo 3.
-
-LaTeX Warning: Citation `jurafsky2009speech' on page 32 undefined on input line
- 9.
-
-[32]
-
-LaTeX Warning: Reference `tab:archivos-rasa' on page 33 undefined on input line
- 62.
-
+[40]
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[33]
-
-LaTeX Warning: Citation `lewis2020retrieval' on page 34 undefined on input line
- 98.
-
-
-LaTeX Warning: Citation `ji2023survey' on page 34 undefined on input line 98.
-
-
-LaTeX Warning: Citation `mikolov2013word2vec' on page 34 undefined on input lin
-e 100.
-
-
-LaTeX Warning: Citation `manning2008introduction' on page 34 undefined on input
- line 100.
-
-
-LaTeX Warning: Citation `nogueira2019passage' on page 34 undefined on input lin
-e 100.
-
-
-LaTeX Warning: Citation `supabasedocs' on page 34 undefined on input line 107.
-
-[34]
-
-LaTeX Warning: Citation `pgvectorgithub' on page 35 undefined on input line 111
-.
-
-) [35] [36] (Capitulos/04_metodologia.tex
+[41] [42]) [43] [44] (Capitulos/04_metodologia.tex
 Cap\'{\i }tulo 4.
-
-LaTeX Warning: Citation `schwaber2020scrum' on page 37 undefined on input line 
-13.
-
-
-LaTeX Warning: Citation `beck2001agile' on page 37 undefined on input line 13.
-
-[37]
-
-LaTeX Warning: Reference `sec:gestion-trabajo' on page 38 undefined on input li
-ne 28.
-
-
-LaTeX Warning: Reference `tab:sprints' on page 38 undefined on input line 33.
-
-
-LaTeX Warning: Reference `cap:planificacion' on page 38 undefined on input line
- 33.
-
-
-LaTeX Warning: Reference `cap:planificacion' on page 38 undefined on input line
- 35.
-
-
-LaTeX Warning: Citation `chacon2014pro' on page 38 undefined on input line 42.
-
-
-LaTeX Warning: Citation `humble2010continuous' on page 38 undefined on input li
-ne 42.
-
-
-LaTeX Warning: Reference `subsubsec:despliegue' on page 38 undefined on input l
-ine 42.
-
-
-LaTeX Warning: Citation `conventionalcommits' on page 38 undefined on input lin
-e 58.
-
-
-LaTeX Warning: Citation `chacon2014pro' on page 38 undefined on input line 58.
-
-[38]
-
-LaTeX Warning: Citation `pep8' on page 39 undefined on input line 65.
-
-
-LaTeX Warning: Citation `pylint' on page 39 undefined on input line 65.
-
-
-LaTeX Warning: Citation `flake8' on page 39 undefined on input line 65.
-
-
-LaTeX Warning: Citation `eslint' on page 39 undefined on input line 69.
-
-
-LaTeX Warning: Citation `cohen2003comparison' on page 39 undefined on input lin
-e 84.
-
-
-LaTeX Warning: Citation `ji2023survey' on page 39 undefined on input line 88.
-
-[39]
-
-LaTeX Warning: Reference `tab:politica-llm' on page 40 undefined on input line 
-92.
-
-
+[45] [46] [47]
 Overfull \hbox (6.30173pt too wide) in paragraph at lines 97--110
  [][] 
-
-LaTeX Warning: Reference `sec:impl-contexto' on page 40 undefined on input line
- 114.
-
 
 Underfull \hbox (badness 2418) in paragraph at lines 114--115
 []\OT1/ptm/m/n/10.95 Un ejem-plo ilus-tra-ti-vo del se-gun-do patr[]on es la no
 r-ma-li-za-ci[]on de la ti-tu-la-ci[]on en
 
-LaTeX Warning: Reference `cap:conclusiones' on page 40 undefined on input line 
-118.
-
-[40]
-
-LaTeX Warning: Reference `ap:actas' on page 41 undefined on input line 127.
-
-
+Underfull \hbox (badness 2980) in paragraph at lines 114--115
+\OT1/pcr/m/n/10.95 ActionCambiarContexto \OT1/ptm/m/n/10.95 (Sec-ci[]on []11.5[
+]): coin-ci-den-cia exac-ta so-bre un dic-cio-na-rio,
+[48]
 Underfull \hbox (badness 2512) in paragraph at lines 129--130
 []\OT1/ptm/m/n/10.95 Complementariamente, las de-ci-sio-nes t[]ecni-cas no tri-
 via-les to-ma-das du-ran-te el de-sa-
@@ -834,35 +403,15 @@ i-co de tres ni-ve-les: \OT1/pcr/b/n/10.95 vMAJOR.MINOR.PATCH\OT1/ptm/m/n/10.95
 Overfull \hbox (15.70636pt too wide) in paragraph at lines 148--2
 \OT1/ptm/m/n/10.95 NLU, sto-ries o re-glas ge-ne-ra un nue-vo ar-te-fac-to de m
 o-de-lo (\OT1/pcr/m/n/10.95 models/linceus[]vX.Y.Z.tar.gz\OT1/ptm/m/n/10.95 )
-[41]
+[49]
 Cap\'{\i }tulo 5.
-
-LaTeX Warning: Reference `cap:metodologia' on page 42 undefined on input line 7
-.
-
-
-LaTeX Warning: Reference `sec:diccionario-edt' on page 42 undefined on input li
-ne 15.
-
-
-LaTeX Warning: Reference `fig:edt' on page 42 undefined on input line 17.
-
 
 Overfull \hbox (2.0086pt too wide) in paragraph at lines 103--104
  [][] 
 
-LaTeX Warning: Reference `cap:arquitectura' on page 42 undefined on input line 
-145.
-
-
 Overfull \hbox (10.81268pt too wide) in paragraph at lines 150--158
  [][] 
-[42] [43]
-
-LaTeX Warning: Reference `cap:metodologia' on page 44 undefined on input line 1
-86.
-
-
+[50] [51]
 Underfull \hbox (badness 10000) in paragraph at lines 199--199
 []|\OT1/ptm/m/n/10 Tablas \OT1/pcr/m/n/10 asignaturas\OT1/ptm/m/n/10 , \OT1/pcr
 /m/n/10 titulaciones\OT1/ptm/m/n/10 ,
@@ -907,7 +456,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 242--242
 Underfull \hbox (badness 10000) in paragraph at lines 242--242
 \OT1/ptm/m/n/10 ren-cia de slot pa-ra se-gui-mien-to. \OT1/ptm/m/it/10 En-tre-g
 a-ble:
-[44]
+[52]
 Underfull \hbox (badness 10000) in paragraph at lines 261--261
 []|\OT1/ptm/m/n/10 Generaci[]on con \OT1/pcr/m/n/10 gemini-embedding-001
 
@@ -937,7 +486,7 @@ cmsy/m/n/10 !$ \OT1/ptm/m/n/10 Asig-na-tu-ra. \OT1/ptm/m/it/10 En-tre-ga-ble:
 Underfull \hbox (badness 1394) in paragraph at lines 309--309
 \OT1/ptm/m/n/10 gun-tas reales so-bre 19 asig-na-tu-ras). \OT1/ptm/m/it/10 En-t
 re-ga-bles:
-[45] [46]
+[53] [54]
 Underfull \hbox (badness 10000) in paragraph at lines 328--328
 []|\OT1/ptm/m/n/10 Registro de las con-ver-sa-cio-nes pi-lo-to en
 
@@ -958,151 +507,18 @@ Underfull \hbox (badness 10000) in paragraph at lines 367--367
 Underfull \hbox (badness 10000) in paragraph at lines 367--367
 \OT1/ptm/m/n/10 en no-ta-ci[]on UML2 (Plan-tUML). \OT1/ptm/m/it/10 En-tre-ga-bl
 e:
-[47]
-
-LaTeX Warning: Reference `tab:resumen-edt' on page 48 undefined on input line 3
-79.
-
-
-LaTeX Warning: Reference `cap:metodologia' on page 48 undefined on input line 4
-14.
-
-
-LaTeX Warning: Reference `tab:backlog-prioridad' on page 48 undefined on input 
-line 423.
-
-[48]
-
-LaTeX Warning: Reference `tab:resumen-edt' on page 49 undefined on input line 4
-50.
-
-
-LaTeX Warning: Reference `tab:estimacion-horas' on page 49 undefined on input l
-ine 459.
-
-
-LaTeX Warning: Reference `cap:metodologia' on page 49 undefined on input line 4
-78.
-
-
-LaTeX Warning: Reference `tab:sprints' on page 49 undefined on input line 478.
-
-
+[55] [56]
 Underfull \hbox (badness 3942) in paragraph at lines 489--489
 []|\OT1/ptm/m/n/10 Dic 2025--Ene
 
 Underfull \hbox (badness 3701) in paragraph at lines 492--492
 []|\OT1/ptm/m/n/10 Sprint lar-go: []epi-cas res-tan-tes, CD,
 
-LaTeX Warning: Reference `tab:hitos' on page 49 undefined on input line 503.
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 513--513
 []|\OT1/ptm/m/n/10 Infraestructura ini-cial (re-po-si-to-rio,
-
-LaTeX Warning: Citation `jdaPreciosTIC2018' on page 49 undefined on input line 
-538.
-
-[49] [50]
-
-LaTeX Warning: Citation `rasaForumMemory' on page 51 undefined on input line 55
-0.
-
-
-LaTeX Warning: Citation `doDroplets' on page 51 undefined on input line 550.
-
-
-LaTeX Warning: Citation `doBandwidth' on page 51 undefined on input line 552.
-
-
-LaTeX Warning: Citation `supabasePricing' on page 51 undefined on input line 55
-6.
-
-[51]
-
-LaTeX Warning: Citation `geminiPricing' on page 52 undefined on input line 568.
-
-
-
-LaTeX Warning: Citation `geminiRateLimits' on page 52 undefined on input line 5
-70.
-
-[52]
-
-LaTeX Warning: Reference `tab:costes-actuales' on page 53 undefined on input li
-ne 584.
-
-
-LaTeX Warning: Reference `tab:costes-escalado' on page 53 undefined on input li
-ne 605.
-
-
-LaTeX Warning: Reference `tab:costes-actuales' on page 53 undefined on input li
-ne 645.
-
-[53]
-
-LaTeX Warning: Reference `tab:desviacion-temporal' on page 54 undefined on inpu
-t line 675.
-
-
-LaTeX Warning: Reference `sec:costes' on page 54 undefined on input line 675.
-
-[54]) [55] [56] (Capitulos/requisitos.tex
+[57] [58] [59] [60] [61] [62]) [63] [64] (Capitulos/requisitos.tex
 Cap\'{\i }tulo 6.
-
-LaTeX Warning: Reference `sec:req-evolucion' on page 57 undefined on input line
- 5.
-
-
-LaTeX Warning: Citation `sommerville2015' on page 57 undefined on input line 7.
-
-
-
-LaTeX Warning: Reference `cap:pruebas' on page 57 undefined on input line 7.
-
-
-LaTeX Warning: Reference `cap:manuales' on page 57 undefined on input line 11.
-
-
-LaTeX Warning: Reference `fig:use-case-diagram' on page 57 undefined on input l
-ine 19.
-
-
-LaTeX Warning: Reference `cap:preparacion' on page 57 undefined on input line 1
-9.
-
-
-LaTeX Warning: Reference `subsec:cu-diagrama' on page 57 undefined on input lin
-e 19.
-
-
-LaTeX Warning: Reference `sec:req-trazabilidad' on page 57 undefined on input l
-ine 19.
-
-[57]
-
-LaTeX Warning: Reference `ap:decisiones' on page 58 undefined on input line 25.
-
-
-
-LaTeX Warning: Reference `cap:pruebas' on page 58 undefined on input line 27.
-
-
-LaTeX Warning: Citation `clegg1994case' on page 58 undefined on input line 29.
-
-
-LaTeX Warning: Reference `sec:req-evolucion' on page 58 undefined on input line
- 29.
-
-
-LaTeX Warning: Reference `cap:pruebas' on page 58 undefined on input line 29.
-
-
-LaTeX Warning: Reference `tab:rf-asignaturas' on page 58 undefined on input lin
-e 33.
-
-
+[65]
 Underfull \hbox (badness 10000) in paragraph at lines 45--45
 []|\OT1/ptm/m/n/10 RAG-
 
@@ -1115,11 +531,7 @@ Underfull \hbox (badness 1259) in paragraph at lines 47--47
 
 Underfull \hbox (badness 10000) in paragraph at lines 47--47
 []|\OT1/ptm/m/n/10 E-P09, HA-
-
-LaTeX Warning: Reference `tab:rf-horarios' on page 58 undefined on input line 5
-3.
-
-[58]
+[66]
 Underfull \hbox (badness 10000) in paragraph at lines 62--62
 []|\OT1/ptm/m/n/10 H-P01..H-
 
@@ -1132,10 +544,6 @@ Underfull \hbox (badness 10000) in paragraph at lines 65--65
 Underfull \hbox (badness 10000) in paragraph at lines 68--68
 []|\OT1/ptm/m/n/10 H-N01, H-
 
-LaTeX Warning: Reference `tab:rf-profesorado' on page 59 undefined on input lin
-e 74.
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 84--84
 []|\OT1/ptm/m/n/10 P-PA01..P-
 
@@ -1147,11 +555,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 88--88
 
 Underfull \hbox (badness 10000) in paragraph at lines 89--89
 []|\OT1/ptm/m/n/10 P-N01..P-
-
-LaTeX Warning: Reference `tab:rf-transversal' on page 59 undefined on input lin
-e 95.
-
-[59]
+[67]
 Underfull \hbox (badness 10000) in paragraph at lines 104--104
 []|\OT1/ptm/m/n/10 CC-P01..CC-
 
@@ -1160,14 +564,6 @@ Underfull \hbox (badness 10000) in paragraph at lines 108--108
 
 Underfull \hbox (badness 10000) in paragraph at lines 108--108
 \OT1/ptm/m/n/10 ni-da y so-por-tar la pre-gun-ta meta-conversacional
-
-LaTeX Warning: Reference `sec:req-actores' on page 60 undefined on input line 1
-15.
-
-
-LaTeX Warning: Reference `tab:rf-admin' on page 60 undefined on input line 115.
-
-
 
 Underfull \hbox (badness 10000) in paragraph at lines 124--124
 []|\OT1/ptm/m/n/10 RF-
@@ -1184,34 +580,26 @@ Underfull \hbox (badness 10000) in paragraph at lines 125--125
 Underfull \hbox (badness 10000) in paragraph at lines 126--126
 []|\OT1/ptm/m/n/10 RF-
 
-LaTeX Warning: Reference `tab:criterios-aceptacion' on page 60 undefined on inp
-ut line 126.
-
-
-LaTeX Warning: Reference `subsec:pruebas-limitaciones' on page 60 undefined on 
-input line 126.
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 126--126
 []|\OT1/ptm/m/n/10 Manual (cri-
 
 Underfull \hbox (badness 10000) in paragraph at lines 126--126
 \OT1/ptm/m/n/10 te-rio en Ta-
 
-Underfull \hbox (badness 2452) in paragraph at lines 126--126
-\OT1/ptm/m/n/10 bla []); fue-ra
-
 Underfull \hbox (badness 10000) in paragraph at lines 126--126
 \OT1/ptm/m/n/10 de la sui-te
 
-Underfull \hbox (badness 2781) in paragraph at lines 126--126
-\OT1/ptm/m/it/10 py-test \OT1/ptm/m/n/10 por ser
+Underfull \hbox (badness 10000) in paragraph at lines 126--126
+\OT1/ptm/m/it/10 py-test \OT1/ptm/m/n/10 por
 
 Underfull \hbox (badness 10000) in paragraph at lines 126--126
-\OT1/ptm/m/n/10 ope-ra-ci[]on de
+\OT1/ptm/m/n/10 ser ope-ra-ci[]on
 
 Underfull \hbox (badness 10000) in paragraph at lines 126--126
-\OT1/ptm/m/n/10 es-cri-tu-ra des-
+\OT1/ptm/m/n/10 de es-cri-tu-ra
+
+Underfull \hbox (badness 10000) in paragraph at lines 126--126
+\OT1/ptm/m/n/10 des-truc-ti-va
 
 Underfull \hbox (badness 10000) in paragraph at lines 127--127
 []|\OT1/ptm/m/n/10 RF-
@@ -1227,85 +615,22 @@ Underfull \hbox (badness 10000) in paragraph at lines 130--130
 
 Underfull \hbox (badness 10000) in paragraph at lines 130--130
 []|\OT1/ptm/m/n/10 FB-01 (ma-
-
-LaTeX Warning: Citation `north2006bdd' on page 60 undefined on input line 136.
-
-
-LaTeX Warning: Reference `tab:rf-asignaturas' on page 60 undefined on input lin
-e 136.
-
-
-LaTeX Warning: Reference `tab:rf-horarios' on page 60 undefined on input line 1
-36.
-
-
-LaTeX Warning: Reference `tab:rf-profesorado' on page 60 undefined on input lin
-e 136.
-
-
-LaTeX Warning: Reference `tab:rf-transversal' on page 60 undefined on input lin
-e 136.
-
-
-LaTeX Warning: Reference `subsec:pruebas-marco' on page 60 undefined on input l
-ine 136.
-
-
-LaTeX Warning: Reference `tab:criterios-aceptacion' on page 60 undefined on inp
-ut line 136.
-
-[60] [61]
+[68] [69]
 Underfull \hbox (badness 10000) in paragraph at lines 150--150
 []|\OT1/ptm/m/n/10 RF-
-
-LaTeX Warning: Reference `tab:ri' on page 62 undefined on input line 156.
-
 
 Underfull \hbox (badness 1286) in paragraph at lines 167--167
 \OT1/ptm/m/n/10 ra-ria, cua-tri-mes-tre y ti-po (teor[]^^Pa/-la-bo-ra-to-rio).
 
-LaTeX Warning: Reference `tab:ri-dominio' on page 62 undefined on input line 17
-6.
-
-
-LaTeX Warning: Reference `cap:estructura-bd' on page 62 undefined on input line
- 176.
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 190--190
 []|\OT1/ptm/m/n/10 Profesor-
-[62]
+[70]
 Overfull \hbox (0.9653pt too wide) in paragraph at lines 204--205
 []\OT1/ptm/m/n/10.95 La ope-ra-ci[]on del sis-te-ma en pro-duc-ci[]on re-gis-tr
 a dos en-ti-da-des. La ta-bla \OT1/pcr/m/n/10.95 conversation[]log
-[63]
-
-LaTeX Warning: Reference `fig:modelo-conceptual-ri' on page 64 undefined on inp
-ut line 208.
-
-
-LaTeX Warning: Reference `cap:estructura-bd' on page 64 undefined on input line
- 208.
-
-[64 <./img/modelo_conceptual_ri.png (PNG copy)>]
-
-LaTeX Warning: Reference `cap:pruebas' on page 65 undefined on input line 220.
-
-
-LaTeX Warning: Reference `subsec:no-funcional-latencia' on page 65 undefined on
- input line 229.
-
-
-LaTeX Warning: Reference `subsec:no-funcional-latencia' on page 65 undefined on
- input line 230.
-
-
+[71] [72 <./img/modelo_conceptual_ri.png (PNG copy)>]
 Underfull \hbox (badness 2245) in paragraph at lines 231--231
 []|\OT1/ptm/m/n/10 Coste me-dio por turno
-
-LaTeX Warning: Reference `subsec:no-funcional-coste' on page 65 undefined on in
-put line 231.
-
 
 Underfull \hbox (badness 2103) in paragraph at lines 232--232
 []|\OT1/ptm/m/n/10 Tasa de []exi-to en sui-te
@@ -1313,16 +638,8 @@ Underfull \hbox (badness 2103) in paragraph at lines 232--232
 Underfull \hbox (badness 10000) in paragraph at lines 232--232
 []|\OT1/ptm/b/n/10 94,3$ $%
 
-LaTeX Warning: Reference `sec:pruebas-e2e' on page 65 undefined on input line 2
-32.
-
-
 Underfull \hbox (badness 3312) in paragraph at lines 233--233
 []|\OT1/ptm/b/n/10 98,3$ $% \OT1/ptm/m/n/10 (58/59
-
-LaTeX Warning: Reference `sec:pruebas-trafico' on page 65 undefined on input li
-ne 233.
-
 
 Underfull \hbox (badness 1874) in paragraph at lines 235--235
 []|\OT1/ptm/b/n/10 100$ $% \OT1/ptm/m/n/10 con-sul-
@@ -1359,10 +676,6 @@ Underfull \hbox (badness 10000) in paragraph at lines 239--239
 
 Underfull \hbox (badness 2635) in paragraph at lines 239--239
 \OT1/ptm/m/n/10 (Ubun-tu 24.04
-
-LaTeX Warning: Reference `cap:manuales' on page 65 undefined on input line 239.
-
-
 
 Underfull \hbox (badness 10000) in paragraph at lines 240--240
 []|\OT1/ptm/m/n/10 RNF-
@@ -1418,112 +731,17 @@ Underfull \hbox (badness 1968) in paragraph at lines 243--243
 Underfull \hbox (badness 10000) in paragraph at lines 243--243
 []|\OT1/ptm/b/n/10 Cumplido
 
-LaTeX Warning: Reference `cap:manuales' on page 65 undefined on input line 243.
-
-
-
-LaTeX Warning: Reference `sec:req-evolucion' on page 65 undefined on input line
- 249.
-
-
-LaTeX Warning: Reference `tab:restricciones' on page 65 undefined on input line
- 253.
-
-
-LaTeX Warning: Reference `subsec:dd-fallback' on page 65 undefined on input lin
-e 272.
-
-
 Underfull \hbox (badness 1688) in paragraph at lines 272--272
 \OT1/ptm/m/n/10 back) de-pen-de de \OT1/pcr/m/n/10 gemma-3-27b-it\OT1/ptm/m/n/1
 0 : \OT1/ptm/b/n/10 15 RPM y
 
 Underfull \hbox (badness 10000) in paragraph at lines 273--273
 []|\OT1/ptm/m/n/10 Supabase (Post-greSQL
-
-LaTeX Warning: Reference `sec:costes' on page 65 undefined on input line 273.
-
-
-LaTeX Warning: Reference `cap:planificacion' on page 65 undefined on input line
- 273.
-
-
-LaTeX Warning: Reference `cap:conclusiones' on page 65 undefined on input line 
-279.
-
-[65] [66] [67]
-
-LaTeX Warning: Reference `fig:widget-chat' on page 68 undefined on input line 2
-91.
-
-
-LaTeX Warning: Reference `fig:admin-asignaturas' on page 68 undefined on input 
-line 299.
-
-
-LaTeX Warning: Reference `sec:req-no-funcionales' on page 68 undefined on input
- line 299.
-
-[68 <./img/conversacion_ejemplo.png> <./img/admin_home.png>]
-
-LaTeX Warning: Reference `fig:admin-horarios' on page 69 undefined on input lin
-e 307.
-
-
-LaTeX Warning: Reference `fig:admin-profesorado' on page 69 undefined on input 
-line 315.
-
-
-LaTeX Warning: Reference `fig:admin-conversaciones' on page 69 undefined on inp
-ut line 323.
-
-
-LaTeX Warning: Reference `sec:pruebas-trafico' on page 69 undefined on input li
-ne 323.
-
-[69 <./img/admin_horarios.png>] [70 <./img/admin_profesores.png> <./img/admin_c
+[73] [74] [75] [76 <./img/conversacion_ejemplo.png> <./img/admin_home.png>]
+[77 <./img/admin_horarios.png>] [78 <./img/admin_profesores.png> <./img/admin_c
 onversaciones.png>]
-
-LaTeX Warning: Reference `cap:introduccion' on page 71 undefined on input line 
-327.
-
-
-LaTeX Warning: Reference `cap:pruebas' on page 71 undefined on input line 327.
-
-
-LaTeX Warning: Reference `tab:traz-obj-rf' on page 71 undefined on input line 3
-31.
-
-
-LaTeX Warning: Reference `subsec:objetivos-tecnicos' on page 71 undefined on in
-put line 331.
-
-
 Underfull \hbox (badness 2343) in paragraph at lines 340--340
 []|\OT1/ptm/m/n/10 Sistema con-ver-sa-cio-nal Ra-sa (flu-jos
-
-LaTeX Warning: Reference `subsec:rf-asignaturas' on page 71 undefined on input 
-line 361.
-
-
-LaTeX Warning: Reference `subsec:rf-admin' on page 71 undefined on input line 3
-61.
-
-
-LaTeX Warning: Reference `tab:traz-rf-pruebas' on page 71 undefined on input li
-ne 361.
-
-
-LaTeX Warning: Reference `cap:pruebas' on page 71 undefined on input line 361.
-
-
-LaTeX Warning: Reference `tab:e2e-categorias' on page 71 undefined on input lin
-e 361.
-
-
-LaTeX Warning: Reference `sec:pruebas-e2e' on page 71 undefined on input line 3
-70.
-
 
 Underfull \hbox (badness 10000) in paragraph at lines 371--371
 []|\OT1/pcr/m/n/9 asignatura[]
@@ -1564,22 +782,6 @@ Underfull \hbox (badness 5578) in paragraph at lines 381--381
 Underfull \hbox (badness 2744) in paragraph at lines 381--381
 \OT1/ptm/m/n/9 H7, RF-P1--P7, RF-
 
-LaTeX Warning: Reference `sec:pruebas-rag' on page 71 undefined on input line 3
-82.
-
-
-LaTeX Warning: Reference `sec:pruebas-nlu' on page 71 undefined on input line 3
-82.
-
-
-LaTeX Warning: Reference `sec:pruebas-trafico' on page 71 undefined on input li
-ne 382.
-
-
-LaTeX Warning: Reference `sec:pruebas-admin' on page 71 undefined on input line
- 382.
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 383--383
 []|\OT1/ptm/m/n/9 RF-A4 (asig-na-tu-ras
 
@@ -1600,19 +802,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 386--386
 
 Underfull \hbox (badness 10000) in paragraph at lines 387--387
 []|\OT1/ptm/m/n/9 24/24 PASS
-
-LaTeX Warning: Reference `sec:pruebas-admin' on page 71 undefined on input line
- 391.
-
-
-LaTeX Warning: Citation `segura2024guiatfg' on page 71 undefined on input line 
-395.
-
-
-LaTeX Warning: Reference `tab:req-evolucion' on page 71 undefined on input line
- 395.
-
-[71] [72] (C:\Program Files\MiKTeX\tex/latex/psnfss\omlpcr.fd)
+[79] [80] (C:\Program Files\MiKTeX\tex/latex/psnfss\omlpcr.fd)
 Underfull \hbox (badness 5274) in paragraph at lines 406--406
 []|\OT1/ptm/m/n/10 Soporte mul-ti-ling[]ue
 
@@ -1624,152 +814,18 @@ Underfull \hbox (badness 1629) in paragraph at lines 408--408
 
 Underfull \hbox (badness 10000) in paragraph at lines 410--410
 []|\OT1/ptm/m/n/10 Integraci[]on con
-
-LaTeX Warning: Reference `sec:pruebas-trafico' on page 73 undefined on input li
-ne 411.
-
-
-LaTeX Warning: Reference `cap:conclusiones' on page 73 undefined on input line 
-415.
-
-) (Capitulos/arquitectura_diseno.tex [73]
+) (Capitulos/arquitectura_diseno.tex [81]
 Cap\'{\i }tulo 7.
-
-LaTeX Warning: Citation `bass2021sap' on page 74 undefined on input line 13.
-
-
-LaTeX Warning: Citation `martin2017clean' on page 74 undefined on input line 13
-.
-
-
-LaTeX Warning: Citation `fielding2000rest' on page 74 undefined on input line 2
-3.
-
-[74]
+[82]
 Underfull \hbox (badness 2111) in paragraph at lines 35--36
 \OT1/ptm/m/n/10.95 de con-sul-tas SQL a par-tir de len-gua-je na-tu-ral (\OT1/p
 tm/m/it/10.95 Text-to-SQL\OT1/ptm/m/n/10.95 ) me-dian-te el mo-de-lo
-
-LaTeX Warning: Reference `fig:componentes' on page 75 undefined on input line 5
-5.
-
-[75]
-
-LaTeX Warning: Reference `sec:impl-multi-intent' on page 76 undefined on input 
-line 61.
-
-
-LaTeX Warning: Reference `sec:impl-multi-intent' on page 76 undefined on input 
-line 61.
-
-[76 <./img/diagrama_componentes.png (PNG copy)>]
-
-LaTeX Warning: Reference `sec:diagrama-despliegue' on page 77 undefined on inpu
-t line 66.
-
-
-LaTeX Warning: Citation `bass2021sap' on page 77 undefined on input line 86.
-
-
-LaTeX Warning: Citation `docker2024' on page 77 undefined on input line 86.
-
-
-LaTeX Warning: Citation `newman2021microservices' on page 77 undefined on input
- line 86.
-
-
-LaTeX Warning: Reference `fig:despliegue' on page 77 undefined on input line 86
-.
-
-[77]
-
-LaTeX Warning: Citation `yu2018spider' on page 78 undefined on input line 146.
-
-
-LaTeX Warning: Citation `owasp2021injection' on page 78 undefined on input line
- 152.
-
-[78]
-
-LaTeX Warning: Citation `holtzman2020curious' on page 79 undefined on input lin
-e 155.
-
-
+[83] [84 <./img/diagrama_componentes.png (PNG copy)>] [85] [86]
 Underfull \hbox (badness 10000) in paragraph at lines 161--162
 \OT1/ptm/m/n/10.95 y \OT1/pcr/m/n/10.95 shared/ollama[]client.py \OT1/ptm/m/n/1
 0.95 con \OT1/ptm/b/n/10.95 id[]enti-ca fir-ma \OT1/ptm/m/n/10.95 (\OT1/pcr/m/n
 /10.95 llamar[]gemini(prompt,
-
-LaTeX Warning: Reference `subsec:dd-fallback' on page 79 undefined on input lin
-e 167.
-
-
-LaTeX Warning: Reference `cap:conclusiones' on page 79 undefined on input line 
-167.
-
-
-LaTeX Warning: Citation `pgvectorgithub' on page 79 undefined on input line 172
-.
-
-
-LaTeX Warning: Citation `malkov2018hnsw' on page 79 undefined on input line 172
-.
-
-
-LaTeX Warning: Citation `malkov2018hnsw' on page 79 undefined on input line 178
-.
-
-
-LaTeX Warning: Citation `karpukhin2020dpr' on page 79 undefined on input line 1
-80.
-
-[79]
-
-LaTeX Warning: Citation `lewis2020retrieval' on page 80 undefined on input line
- 185.
-
-
-LaTeX Warning: Citation `langchainChunking' on page 80 undefined on input line 
-185.
-
-
-LaTeX Warning: Citation `lewis2020retrieval' on page 80 undefined on input line
- 192.
-
-
-LaTeX Warning: Citation `karpukhin2020dpr' on page 80 undefined on input line 1
-92.
-
-
-LaTeX Warning: Citation `es2024ragas' on page 80 undefined on input line 193.
-
-
-LaTeX Warning: Citation `geminiRateLimits' on page 80 undefined on input line 1
-98.
-
-
-LaTeX Warning: Citation `karpukhin2020dpr' on page 80 undefined on input line 2
-00.
-
-
-LaTeX Warning: Citation `es2024ragas' on page 80 undefined on input line 204.
-
-
-LaTeX Warning: Citation `cohen2003comparison' on page 80 undefined on input lin
-e 213.
-
-[80]
-
-LaTeX Warning: Citation `rasadocs' on page 81 undefined on input line 243.
-
-
-LaTeX Warning: Citation `bocklisch2017rasa' on page 81 undefined on input line 
-243.
-
-
-LaTeX Warning: Citation `rasadocs' on page 81 undefined on input line 245.
-
-
+[87] [88]
 Underfull \hbox (badness 3302) in paragraph at lines 245--246
 []\OT1/ptm/b/n/10.95 Decisi[]on: \OT1/ptm/m/n/10.95 Se con-fi-gur[]o un pi-pe-l
 i-ne de 11 com-po-nen-tes que apo-ya el cla-si-fi-ca-dor
@@ -1778,190 +834,22 @@ Overfull \hbox (13.00131pt too wide) in paragraph at lines 245--246
 \OT1/pcr/m/n/10.95 DIETClassifier \OT1/ptm/m/n/10.95 so-bre \OT1/ptm/b/n/10.95 
 em-bed-dings pre-en-tre-na-dos de spaCy en es-pa[]nol \OT1/ptm/m/n/10.95 (\OT1/
 pcr/m/n/10.95 es[]core[]news[]md\OT1/ptm/m/n/10.95 )
-[81]
-
-LaTeX Warning: Citation `bocklisch2020diet' on page 82 undefined on input line 
-255.
-
-
-LaTeX Warning: Citation `bocklisch2020diet' on page 82 undefined on input line 
-264.
-
-
-LaTeX Warning: Citation `casanueva2020efficient' on page 82 undefined on input 
-line 265.
-
-
-LaTeX Warning: Citation `bocklisch2020diet' on page 82 undefined on input line 
-266.
-
-
-LaTeX Warning: Citation `nistFips180' on page 82 undefined on input line 273.
-
-[82]
-
-LaTeX Warning: Reference `sec:arq-general' on page 83 undefined on input line 2
-92.
-
-
-LaTeX Warning: Citation `fowler2002patterns' on page 83 undefined on input line
- 308.
-
-) (Capitulos/marco_tecnologico.tex [83] [84 <./img/diagrama_despliegue.png (PNG
- copy)>]
+[89] [90]) (Capitulos/marco_tecnologico.tex [91] [92 <./img/diagrama_despliegue
+.png (PNG copy)>]
 Cap\'{\i }tulo 8.
-
-LaTeX Warning: Reference `cap:arquitectura' on page 85 undefined on input line 
-5.
-
-
-LaTeX Warning: Reference `subsubsec:investigacion' on page 85 undefined on inpu
-t line 5.
-
-
-LaTeX Warning: Reference `cap:planificacion' on page 85 undefined on input line
- 5.
-
-
-LaTeX Warning: Citation `rasadocs' on page 85 undefined on input line 11.
-
-
-LaTeX Warning: Citation `bocklisch2017rasa' on page 85 undefined on input line 
-11.
-
-
-LaTeX Warning: Reference `cap:planificacion' on page 85 undefined on input line
- 11.
-
 
 Underfull \hbox (badness 1052) in paragraph at lines 19--20
 []\OT1/ptm/b/n/10.95 Intenciones (in-tents)\OT1/ptm/m/n/10.95 : ?`Qu[]e quie-re
  ha-cer el usua-rio? (e.g., \OT1/pcr/m/n/10.95 consultar[]horario\OT1/ptm/m/n/1
 0.95 ,
-[85]
-
-LaTeX Warning: Citation `honnibal2020spacy' on page 86 undefined on input line 
-46.
-
-
-LaTeX Warning: Citation `cohen2003comparison' on page 86 undefined on input lin
-e 59.
-
-
-LaTeX Warning: Citation `levenshtein1966binary' on page 86 undefined on input l
-ine 67.
-
-
-LaTeX Warning: Citation `geminidocs' on page 86 undefined on input line 73.
-
-
-LaTeX Warning: Reference `subsubsec:investigacion' on page 86 undefined on inpu
-t line 73.
-
-
-LaTeX Warning: Reference `subsec:dd-embeddings' on page 86 undefined on input l
-ine 80.
-
-
+[93]
 Underfull \hbox (badness 1127) in paragraph at lines 85--86
 []\OT1/ptm/b/n/10.95 Ollama \OT1/ptm/m/n/10.95 se man-tie-ne co-mo mo-tor de in
 -fe-ren-cia lo-cal op-cio-nal y se uti-liz[]o prin-ci-pal-
-[86]
-
-LaTeX Warning: Reference `sec:costes' on page 87 undefined on input line 89.
-
-
-LaTeX Warning: Citation `lewis2020retrieval' on page 87 undefined on input line
- 95.
-
-
-LaTeX Warning: Citation `pgvectorgithub' on page 87 undefined on input line 99.
-
-
-
-LaTeX Warning: Citation `malkov2018hnsw' on page 87 undefined on input line 100
-.
-
-
-LaTeX Warning: Reference `subsec:dd-chunking' on page 87 undefined on input lin
-e 103.
-
-
-LaTeX Warning: Reference `subsec:dd-embeddings' on page 87 undefined on input l
-ine 103.
-
-
-LaTeX Warning: Citation `supabasedocs' on page 87 undefined on input line 107.
-
-
-LaTeX Warning: Citation `pgvectorgithub' on page 87 undefined on input line 107
-.
-
-
-LaTeX Warning: Citation `weaviatedocs' on page 87 undefined on input line 107.
-
-
-LaTeX Warning: Citation `qdrantdocs' on page 87 undefined on input line 107.
-
-
-LaTeX Warning: Reference `subsubsec:investigacion' on page 87 undefined on inpu
-t line 107.
-
-
-LaTeX Warning: Citation `pgvectorgithub' on page 87 undefined on input line 115
-.
-
-
-LaTeX Warning: Citation `malkov2018hnsw' on page 87 undefined on input line 115
-.
-
-
-LaTeX Warning: Reference `subsec:dd-embeddings' on page 87 undefined on input l
-ine 115.
-
-
-LaTeX Warning: Citation `newman2021microservices' on page 87 undefined on input
- line 119.
-
-[87]
-
-LaTeX Warning: Reference `subsec:dd-slots' on page 88 undefined on input line 1
-28.
-
-
-LaTeX Warning: Reference `sec:procesamiento-conversacional' on page 88 undefine
-d on input line 133.
-
-
-LaTeX Warning: Citation `eslint' on page 88 undefined on input line 137.
-
-
-LaTeX Warning: Citation `humble2010continuous' on page 88 undefined on input li
-ne 143.
-
-
-LaTeX Warning: Reference `cap:estructura-proyecto' on page 88 undefined on inpu
-t line 143.
-
-
+[94] [95] [96]
 Underfull \hbox (badness 3219) in paragraph at lines 147--148
 []\OT1/ptm/m/n/10.95 Las de-pen-den-cias de Python se fi-jan en \OT1/pcr/m/n/10
 .95 requirements.txt \OT1/ptm/m/n/10.95 (ser-vi-dor Ra-sa) y
-[88]
-
-LaTeX Warning: Citation `owasp2021injection' on page 89 undefined on input line
- 166.
-
-
-LaTeX Warning: Citation `geminidocs' on page 89 undefined on input line 173.
-
-
-LaTeX Warning: Reference `sec:costes' on page 89 undefined on input line 177.
-
-
-LaTeX Warning: Reference `tab:stack-tecnologico' on page 89 undefined on input 
-line 184.
-
 
 Underfull \hbox (badness 10000) in paragraph at lines 194--194
 []|\OT1/ptm/m/n/10 Nginx (Doc-ker) / Python
@@ -1986,44 +874,18 @@ Underfull \hbox (badness 10000) in paragraph at lines 203--203
 
 Underfull \hbox (badness 10000) in paragraph at lines 207--207
 []|\OT1/ptm/m/n/10 DigitalOcean (Ubun-tu 24.04
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-
-LaTeX Warning: Reference `cap:pruebas' on page 89 undefined on input line 215.
-
-
-LaTeX Warning: Reference `subsec:dd-gemini-ollama' on page 89 undefined on inpu
-t line 215.
-
-
-LaTeX Warning: Reference `cap:pruebas' on page 89 undefined on input line 215.
-
-) (Capitulos/estructura_proyecto.tex [89] [90]
+[97]) (Capitulos/estructura_proyecto.tex
+Underfull \hbox (badness 1867) in paragraph at lines 215--2
+[] []\OT1/ptm/b/n/10.95 No-ta so-bre el mo-de-lo \OT1/pcr/b/n/10.95 gemma-3-27b
+-it\OT1/ptm/b/n/10.95 .[] \OT1/ptm/m/n/10.95 El mo-de-lo \OT1/pcr/m/n/10.95 gem
+ma-3-27b-it \OT1/ptm/m/n/10.95 es el que
+[98]
 Cap\'{\i }tulo 9.
-[91]
-
-LaTeX Warning: Reference `subsec:dd-pipeline' on page 92 undefined on input lin
-e 109.
-
-[92]
-
-LaTeX Warning: Reference `cap:implementacion' on page 93 undefined on input lin
-e 123.
-
-
-LaTeX Warning: Reference `subsec:dd-texttosql' on page 93 undefined on input li
-ne 123.
-
-
-LaTeX Warning: Reference `sec:impl-multi-intent' on page 93 undefined on input 
-line 123.
-
-
+[99] [100]
 Underfull \hbox (badness 2326) in paragraph at lines 138--139
 []\OT1/pcr/m/n/10.95 config.py\OT1/ptm/m/n/10.95 : Car-ga de va-ria-bles de en-
 torno y dic-cio-na-rio de alias y acr[]oni-mos
-[93]
+[101]
 Overfull \hbox (27.16486pt too wide) in paragraph at lines 148--149
 []\OT1/pcr/m/n/10.95 routes/\OT1/ptm/m/n/10.95 : Un fi-che-ro por do-mi-nio (\O
 T1/pcr/m/n/10.95 asignaturas.py\OT1/ptm/m/n/10.95 , \OT1/pcr/m/n/10.95 centros.
@@ -2034,14 +896,6 @@ Overfull \hbox (2.77872pt too wide) in paragraph at lines 148--149
 s.py\OT1/ptm/m/n/10.95 , \OT1/pcr/m/n/10.95 planes[]docentes.py\OT1/ptm/m/n/10.
 95 , \OT1/pcr/m/n/10.95 conversaciones.py\OT1/ptm/m/n/10.95 ,
 
-LaTeX Warning: Reference `cap:arquitectura' on page 94 undefined on input line 
-160.
-
-
-LaTeX Warning: Reference `subsec:dd-chunking' on page 94 undefined on input lin
-e 162.
-
-
 Underfull \hbox (badness 4254) in paragraph at lines 164--165
 []\OT1/pcr/m/n/10.95 db[]vectores.py\OT1/ptm/m/n/10.95 : Per-sis-ten-cia y con-
 sul-ta so-bre la ta-bla \OT1/pcr/m/n/10.95 plan[]docente \OT1/ptm/m/n/10.95 con
@@ -2051,11 +905,7 @@ Underfull \hbox (badness 4303) in paragraph at lines 171--172
 \OT1/pcr/m/n/10.95 horarios.yml\OT1/ptm/m/n/10.95 , \OT1/pcr/m/n/10.95 profesor
 es.yml\OT1/ptm/m/n/10.95 , \OT1/pcr/m/n/10.95 contexto.yml \OT1/ptm/m/n/10.95 y
  \OT1/pcr/m/n/10.95 general.yml\OT1/ptm/m/n/10.95 . El fi-che-ro
-[94]
-
-LaTeX Warning: Reference `cap:pruebas' on page 95 undefined on input line 191.
-
-
+[102]
 Underfull \hbox (badness 2970) in paragraph at lines 193--194
 []\OT1/pcr/m/n/10.95 docs/ \OT1/ptm/m/n/10.95 agru-pa la do-cu-men-ta-ci[]on t[
 ]ecni-ca ge-ne-ra-da du-ran-te el de-sa-rro-llo: do-cu-men-
@@ -2063,21 +913,9 @@ Underfull \hbox (badness 2970) in paragraph at lines 193--194
 Underfull \hbox (badness 1057) in paragraph at lines 193--194
 \OT1/ptm/m/n/10.95 ta-ci[]on por sprint, dic-cio-na-rios del sis-te-ma, no-tas 
 de di-se[]no y pla-nes de im-ple-men-ta-ci[]on.
-[95]
-
-LaTeX Warning: Reference `cap:pruebas' on page 96 undefined on input line 201.
-
-) (Capitulos/estructura_bd.tex [96]
+[103]) (Capitulos/estructura_bd.tex [104]
 Cap\'{\i }tulo 10.
-
-LaTeX Warning: Citation `codd1970relational' on page 97 undefined on input line
- 9.
-
-
-LaTeX Warning: Citation `chen1976entityrelationship' on page 97 undefined on in
-put line 25.
-
-[97]
+[105]
 Underfull \hbox (badness 10000) in paragraph at lines 138--138
 []|\OT1/ptm/m/n/10.95 Referencia a TI-TU-LA-CIO-NES
 
@@ -2086,64 +924,24 @@ Underfull \hbox (badness 10000) in paragraph at lines 167--167
 
 Underfull \hbox (badness 2393) in paragraph at lines 189--189
 []|\OT1/ptm/m/n/10.95 Cuatrimestre acad[]emi-co (C1, C2 o
-[98] [99] [100]
+[106] [107] [108]
 Underfull \hbox (badness 6910) in paragraph at lines 212--212
 []|\OT1/ptm/m/n/10.95 pendiente, pro-ce-san-do, com-ple-ta-do,
 
 Underfull \hbox (badness 10000) in paragraph at lines 229--229
 []|\OT1/ptm/m/n/10.95 Referencia a PLA-
-
-LaTeX Warning: Citation `devlin2019bert' on page 101 undefined on input line 23
-1.
-
-[101] [102]
+[109] [110]
 Underfull \hbox (badness 4467) in paragraph at lines 253--254
 []\OT1/ptm/m/n/10.95 Un \OT1/ptm/b/n/10.95 plan do-cen-te \OT1/ptm/m/n/10.95 se
  des-com-po-ne en m[]ulti-ples \OT1/ptm/b/n/10.95 chunks \OT1/ptm/m/n/10.95 pa-
 ra vec-to-ri-za-ci[]on (FK
 
-LaTeX Warning: Reference `sec:diseno-conceptual' on page 103 undefined on input
- line 256.
-
-
 Overfull \hbox (2.74689pt too wide) in paragraph at lines 256--257
 []\OT1/ptm/m/n/10.95 Todas las ta-blas prin-ci-pa-les re-gis-tran adem[]as \OT1
 /pcr/m/n/10.95 created[]at \OT1/ptm/m/n/10.95 y \OT1/pcr/m/n/10.95 updated[]at 
 \OT1/ptm/m/n/10.95 (\OT1/pcr/m/n/10.95 timestamptz\OT1/ptm/m/n/10.95 )
-
-LaTeX Warning: Citation `bayer1972btree' on page 103 undefined on input line 26
-3.
-
-
-LaTeX Warning: Citation `postgresBtree' on page 103 undefined on input line 263
-.
-
-
-LaTeX Warning: Citation `postgresPgTrgm' on page 103 undefined on input line 26
-4.
-
-
-LaTeX Warning: Reference `subsec:dd-fallback' on page 103 undefined on input li
-ne 264.
-
-
-LaTeX Warning: Citation `malkov2018hnsw' on page 103 undefined on input line 26
-5.
-
-
-LaTeX Warning: Reference `subsec:dd-embeddings' on page 103 undefined on input 
-line 265.
-
-
-Underfull \hbox (badness 1067) in paragraph at lines 265--266
-\OT1/ptm/m/n/10.95 (Sec-ci[]on []), ofre-cien-do b[]usque-da apro-xi-ma-da de v
-e-ci-nos m[]as cer-ca-nos en tiem-po
-[103]) (Capitulos/implementacion.tex [104]
+[111]) (Capitulos/implementacion.tex [112]
 Cap\'{\i }tulo 11.
-
-LaTeX Warning: Reference `sec:impl-multi-intent' on page 105 undefined on input
- line 7.
-
 
 Underfull \hbox (badness 1635) in paragraph at lines 7--8
 []\OT1/ptm/m/n/10.95 El c[]odi-go se or-ga-ni-za en una car-pe-ta \OT1/pcr/m/n/
@@ -2155,14 +953,11 @@ Underfull \hbox (badness 2744) in paragraph at lines 7--8
 /n/10.95 , \OT1/pcr/m/n/10.95 contexto\OT1/ptm/m/n/10.95 , \OT1/pcr/m/n/10.95 f
 allback\OT1/ptm/m/n/10.95 ) m[]as el m[]odu-lo
 
-LaTeX Warning: Citation `gamma1994gof' on page 105 undefined on input line 40.
-
-
 Overfull \hbox (6.8377pt too wide) in paragraph at lines 43--44
 []\OT1/ptm/b/n/10.95 Validaci[]on de con-tex-to\OT1/ptm/m/n/10.95 : si la con-s
 ul-ta re-quie-re ti-tu-la-ci[]on y el slot \OT1/pcr/m/n/10.95 contexto[]titulac
 ion
-[105]
+[113]
 Underfull \hbox (badness 2080) in paragraph at lines 57--58
 []\OT1/ptm/m/n/10.95 La []epi-ca de asig-na-tu-ras con-cen-tra cin-co ac-cio-ne
 s: \OT1/pcr/m/n/10.95 ActionConsultaEspecifica
@@ -2174,28 +969,7 @@ Underfull \hbox (badness 1888) in paragraph at lines 57--58
 Underfull \hbox (badness 6016) in paragraph at lines 57--58
 \OT1/pcr/m/n/10.95 ActionConsultaConteo \OT1/ptm/m/n/10.95 (con-teo), \OT1/pcr/
 m/n/10.95 ActionMostrarTodasAsignaturas \OT1/ptm/m/n/10.95 (vol-ca-do
-
-LaTeX Warning: Reference `fig:pipe-asig-especifica' on page 106 undefined on in
-put line 61.
-
-
-LaTeX Warning: Reference `lst:asig-cascada' on page 106 undefined on input line
- 67.
-
-
-LaTeX Warning: Reference `lst:asig-cascada' on page 106 undefined on input line
- 84.
-
-
-LaTeX Warning: Reference `lst:asig-cascada' on page 106 undefined on input line
- 84.
-
-[106]
-
-LaTeX Warning: Reference `lst:asig-cascada' on page 107 undefined on input line
- 88.
-
-
+[114]
 Underfull \hbox (badness 3428) in paragraph at lines 88--89
 [] []\OT1/ptm/b/n/10.95 Re-so-lu-ci[]on del nom-bre de asig-na-tu-ra.[] \OT1/pt
 m/m/n/10.95 La fun-ci[]on \OT1/pcr/m/n/10.95 resolver[]asignatura() \OT1/ptm/m/
@@ -2753,7 +1527,7 @@ Package xcolor Warning: Incompatible color definition on input line 114.
 
 Package xcolor Warning: Incompatible color definition on input line 114.
 
-[107]
+[115]
 
 Package xcolor Warning: Incompatible color definition on input line 115.
 
@@ -2874,29 +1648,7 @@ Package xcolor Warning: Incompatible color definition on input line 120.
 
 Package xcolor Warning: Incompatible color definition on input line 120.
 
-
-LaTeX Warning: Reference `subsec:impl-rag-busqueda' on page 108 undefined on in
-put line 130.
-
-[108]
-
-LaTeX Warning: Reference `fig:pipe-asig-listado' on page 109 undefined on input
- line 136.
-
-[109]
-
-LaTeX Warning: Citation `owasp2021injection' on page 110 undefined on input lin
-e 162.
-
-
-LaTeX Warning: Reference `fig:pipe-profesores' on page 110 undefined on input l
-ine 179.
-
-[110] [111]
-
-LaTeX Warning: Reference `lst:prof-atajos' on page 112 undefined on input line 
-218.
-
+[116] [117] [118] [119]
 
 Package xcolor Warning: Incompatible color definition on input line 220.
 
@@ -3266,28 +2018,14 @@ Package xcolor Warning: Incompatible color definition on input line 242.
 
 Package xcolor Warning: Incompatible color definition on input line 242.
 
-[112]
-
-LaTeX Warning: Reference `fig:pipe-horarios' on page 113 undefined on input lin
-e 255.
-
-
+[120]
 Overfull \hbox (13.95132pt too wide) in paragraph at lines 281--282
  [][] 
 
 Underfull \hbox (badness 7468) in paragraph at lines 290--291
 \OT1/ptm/m/n/10.95 La cl[]ausu-la \OT1/pcr/m/n/10.95 GROUP BY (dia[]semana, hor
 a[]inicio, hora[]fin, asignatura,
-[113] [114]
-
-LaTeX Warning: Citation `levenshtein1966binary' on page 115 undefined on input 
-line 299.
-
-
-LaTeX Warning: Reference `fig:pipe-fallback' on page 115 undefined on input lin
-e 306.
-
-
+[121] [122]
 Underfull \hbox (badness 2662) in paragraph at lines 345--346
 []\OT1/pcr/m/n/10.95 ActionMultiIntent \OT1/ptm/m/n/10.95 fue di-se[]nada pa-ra
  cu-brir men-sa-jes que com-bi-nan un cam-
@@ -3303,28 +2041,7 @@ m/n/10.95 se iden-ti-fi-ca-ba con un in-tent com-pues-to del
 Underfull \hbox (badness 10000) in paragraph at lines 345--346
 \OT1/ptm/m/n/10.95 ti-po \OT1/pcr/m/n/10.95 cambiar[]contexto[]academico+consul
 ta[]horario\OT1/ptm/m/n/10.95 , que se se-pa-ra-ba en
-[115] [116]
-
-LaTeX Warning: Reference `ap:decisiones' on page 117 undefined on input line 34
-7.
-
-
-LaTeX Warning: Reference `sec:impl-fallback' on page 117 undefined on input lin
-e 355.
-
-
-LaTeX Warning: Reference `subsec:no-funcional-latencia' on page 117 undefined o
-n input line 366.
-
-
-LaTeX Warning: Reference `subsec:no-funcional-coste' on page 117 undefined on i
-nput line 366.
-
-
-LaTeX Warning: Reference `cap:pruebas' on page 117 undefined on input line 366.
-
-
-
+[123] [124]
 Underfull \hbox (badness 10000) in paragraph at lines 366--367
 []\OT1/pcr/m/n/10.95 shared/gemini[]client.py \OT1/ptm/m/n/10.95 ex-po-ne una f
 un-ci[]on \OT1/pcr/m/n/10.95 llamar[]gemini(prompt,
@@ -3333,104 +2050,23 @@ Underfull \hbox (badness 1742) in paragraph at lines 366--367
 \OT1/ptm/m/n/10.95 p. ej. \OT1/pcr/m/n/10.95 .[]signaturas.text[]to[]sql" \OT1/
 ptm/m/n/10.95 o \OT1/pcr/m/n/10.95 "profesores.respuesta"\OT1/ptm/m/n/10.95 ), 
 re-cuen-tos de
-[117]
-
-LaTeX Warning: Citation `holtzman2020curious' on page 118 undefined on input li
-ne 368.
-
-
-LaTeX Warning: Citation `ji2023survey' on page 118 undefined on input line 368.
-
-
-
-LaTeX Warning: Citation `manning2008introduction' on page 118 undefined on inpu
-t line 376.
-
-
+[125]
 Overfull \hbox (8.26706pt too wide) in paragraph at lines 376--377
 []\OT1/pcr/m/n/10.95 shared/matching.py \OT1/ptm/m/n/10.95 im-ple-men-ta la fun
 -ci[]on \OT1/pcr/m/n/10.95 score[]por[]normalizado(consulta,
-
-LaTeX Warning: Reference `subsec:impl-resolver-afirmacion' on page 118 undefine
-d on input line 383.
-
-[118]
-
-LaTeX Warning: Reference `sec:pruebas-trafico' on page 119 undefined on input l
-ine 388.
-
-
+[126]
 Underfull \hbox (badness 1325) in paragraph at lines 392--393
 \OT1/ptm/m/n/10.95 pre-gun-ta. La im-ple-men-ta-ci[]on re-uti-li-za la ac-ci[]o
 n ori-gi-nal (\OT1/pcr/m/n/10.95 ActionConsultaProfesor\OT1/ptm/m/n/10.95 ,
-
-LaTeX Warning: Citation `lewis2020retrieval' on page 119 undefined on input lin
-e 401.
-
-
-LaTeX Warning: Reference `sec:impl-asignaturas' on page 119 undefined on input 
-line 401.
-
-
-LaTeX Warning: Reference `sec:impl-profesores' on page 119 undefined on input l
-ine 401.
-
-[119]
-
-LaTeX Warning: Citation `langchainChunking' on page 120 undefined on input line
- 409.
-
-(C:\Program Files\MiKTeX\tex/latex/psnfss\omspcr.fd)
+[127] (C:\Program Files\MiKTeX\tex/latex/psnfss\omspcr.fd)
 Underfull \hbox (badness 1424) in paragraph at lines 409--410
 []\OT1/ptm/m/n/10.95 Solo den-tro de ca-da sec-ci[]on se apli-ca la di-vi-si[]o
 n por ta-ma[]no, con tres par[]ame-tros:
-
-LaTeX Warning: Reference `subsec:dd-embeddings' on page 120 undefined on input 
-line 413.
-
-
-LaTeX Warning: Reference `cap:arquitectura' on page 120 undefined on input line
- 413.
-
-
-LaTeX Warning: Reference `tab:rerank-weights' on page 120 undefined on input li
-ne 419.
-
-[120]
-
-LaTeX Warning: Reference `fig:impl-admin-home' on page 121 undefined on input l
-ine 462.
-
-[121]
-
-LaTeX Warning: Reference `fig:impl-admin-profesores' on page 122 undefined on i
-nput line 464.
-
-
-LaTeX Warning: Reference `tab:impl-admin-operaciones' on page 122 undefined on 
-input line 464.
-
-
+[128] [129]
 Overfull \hbox (0.31166pt too wide) in paragraph at lines 467--468
 \OT1/ptm/m/n/10.95 do RAG en un []uni-co \OT1/ptm/m/it/10.95 end-point \OT1/pcr
 /m/n/10.95 POST /api/admin/planes[]docentes/vectorize\OT1/ptm/m/n/10.95 .
-
-LaTeX Warning: Reference `fig:impl-admin-conversaciones' on page 122 undefined 
-on input line 468.
-
-
-LaTeX Warning: Reference `fig:impl-admin-stats' on page 122 undefined on input 
-line 469.
-
-
-LaTeX Warning: Reference `fig:sevius4-publico' on page 122 undefined on input l
-ine 502.
-
-
-LaTeX Warning: Reference `tab:impl-admin-operaciones' on page 122 undefined on 
-input line 502.
-
-[122] [123]
+[130] [131]
 Underfull \hbox (badness 10000) in paragraph at lines 507--507
 []\OT1/ptm/m/n/10.95 Figura 11.10: []P[]agi-na de ac-ce-so p[]ubli-co del por-t
 al Se-vius4
@@ -3438,182 +2074,31 @@ al Se-vius4
 Underfull \hbox (badness 3803) in paragraph at lines 507--507
 \OT1/ptm/m/n/10.95 (\OT1/pcr/m/n/10.95 https://sevius4.us.es/?PyP=LISTA\OT1/ptm
 /m/n/10.95 ). Los tres des-ple-ga-bles en-ca-de-na-dos Cen-
-[124 <./img/admin_stats.png> <./img/sevius4-centro-titulacion-asignatura.png>]
-[125]
-
-LaTeX Warning: Reference `sec:impl-rag-pipeline' on page 126 undefined on input
- line 568.
-
-) [126] [127] (Capitulos/pruebas.tex
+[132 <./img/admin_stats.png> <./img/sevius4-centro-titulacion-asignatura.png>]
+[133]) [134] [135] (Capitulos/pruebas.tex
 Cap\'{\i }tulo 12.
-
-LaTeX Warning: Reference `sec:pruebas-admin' on page 128 undefined on input lin
-e 7.
-
-
-LaTeX Warning: Citation `brooke1996sus' on page 128 undefined on input line 7.
-
-
-LaTeX Warning: Citation `iso25010' on page 128 undefined on input line 13.
-
-
-LaTeX Warning: Citation `north2006bdd' on page 128 undefined on input line 15.
-
-[128]
-
-LaTeX Warning: Citation `xoriantChatbot' on page 129 undefined on input line 17
-.
-
-
-LaTeX Warning: Citation `testio' on page 129 undefined on input line 17.
-
-
-LaTeX Warning: Reference `ap:trabajo-futuro' on page 129 undefined on input lin
-e 21.
-
-
-LaTeX Warning: Reference `tab:e2e-categorias' on page 129 undefined on input li
-ne 27.
-
-
-LaTeX Warning: Reference `tab:rag-cobertura' on page 129 undefined on input lin
-e 27.
-
-
-LaTeX Warning: Reference `tab:nlu-resultados' on page 129 undefined on input li
-ne 27.
-
-
-LaTeX Warning: Reference `tab:latencia' on page 129 undefined on input line 27.
-
-
-
-LaTeX Warning: Reference `tab:coste-extrapolado' on page 129 undefined on input
- line 27.
-
-
-LaTeX Warning: Reference `tab:admin-resultados' on page 129 undefined on input 
-line 27.
-
-
-LaTeX Warning: Reference `tab:trafico-resultados' on page 129 undefined on inpu
-t line 27.
-
-
-Overfull \hbox (14.55794pt too wide) in paragraph at lines 27--28
-\OT1/ptm/m/n/10.95 pro-du-ci-bles y au-di-ta-bles: la sui-te E2E (Cua-dro []) e
-n \OT1/pcr/m/n/10.95 tests/results/testing[]general.md\OT1/ptm/m/n/10.95 ,
-
-Overfull \hbox (110.54388pt too wide) in paragraph at lines 27--28
-\OT1/ptm/m/n/10.95 el ban-co de pre-gun-tas de la ca-pa de pro-fun-di-dad RAG (
-Cua-dro []) en \OT1/pcr/m/n/10.95 tests/plans/rag[]asignaturas[]manual.md
-
-Underfull \hbox (badness 1173) in paragraph at lines 27--28
-\OT1/pcr/m/n/10.95 core \OT1/ptm/m/n/10.95 (Cua-dro []) en \OT1/pcr/m/n/10.95 t
-ests/results/stories.md\OT1/ptm/m/n/10.95 , las m[]etri-cas no fun-cio-na-les d
-e
-[129]
-
-LaTeX Warning: Reference `tab:e2e-categorias' on page 130 undefined on input li
-ne 35.
-
-
-LaTeX Warning: Reference `subsec:pruebas-trabajo-futuro' on page 130 undefined 
-on input line 60.
-
-
-LaTeX Warning: Citation `braun2017evaluating' on page 130 undefined on input li
-ne 64.
-
-
-LaTeX Warning: Citation `casanueva2020efficient' on page 130 undefined on input
- line 64.
-
-
-LaTeX Warning: Citation `gupta2019admitbot' on page 130 undefined on input line
- 64.
-
-
-LaTeX Warning: Citation `colace2018edubot' on page 130 undefined on input line 
-64.
-
-
-LaTeX Warning: Citation `ranoliya2017chatbot' on page 130 undefined on input li
-ne 64.
-
-
-LaTeX Warning: Citation `dibya2021chatbot' on page 130 undefined on input line 
-64.
-
-
-LaTeX Warning: Reference `sec:pruebas-casos-fallidos' on page 130 undefined on 
-input line 72.
-
-[130]
-
-LaTeX Warning: Reference `tab:rag-cobertura' on page 131 undefined on input lin
-e 76.
-
-
-LaTeX Warning: Citation `es2024ragas' on page 131 undefined on input line 96.
-
-
-LaTeX Warning: Citation `lewis2020retrieval' on page 131 undefined on input lin
-e 96.
-
-
-LaTeX Warning: Reference `tab:nlu-resultados' on page 131 undefined on input li
-ne 100.
-
-[131]
-
-LaTeX Warning: Citation `bocklisch2020diet' on page 132 undefined on input line
- 121.
-
-
-LaTeX Warning: Citation `casanueva2020efficient' on page 132 undefined on input
- line 121.
-
-
-LaTeX Warning: Reference `tab:trafico-resultados' on page 132 undefined on inpu
-t line 133.
-
-[132]
-
-LaTeX Warning: Citation `casas2020trends' on page 133 undefined on input line 1
-55.
-
-
-LaTeX Warning: Citation `folstad2020users' on page 133 undefined on input line 
-155.
-
-
+[136]
+Underfull \hbox (badness 3058) in paragraph at lines 27--28
+[]\OT1/ptm/m/n/10.95 Todos los ar-te-fac-tos de eva-lua-ci[]on re-si-den en el 
+di-rec-to-rio \OT1/pcr/m/n/10.95 tests/ \OT1/ptm/m/n/10.95 del re-po-si-to-
+
+Underfull \hbox (badness 2181) in paragraph at lines 27--28
+\OT1/ptm/m/n/10.95 rio. Ca-da cua-dro de es-te cap[]^^Ptu-lo se res-pal-da con 
+un fi-che-ro con-cre-to, de mo-do que
+
+Underfull \hbox (badness 2726) in paragraph at lines 27--28
+\OT1/ptm/m/n/10.95 los va-lo-res re-por-ta-dos son re-pro-du-ci-bles y au-di-ta
+-bles: la sui-te E2E (Cua-dro []12.1[]) en
+
+Underfull \hbox (badness 1708) in paragraph at lines 27--28
+\OT1/pcr/m/n/10.95 tests/results/testing[]general.md\OT1/ptm/m/n/10.95 , el ban
+-co de pre-gun-tas de la ca-pa de pro-
+[137] [138] [139] [140]
 Overfull \hbox (19.40181pt too wide) in paragraph at lines 159--160
 []\OT1/ptm/m/n/10.95 Los iden-ti-fi-ca-do-res de los ca-sos de prue-ba si-guen 
 la con-ven-ci[]on \OT1/pcr/m/n/10.95 <tipo>-<origen><n[]umero>\OT1/ptm/m/n/10.9
 5 :
-
-LaTeX Warning: Reference `subsec:pruebas-limitaciones' on page 133 undefined on
- input line 163.
-
-
-LaTeX Warning: Reference `sec:impl-profesores' on page 133 undefined on input l
-ine 165.
-
-
-LaTeX Warning: Reference `sec:impl-rag-pipeline' on page 133 undefined on input
- line 167.
-
-
-LaTeX Warning: Reference `cap:conclusiones' on page 133 undefined on input line
- 167.
-
-[133]
-
-LaTeX Warning: Reference `tab:casos-fallidos-resumen' on page 134 undefined on 
-input line 173.
-
-
+[141]
 Underfull \hbox (badness 10000) in paragraph at lines 182--182
 []|\OT1/ptm/m/n/10 E-T02,
 
@@ -3632,230 +2117,25 @@ Underfull \hbox (badness 10000) in paragraph at lines 184--184
 Underfull \hbox (badness 10000) in paragraph at lines 184--184
 \OT1/pcr/m/n/10 PARCIAL
 
-Overfull \hbox (24.20695pt too wide) in paragraph at lines 185--185
-[]|\OT1/ptm/m/n/10 Nuevo flu-jo \OT1/pcr/m/n/10 consulta[]titulacion[]por[]tema
-
-
-LaTeX Warning: Reference `sec:pruebas-nlu' on page 134 undefined on input line 
-189.
-
-
-LaTeX Warning: Reference `sec:pruebas-e2e' on page 134 undefined on input line 
-193.
-
-
-LaTeX Warning: Reference `tab:latencia' on page 134 undefined on input line 197
-.
-
-[134]
-
-LaTeX Warning: Citation `geminiPricing' on page 135 undefined on input line 217
-.
-
-
-LaTeX Warning: Reference `sec:costes' on page 135 undefined on input line 217.
-
-
-LaTeX Warning: Reference `tab:coste-extrapolado' on page 135 undefined on input
- line 219.
-
-
-LaTeX Warning: Reference `subsec:trafico-resultados' on page 135 undefined on i
-nput line 219.
-
-
-LaTeX Warning: Citation `goel2018jillwatson' on page 135 undefined on input lin
-e 219.
-
-
-LaTeX Warning: Citation `gupta2019admitbot' on page 135 undefined on input line
- 219.
-
-
-LaTeX Warning: Citation `colace2018edubot' on page 135 undefined on input line 
-219.
-
-[135]
-
-LaTeX Warning: Reference `sec:costes' on page 136 undefined on input line 235.
-
-
-LaTeX Warning: Reference `cap:planificacion' on page 136 undefined on input lin
-e 235.
-
-
-LaTeX Warning: Reference `tab:visiongeneral' on page 136 undefined on input lin
-e 239.
-
-
-LaTeX Warning: Reference `sec:pruebas-e2e' on page 136 undefined on input line 
-248.
-
-
-LaTeX Warning: Citation `braun2017evaluating' on page 136 undefined on input li
-ne 248.
-
-
-LaTeX Warning: Reference `subsec:rag-baseline' on page 136 undefined on input l
-ine 249.
-
-
-LaTeX Warning: Citation `lewis2020retrieval' on page 136 undefined on input lin
-e 249.
-
-
-LaTeX Warning: Reference `subsec:rag-profundidad' on page 136 undefined on inpu
-t line 250.
-
-
-LaTeX Warning: Citation `es2024ragas' on page 136 undefined on input line 250.
-
-
-LaTeX Warning: Reference `sec:pruebas-nlu' on page 136 undefined on input line 
-251.
-
-
-LaTeX Warning: Citation `bocklisch2020diet' on page 136 undefined on input line
- 251.
-
-
-LaTeX Warning: Reference `sec:pruebas-trafico' on page 136 undefined on input l
-ine 252.
-
-
-LaTeX Warning: Citation `casas2020trends' on page 136 undefined on input line 2
-52.
-
-
-LaTeX Warning: Reference `sec:pruebas-admin' on page 136 undefined on input lin
-e 253.
-
-
-LaTeX Warning: Citation `wohlin2012experimentation' on page 136 undefined on in
-put line 266.
-
-[136]
-
-LaTeX Warning: Reference `subsec:pruebas-marco' on page 137 undefined on input 
-line 268.
-
-
-LaTeX Warning: Reference `subsec:pruebas-ejecucion' on page 137 undefined on in
-put line 268.
-
-
-LaTeX Warning: Citation `brooke1996sus' on page 137 undefined on input line 270
-.
-
-
-LaTeX Warning: Reference `tab:visiongeneral' on page 137 undefined on input lin
-e 274.
-
-[137]
-
-LaTeX Warning: Reference `tab:admin-resultados' on page 138 undefined on input 
-line 290.
-
-
-LaTeX Warning: Reference `subsec:pruebas-limitaciones' on page 138 undefined on
- input line 334.
-
-) (Capitulos/manual.tex [138] [139]
+Underfull \hbox (badness 10000) in paragraph at lines 185--185
+[]|\OT1/ptm/m/n/10 Nuevo flu-jo \OT1/pcr/m/n/10 consulta[]titulacion[]
+[142] [143] [144] [145]) (Capitulos/manual.tex [146] [147]
 Cap\'{\i }tulo 13.
 
-LaTeX Warning: Reference `fig:widget-cerrado' on page 140 undefined on input li
-ne 18.
+Overfull \hbox (21.68546pt too wide) in paragraph at lines 18--19
+\OT1/ptm/m/n/10.95 El pro-to-ti-po est[]a des-ple-ga-do en la di-rec-ci[]on []\
+OT1/pcr/m/n/10.95 http://206.189.106.215/pagina-principal[]\OT1/ptm/m/n/10.95 .
 
-
-LaTeX Warning: Reference `fig:widget-abierto' on page 140 undefined on input li
-ne 30.
-
-[140] [141 <./img/widget_cerrado.png> <./img/widget_abierto.png>]
-
-LaTeX Warning: Reference `tab:funcionalidades-usuario' on page 142 undefined on
- input line 50.
-
-
-LaTeX Warning: Reference `fig:ejemplo-asignatura' on page 142 undefined on inpu
-t line 77.
-
-
-LaTeX Warning: Reference `fig:ejemplo-profesor' on page 142 undefined on input 
-line 77.
-
-[142] [143 <./img/ejemplo_asignatura.png>] [144 <./img/ejemplo_horario.png>]
-[145 <./img/ejemplo_profesor.png>]
-
-LaTeX Warning: Reference `subsec:impl-admin-operaciones' on page 146 undefined 
-on input line 121.
-
-
-LaTeX Warning: Reference `fig:admin-home' on page 146 undefined on input line 1
-25.
-
-
-LaTeX Warning: Reference `tab:admin-centros-acciones' on page 146 undefined on 
-input line 138.
-
-[146]
+[148] [149 <./img/widget_cerrado.png> <./img/widget_abierto.png>] [150]
+[151 <./img/ejemplo_asignatura.png>] [152 <./img/ejemplo_horario.png>] [153 <./
+img/ejemplo_profesor.png>]
 Underfull \hbox (badness 3635) in paragraph at lines 150--150
 []|\OT1/ptm/m/n/10.95 Sincronizar ti-tu-la-cio-nes des-de
-
-LaTeX Warning: Reference `fig:man-admin-asignaturas' on page 147 undefined on i
-nput line 157.
-
-
-LaTeX Warning: Reference `tab:admin-asignaturas-acciones' on page 147 undefined
- on input line 157.
-
-[147 <./img/admin_asignaturas.png>]
-
-LaTeX Warning: Reference `fig:admin-profesores' on page 148 undefined on input 
-line 189.
-
-
-LaTeX Warning: Reference `tab:admin-profesores-acciones' on page 148 undefined 
-on input line 189.
-
-[148]
-
-LaTeX Warning: Reference `fig:man-admin-horarios' on page 149 undefined on inpu
-t line 216.
-
-
-LaTeX Warning: Reference `tab:admin-horarios-acciones' on page 149 undefined on
- input line 216.
-
-
-LaTeX Warning: Reference `fig:man-admin-conversaciones' on page 149 undefined o
-n input line 244.
-
-
-LaTeX Warning: Reference `tab:admin-conv-acciones' on page 149 undefined on inp
-ut line 244.
-
-[149 <./img/admin_horarios_con_boton_generar_horarios.png>]
-
-LaTeX Warning: Reference `fig:admin-stats' on page 150 undefined on input line 
-270.
-
-
-LaTeX Warning: Reference `tab:admin-onboarding' on page 150 undefined on input 
-line 281.
-
-
+[154] [155 <./img/admin_asignaturas.png>] [156] [157 <./img/admin_horarios_con_
+boton_generar_horarios.png>]
 Underfull \hbox (badness 10000) in paragraph at lines 292--292
 []|\OT1/ptm/m/n/10.95 Asignaturas / \OT1/ptm/m/it/10.95 Sin-cro-ni-zar
-
-LaTeX Warning: Reference `cap:requisitos' on page 150 undefined on input line 3
-03.
-
-[150] [151]
-
-LaTeX Warning: Reference `tab:despliegue-requisitos' on page 152 undefined on i
-nput line 314.
-
-(lstlang1.sty) (lstlang1.sty)
+[158] [159] (lstlang1.sty) (lstlang1.sty)
 
 Package xcolor Warning: Incompatible color definition on input line 340.
 
@@ -3959,22 +2239,12 @@ Package xcolor Warning: Incompatible color definition on input line 344.
 Package xcolor Warning: Incompatible color definition on input line 344.
 
 
-LaTeX Warning: Reference `tab:despliegue-contenedores' on page 152 undefined on
- input line 350.
-
-[152]
 Underfull \hbox (badness 10000) in paragraph at lines 363--363
 []|\OT1/pcr/m/n/9 python:3.10.14-
 
 Underfull \hbox (badness 2197) in paragraph at lines 363--364
 []|\OT1/ptm/m/n/9 Acciones per-so-na-li-za-das y m[]odu-lo
-
-LaTeX Warning: Reference `lst:logs' on page 153 undefined on input line 375.
-
-
-LaTeX Warning: Reference `tab:despliegue-contenedores' on page 153 undefined on
- input line 375.
-
+[160]
 
 Package xcolor Warning: Incompatible color definition on input line 377.
 
@@ -4116,7 +2386,6 @@ Package xcolor Warning: Incompatible color definition on input line 381.
 
 Package xcolor Warning: Incompatible color definition on input line 381.
 
-[153]
 
 Package xcolor Warning: Incompatible color definition on input line 387.
 
@@ -4350,10 +2619,6 @@ Package xcolor Warning: Incompatible color definition on input line 397.
 
 
 Package xcolor Warning: Incompatible color definition on input line 397.
-
-
-LaTeX Warning: Reference `tab:desarrollo-estructura' on page 154 undefined on i
-nput line 408.
 
 
 Overfull \hbox (16.27225pt too wide) in paragraph at lines 429--430
@@ -4365,10 +2630,7 @@ Underfull \hbox (badness 4096) in paragraph at lines 429--430
 \OT1/ptm/m/n/10.95 de de-pen-den-cias \OT1/pcr/m/n/10.95 requirements-rasa.txt 
 \OT1/ptm/m/n/10.95 y \OT1/pcr/m/n/10.95 requirements-actions.txt\OT1/ptm/m/n/10
 .95 . La
-
-LaTeX Warning: Reference `lst:dev-setup' on page 154 undefined on input line 43
-3.
-
+[161]
 
 Package xcolor Warning: Incompatible color definition on input line 435.
 
@@ -4539,11 +2801,6 @@ Package xcolor Warning: Incompatible color definition on input line 440.
 
 
 Package xcolor Warning: Incompatible color definition on input line 440.
-
-[154]
-
-LaTeX Warning: Reference `lst:dev-run' on page 155 undefined on input line 442.
-
 
 
 Package xcolor Warning: Incompatible color definition on input line 444.
@@ -4811,20 +3068,12 @@ Package xcolor Warning: Incompatible color definition on input line 456.
 
 
 Package xcolor Warning: Incompatible color definition on input line 456.
-
-
-LaTeX Warning: Reference `tab:desarrollo-ciclo' on page 155 undefined on input 
-line 462.
 
 
 Underfull \hbox (badness 7047) in paragraph at lines 473--474
 []|\OT1/ptm/m/n/10.95 Ejecuci[]on de \OT1/pcr/m/n/10.95 rasa test core \OT1/ptm
 /m/n/10.95 pa-ra la pol[]^^Pti-ca,
-[155]
-
-LaTeX Warning: Reference `lst:nlu-intent' on page 156 undefined on input line 4
-84.
-
+[162]
 
 Package xcolor Warning: Incompatible color definition on input line 486.
 
@@ -4931,10 +3180,6 @@ Package xcolor Warning: Incompatible color definition on input line 494.
 Package xcolor Warning: Incompatible color definition on input line 494.
 
 
-LaTeX Warning: Reference `lst:action-estructura' on page 156 undefined on input
- line 496.
-
-
 Package xcolor Warning: Incompatible color definition on input line 498.
 
 
@@ -5168,6 +3413,7 @@ Package xcolor Warning: Incompatible color definition on input line 513.
 
 Package xcolor Warning: Incompatible color definition on input line 513.
 
+[163]
 
 Package xcolor Warning: Incompatible color definition on input line 514.
 
@@ -5213,11 +3459,6 @@ Overfull \hbox (20.43867pt too wide) in paragraph at lines 521--522
 \OT1/ptm/m/n/10.95 lle-van el pre-fi-jo \OT1/pcr/m/n/10.95 ultimo[] \OT1/ptm/m/
 n/10.95 (\OT1/pcr/m/n/10.95 ultimo[]nombre[]asignatura\OT1/ptm/m/n/10.95 , \OT1
 /pcr/m/n/10.95 ultimo[]profesor[]consultado\OT1/ptm/m/n/10.95 ).
-[156]
-
-LaTeX Warning: Reference `lst:validar-sql' on page 157 undefined on input line 
-523.
-
 
 Package xcolor Warning: Incompatible color definition on input line 525.
 
@@ -5647,178 +3888,39 @@ Package xcolor Warning: Incompatible color definition on input line 545.
 
 Package xcolor Warning: Incompatible color definition on input line 545.
 
-) (Capitulos/conclusiones.tex [157]
+) (Capitulos/conclusiones.tex [164] [165]
 Cap\'{\i }tulo 14.
-
-LaTeX Warning: Reference `cap:introduccion' on page 158 undefined on input line
- 5.
-
-
-LaTeX Warning: Reference `tab:linceus-numeros' on page 158 undefined on input l
-ine 9.
-
-
-LaTeX Warning: Reference `sec:req-actores' on page 158 undefined on input line 
-25.
-
 
 Underfull \hbox (badness 10000) in paragraph at lines 27--27
 []|\OT1/ptm/m/n/10 150 / 159
 
-LaTeX Warning: Reference `tab:e2e-categorias' on page 158 undefined on input li
-ne 27.
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 28--28
 []|\OT1/ptm/m/n/10 47 / 50
-
-LaTeX Warning: Reference `subsec:rag-baseline' on page 158 undefined on input l
-ine 28.
-
 
 Underfull \hbox (badness 10000) in paragraph at lines 29--29
 []|\OT1/ptm/m/n/10 68 / 74
 
-LaTeX Warning: Reference `tab:rag-cobertura' on page 158 undefined on input lin
-e 29.
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 30--30
 []|\OT1/ptm/m/n/10 158 / 158
-
-LaTeX Warning: Reference `tab:nlu-resultados' on page 158 undefined on input li
-ne 30.
-
 
 Underfull \hbox (badness 10000) in paragraph at lines 31--31
 []|\OT1/ptm/m/n/10 58 / 59
 
-LaTeX Warning: Reference `tab:trafico-resultados' on page 158 undefined on inpu
-t line 31.
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 32--32
 []|\OT1/ptm/m/n/10 24 / 24
-
-LaTeX Warning: Reference `tab:admin-resultados' on page 158 undefined on input 
-line 32.
-
-
-LaTeX Warning: Reference `subsec:trafico-resultados' on page 158 undefined on i
-nput line 33.
-
-
-LaTeX Warning: Reference `tab:latencia' on page 158 undefined on input line 35.
-
-
-
-LaTeX Warning: Reference `tab:latencia' on page 158 undefined on input line 36.
-
-
-
-LaTeX Warning: Reference `subsec:no-funcional-coste' on page 158 undefined on i
-nput line 37.
-
-
-LaTeX Warning: Reference `sec:pruebas-no-funcional' on page 158 undefined on in
-put line 38.
-
 
 Underfull \hbox (badness 5985) in paragraph at lines 39--39
 []|\OT1/ptm/m/n/10 Tiempo de cum-pli-mien-to RNF-14
 
 Underfull \hbox (badness 1221) in paragraph at lines 39--39
 []|\OT1/ptm/m/n/10 28 s (me-dia-
-
-LaTeX Warning: Reference `tab:rnf' on page 158 undefined on input line 39.
-
-
-LaTeX Warning: Reference `cap:planificacion' on page 158 undefined on input lin
-e 41.
-
-
-LaTeX Warning: Reference `ap:decisiones' on page 158 undefined on input line 42
-.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 42--42
-[]|\OT1/pcr/m/n/10 docs/sprints/\OT1/ptm/m/n/10 , Ap[]endi-
-
-LaTeX Warning: Reference `sec:conc-desviacion' on page 158 undefined on input l
-ine 43.
-
-
-LaTeX Warning: Reference `cap:introduccion' on page 158 undefined on input line
- 51.
-
-
-LaTeX Warning: Reference `cap:pruebas' on page 158 undefined on input line 51.
-
-
-LaTeX Warning: Reference `tab:cumplimiento-tecnico' on page 158 undefined on in
-put line 59.
-
-
-LaTeX Warning: Reference `cap:introduccion' on page 158 undefined on input line
- 59.
-
-
-LaTeX Warning: Reference `cap:pruebas' on page 158 undefined on input line 59.
-
-[158] [159]
+[166] [167]
 Underfull \hbox (badness 1137) in paragraph at lines 69--69
 []|\OT1/ptm/m/n/10 Sistema con-ver-sa-cio-nal Ra-sa con flu-jos
 
-LaTeX Warning: Reference `sec:pruebas-nlu' on page 160 undefined on input line 
-69.
-
-
-LaTeX Warning: Reference `subsec:no-funcional-coste' on page 160 undefined on i
-nput line 70.
-
-
-LaTeX Warning: Reference `subsec:rag-profundidad' on page 160 undefined on inpu
-t line 71.
-
-
-LaTeX Warning: Reference `sec:pruebas-e2e' on page 160 undefined on input line 
-72.
-
-
-LaTeX Warning: Reference `sec:pruebas-trafico' on page 160 undefined on input l
-ine 73.
-
-[160]
-
-LaTeX Warning: Reference `cap:planificacion' on page 161 undefined on input lin
-e 95.
-
-
-LaTeX Warning: Citation `segura2024guiatfg' on page 161 undefined on input line
- 103.
-
-
-LaTeX Warning: Reference `cap:pruebas' on page 161 undefined on input line 111.
-
-
-[161]
-
-LaTeX Warning: Reference `sec:politica-llm' on page 162 undefined on input line
- 113.
-
-
-LaTeX Warning: Citation `humble2010continuous' on page 162 undefined on input l
-ine 117.
-
-
-LaTeX Warning: Reference `cap:pruebas' on page 162 undefined on input line 119.
-
-
-
-LaTeX Warning: Citation `harel1987statecharts' on page 162 undefined on input l
-ine 119.
-
-
+Underfull \hbox (badness 2318) in paragraph at lines 71--72
+\OT1/ptm/m/n/10 pa RAG va-li-da-da al 91,9$ $% de pro-fun-di-dad
+[168] [169]
 Underfull \hbox (badness 1303) in paragraph at lines 119--120
 \OT1/pcr/m/n/10.95 ultimo[]profesor[]consultado \OT1/ptm/m/n/10.95 o \OT1/pcr/m
 /n/10.95 ultimo[]nombre[]asignatura \OT1/ptm/m/n/10.95 con una re-gla de
@@ -5827,183 +3929,18 @@ Underfull \hbox (badness 1810) in paragraph at lines 119--120
 \OT1/ptm/m/n/10.95 he-re-da \OT1/pcr/m/n/10.95 ultimo[]curso[]consultado \OT1/p
 tm/m/n/10.95 y \OT1/pcr/m/n/10.95 ultimo[]grupo[]consultado\OT1/ptm/m/n/10.95 ,
  y cuan-do so-lo
-[162]
-
-LaTeX Warning: Reference `sec:impl-shared' on page 163 undefined on input line 
-121.
-
-
-LaTeX Warning: Reference `sec:req-evolucion' on page 163 undefined on input lin
-e 125.
-
-[163]
-
-LaTeX Warning: Citation `wollny2021survey' on page 164 undefined on input line 
-133.
-
-
-LaTeX Warning: Citation `gupta2019admitbot' on page 164 undefined on input line
- 133.
-
-
-LaTeX Warning: Citation `colace2018edubot' on page 164 undefined on input line 
-133.
-
-
-LaTeX Warning: Citation `ranoliya2017chatbot' on page 164 undefined on input li
-ne 133.
-
-
-LaTeX Warning: Citation `dibya2021chatbot' on page 164 undefined on input line 
-133.
-
-
-LaTeX Warning: Reference `sec:impl-shared' on page 164 undefined on input line 
-135.
-
-
-LaTeX Warning: Reference `sec:impl-contexto' on page 164 undefined on input lin
-e 135.
-
-
-LaTeX Warning: Reference `subsec:dd-pipeline' on page 164 undefined on input li
-ne 135.
-
-
-LaTeX Warning: Citation `wollny2021survey' on page 164 undefined on input line 
-137.
-
-
-LaTeX Warning: Reference `sec:impl-profesores' on page 164 undefined on input l
-ine 137.
-
-[164]
-
-LaTeX Warning: Reference `sec:impl-admin' on page 165 undefined on input line 1
-39.
-
-
-LaTeX Warning: Reference `sec:pruebas-admin' on page 165 undefined on input lin
-e 139.
-
-
-LaTeX Warning: Reference `cap:pruebas' on page 165 undefined on input line 141.
-
-
-
-LaTeX Warning: Citation `ji2023survey' on page 165 undefined on input line 147.
-
-
-
-LaTeX Warning: Reference `sec:impl-fallback' on page 165 undefined on input lin
-e 147.
-
-
-LaTeX Warning: Citation `rgpd2016' on page 165 undefined on input line 149.
-
-[165]
-
-LaTeX Warning: Reference `sec:pruebas-trafico' on page 166 undefined on input l
-ine 151.
-
-
-LaTeX Warning: Reference `sec:pruebas-nlu' on page 166 undefined on input line 
-151.
-
-
-LaTeX Warning: Reference `subsec:impl-rag-busqueda' on page 166 undefined on in
-put line 153.
-
-
-LaTeX Warning: Reference `subsec:dd-gemini-ollama' on page 166 undefined on inp
-ut line 153.
-
-
-LaTeX Warning: Citation `holtzman2020curious' on page 166 undefined on input li
-ne 159.
-
-) (Capitulos/uso_ia.tex [166]
+[170] [171] [172] [173]) (Capitulos/uso_ia.tex [174]
 Cap\'{\i }tulo 15.
-
-LaTeX Warning: Reference `cap:marco-tecnologico' on page 167 undefined on input
- line 7.
-
-
-LaTeX Warning: Reference `cap:planificacion' on page 167 undefined on input lin
-e 19.
-
-[167]) (Capitulos/video_presentacion.tex [168]
+[175]) (Capitulos/video_presentacion.tex [176]
 Cap\'{\i }tulo 16.
-
-LaTeX Warning: Reference `fig:video-thumbnail' on page 169 undefined on input l
-ine 24.
-
-
-LaTeX Warning: Reference `tab:video-estructura' on page 169 undefined on input 
-line 37.
-
-
-LaTeX Warning: Reference `cap:pruebas' on page 169 undefined on input line 70.
-
-[169 <./img/youtube-demo-thumbnail.png>]) [170] (Capitulos/apendices.tex
-[171] [172] [173]
-
-LaTeX Warning: Reference `cap:metodologia' on page 174 undefined on input line 
-204.
-
-
-LaTeX Warning: Reference `tab:clockify-categorias' on page 174 undefined on inp
-ut line 206.
-
-
-LaTeX Warning: Reference `tab:clockify-sprints' on page 174 undefined on input 
-line 206.
-
-
+[177 <./img/youtube-demo-thumbnail.png>]) [178] (Capitulos/apendices.tex
+[179] [180] [181]
 Underfull \hbox (badness 1406) in paragraph at lines 253--254
 []\OT1/ptm/m/n/10.95 A lo lar-go del de-sa-rro-llo se han re-gis-tra-do \OT1/pt
 m/b/n/10.95 113 de-ci-sio-nes t[]ecni-cas \OT1/ptm/m/n/10.95 en los fi-che-ros
-[174]
-
-LaTeX Warning: Reference `cap:requisitos' on page 175 undefined on input line 2
-55.
-
-
-LaTeX Warning: Reference `cap:conclusiones' on page 175 undefined on input line
- 255.
-
-[175]
-ignored error: Infinite glue shrinkage found in box being split [176] [177]
-
-LaTeX Warning: Reference `cap:introduccion' on page 178 undefined on input line
- 412.
-
-
-LaTeX Warning: Reference `cap:conclusiones' on page 178 undefined on input line
- 412.
-
-
-LaTeX Warning: Reference `sec:pruebas-e2e' on page 178 undefined on input line 
-418.
-
-
-LaTeX Warning: Reference `sec:pruebas-trafico' on page 178 undefined on input l
-ine 418.
-
-
-LaTeX Warning: Reference `subsec:pruebas-trabajo-futuro' on page 178 undefined 
-on input line 418.
-
-
-LaTeX Warning: Reference `tab:trabajo-futuro' on page 178 undefined on input li
-ne 418.
-
-[178]
-
-LaTeX Warning: Reference `sec:pruebas-casos-fallidos' on page 179 undefined on 
-input line 420.
-
-
+[182] [183]
+ignored error: Infinite glue shrinkage found in box being split [184] [185]
+[186]
 Overfull \hbox (14.93623pt too wide) in paragraph at lines 434--434
 \OT1/pcr/m/n/10 consulta[]horario[]asignatura 
 
@@ -6018,35 +3955,15 @@ Overfull \hbox (14.93623pt too wide) in paragraph at lines 441--441
 
 Overfull \hbox (17.07027pt too wide) in paragraph at lines 442--442
 \OT1/pcr/m/n/10 aula.startswith([]A')=teor[]^^Pa 
-ignored error: Infinite glue shrinkage found in box being split [179]
-
-LaTeX Warning: Reference `subsec:conc-fut-optimizacion' on page 180 undefined o
-n input line 447.
-
-
-LaTeX Warning: Reference `sec:pruebas-discusion' on page 180 undefined on input
- line 447.
-
-) [180] (proyect.bbl [181]
+ignored error: Infinite glue shrinkage found in box being split [187]) [188]
+(proyect.bbl [189]
 
 Package Fancyhdr Warning: \headheight is too small (13.59999pt): 
  Make it at least 14.20308pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[182] [183] [184] [185]) [186] (proyect.aux)
-
-LaTeX Warning: There were undefined references.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
-
-Package rerunfilecheck Warning: File `proyect.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
- )
+[190] [191] [192] [193]) [194] (proyect.aux) )
 (see the transcript file for additional information) <C:\Users\santi\AppData\Lo
 cal\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1095.pk><C:/Users/santi/AppDa
 ta/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/sa
@@ -6073,5 +3990,5 @@ b8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utm
 bi8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/ut
 mr8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/ut
 mri8a.pfb>
-Output written on proyect.pdf (187 pages, 4666199 bytes).
+Output written on proyect.pdf (195 pages, 4984721 bytes).
 Transcript written on proyect.log.

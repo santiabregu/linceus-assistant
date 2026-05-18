@@ -15,7 +15,7 @@ El destinatario de este manual es el alumnado de la ETSII que utiliza Linceus As
 
 \subsection{Acceso a la aplicación}\label{subsec:usuario-acceso}
 
-Linceus Assistant se ofrece como una aplicación web responsiva, accesible desde cualquier navegador moderno (Chrome, Firefox, Edge, Safari) tanto en ordenador como en dispositivo móvil. La página principal del prototipo muestra una breve descripción del proyecto y un \textit{widget} de chat anclado en la esquina inferior derecha, que se despliega al hacer clic sobre el icono (Figura~\ref{fig:widget-cerrado}). No se requiere autenticación previa: la sesión se identifica internamente mediante un identificador anónimo generado por el navegador, lo que permite mantener el contexto durante la conversación sin recoger datos personales.
+Linceus Assistant se ofrece como una aplicación web responsiva, accesible desde cualquier navegador moderno (Chrome, Firefox, Edge, Safari) tanto en ordenador como en dispositivo móvil. El prototipo está desplegado en la dirección \href{http://206.189.106.215/pagina-principal}{\texttt{http://206.189.106.215/pagina-principal}}. Al tratarse de un servidor con HTTP sin certificado TLS, los navegadores muestran un aviso de \textit{``conexión no segura''} antes del primer acceso que debe aceptarse para continuar; esta limitación es propia del despliegue de fase~1 y no afecta a la privacidad del usuario, ya que ninguna información identificable se envía al servidor. La página principal del prototipo muestra una breve descripción del proyecto y un \textit{widget} de chat anclado en la esquina inferior derecha, que se despliega al hacer clic sobre el icono (Figura~\ref{fig:widget-cerrado}). No se requiere autenticación previa: la sesión se identifica internamente mediante un identificador anónimo generado por el navegador, lo que permite mantener el contexto durante la conversación sin recoger datos personales.
 
 \begin{figure}[hbtp]
   \centering
@@ -122,7 +122,7 @@ Este manual se dirige al perfil de \emph{administrador del catálogo}: la person
 
 \subsection{Acceso e interfaz general}\label{subsec:admin-acceso}
 
-El panel está disponible en \texttt{http://<host>/admin.html} y requiere un usuario con permisos de administración. Tras autenticarse, la interfaz muestra una barra de navegación superior con cinco pestañas (Figura~\ref{fig:admin-home}): \textit{Centros}, \textit{Profesores}, \textit{Horarios}, \textit{Conversaciones} y \textit{Estadísticas}. La pestaña activa por defecto es \textit{Centros}, que actúa como punto de entrada jerárquico al resto del catálogo.
+El panel está disponible en \href{http://206.189.106.215/admin.html}{\texttt{http://206.189.106.215/admin.html}} y requiere un usuario con permisos de administración. Tras autenticarse, la interfaz muestra una barra de navegación superior con cinco pestañas (Figura~\ref{fig:admin-home}): \textit{Centros}, \textit{Profesores}, \textit{Horarios}, \textit{Conversaciones} y \textit{Estadísticas}. La pestaña activa por defecto es \textit{Centros}, que actúa como punto de entrada jerárquico al resto del catálogo.
 
 \begin{figure}[hbtp]
   \centering

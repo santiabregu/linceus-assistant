@@ -29,7 +29,7 @@
 \contentsline {figure}{\numberline {11.7}{\ignorespaces Vista de profesores del Departamento de Lenguajes y Sistemas Informáticos. La columna \textit {Enriquecer desde us.es} lanza el scraper de directorio para actualizar los datos del PDI.}}{131}{figure.11.7}%
 \contentsline {figure}{\numberline {11.8}{\ignorespaces Vista de conversaciones agrupadas por sesión. La fila en verde indica una sesión marcada como revisada. El botón \textit {Exportar esta página} vuelca las sesiones seleccionadas en CSV.}}{131}{figure.11.8}%
 \contentsline {figure}{\numberline {11.9}{\ignorespaces Panel de estadísticas generales. Los contadores se calculan en tiempo real contra Supabase. En el momento de la captura el sistema contaba con 244~asignaturas, 268~profesores, 157~planes docentes vectorizados y 1352~\textit {chunks} RAG.}}{132}{figure.11.9}%
-\contentsline {figure}{\numberline {11.10}{\ignorespaces Página de acceso público del portal Sevius4 (\texttt {https://sevius4.us.es/?PyP=LISTA}). Los tres desplegables encadenados Centro $\rightarrow $ Titulación $\rightarrow $ Asignatura son la fuente que los \textit {scrapers} del panel recorren para sincronizar los nombres del catálogo académico y descargar los planes docentes en PDF.}}{132}{figure.11.10}%
+\contentsline {figure}{\numberline {11.10}{\ignorespaces Página de acceso público del portal Sevius4.}}{132}{figure.11.10}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {13.1}{\ignorespaces Página principal del prototipo con el \textit {widget} de chat cerrado.}}{149}{figure.13.1}%
@@ -41,8 +41,8 @@
 \contentsline {figure}{\numberline {13.7}{\ignorespaces Pestaña \textit {Asignaturas} con la barra de acciones disponibles para la titulación.}}{155}{figure.13.7}%
 \contentsline {figure}{\numberline {13.8}{\ignorespaces Pestaña \textit {Profesores} del panel de administración. La columna \textit {Enriquecer desde us.es} dispara el scraper del directorio PDI para el departamento correspondiente.}}{156}{figure.13.8}%
 \contentsline {figure}{\numberline {13.9}{\ignorespaces Pestaña \textit {Horarios} con el botón \textit {Generar horarios} activo para los centros con extractor disponible.}}{157}{figure.13.9}%
-\contentsline {figure}{\numberline {13.10}{\ignorespaces Pestaña \textit {Conversaciones} con las sesiones agrupadas. La fila resaltada en verde indica una sesión ya revisada por el administrador.}}{158}{figure.13.10}%
-\contentsline {figure}{\numberline {13.11}{\ignorespaces Pestaña \textit {Estadísticas}: contadores globales del catálogo cargado.}}{159}{figure.13.11}%
+\contentsline {figure}{\numberline {13.10}{\ignorespaces Pestaña \textit {Conversaciones} con las sesiones agrupadas. La fila resaltada en verde indica una sesión ya revisada por el administrador.}}{157}{figure.13.10}%
+\contentsline {figure}{\numberline {13.11}{\ignorespaces Pestaña \textit {Estadísticas}: contadores globales del catálogo cargado.}}{158}{figure.13.11}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
