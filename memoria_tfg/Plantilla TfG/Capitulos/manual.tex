@@ -15,7 +15,7 @@ El destinatario de este manual es el alumnado de la ETSII que utiliza Linceus As
 
 \subsection{Acceso a la aplicación}\label{subsec:usuario-acceso}
 
-Linceus Assistant se ofrece como una aplicación web responsiva, accesible desde cualquier navegador moderno (Chrome, Firefox, Edge, Safari) tanto en ordenador como en dispositivo móvil. La página principal del prototipo muestra una breve descripción del proyecto y un \textit{widget} de chat anclado en la esquina inferior derecha, que se despliega al hacer clic sobre el icono (Figura~\ref{fig:widget-cerrado}). No se requiere autenticación previa: la sesión se identifica internamente mediante un identificador anónimo generado por el navegador, lo que permite mantener el contexto durante la conversación sin recoger datos personales.
+Linceus Assistant se ofrece como una aplicación web responsiva, accesible desde cualquier navegador moderno (Chrome, Firefox, Edge, Safari) tanto en ordenador como en dispositivo móvil. El prototipo está desplegado en la dirección \href{http://206.189.106.215/pagina-principal}{\texttt{http://206.189.106.215/pagina-principal}}. Al tratarse de un servidor con HTTP sin certificado TLS, los navegadores muestran un aviso de \textit{``conexión no segura''} antes del primer acceso que debe aceptarse para continuar; esta limitación es propia del despliegue de fase~1 y no afecta a la privacidad del usuario, ya que ninguna información identificable se envía al servidor. La página principal del prototipo muestra una breve descripción del proyecto y un \textit{widget} de chat anclado en la esquina inferior derecha, que se despliega al hacer clic sobre el icono (Figura~\ref{fig:widget-cerrado}). No se requiere autenticación previa: la sesión se identifica internamente mediante un identificador anónimo generado por el navegador, lo que permite mantener el contexto durante la conversación sin recoger datos personales.
 
 \begin{figure}[hbtp]
   \centering
@@ -122,7 +122,7 @@ Este manual se dirige al perfil de \emph{administrador del catálogo}: la person
 
 \subsection{Acceso e interfaz general}\label{subsec:admin-acceso}
 
-El panel está disponible en \texttt{http://<host>/admin.html} y requiere un usuario con permisos de administración. Tras autenticarse, la interfaz muestra una barra de navegación superior con cinco pestañas (Figura~\ref{fig:admin-home}): \textit{Centros}, \textit{Profesores}, \textit{Horarios}, \textit{Conversaciones} y \textit{Estadísticas}. La pestaña activa por defecto es \textit{Centros}, que actúa como punto de entrada jerárquico al resto del catálogo.
+El panel está disponible en \href{http://206.189.106.215/admin.html}{\texttt{http://206.189.106.215/admin.html}} y requiere un usuario con permisos de administración. Tras autenticarse, la interfaz muestra una barra de navegación superior con cinco pestañas (Figura~\ref{fig:admin-home}): \textit{Centros}, \textit{Profesores}, \textit{Horarios}, \textit{Conversaciones} y \textit{Estadísticas}. La pestaña activa por defecto es \textit{Centros}, que actúa como punto de entrada jerárquico al resto del catálogo.
 
 \begin{figure}[hbtp]
   \centering
@@ -338,7 +338,7 @@ Además de los recursos de cómputo, el despliegue requiere disponer de tres cre
 La instalación parte de la clonación del repositorio del proyecto y se completa en cuatro pasos. El primer paso consiste en obtener una copia local del código y situarse en el directorio resultante. El segundo paso es preparar el fichero \texttt{.env} a partir de la plantilla, sustituyendo cada variable por el valor correspondiente al entorno de despliegue. El tercer paso es asegurarse de que el directorio \texttt{models/} contiene un modelo Rasa entrenado: si no es así, basta con ejecutar \texttt{rasa train} en un entorno con las dependencias instaladas, o bien copiar el último modelo válido desde el repositorio. El cuarto y último paso es levantar la pila completa con Docker Compose:
 
 \begin{lstlisting}[language=bash, caption={Levantar la pila completa con Docker Compose.}]
-git clone <url-repositorio> && cd linceus-assistant
+git clone https://github.com/santiabregu/linceus-assistant && cd linceus-assistant
 cp .env.example .env          # completar variables
 docker compose -f docker/docker-compose.yml up --build -d
 \end{lstlisting}
@@ -401,7 +401,7 @@ docker compose -f docker/docker-compose.yml down
 % =====================================================
 \section{Manual de desarrollo}\label{sec:manual-desarrollo}
 
-El manual de desarrollo se dirige a quien deba modificar, ampliar o mantener el código de Linceus Assistant tras el cierre de este TFG. Su objetivo es minimizar la curva de aprendizaje proporcionando una visión panorámica del repositorio, las convenciones empleadas y el ciclo de trabajo recomendado.
+El manual de desarrollo se dirige a quien deba modificar, ampliar o mantener el código de Linceus Assistant tras el cierre de este TFG. Su objetivo es minimizar la curva de aprendizaje proporcionando una visión panorámica del repositorio, las convenciones empleadas y el ciclo de trabajo recomendado. El código fuente completo del proyecto está alojado en GitHub bajo \href{https://github.com/santiabregu/linceus-assistant}{\texttt{https://github.com/santiabregu/linceus-assistant}} y es la referencia autoritativa para cualquier divergencia con esta memoria.
 
 \subsection{Estructura del repositorio}\label{subsec:desarrollo-estructura}
 

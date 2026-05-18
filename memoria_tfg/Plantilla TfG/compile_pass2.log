@@ -275,12 +275,8 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[6] [7] [8] [9] [10]) [11] (proyect.lof
-Overfull \hbox (53.07896pt too wide) in paragraph at lines 32--32
- [][] [][]\OT1/ptm/m/n/10.95 P[]agi-na de ac-ce-so p[]ubli-co del por-tal Se-vi
-us4 (\OT1/pcr/m/n/10.95 https://sevius4.us.es/?PyP=LISTA\OT1/ptm/m/n/10.95 ). 
-[12]) [13] (proyect.lot [14]) [15] (proyect.lol) [16] [17]
-(Capitulos/01_introduccion.tex
+[6] [7] [8] [9] [10]) [11] (proyect.lof [12]) [13] (proyect.lot [14]) [15]
+(proyect.lol) [16] [17] (Capitulos/01_introduccion.tex
 Cap\'{\i }tulo 1.
 [18] [19] (Capitulos/soluciones_existentes.tex [20] [21]
 Underfull \hbox (badness 10000) in paragraph at lines 46--46
@@ -878,7 +874,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 203--203
 
 Underfull \hbox (badness 10000) in paragraph at lines 207--207
 []|\OT1/ptm/m/n/10 DigitalOcean (Ubun-tu 24.04
-[97]) (Capitulos/estructura_proyecto.tex [98]
+[97]) (Capitulos/estructura_proyecto.tex
+Underfull \hbox (badness 1867) in paragraph at lines 215--2
+[] []\OT1/ptm/b/n/10.95 No-ta so-bre el mo-de-lo \OT1/pcr/b/n/10.95 gemma-3-27b
+-it\OT1/ptm/b/n/10.95 .[] \OT1/ptm/m/n/10.95 El mo-de-lo \OT1/pcr/m/n/10.95 gem
+ma-3-27b-it \OT1/ptm/m/n/10.95 es el que
+[98]
 Cap\'{\i }tulo 9.
 [99] [100]
 Underfull \hbox (badness 2326) in paragraph at lines 138--139
@@ -2116,18 +2117,22 @@ Underfull \hbox (badness 10000) in paragraph at lines 184--184
 Underfull \hbox (badness 10000) in paragraph at lines 184--184
 \OT1/pcr/m/n/10 PARCIAL
 
-Overfull \hbox (24.20695pt too wide) in paragraph at lines 185--185
-[]|\OT1/ptm/m/n/10 Nuevo flu-jo \OT1/pcr/m/n/10 consulta[]titulacion[]por[]tema
-
+Underfull \hbox (badness 10000) in paragraph at lines 185--185
+[]|\OT1/ptm/m/n/10 Nuevo flu-jo \OT1/pcr/m/n/10 consulta[]titulacion[]
 [142] [143] [144] [145]) (Capitulos/manual.tex [146] [147]
 Cap\'{\i }tulo 13.
+
+Overfull \hbox (21.68546pt too wide) in paragraph at lines 18--19
+\OT1/ptm/m/n/10.95 El pro-to-ti-po est[]a des-ple-ga-do en la di-rec-ci[]on []\
+OT1/pcr/m/n/10.95 http://206.189.106.215/pagina-principal[]\OT1/ptm/m/n/10.95 .
+
 [148] [149 <./img/widget_cerrado.png> <./img/widget_abierto.png>] [150]
 [151 <./img/ejemplo_asignatura.png>] [152 <./img/ejemplo_horario.png>] [153 <./
-img/ejemplo_profesor.png>] [154]
+img/ejemplo_profesor.png>]
 Underfull \hbox (badness 3635) in paragraph at lines 150--150
 []|\OT1/ptm/m/n/10.95 Sincronizar ti-tu-la-cio-nes des-de
-[155 <./img/admin_asignaturas.png>] [156] [157 <./img/admin_horarios_con_boton_
-generar_horarios.png>]
+[154] [155 <./img/admin_asignaturas.png>] [156] [157 <./img/admin_horarios_con_
+boton_generar_horarios.png>]
 Underfull \hbox (badness 10000) in paragraph at lines 292--292
 []|\OT1/ptm/m/n/10.95 Asignaturas / \OT1/ptm/m/it/10.95 Sin-cro-ni-zar
 [158] [159] (lstlang1.sty) (lstlang1.sty)
@@ -2165,6 +2170,18 @@ Package xcolor Warning: Incompatible color definition on input line 341.
 Package xcolor Warning: Incompatible color definition on input line 341.
 
 
+Package xcolor Warning: Incompatible color definition on input line 341.
+
+
+Package xcolor Warning: Incompatible color definition on input line 341.
+
+
+Package xcolor Warning: Incompatible color definition on input line 341.
+
+
+Package xcolor Warning: Incompatible color definition on input line 341.
+
+
 Package xcolor Warning: Incompatible color definition on input line 342.
 
 
@@ -2233,12 +2250,13 @@ Package xcolor Warning: Incompatible color definition on input line 344.
 
 Package xcolor Warning: Incompatible color definition on input line 344.
 
-[160]
+
 Underfull \hbox (badness 10000) in paragraph at lines 363--363
 []|\OT1/pcr/m/n/9 python:3.10.14-
 
 Underfull \hbox (badness 2197) in paragraph at lines 363--364
 []|\OT1/ptm/m/n/9 Acciones per-so-na-li-za-das y m[]odu-lo
+[160]
 
 Package xcolor Warning: Incompatible color definition on input line 377.
 
@@ -2380,7 +2398,6 @@ Package xcolor Warning: Incompatible color definition on input line 381.
 
 Package xcolor Warning: Incompatible color definition on input line 381.
 
-[161]
 
 Package xcolor Warning: Incompatible color definition on input line 387.
 
@@ -2625,6 +2642,7 @@ Underfull \hbox (badness 4096) in paragraph at lines 429--430
 \OT1/ptm/m/n/10.95 de de-pen-den-cias \OT1/pcr/m/n/10.95 requirements-rasa.txt 
 \OT1/ptm/m/n/10.95 y \OT1/pcr/m/n/10.95 requirements-actions.txt\OT1/ptm/m/n/10
 .95 . La
+[161]
 
 Package xcolor Warning: Incompatible color definition on input line 435.
 
@@ -2796,7 +2814,6 @@ Package xcolor Warning: Incompatible color definition on input line 440.
 
 Package xcolor Warning: Incompatible color definition on input line 440.
 
-[162]
 
 Package xcolor Warning: Incompatible color definition on input line 444.
 
@@ -3068,7 +3085,7 @@ Package xcolor Warning: Incompatible color definition on input line 456.
 Underfull \hbox (badness 7047) in paragraph at lines 473--474
 []|\OT1/ptm/m/n/10.95 Ejecuci[]on de \OT1/pcr/m/n/10.95 rasa test core \OT1/ptm
 /m/n/10.95 pa-ra la pol[]^^Pti-ca,
-[163]
+[162]
 
 Package xcolor Warning: Incompatible color definition on input line 486.
 
@@ -3285,6 +3302,7 @@ Package xcolor Warning: Incompatible color definition on input line 509.
 
 Package xcolor Warning: Incompatible color definition on input line 509.
 
+[163]
 
 Package xcolor Warning: Incompatible color definition on input line 510.
 
@@ -3453,7 +3471,6 @@ Overfull \hbox (20.43867pt too wide) in paragraph at lines 521--522
 \OT1/ptm/m/n/10.95 lle-van el pre-fi-jo \OT1/pcr/m/n/10.95 ultimo[] \OT1/ptm/m/
 n/10.95 (\OT1/pcr/m/n/10.95 ultimo[]nombre[]asignatura\OT1/ptm/m/n/10.95 , \OT1
 /pcr/m/n/10.95 ultimo[]profesor[]consultado\OT1/ptm/m/n/10.95 ).
-[164]
 
 Package xcolor Warning: Incompatible color definition on input line 525.
 
@@ -3883,7 +3900,7 @@ Package xcolor Warning: Incompatible color definition on input line 545.
 
 Package xcolor Warning: Incompatible color definition on input line 545.
 
-) (Capitulos/conclusiones.tex [165]
+) (Capitulos/conclusiones.tex [164] [165]
 Cap\'{\i }tulo 14.
 
 Underfull \hbox (badness 10000) in paragraph at lines 27--27
@@ -3989,5 +4006,5 @@ b8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utm
 bi8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/ut
 mr8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/ut
 mri8a.pfb>
-Output written on proyect.pdf (195 pages, 4984613 bytes).
+Output written on proyect.pdf (195 pages, 4985195 bytes).
 Transcript written on proyect.log.

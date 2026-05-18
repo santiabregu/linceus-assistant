@@ -273,7 +273,9 @@ No file proyect.toc.
 No file proyect.lof.
 [6]
 No file proyect.lot.
-[7] (proyect.lol) [8] [9] (Capitulos/01_introduccion.tex
+[7]
+No file proyect.lol.
+[8] [9] (Capitulos/01_introduccion.tex
 Cap\'{\i }tulo 1.
 
 LaTeX Warning: Citation `jurafsky2009speech' on page 10 undefined on input line
@@ -1993,13 +1995,21 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 LaTeX Warning: Reference `cap:pruebas' on page 89 undefined on input line 215.
 
 
+LaTeX Warning: Reference `cap:pruebas' on page 89 undefined on input line 215.
+
+
 LaTeX Warning: Reference `subsec:dd-gemini-ollama' on page 89 undefined on inpu
 t line 215.
 
 
 LaTeX Warning: Reference `cap:pruebas' on page 89 undefined on input line 215.
 
-) (Capitulos/estructura_proyecto.tex [89] [90]
+) (Capitulos/estructura_proyecto.tex
+Underfull \hbox (badness 1867) in paragraph at lines 215--2
+[] []\OT1/ptm/b/n/10.95 No-ta so-bre el mo-de-lo \OT1/pcr/b/n/10.95 gemma-3-27b
+-it\OT1/ptm/b/n/10.95 .[] \OT1/ptm/m/n/10.95 El mo-de-lo \OT1/pcr/m/n/10.95 gem
+ma-3-27b-it \OT1/ptm/m/n/10.95 es el que
+[89] [90]
 Cap\'{\i }tulo 9.
 [91]
 
@@ -3632,9 +3642,8 @@ Underfull \hbox (badness 10000) in paragraph at lines 184--184
 Underfull \hbox (badness 10000) in paragraph at lines 184--184
 \OT1/pcr/m/n/10 PARCIAL
 
-Overfull \hbox (24.20695pt too wide) in paragraph at lines 185--185
-[]|\OT1/ptm/m/n/10 Nuevo flu-jo \OT1/pcr/m/n/10 consulta[]titulacion[]por[]tema
-
+Underfull \hbox (badness 10000) in paragraph at lines 185--185
+[]|\OT1/ptm/m/n/10 Nuevo flu-jo \OT1/pcr/m/n/10 consulta[]titulacion[]
 
 LaTeX Warning: Reference `sec:pruebas-nlu' on page 134 undefined on input line 
 189.
@@ -3767,6 +3776,11 @@ LaTeX Warning: Reference `fig:widget-cerrado' on page 140 undefined on input li
 ne 18.
 
 
+Overfull \hbox (21.68546pt too wide) in paragraph at lines 18--19
+\OT1/ptm/m/n/10.95 El pro-to-ti-po est[]a des-ple-ga-do en la di-rec-ci[]on []\
+OT1/pcr/m/n/10.95 http://206.189.106.215/pagina-principal[]\OT1/ptm/m/n/10.95 .
+
+
 LaTeX Warning: Reference `fig:widget-abierto' on page 140 undefined on input li
 ne 30.
 
@@ -3783,12 +3797,12 @@ t line 77.
 LaTeX Warning: Reference `fig:ejemplo-profesor' on page 142 undefined on input 
 line 77.
 
-[142] [143 <./img/ejemplo_asignatura.png>] [144 <./img/ejemplo_horario.png>]
-[145 <./img/ejemplo_profesor.png>]
 
-LaTeX Warning: Reference `subsec:impl-admin-operaciones' on page 146 undefined 
+LaTeX Warning: Reference `subsec:impl-admin-operaciones' on page 142 undefined 
 on input line 121.
 
+[142] [143 <./img/ejemplo_asignatura.png>] [144 <./img/ejemplo_horario.png>]
+[145 <./img/ejemplo_profesor.png>]
 
 LaTeX Warning: Reference `fig:admin-home' on page 146 undefined on input line 1
 25.
@@ -3797,18 +3811,18 @@ LaTeX Warning: Reference `fig:admin-home' on page 146 undefined on input line 1
 LaTeX Warning: Reference `tab:admin-centros-acciones' on page 146 undefined on 
 input line 138.
 
-[146]
+
 Underfull \hbox (badness 3635) in paragraph at lines 150--150
 []|\OT1/ptm/m/n/10.95 Sincronizar ti-tu-la-cio-nes des-de
 
-LaTeX Warning: Reference `fig:man-admin-asignaturas' on page 147 undefined on i
+LaTeX Warning: Reference `fig:man-admin-asignaturas' on page 146 undefined on i
 nput line 157.
 
 
-LaTeX Warning: Reference `tab:admin-asignaturas-acciones' on page 147 undefined
+LaTeX Warning: Reference `tab:admin-asignaturas-acciones' on page 146 undefined
  on input line 157.
 
-[147 <./img/admin_asignaturas.png>]
+[146] [147 <./img/admin_asignaturas.png>]
 
 LaTeX Warning: Reference `fig:admin-profesores' on page 148 undefined on input 
 line 189.
@@ -3817,15 +3831,15 @@ line 189.
 LaTeX Warning: Reference `tab:admin-profesores-acciones' on page 148 undefined 
 on input line 189.
 
-[148]
 
-LaTeX Warning: Reference `fig:man-admin-horarios' on page 149 undefined on inpu
+LaTeX Warning: Reference `fig:man-admin-horarios' on page 148 undefined on inpu
 t line 216.
 
 
-LaTeX Warning: Reference `tab:admin-horarios-acciones' on page 149 undefined on
+LaTeX Warning: Reference `tab:admin-horarios-acciones' on page 148 undefined on
  input line 216.
 
+[148]
 
 LaTeX Warning: Reference `fig:man-admin-conversaciones' on page 149 undefined o
 n input line 244.
@@ -3850,12 +3864,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 292--292
 LaTeX Warning: Reference `cap:requisitos' on page 150 undefined on input line 3
 03.
 
-[150] [151]
+[150]
 
-LaTeX Warning: Reference `tab:despliegue-requisitos' on page 152 undefined on i
+LaTeX Warning: Reference `tab:despliegue-requisitos' on page 151 undefined on i
 nput line 314.
 
-(lstlang1.sty) (lstlang1.sty)
+[151] (lstlang1.sty) (lstlang1.sty)
 
 Package xcolor Warning: Incompatible color definition on input line 340.
 
@@ -3867,6 +3881,18 @@ Package xcolor Warning: Incompatible color definition on input line 340.
 
 
 Package xcolor Warning: Incompatible color definition on input line 340.
+
+
+Package xcolor Warning: Incompatible color definition on input line 341.
+
+
+Package xcolor Warning: Incompatible color definition on input line 341.
+
+
+Package xcolor Warning: Incompatible color definition on input line 341.
+
+
+Package xcolor Warning: Incompatible color definition on input line 341.
 
 
 Package xcolor Warning: Incompatible color definition on input line 341.
@@ -3962,12 +3988,13 @@ Package xcolor Warning: Incompatible color definition on input line 344.
 LaTeX Warning: Reference `tab:despliegue-contenedores' on page 152 undefined on
  input line 350.
 
-[152]
+
 Underfull \hbox (badness 10000) in paragraph at lines 363--363
 []|\OT1/pcr/m/n/9 python:3.10.14-
 
 Underfull \hbox (badness 2197) in paragraph at lines 363--364
 []|\OT1/ptm/m/n/9 Acciones per-so-na-li-za-das y m[]odu-lo
+[152]
 
 LaTeX Warning: Reference `lst:logs' on page 153 undefined on input line 375.
 
@@ -4116,7 +4143,6 @@ Package xcolor Warning: Incompatible color definition on input line 381.
 
 Package xcolor Warning: Incompatible color definition on input line 381.
 
-[153]
 
 Package xcolor Warning: Incompatible color definition on input line 387.
 
@@ -4352,7 +4378,7 @@ Package xcolor Warning: Incompatible color definition on input line 397.
 Package xcolor Warning: Incompatible color definition on input line 397.
 
 
-LaTeX Warning: Reference `tab:desarrollo-estructura' on page 154 undefined on i
+LaTeX Warning: Reference `tab:desarrollo-estructura' on page 153 undefined on i
 nput line 408.
 
 
@@ -4365,6 +4391,7 @@ Underfull \hbox (badness 4096) in paragraph at lines 429--430
 \OT1/ptm/m/n/10.95 de de-pen-den-cias \OT1/pcr/m/n/10.95 requirements-rasa.txt 
 \OT1/ptm/m/n/10.95 y \OT1/pcr/m/n/10.95 requirements-actions.txt\OT1/ptm/m/n/10
 .95 . La
+[153]
 
 LaTeX Warning: Reference `lst:dev-setup' on page 154 undefined on input line 43
 3.
@@ -4540,9 +4567,8 @@ Package xcolor Warning: Incompatible color definition on input line 440.
 
 Package xcolor Warning: Incompatible color definition on input line 440.
 
-[154]
 
-LaTeX Warning: Reference `lst:dev-run' on page 155 undefined on input line 442.
+LaTeX Warning: Reference `lst:dev-run' on page 154 undefined on input line 442.
 
 
 
@@ -4813,16 +4839,16 @@ Package xcolor Warning: Incompatible color definition on input line 456.
 Package xcolor Warning: Incompatible color definition on input line 456.
 
 
-LaTeX Warning: Reference `tab:desarrollo-ciclo' on page 155 undefined on input 
+LaTeX Warning: Reference `tab:desarrollo-ciclo' on page 154 undefined on input 
 line 462.
 
 
 Underfull \hbox (badness 7047) in paragraph at lines 473--474
 []|\OT1/ptm/m/n/10.95 Ejecuci[]on de \OT1/pcr/m/n/10.95 rasa test core \OT1/ptm
 /m/n/10.95 pa-ra la pol[]^^Pti-ca,
-[155]
+[154]
 
-LaTeX Warning: Reference `lst:nlu-intent' on page 156 undefined on input line 4
+LaTeX Warning: Reference `lst:nlu-intent' on page 155 undefined on input line 4
 84.
 
 
@@ -4931,7 +4957,7 @@ Package xcolor Warning: Incompatible color definition on input line 494.
 Package xcolor Warning: Incompatible color definition on input line 494.
 
 
-LaTeX Warning: Reference `lst:action-estructura' on page 156 undefined on input
+LaTeX Warning: Reference `lst:action-estructura' on page 155 undefined on input
  line 496.
 
 
@@ -5045,6 +5071,7 @@ Package xcolor Warning: Incompatible color definition on input line 509.
 
 Package xcolor Warning: Incompatible color definition on input line 509.
 
+[155]
 
 Package xcolor Warning: Incompatible color definition on input line 510.
 
@@ -5213,9 +5240,8 @@ Overfull \hbox (20.43867pt too wide) in paragraph at lines 521--522
 \OT1/ptm/m/n/10.95 lle-van el pre-fi-jo \OT1/pcr/m/n/10.95 ultimo[] \OT1/ptm/m/
 n/10.95 (\OT1/pcr/m/n/10.95 ultimo[]nombre[]asignatura\OT1/ptm/m/n/10.95 , \OT1
 /pcr/m/n/10.95 ultimo[]profesor[]consultado\OT1/ptm/m/n/10.95 ).
-[156]
 
-LaTeX Warning: Reference `lst:validar-sql' on page 157 undefined on input line 
+LaTeX Warning: Reference `lst:validar-sql' on page 156 undefined on input line 
 523.
 
 
@@ -5647,7 +5673,7 @@ Package xcolor Warning: Incompatible color definition on input line 545.
 
 Package xcolor Warning: Incompatible color definition on input line 545.
 
-) (Capitulos/conclusiones.tex [157]
+) (Capitulos/conclusiones.tex [156] [157]
 Cap\'{\i }tulo 14.
 
 LaTeX Warning: Reference `cap:introduccion' on page 158 undefined on input line
@@ -6073,5 +6099,5 @@ b8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utm
 bi8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/ut
 mr8a.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/ut
 mri8a.pfb>
-Output written on proyect.pdf (187 pages, 4666199 bytes).
+Output written on proyect.pdf (187 pages, 4664912 bytes).
 Transcript written on proyect.log.

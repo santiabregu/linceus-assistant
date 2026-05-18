@@ -1,9 +1,13 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.4.26)  18 MAY 2026 20:08
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.4.26)  18 MAY 2026 21:38
 entering extended mode
  restricted \write18 enabled.
+ file:line:error style messages enabled.
  %&-line parsing enabled.
-**./proyect.tex
-(proyect.tex
+**"c:/Users/santi/Desktop/cuarto/TFG/linceus-assistant/memoria_tfg/Plantilla Tf
+G/proyect.tex"
+
+(c:/Users/santi/Desktop/cuarto/TFG/linceus-assistant/memoria_tfg/Plantilla TfG/
+proyect.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
 (pclass.cls
@@ -1065,13 +1069,7 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 \tf@toc=\write5
 \openout5 = `proyect.toc'.
 
- [11] (proyect.lof
-Overfull \hbox (53.07896pt too wide) in paragraph at lines 32--32
- [][] [][]\OT1/ptm/m/n/10.95 P[]agi-na de ac-ce-so p[]ubli-co del por-tal Se-vi
-us4 (\OT1/pcr/m/n/10.95 https://sevius4.us.es/?PyP=LISTA\OT1/ptm/m/n/10.95 ). 
- []
-
-[12
+ [11] (proyect.lof [12
 
 ])
 \tf@lof=\write6
@@ -1083,7 +1081,8 @@ us4 (\OT1/pcr/m/n/10.95 https://sevius4.us.es/?PyP=LISTA\OT1/ptm/m/n/10.95 ).
 \tf@lot=\write7
 \openout7 = `proyect.lot'.
 
- [15] (proyect.lol)
+ [15]
+(proyect.lol)
 \tf@lol=\write8
 \openout8 = `proyect.lol'.
 
@@ -1092,8 +1091,7 @@ us4 (\OT1/pcr/m/n/10.95 https://sevius4.us.es/?PyP=LISTA\OT1/ptm/m/n/10.95 ).
 ] [17
 
 
-]
-(Capitulos/01_introduccion.tex
+] (Capitulos/01_introduccion.tex
 Cap\'{\i }tulo 1.
 [18
 
@@ -1694,7 +1692,7 @@ a dos en-ti-da-des. La ta-bla \OT1/pcr/m/n/10.95 conversation[]log
  []
 
 [71]
-<img/modelo_conceptual_ri.png, id=2394, 1086.0575pt x 815.045pt>
+<img/modelo_conceptual_ri.png, id=2391, 1086.0575pt x 815.045pt>
 File: img/modelo_conceptual_ri.png Graphic file (type png)
 <use img/modelo_conceptual_ri.png>
 Package pdftex.def Info: img/modelo_conceptual_ri.png  used on input line 212.
@@ -1881,28 +1879,28 @@ Underfull \hbox (badness 10000) in paragraph at lines 273--273
  []
 
 [73] [74] [75]
-<img/conversacion_ejemplo.png, id=2426, 1426.57968pt x 620.3175pt>
+<img/conversacion_ejemplo.png, id=2423, 1426.57968pt x 620.3175pt>
 File: img/conversacion_ejemplo.png Graphic file (type png)
 <use img/conversacion_ejemplo.png>
 Package pdftex.def Info: img/conversacion_ejemplo.png  used on input line 287.
 (pdftex.def)             Requested size: 426.79135pt x 185.5761pt.
-<img/admin_home.png, id=2428, 1443.14156pt x 621.82312pt>
+<img/admin_home.png, id=2425, 1443.14156pt x 621.82312pt>
 File: img/admin_home.png Graphic file (type png)
 <use img/admin_home.png>
 Package pdftex.def Info: img/admin_home.png  used on input line 295.
 (pdftex.def)             Requested size: 426.79135pt x 183.89166pt.
  [76 <./img/conversacion_ejemplo.png> <./img/admin_home.png>]
-<img/admin_horarios.png, id=2437, 1425.82687pt x 620.3175pt>
+<img/admin_horarios.png, id=2434, 1425.82687pt x 620.3175pt>
 File: img/admin_horarios.png Graphic file (type png)
 <use img/admin_horarios.png>
 Package pdftex.def Info: img/admin_horarios.png  used on input line 303.
 (pdftex.def)             Requested size: 426.79135pt x 185.6802pt.
-<img/admin_profesores.png, id=2439, 1425.82687pt x 620.3175pt>
+<img/admin_profesores.png, id=2436, 1425.82687pt x 620.3175pt>
 File: img/admin_profesores.png Graphic file (type png)
 <use img/admin_profesores.png>
 Package pdftex.def Info: img/admin_profesores.png  used on input line 311.
 (pdftex.def)             Requested size: 426.79135pt x 185.6802pt.
-<img/admin_conversaciones.png, id=2441, 1428.08531pt x 620.3175pt>
+<img/admin_conversaciones.png, id=2438, 1428.08531pt x 620.3175pt>
 File: img/admin_conversaciones.png Graphic file (type png)
 <use img/admin_conversaciones.png>
 Package pdftex.def Info: img/admin_conversaciones.png  used on input line 319.
@@ -2053,13 +2051,13 @@ tm/m/it/10.95 Text-to-SQL\OT1/ptm/m/n/10.95 ) me-dian-te el mo-de-lo
  []
 
 [83]
-<img/diagrama_componentes.png, id=2503, 1854.93pt x 841.1425pt>
+<img/diagrama_componentes.png, id=2500, 1854.93pt x 841.1425pt>
 File: img/diagrama_componentes.png Graphic file (type png)
 <use img/diagrama_componentes.png>
 Package pdftex.def Info: img/diagrama_componentes.png  used on input line 60.
 (pdftex.def)             Requested size: 667.64177pt x 302.7469pt.
  [84 <./img/diagrama_componentes.png (PNG copy)>]
-<img/diagrama_despliegue.png, id=2516, 1432.35126pt x 983.675pt>
+<img/diagrama_despliegue.png, id=2513, 1432.35126pt x 983.675pt>
 File: img/diagrama_despliegue.png Graphic file (type png)
 <use img/diagrama_despliegue.png>
 Package pdftex.def Info: img/diagrama_despliegue.png  used on input line 90.
@@ -2151,7 +2149,14 @@ Underfull \hbox (badness 10000) in paragraph at lines 207--207
 []|\OT1/ptm/m/n/10 DigitalOcean (Ubun-tu 24.04
  []
 
-[97]) (Capitulos/estructura_proyecto.tex [98]
+[97]) (Capitulos/estructura_proyecto.tex
+Underfull \hbox (badness 1867) in paragraph at lines 215--2
+[] []\OT1/ptm/b/n/10.95 No-ta so-bre el mo-de-lo \OT1/pcr/b/n/10.95 gemma-3-27b
+-it\OT1/ptm/b/n/10.95 .[] \OT1/ptm/m/n/10.95 El mo-de-lo \OT1/pcr/m/n/10.95 gem
+ma-3-27b-it \OT1/ptm/m/n/10.95 es el que
+ []
+
+[98]
 Cap\'{\i }tulo 9.
 [99
 
@@ -3437,13 +3442,13 @@ File: img/admin_conversaciones.png Graphic file (type png)
 <use img/admin_conversaciones.png>
 Package pdftex.def Info: img/admin_conversaciones.png  used on input line 488.
 (pdftex.def)             Requested size: 426.79135pt x 185.3868pt.
-<img/admin_stats.png, id=2943, 1442.38875pt x 621.07031pt>
+<img/admin_stats.png, id=2941, 1442.38875pt x 621.07031pt>
 File: img/admin_stats.png Graphic file (type png)
 <use img/admin_stats.png>
 Package pdftex.def Info: img/admin_stats.png  used on input line 495.
 (pdftex.def)             Requested size: 426.79135pt x 183.7638pt.
 [130] [131]
-<img/sevius4-centro-titulacion-asignatura.png, id=2954, 737.75626pt x 351.56343
+<img/sevius4-centro-titulacion-asignatura.png, id=2952, 737.75626pt x 351.56343
 pt>
 File: img/sevius4-centro-titulacion-asignatura.png Graphic file (type png)
 <use img/sevius4-centro-titulacion-asignatura.png>
@@ -3531,37 +3536,44 @@ Underfull \hbox (badness 10000) in paragraph at lines 184--184
  []
 
 
-Overfull \hbox (24.20695pt too wide) in paragraph at lines 185--185
-[]|\OT1/ptm/m/n/10 Nuevo flu-jo \OT1/pcr/m/n/10 consulta[]titulacion[]por[]tema
-
+Underfull \hbox (badness 10000) in paragraph at lines 185--185
+[]|\OT1/ptm/m/n/10 Nuevo flu-jo \OT1/pcr/m/n/10 consulta[]titulacion[]
  []
 
 [142] [143] [144] [145]) (Capitulos/manual.tex [146] [147]
 Cap\'{\i }tulo 13.
-<img/widget_cerrado.png, id=3111, 1427.3325pt x 622.57594pt>
+
+Overfull \hbox (21.68546pt too wide) in paragraph at lines 18--19
+\OT1/ptm/m/n/10.95 El pro-to-ti-po est[]a des-ple-ga-do en la di-rec-ci[]on []\
+OT1/pcr/m/n/10.95 http://206.189.106.215/pagina-principal[]\OT1/ptm/m/n/10.95 .
+
+ []
+
+<img/widget_cerrado.png, id=3110, 1427.3325pt x 622.57594pt>
 File: img/widget_cerrado.png Graphic file (type png)
 <use img/widget_cerrado.png>
 Package pdftex.def Info: img/widget_cerrado.png  used on input line 25.
 (pdftex.def)             Requested size: 426.79135pt x 186.15674pt.
-<img/widget_abierto.png, id=3113, 1425.82687pt x 621.07031pt>
+[148
+
+]
+<img/widget_abierto.png, id=3116, 1425.82687pt x 621.07031pt>
 File: img/widget_abierto.png Graphic file (type png)
 <use img/widget_abierto.png>
 Package pdftex.def Info: img/widget_abierto.png  used on input line 37.
 (pdftex.def)             Requested size: 426.79135pt x 185.90555pt.
-[148
-
-] [149 <./img/widget_cerrado.png> <./img/widget_abierto.png>]
-<img/ejemplo_asignatura.png, id=3127, 365.86688pt x 496.85625pt>
+ [149 <./img/widget_cerrado.png> <./img/widget_abierto.png>]
+<img/ejemplo_asignatura.png, id=3126, 365.86688pt x 496.85625pt>
 File: img/ejemplo_asignatura.png Graphic file (type png)
 <use img/ejemplo_asignatura.png>
 Package pdftex.def Info: img/ejemplo_asignatura.png  used on input line 85.
 (pdftex.def)             Requested size: 362.77525pt x 492.68524pt.
-<img/ejemplo_horario.png, id=3128, 351.56343pt x 489.32813pt>
+<img/ejemplo_horario.png, id=3127, 351.56343pt x 489.32813pt>
 File: img/ejemplo_horario.png Graphic file (type png)
 <use img/ejemplo_horario.png>
 Package pdftex.def Info: img/ejemplo_horario.png  used on input line 95.
 (pdftex.def)             Requested size: 362.77525pt x 504.93198pt.
-<img/ejemplo_profesor.png, id=3129, 353.06906pt x 494.59781pt>
+<img/ejemplo_profesor.png, id=3128, 353.06906pt x 494.59781pt>
 File: img/ejemplo_profesor.png Graphic file (type png)
 <use img/ejemplo_profesor.png>
 Package pdftex.def Info: img/ejemplo_profesor.png  used on input line 105.
@@ -3573,23 +3585,23 @@ File: img/admin_home.png Graphic file (type png)
 <use img/admin_home.png>
 Package pdftex.def Info: img/admin_home.png  used on input line 129.
 (pdftex.def)             Requested size: 426.79135pt x 183.89166pt.
- [154]
+
 Underfull \hbox (badness 3635) in paragraph at lines 150--150
 []|\OT1/ptm/m/n/10.95 Sincronizar ti-tu-la-cio-nes des-de
  []
 
+[154]
 <img/admin_asignaturas.png, id=3159, 1428.83812pt x 620.3175pt>
 File: img/admin_asignaturas.png Graphic file (type png)
 <use img/admin_asignaturas.png>
 Package pdftex.def Info: img/admin_asignaturas.png  used on input line 165.
 (pdftex.def)             Requested size: 426.79135pt x 185.28267pt.
-[155 <./img/admin_asignaturas.png>]
+ [155 <./img/admin_asignaturas.png>]
 File: img/admin_profesores.png Graphic file (type png)
 <use img/admin_profesores.png>
 Package pdftex.def Info: img/admin_profesores.png  used on input line 193.
 (pdftex.def)             Requested size: 426.79135pt x 185.6802pt.
- [156]
-<img/admin_horarios_con_boton_generar_horarios.png, id=3174, 1441.63594pt x 621
+<img/admin_horarios_con_boton_generar_horarios.png, id=3169, 1441.63594pt x 621
 .07031pt>
 File: img/admin_horarios_con_boton_generar_horarios.png Graphic file (type png)
 
@@ -3597,6 +3609,7 @@ File: img/admin_horarios_con_boton_generar_horarios.png Graphic file (type png)
 Package pdftex.def Info: img/admin_horarios_con_boton_generar_horarios.png  use
 d on input line 223.
 (pdftex.def)             Requested size: 426.79135pt x 183.85857pt.
+ [156]
 File: img/admin_conversaciones.png Graphic file (type png)
 <use img/admin_conversaciones.png>
 Package pdftex.def Info: img/admin_conversaciones.png  used on input line 248.
@@ -3650,6 +3663,18 @@ Package xcolor Warning: Incompatible color definition on input line 341.
 Package xcolor Warning: Incompatible color definition on input line 341.
 
 
+Package xcolor Warning: Incompatible color definition on input line 341.
+
+
+Package xcolor Warning: Incompatible color definition on input line 341.
+
+
+Package xcolor Warning: Incompatible color definition on input line 341.
+
+
+Package xcolor Warning: Incompatible color definition on input line 341.
+
+
 Package xcolor Warning: Incompatible color definition on input line 342.
 
 
@@ -3718,7 +3743,7 @@ Package xcolor Warning: Incompatible color definition on input line 344.
 
 Package xcolor Warning: Incompatible color definition on input line 344.
 
-[160]
+
 Underfull \hbox (badness 10000) in paragraph at lines 363--363
 []|\OT1/pcr/m/n/9 python:3.10.14-
  []
@@ -3728,6 +3753,7 @@ Underfull \hbox (badness 2197) in paragraph at lines 363--364
 []|\OT1/ptm/m/n/9 Acciones per-so-na-li-za-das y m[]odu-lo
  []
 
+[160]
 
 Package xcolor Warning: Incompatible color definition on input line 377.
 
@@ -3869,7 +3895,6 @@ Package xcolor Warning: Incompatible color definition on input line 381.
 
 Package xcolor Warning: Incompatible color definition on input line 381.
 
-[161]
 
 Package xcolor Warning: Incompatible color definition on input line 387.
 
@@ -4118,6 +4143,7 @@ Underfull \hbox (badness 4096) in paragraph at lines 429--430
 .95 . La
  []
 
+[161]
 
 Package xcolor Warning: Incompatible color definition on input line 435.
 
@@ -4289,7 +4315,6 @@ Package xcolor Warning: Incompatible color definition on input line 440.
 
 Package xcolor Warning: Incompatible color definition on input line 440.
 
-[162]
 
 Package xcolor Warning: Incompatible color definition on input line 444.
 
@@ -4563,7 +4588,7 @@ Underfull \hbox (badness 7047) in paragraph at lines 473--474
 /m/n/10.95 pa-ra la pol[]^^Pti-ca,
  []
 
-[163]
+[162]
 
 Package xcolor Warning: Incompatible color definition on input line 486.
 
@@ -4780,6 +4805,7 @@ Package xcolor Warning: Incompatible color definition on input line 509.
 
 Package xcolor Warning: Incompatible color definition on input line 509.
 
+[163]
 
 Package xcolor Warning: Incompatible color definition on input line 510.
 
@@ -4956,7 +4982,6 @@ n/10.95 (\OT1/pcr/m/n/10.95 ultimo[]nombre[]asignatura\OT1/ptm/m/n/10.95 , \OT1
 /pcr/m/n/10.95 ultimo[]profesor[]consultado\OT1/ptm/m/n/10.95 ).
  []
 
-[164]
 
 Package xcolor Warning: Incompatible color definition on input line 525.
 
@@ -5386,7 +5411,7 @@ Package xcolor Warning: Incompatible color definition on input line 545.
 
 Package xcolor Warning: Incompatible color definition on input line 545.
 
-) (Capitulos/conclusiones.tex [165]
+) (Capitulos/conclusiones.tex [164] [165]
 Cap\'{\i }tulo 14.
 
 Underfull \hbox (badness 10000) in paragraph at lines 27--27
@@ -5459,7 +5484,7 @@ Cap\'{\i }tulo 15.
 
 ]) (Capitulos/video_presentacion.tex [176]
 Cap\'{\i }tulo 16.
-<img/youtube-demo-thumbnail.png, id=3418, 2762.32pt x 1541.76pt>
+<img/youtube-demo-thumbnail.png, id=3419, 2762.32pt x 1541.76pt>
 File: img/youtube-demo-thumbnail.png Graphic file (type png)
 <use img/youtube-demo-thumbnail.png>
 Package pdftex.def Info: img/youtube-demo-thumbnail.png  used on input line 30.
@@ -5478,8 +5503,8 @@ m/b/n/10.95 113 de-ci-sio-nes t[]ecni-cas \OT1/ptm/m/n/10.95 en los fi-che-ros
  []
 
 [182] [183]
-ignored error: Infinite glue shrinkage found in box being split [184] [185]
-[186]
+Capitulos/apendices.tex:330: ignored error: Infinite glue shrinkage found in bo
+x being split [184] [185] [186]
 Overfull \hbox (14.93623pt too wide) in paragraph at lines 434--434
 \OT1/pcr/m/n/10 consulta[]horario[]asignatura 
  []
@@ -5504,8 +5529,8 @@ Overfull \hbox (17.07027pt too wide) in paragraph at lines 442--442
 \OT1/pcr/m/n/10 aula.startswith([]A')=teor[]^^Pa 
  []
 
-ignored error: Infinite glue shrinkage found in box being split [187]) [188]
-(proyect.bbl [189
+Capitulos/apendices.tex:444: ignored error: Infinite glue shrinkage found in bo
+x being split [187]) [188] (proyect.bbl [189
 
 
 ]
@@ -5520,21 +5545,17 @@ Package Fancyhdr Warning: \headheight is too small (13.59999pt):
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
 Package rerunfilecheck Info: File `proyect.out' has not changed.
 (rerunfilecheck)             Checksum: 5D5E377E1A2745E927973101B6326431;58339.
  ) 
 Here is how much of TeX's memory you used:
- 29769 strings out of 467871
- 538517 string characters out of 5418376
- 1147657 words of memory out of 5000000
- 57006 multiletter control sequences out of 15000+600000
+ 29773 strings out of 467871
+ 538776 string characters out of 5418376
+ 1184156 words of memory out of 5000000
+ 57008 multiletter control sequences out of 15000+600000
  715650 words of font info for 206 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,15n,94p,2893b,2125s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,15n,94p,2971b,2125s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\santi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm
 1095.pk><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
 ts/cm/cmbx10.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/publ
@@ -5560,9 +5581,9 @@ TeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/santi/AppData/Local/Programs/MiK
 TeX/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/santi/AppData/Local/Programs/Mi
 KTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/santi/AppData/Local/Programs/Mi
 KTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on proyect.pdf (195 pages, 4984613 bytes).
+Output written on proyect.pdf (195 pages, 4985202 bytes).
 PDF statistics:
- 3912 PDF objects out of 4296 (max. 8388607)
+ 3913 PDF objects out of 4296 (max. 8388607)
  988 named destinations out of 1000 (max. 500000)
  2452 words of extra memory for PDF output out of 10000 (max. 10000000)
 
