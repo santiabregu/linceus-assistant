@@ -43,7 +43,7 @@ Las acciones personalizadas permiten al bot ejecutar código Python para:
 
 \subsubsection{spaCy}
 
-spaCy proporciona capacidades avanzadas de NLP en español:
+spaCy~\cite{honnibal2020spacy} proporciona capacidades avanzadas de NLP en español:
 
 \begin{itemize}
     \item \textbf{Tokenización}: Separación del texto en palabras y signos de puntuación
@@ -56,7 +56,7 @@ El modelo \texttt{es\_core\_news\_md} incluye vocabulario específico del españ
 
 \subsubsection{Coincidencia difusa (Fuzzy Matching)}
 
-La librería RapidFuzz implementa algoritmos de distancia de cadenas que permiten:
+La librería RapidFuzz implementa algoritmos de distancia de cadenas~\cite{cohen2003comparison} que permiten:
 
 \begin{itemize}
     \item Tolerar errores ortográficos (e.g., "Fundamnetos de Programacion")
@@ -64,7 +64,7 @@ La librería RapidFuzz implementa algoritmos de distancia de cadenas que permite
     \item Manejar variaciones en la escritura (e.g., mayúsculas, tildes)
 \end{itemize}
 
-Se utiliza el algoritmo de \textit{Levenshtein distance} con un umbral de similitud del 80\% para considerar coincidencias válidas.
+Se utiliza el algoritmo de \textit{Levenshtein distance}~\cite{levenshtein1966binary} con un umbral de similitud del 80\% para considerar coincidencias válidas.
 
 \section{Tecnologías de Inteligencia Artificial}\label{sec:ia}
 
@@ -116,7 +116,7 @@ La extensión \textbf{pgvector}~\cite{pgvectorgithub} añade el tipo \texttt{vec
 
 \section{Tecnologías de frontend}\label{sec:frontend}
 
-El frontend del proyecto está formado por dos piezas: el \textbf{widget de chat} embebible en cualquier página de la US y el \textbf{panel de administración} que da acceso a las importaciones de datos y a las conversaciones registradas. Ambas son aplicaciones estáticas (HTML, CSS y JavaScript ES6+ sin \textit{frameworks} reactivos) servidas por Nginx en producción y por el servidor HTTP de Python en desarrollo.
+El frontend del proyecto está formado por dos piezas: el \textbf{widget de chat} embebible en cualquier página de la US y el \textbf{panel de administración} que da acceso a las importaciones de datos y a las conversaciones registradas. Ambas son aplicaciones estáticas (HTML, CSS y JavaScript ES6+ sin \textit{frameworks} reactivos) servidas por Nginx en producción y por el servidor HTTP de Python en desarrollo. La separación entre el widget del usuario, el panel de administración, el servidor conversacional y el servidor de acciones sigue los principios de desacoplamiento propios de las arquitecturas de microservicios~\cite{newman2021microservices}.
 
 \subsection{Widget de chat}
 
@@ -140,7 +140,7 @@ El panel (\texttt{admin.html}, \texttt{admin.js}, \texttt{admin.css}) es una apl
 
 \subsection{Control de versiones}
 
-\textbf{Git} es el sistema de control de versiones utilizado, con \textbf{GitHub} como plataforma de \textit{hosting}. La estructura concreta del repositorio se detalla en el Capítulo~\ref{cap:estructura-proyecto}; no se reproduce aquí para evitar duplicar información.
+\textbf{Git} es el sistema de control de versiones utilizado, con \textbf{GitHub} como plataforma de \textit{hosting}. La integración continua y el flujo de entrega automatizada que se apoya sobre este repositorio siguen los principios de \textit{continuous delivery}~\cite{humble2010continuous}. La estructura concreta del repositorio se detalla en el Capítulo~\ref{cap:estructura-proyecto}; no se reproduce aquí para evitar duplicar información.
 
 \subsection{Gestión de dependencias}
 
@@ -163,7 +163,7 @@ La librería \texttt{python-dotenv} carga la configuración desde un fichero \te
 \subsection{Validación de entrada}
 
 \begin{itemize}
-    \item Sanitización de consultas SQL para prevenir inyección SQL
+    \item Sanitización de consultas SQL para prevenir inyección SQL, siguiendo las recomendaciones de OWASP~\cite{owasp2021injection}
     \item Validación de tipos de datos en entradas de usuario
     \item Limitación de longitud de mensajes
 \end{itemize}
@@ -174,7 +174,7 @@ En el despliegue actual, las consultas se envían a la API de Google Gemini~\cit
 
 \begin{itemize}
     \item \textbf{Punto único de auditoría}: cualquier llamada saliente al LLM atraviesa el cliente, lo que facilita la inspección de \textit{prompts}, el registro de uso y la aplicación de filtros si fuera necesario.
-    \item \textbf{Sustituibilidad del proveedor}: la misma interfaz está implementada por \texttt{shared/ollama\_client.py}, de modo que ante un cambio de política de Google o un escenario que exija inferencia local (por ejemplo, un despliegue institucional sobre infraestructura propia de la US, ver Sección~\ref{sec:costes}), se puede conmutar a Ollama sin tocar las acciones de Rasa.
+    \item \textbf{Sustituibilidad del proveedor}: el cliente \texttt{shared/ollama\_client.py} implementa la misma interfaz, de modo que ante un cambio de política de Google o un escenario que exija inferencia local (por ejemplo, un despliegue institucional sobre infraestructura propia de la US, ver Sección~\ref{sec:costes}), se puede conmutar a Ollama sin tocar las acciones de Rasa.
 \end{itemize}
 
 La opción local con Ollama se mantiene, por tanto, como mecanismo de mitigación de riesgo (cambios de cuotas o términos de uso del proveedor cloud) y no como modo de operación por defecto.
@@ -211,3 +211,5 @@ Calidad de código & ESLint, Pylint, Flake8 & \textit{Linting} JS y Python \\ \h
 \caption{Stack tecnológico completo del proyecto LinceUS Assistant.}
 \label{tab:stack-tecnologico}
 \end{table}
+
+\paragraph{Nota sobre el modelo \texttt{gemma-3-27b-it}.} El modelo \texttt{gemma-3-27b-it} es el que se utilizó durante toda la fase de desarrollo y validación del prototipo, y por tanto el que sustenta las métricas reportadas en el Capítulo~\ref{cap:pruebas} (latencia mediana 3,4~s, coste medio por turno 0,012~céntimos, 216~llamadas medidas). Tras el cierre del prototipo, Google retiró ese modelo de su catálogo público en mayo de 2026 y lo sustituyó por la familia \texttt{Gemma~4}. Para mantener operativo el sistema sin reescribir su pipeline, la constante \texttt{GEMINI\_MODEL} del cliente (\texttt{actions/shared/gemini\_client.py}) se actualizó al sucesor más directo dentro de la misma familia, \texttt{gemma-4-26b-a4b-it} (arquitectura \textit{Mixture-of-Experts}, $\sim$26\,B parámetros activos). Las métricas medidas durante el TFG no se han reproducido sobre el nuevo modelo: dado el carácter conmutable del cliente LLM (Sección~\ref{subsec:dd-gemini-ollama}), cualquier revalidación posterior bastaría con relanzar la suite del Capítulo~\ref{cap:pruebas} sin tocar el resto del sistema.

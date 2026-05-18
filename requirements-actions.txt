@@ -7,3 +7,5 @@ rapidfuzz==3.6.1
 google-generativeai>=0.7.0
 psycopg2-binary==2.9.9
 requests>=2.31.0
+# Rasa 3.6 importa packaging.version.LegacyVersion, eliminado en packaging>=22.0
+packaging<22.0

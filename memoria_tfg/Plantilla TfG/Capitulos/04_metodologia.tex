@@ -10,7 +10,7 @@ Este capítulo describe cómo se ha organizado y ejecutado el desarrollo de Linc
 
 \subsection{Scrum: fundamentos}
 
-Scrum es un marco de trabajo ágil para el desarrollo iterativo e incremental de productos complejos~\cite{schwaber2020scrum}. Su unidad de trabajo es el \textbf{sprint}, una iteración de duración fija (típicamente de una a cuatro semanas) al final de la cual se obtiene un incremento del producto potencialmente entregable. Los roles clásicos son el \textit{Product Owner}, responsable de priorizar el \textit{product backlog}; el \textit{Scrum Master}, que facilita el proceso; y el \textit{Development Team}, que ejecuta el trabajo. Las ceremonias principales son la \textit{Sprint Planning} (planificación del sprint), la \textit{Daily Scrum} (sincronización diaria), la \textit{Sprint Review} (revisión del incremento) y la \textit{Sprint Retrospective} (mejora del proceso).
+Scrum es un marco de trabajo ágil para el desarrollo iterativo e incremental de productos complejos~\cite{schwaber2020scrum}, encuadrado en los principios establecidos por el Manifiesto Ágil~\cite{beck2001agile}. Su unidad de trabajo es el \textbf{sprint}, una iteración de duración fija (típicamente de una a cuatro semanas) al final de la cual se obtiene un incremento del producto potencialmente entregable. Los roles clásicos son el \textit{Product Owner}, responsable de priorizar el \textit{product backlog}; el \textit{Scrum Master}, que facilita el proceso; y el \textit{Development Team}, que ejecuta el trabajo. Las ceremonias principales son la \textit{Sprint Planning} (planificación del sprint), la \textit{Daily Scrum} (sincronización diaria), la \textit{Sprint Review} (revisión del incremento) y la \textit{Sprint Retrospective} (mejora del proceso).
 
 Una de las características definitorias de Scrum es su flexibilidad: la guía oficial no prescribe prácticas de ingeniería específicas, sino un conjunto mínimo de reglas que el equipo adapta a su contexto. Esto lo hace especialmente adecuado para proyectos de alcance variable como un TFG, donde los requisitos evolucionan con el conocimiento adquirido durante el desarrollo.
 
@@ -39,7 +39,7 @@ Cada sprint cierra con un incremento funcional verificable y un breve registro d
 \label{sec:git}
 % =====================================================
 
-El control de versiones del proyecto se gestiona con \textbf{Git}, y el repositorio remoto se aloja en \textbf{GitHub}. Esta combinación proporciona trazabilidad completa de los cambios, facilita la revisión del historial de decisiones técnicas y permite integrar el pipeline de despliegue continuo descrito en la Sección~\ref{subsubsec:despliegue}.
+El control de versiones del proyecto se gestiona con \textbf{Git}~\cite{chacon2014pro}, y el repositorio remoto se aloja en \textbf{GitHub}. Esta combinación proporciona trazabilidad completa de los cambios, facilita la revisión del historial de decisiones técnicas y permite integrar el pipeline de despliegue continuo~\cite{humble2010continuous} descrito en la Sección~\ref{subsubsec:despliegue}.
 
 \subsection{Política de ramas}
 
@@ -55,7 +55,7 @@ El ciclo completo de una épica es, por tanto: \texttt{main} → \texttt{feature
 
 \subsection{Convenciones de commits}
 
-Los mensajes de commit siguen el estándar \textbf{Conventional Commits}~\cite{conventionalcommits}, con el formato \texttt{<tipo>(<ámbito>): <descripción>}. Los tipos empleados con mayor frecuencia son \texttt{feat} (nueva funcionalidad), \texttt{fix} (corrección de errores), \texttt{refactor} (reestructuración sin cambio de comportamiento), \texttt{test} (adición o modificación de pruebas) y \texttt{docs} (documentación). Los commits son frecuentes y de alcance reducido: cada commit representa un cambio coherente y compilable, lo que facilita la bisección del historial cuando aparecen regresiones.
+Los mensajes de commit siguen el estándar \textbf{Conventional Commits}~\cite{conventionalcommits}, con el formato \texttt{<tipo>: <descripción>}. Los tipos empleados con mayor frecuencia son \texttt{feat} (nueva funcionalidad), \texttt{fix} (corrección de errores), \texttt{refactor} (reestructuración sin cambio de comportamiento), \texttt{test} (adición o modificación de pruebas) y \texttt{docs} (documentación). Los commits son frecuentes y de alcance reducido: cada commit representa un cambio coherente y compilable, lo que facilita la bisección del historial mediante \texttt{git bisect}~\cite{chacon2014pro} cuando aparecen regresiones.
 
 % =====================================================
 \section{Estándares de codificación}
@@ -81,11 +81,11 @@ El criterio operativo es jerárquico. Para cada subtarea (clasificar una pregunt
 
 \begin{enumerate}
     \item \textbf{Diccionarios y regex} cuando el espacio de entrada es cerrado o casi cerrado (lista finita de alias, conjunto pequeño de palabras clave, patrones léxicos identificables como \textit{``grupo N''} o \textit{``coordinador''}).
-    \item \textbf{Fuzzy matching} (\texttt{rapidfuzz}, \texttt{SequenceMatcher}) cuando el espacio de entrada es cerrado pero admite errores tipográficos o variantes morfológicas (nombres de profesor en BD, tokens de tutorías con typos).
+    \item \textbf{Fuzzy matching}~\cite{cohen2003comparison} (\texttt{rapidfuzz}, \texttt{SequenceMatcher}) cuando el espacio de entrada es cerrado pero admite errores tipográficos o variantes morfológicas (nombres de profesor en BD, tokens de tutorías con typos).
     \item \textbf{LLM} solo cuando el espacio de entrada es abierto (generar SQL a partir de lenguaje natural, redactar respuesta natural a partir de \textit{chunks}) o cuando una heurística previa no ha sido concluyente y el coste del LLM se justifica.
 \end{enumerate}
 
-Esta jerarquía no es una preferencia estética: responde a tres restricciones concretas del proyecto. Primero, el \textbf{coste por turno}: cada llamada al modelo cuenta hacia la cuota mensual de Gemini, y multiplicarla por dos o tres llamadas en cada turno conversacional convierte un sistema económico en uno difícil de mantener. Segundo, la \textbf{latencia percibida}: una llamada al modelo añade entre 800~ms y 2~s al turno, y el usuario percibe esa latencia incluso cuando la pregunta era trivial. Tercero, y probablemente más importante, las \textbf{alucinaciones}: cada vez que se delega una decisión binaria al LLM hay una probabilidad no nula de que invente un valor o lo interprete fuera del rango esperado, lo que en un asistente académico puede traducirse en información incorrecta entregada con tono autoritario.
+Esta jerarquía no es una preferencia estética: responde a tres restricciones concretas del proyecto. Primero, el \textbf{coste por turno}: cada llamada al modelo cuenta hacia la cuota mensual de Gemini, y multiplicarla por dos o tres llamadas en cada turno conversacional convierte un sistema económico en uno difícil de mantener. Segundo, la \textbf{latencia percibida}: una llamada al modelo añade entre 800~ms y 2~s al turno, y el usuario percibe esa latencia incluso cuando la pregunta era trivial. Tercero, y probablemente más importante, las \textbf{alucinaciones}~\cite{ji2023survey}: cada vez que se delega una decisión binaria al LLM hay una probabilidad no nula de que invente un valor o lo interprete fuera del rango esperado, lo que en un asistente académico puede traducirse en información incorrecta entregada con tono autoritario.
 
 \subsection{Aplicación en el sistema}
 
@@ -94,7 +94,7 @@ El criterio se materializa en patrones recurrentes a lo largo del código. La Ta
 \begin{table}[hbtp]
 \centering
 \small
-\begin{tabular}{|p{3.4cm}|p{4.5cm}|p{6cm}|}
+\begin{tabular}{|p{3.4cm}|>{\raggedright\arraybackslash}p{4.5cm}|>{\raggedright\arraybackslash}p{6cm}|}
 \hline
 \textbf{Patrón} & \textbf{Subtarea típica} & \textbf{Ejemplo en el proyecto} \\
 \hline

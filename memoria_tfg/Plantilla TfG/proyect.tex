@@ -33,6 +33,15 @@
 % Para celdas que abarcan varias filas (resumen EDT por fases)
 \usepackage{multirow}
 
+% Para forzar [H] en figuras que no deben flotar (evita que figuras del
+% capitulo de implementacion partan listings de codigo en dos paginas).
+\usepackage{float}
+
+% Tablas que rompen entre páginas (apéndice de decisiones técnicas).
+% array proporciona \arraybackslash y \raggedright en columnas p{}.
+\usepackage{array}
+\usepackage{longtable}
+
 % Permite a LaTeX estirar levemente el espaciado interpalabra para evitar
 % overfull en palabras largas sin guion (URLs, nombres de clase, etc.).
 \setlength{\emergencystretch}{3em}
@@ -43,10 +52,43 @@
 % Permite partir URLs largas en la bibliografia en cualquier caracter.
 \usepackage{xurl}
 
+% Portada: logo combinado US+ETSII, líneas decorativas en rojo US y mayor
+% jerarquía tipográfica. makeatletter necesario para acceder a los @-comandos de pclass.
+\makeatletter
+\renewcommand{\hacerportada}{%
+  \begin{titlepage}
+  \centering
+  \includegraphics[width=0.72\linewidth]{img/US_etsii_logo}
+
+  \par\vspace{0.9cm}
+  {\color{usred}\rule{\linewidth}{1.2pt}}
+  \par\vspace{1.4cm}
+
+  \begin{center}\sffamily
+    {\large Trabajo fin de \@tipo{}}\\[0.5cm]
+    {\large \@titulacion{}}\\[1.8cm]
+    \parbox{\linewidth}{\centering\fontsize{17}{36}\selectfont\bfseries \@titulopro{}\par}\\[2cm]
+    {\large Realizado por}\\[0.35cm]
+    {\large\bfseries \@autorUno{}}\\[1.6cm]
+    {\large Dirigido por}\\[0.35cm]
+    {\large\bfseries \@tutor}\\[1.4cm]
+    {\large Departamento}\\[0.2cm]
+    {\large \@departamento}
+  \end{center}
+
+  \vfill
+  {\color{usred}\rule{\linewidth}{1.2pt}}\\[0.5cm]
+  \begin{flushright}
+    \sffamily{\large Sevilla,\ \@diad}
+  \end{flushright}
+  \end{titlepage}
+  {\pagestyle{empty}\cleardoublepage}%
+}
+\makeatother
 
 \begin{document}
 \tipo{Grado}
-\titulopro{Linceus Assistant: chatbot universitario con RAG para el alumnado de la ETSII}
+\titulopro{Diseño y desarrollo de un chatbot inteligente para la consulta de información académica y administrativa en la Universidad de Sevilla\\[0.4cm]{\normalsize\mdseries\itshape Linceus Assistant}}
 \tutor{Jos\'e Antonio Parejo Maestre}
 \departamento{Lenguajes y Sistemas Inform\'aticos}
 \autores{Santia Bregu}{{\ }}
@@ -105,9 +147,9 @@
      \input{Capitulos/05_planificacion}
 
 % =====================================================
-% PARTE III: DISEÑO E IMPLEMENTACIÓN
+% PARTE III: ANÁLISIS, DISEÑO E IMPLEMENTACIÓN
 % =====================================================
-\part{Diseño e Implementación}
+\part{Análisis, Diseño e Implementación}
 
      \input{Capitulos/requisitos}
      \input{Capitulos/arquitectura_diseno}

@@ -1,6 +1,7 @@
 @startuml diagrama_despliegue
 !pragma layout smetana
 skinparam defaultFontSize 13
+skinparam defaultFontName Arial
 skinparam shadowing false
 skinparam nodeStyle rectangle
 
@@ -52,7 +53,7 @@ cloud "Supabase (Cloud)" as supabase <<servicio externo>> {
 cloud "Google Cloud" as gcloud <<servicio externo>> {
   node "API Gemini" as gemini <<servicio API>> {
     artifact "Gemma-3-27b-it" as gemini_llm
-    artifact "text-embedding-004" as gemini_emb
+    artifact "gemini-embedding-001" as gemini_emb
   }
 }
 

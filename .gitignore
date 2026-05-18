@@ -66,3 +66,6 @@ old/
 # ESLint
 node_modules/
 package-lock.json
+
+# Explanations / flow docs (generados localmente, no van al repo)
+explanations/

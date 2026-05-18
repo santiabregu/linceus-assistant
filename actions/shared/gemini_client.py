@@ -15,7 +15,7 @@ load_dotenv()
 
 # Configuración de Gemini
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL = "gemma-3-27b-it"  # 15K req/día gratis, muy capaz para SQL/JSON
+GEMINI_MODEL = "gemma-4-26b-a4b-it"  # Sucesor de gemma-3-27b-it tras su retirada en mayo de 2026; misma familia Gemma, ~26B parámetros activos (MoE), capaz para SQL/JSON
 DEFAULT_TIMEOUT = 30  # segundos
 
 # Path donde se vuelcan métricas en modo benchmark. Si la env var

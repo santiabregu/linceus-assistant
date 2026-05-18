@@ -12,6 +12,8 @@ postgrest>=0.10.0
 # Dependencias específicas para compatibilidad
 numpy<1.25.0,>=1.19.2
 pydantic<1.10.10,>=1.7.4
+# Rasa 3.6 importa packaging.version.LegacyVersion, eliminado en packaging>=22.0
+packaging<22.0
 
 # Procesamiento de lenguaje natural en español
 spacy>=3.8.0,<4.0.0

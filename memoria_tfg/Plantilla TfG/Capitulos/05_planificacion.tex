@@ -93,7 +93,7 @@ La Figura~\ref{fig:edt} muestra la EDT a nivel de fases y paquetes de trabajo.
 \node[p3style] (p31) at (52mm,-32mm) {3.1 Validaci\'on y testing};
 \node[p3style] (p32) at (52mm,-46mm) {3.2 Piloto con usuarios};
 \node[p3style] (p33) at (52mm,-60mm) {3.3 Despliegue (DigitalOcean)};
-\node[p3style] (p34) at (52mm,-74mm) {3.4 Memoria y defensa};
+\node[p3style] (p34) at (52mm,-74mm) {3.4 Memoria};
 
 \draw[arrow] (f3.south)  -- (p31.north);
 \draw[arrow] (p31.south) -- (p32.north);
@@ -123,7 +123,7 @@ La fase de inicio agrupa todo el trabajo previo a la implementación: planificac
 % --- 1.1 ---
 \subsubsection{1.1: Gestión del proyecto}\label{subsubsec:gestion}
 
-Paquete transversal: aunque su esfuerzo principal se concentra en el inicio (planificación) y en el cierre (memoria, defensa), la gestión del proyecto está activa durante todo el ciclo de vida.
+Paquete transversal: aunque su esfuerzo principal se concentra en el inicio (planificación) y en el cierre (memoria), la gestión del proyecto está activa durante todo el ciclo de vida.
 
 \begin{table}[hbtp]
 \centering
@@ -258,7 +258,7 @@ Infraestructura transversal de \textit{Retrieval Augmented Generation} sobre los
 \hline
 \textbf{ID} & \textbf{Tarea} & \textbf{Descripción y entregables} & \textbf{Est.} \\ \hline
 2.4.1 & Extracción y \textit{chunking} & Parseo de planes docentes (HTML/PDF), \textit{chunking} semántico con metadatos (asignatura, sección, año). \textit{Entregable: pipeline.} & M \\ \hline
-2.4.2 & Embeddings y \texttt{pgvector} & Generación con \texttt{text-embedding-004} y almacenamiento en pgvector con índices HNSW; función SQL \texttt{buscar\_plan\_docente()}. \textit{Entregable: pipeline de vectorización.} & M \\ \hline
+2.4.2 & Embeddings y \texttt{pgvector} & Generación con \texttt{gemini-embedding-001} (2\,000 dimensiones) y almacenamiento en pgvector con índices HNSW; función SQL \texttt{buscar\_plan\_docente()}. \textit{Entregable: pipeline de vectorización.} & M \\ \hline
 2.4.3 & Action RAG & Acción que combina retrieval semántico con re-ranking por sección y umbral de similitud; respuesta con citas. \textit{Entregable: módulo RAG en \texttt{actions/}.} & L \\ \hline
 2.4.4 & Anti-alucinación & Prompts reforzados que prohíben inventar nombres, emails o aulas no presentes en los chunks. \textit{Entregable: prompts revisados.} & M \\ \hline
 \end{tabular}
@@ -353,9 +353,9 @@ Puesta en funcionamiento del sistema en una infraestructura accesible públicame
 \end{table}
 
 % --- 3.4 ---
-\subsubsection{3.4: Memoria y defensa}\label{subsubsec:memoria}
+\subsubsection{3.4: Memoria}\label{subsubsec:memoria}
 
-Documentación académica final del proyecto y preparación del acto de defensa.
+Documentación académica final del proyecto.
 
 \begin{table}[hbtp]
 \centering
@@ -365,9 +365,8 @@ Documentación académica final del proyecto y preparación del acto de defensa.
 \textbf{ID} & \textbf{Tarea} & \textbf{Descripción y entregables} & \textbf{Est.} \\ \hline
 3.4.1 & Redacción de la memoria & Capítulos de introducción, marco, metodología, arquitectura, planificación, pruebas y conclusiones. \textit{Entregable: memoria.} & L \\ \hline
 3.4.2 & Diagramas técnicos & Diagrama de componentes y de despliegue en notación UML2 (PlantUML). \textit{Entregable: \texttt{img/diagrama\_*.png}.} & S \\ \hline
-3.4.3 & Defensa & Diapositivas, ensayo y demo en vivo del prototipo desplegado. \textit{Entregable: presentación.} & M \\ \hline
 \end{tabular}
-\caption{Diccionario EDT:3.4: Memoria y defensa.}
+\caption{Diccionario EDT:3.4: Memoria del proyecto.}
 \label{tab:dict-3-4}
 \end{table}
 
@@ -398,7 +397,7 @@ La Tabla~\ref{tab:resumen-edt} resume los paquetes de trabajo por fase y la dist
   & 3.1 Validación y testing         & 5 & 1 & 3 & 1 \\ \cline{2-6}
   & 3.2 Piloto con usuarios          & 3 & 1 & 2 & 0 \\ \cline{2-6}
   & 3.3 Despliegue en producción     & 3 & 2 & 1 & 0 \\ \cline{2-6}
-  & 3.4 Memoria y defensa            & 3 & 1 & 1 & 1 \\ \hline
+  & 3.4 Memoria                       & 3 & 1 & 1 & 1 \\ \hline
 \hline
 \multicolumn{2}{|l|}{\textbf{Total}} & \textbf{45} & \textbf{8} & \textbf{26} & \textbf{11} \\ \hline
 \end{tabular}
@@ -428,7 +427,7 @@ La Tabla~\ref{tab:backlog-prioridad} muestra el orden de prioridad de las épica
 \begin{tabular}{|c|l|l|}
 \hline
 \textbf{Prioridad} & \textbf{Épica / paquete} & \textbf{Dependencia} \\ \hline
-1 & 2.1 Asignaturas (BD relacional + Text-to-SQL) & --- \\ \hline
+1 & 2.1 Asignaturas (BD relacional + Text-to-SQL) & -- \\ \hline
 2 & 2.2 Profesores (BD + RAG plan docente)        & 2.1 (esquema BD compartido) \\ \hline
 3 & 2.4 Pipeline RAG (transversal)                & 2.1 (inventario de fuentes) \\ \hline
 4 & 2.3 Horarios (BD + extractor PDF)             & 2.1 (esquema BD) \\ \hline
@@ -467,7 +466,7 @@ Esta cifra refleja el esfuerzo agregado de todos los paquetes considerados de fo
 \textbf{Fase} & \textbf{Estimación (h)} & \textbf{\% sobre 300\,h} \\ \hline
 1. Inicio (anteproyecto, investigación, arquitectura) &  45 & 15\,\% \\ \hline
 2. Desarrollo (cinco épicas)                          & 195 & 65\,\% \\ \hline
-3. Cierre (pruebas, despliegue, memoria, defensa)     &  60 & 20\,\% \\ \hline
+3. Cierre (pruebas, despliegue y memoria)              &  60 & 20\,\% \\ \hline
 \textbf{Total estimado}                               & \textbf{300} & \textbf{100\,\%} \\ \hline
 \end{tabular}
 \caption{Estimación inicial de esfuerzo por fase.}
@@ -491,7 +490,7 @@ S4 & Dic 2025--Ene 2026 & Épica Asignaturas avanzada, Ollama/Gemini, pipeline R
 S5 & Feb 2026       & Vectorización de planes docentes, integración Gemini, documentación & 17,68 \\ \hline
 S6 & Feb--Abr 2026  & Épicas Horarios y Profesores, panel admin, pruebas, piloto & 23,72 \\ \hline
 S7 & Abr 2026       & Sprint largo: épicas restantes, CD, pruebas exhaustivas, memoria & 106,35+44,17 \\ \hline
-S8 & Abr--May 2026  & Cierre de memoria, manuales, presentación                        & 10,79 \\ \hline
+S8 & Abr--May 2026  & Cierre de memoria y manuales                                    & 10,79 \\ \hline
 \multicolumn{3}{|l|}{Reuniones de seguimiento con el tutor (sin sprint asociado)} & 3,91 \\ \hline
 \multicolumn{3}{|l|}{\textbf{Total registrado a 02/05/2026}} & \textbf{281,72} \\ \hline
 \end{tabular}
@@ -501,7 +500,7 @@ S8 & Abr--May 2026  & Cierre de memoria, manuales, presentación                
 
 \subsection{Cronograma e hitos}\label{sec:cronograma}
 
-Los hitos principales del proyecto cubren no solo las tareas de desarrollo sino también las de investigación tecnológica, documentación técnica, redacción de manuales y preparación de la defensa, tal como recomienda la guía académica de elaboración del TFG. La Tabla~\ref{tab:hitos} recoge cada hito con su fecha real de consecución, el sprint en el que se completó y la categoría de trabajo a la que corresponde.
+Los hitos principales del proyecto cubren no solo las tareas de desarrollo sino también las de investigación tecnológica, documentación técnica, redacción de manuales y cierre del entregable, tal como recomienda la guía académica de elaboración del TFG. La Tabla~\ref{tab:hitos} recoge cada hito con su fecha real de consecución, el sprint en el que se completó y la categoría de trabajo a la que corresponde.
 
 \begin{table}[hbtp]
 \centering
@@ -522,7 +521,7 @@ Piloto con usuarios reales completado & 15/04/2026 & S7 & Validación \\ \hline
 Suite de pruebas E2E, RAG y panel admin estabilizada & 26/04/2026 & S7 & Validación \\ \hline
 Redacción de la memoria (Partes I y II) & 02/05/2026 & S8 & Documentación \\ \hline
 Manual de usuario y manual de despliegue & mayo 2026 & S8 & Documentación \\ \hline
-Vídeo de presentación y defensa & mayo 2026 & S8 & Presentación \\ \hline
+Vídeo demostración del prototipo & mayo 2026 & S8 & Documentación \\ \hline
 \end{tabular}
 \caption{Hitos principales del proyecto.}
 \label{tab:hitos}
@@ -536,10 +535,10 @@ Vídeo de presentación y defensa & mayo 2026 & S8 & Presentación \\ \hline
 
 \subsection{Costes de personal}
 
-El proyecto ha sido desarrollado íntegramente por un único desarrollador en calidad de Ingeniero de Software en formación. Para la estimación del coste de personal se toma como referencia una tarifa horaria de \textbf{15\,€/h}, coherente con el salario medio de un desarrollador junior en España según datos del mercado laboral en 2025~\cite{infojobs2025}.
+El proyecto ha sido desarrollado íntegramente por un único desarrollador en calidad de Ingeniero de Software en formación. Para la estimación del coste de personal se toma como referencia la tarifa horaria de \textbf{28,37\,€/h} (sin IVA), correspondiente al perfil ``Analista Programador J2EE/Web (Junior)'' del informe oficial de la Junta de Andalucía sobre perfiles profesionales del ámbito informático~\cite{jdaPreciosTIC2018}. Este perfil es el que mejor refleja el rol desempeñado durante el proyecto, en el que una misma persona ha asumido tanto el análisis funcional como el diseño y la programación de la solución.
 
 \[
-\text{Coste personal} = 300\,\text{h} \times 15\,\text{€/h} = \mathbf{4\,500\,\text{€}}
+\text{Coste personal} = 300\,\text{h} \times 28{,}37\,\text{€/h} = \mathbf{8\,511\,\text{€}}
 \]
 
 \subsection{Costes de material e infraestructura}
@@ -568,12 +567,12 @@ El proyecto se ha desarrollado y validado sobre el plan Free, lo que es viable d
 
 El sistema utiliza actualmente \texttt{gemma-3-27b-it} a través de la API de Google AI Studio. Según la documentación oficial de precios~\cite{geminiPricing}, los modelos de la familia Gemma figuran como gratuitos tanto en tokens de entrada como de salida, lo que ha permitido sostener todo el desarrollo, las suites de pruebas y el piloto sin coste. Esta elección responde a una búsqueda explícita de la opción de menor coste viable durante la fase de TFG: dentro del catálogo gratuito de Google, Gemma 3 27B es el modelo más capaz disponible y suficiente para las tareas de clasificación de intenciones, generación de SQL y síntesis de respuestas RAG.
 
-\paragraph{Límites de uso y dimensionado.} Los \textit{rate limits} oficiales para Gemma 3 27B no aparecen explícitamente en la documentación pública de \textit{rate limits} de Google~\cite{geminiRateLimits}; las fuentes terceras consultadas y los mensajes de error observados durante las pruebas sitúan el techo en torno a \textbf{30 peticiones por minuto (RPM)} y \textbf{14\,400 peticiones diarias (RPD)}. Este techo es suficiente para el escenario actual del piloto (700 alumnos potenciales, picos de docena de turnos por minuto), pero se convierte en restrictivo a medida que el sistema escala: cada turno de conversación puede generar entre 2 y 4 llamadas al LLM (clasificación, generación de SQL, síntesis), de modo que 30 RPM equivalen aproximadamente a entre 7 y 15 turnos simultáneos. Para 5\,000 o 70\,000 alumnos no es la latencia ni el coste el cuello de botella, sino la cuota de RPM.
+\paragraph{Límites de uso y dimensionado.} Los \textit{rate limits} de la familia Gemma en el plan gratuito de Google AI Studio son de \textbf{15 peticiones por minuto (RPM)} y \textbf{1\,500 peticiones diarias (RPD)}~\cite{geminiRateLimits}. Este techo es suficiente para el escenario actual del piloto (700 alumnos potenciales, picos de docena de turnos por minuto), pero se convierte en restrictivo a medida que el sistema escala: cada turno de conversación puede generar entre 2 y 4 llamadas al LLM (clasificación, generación de SQL, síntesis), de modo que 15 RPM equivalen aproximadamente a entre 4 y 7 turnos simultáneos. Para 5\,000 o 70\,000 alumnos no es la latencia ni el coste el cuello de botella, sino la cuota de RPM.
 
 \paragraph{Estrategia de evolución del modelo.} El sistema ha sido diseñado deliberadamente para que el proveedor de LLM sea un componente intercambiable: las llamadas al modelo están aisladas en clientes dedicados (\texttt{actions/shared/gemini\_client.py} para la API de Google y \texttt{actions/shared/ollama\_client.py} para inferencia local) tras una interfaz uniforme, y la selección del proveedor se realiza por configuración. Esta abstracción es herencia directa de la fase de prototipado, en la que se utilizó Ollama con modelos cuantizados ejecutándose en local antes de migrar a Gemma por capacidad. Gracias a ella, la evolución del modelo según la madurez del despliegue contempla tres etapas:
 
 \begin{enumerate}
-    \item \textbf{Etapa actual (piloto, $\leq$\,1\,000~alumnos):} \texttt{gemma-3-27b-it} gratuito. Cuota de 30~RPM suficiente, coste cero, calidad adecuada para los tres dominios funcionales validados.
+    \item \textbf{Etapa actual (piloto, $\leq$\,1\,000~alumnos):} \texttt{gemma-3-27b-it} gratuito. Cuota de 15~RPM suficiente, coste cero, calidad adecuada para los tres dominios funcionales validados.
     \item \textbf{Etapa intermedia (1\,000--10\,000 alumnos):} migración a un proveedor con cuota más amplia para absorber la concurrencia. La opción más razonable es \textbf{Gemini 2.5 Flash} en plan de pago, con cuotas que escalan a varios miles de RPM y un coste estimado de unos 22\,\$/mes para volúmenes del orden de 5\,000 alumnos. Alternativamente, se pueden combinar varios proveedores con planes gratuitos generosos (Groq, OpenRouter) repartiendo carga, manteniendo coste nulo a cambio de mayor complejidad operativa.
     \item \textbf{Etapa avanzada (consolidación institucional o $>$10\,000 alumnos):} adopción de un modelo \textbf{más inteligente} (Gemini 2.5 Pro, GPT-4o o equivalentes) para mejorar la calidad en consultas ambiguas y dominios añadidos, o bien autoalojar un modelo abierto (Llama 3.1 70B, Mixtral) sobre infraestructura de la propia universidad. Esta última vía es especialmente interesante en un despliegue institucional: la US dispone del Servicio de Informática y Comunicaciones (SIC) y de centros con capacidad de cálculo (HPC, GPUs de investigación) sobre los que ejecutar un modelo propio. La inferencia local elimina por completo la dependencia de proveedores externos, las cuotas de RPM y la fuga de datos académicos a terceros, a cambio de asumir el coste de hardware y mantenimiento.
 \end{enumerate}
@@ -607,9 +606,9 @@ El coste de operación no escala de forma lineal con el número de usuarios: exi
 
 \begin{table}[hbtp]
 \centering
-\scriptsize
+\footnotesize
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{|p{2.6cm}|p{2.6cm}|p{3cm}|p{3.6cm}|}
+\begin{tabular}{|p{2.8cm}|p{2.8cm}|p{3.2cm}|p{3.8cm}|}
 \hline
 \textbf{Componente} & \textbf{700 usuarios} & \textbf{5\,000 usuarios} & \textbf{70\,000 usuarios} \\ \hline
 Droplet DigitalOcean & 12\,\$/mes & 24\,\$/mes (4~GB) & 96\,\$/mes (cluster) \\ \hline
@@ -632,18 +631,18 @@ Los saltos críticos se producen al pasar de 700 a 5\,000 usuarios (donde el pla
 \begin{tabular}{|l|r|}
 \hline
 \textbf{Concepto}                              & \textbf{Importe} \\ \hline
-Costes de personal (300\,h $\times$ 15\,€/h)   & 4\,500,00\,€ \\ \hline
+Costes de personal (300\,h $\times$ 28,37\,€/h)& 8\,511,00\,€ \\ \hline
 Infraestructura durante el desarrollo (2 meses)&    22,00\,€ \\ \hline
-\textbf{Subtotal}                              & \textbf{4\,522,00\,€} \\ \hline
-Contingencias (10\,\%)                         &   452,20\,€ \\ \hline
-Beneficio industrial (10\,\%)                  &   452,20\,€ \\ \hline
-\textbf{Coste total del proyecto}              & \textbf{5\,426,40\,€} \\ \hline
+\textbf{Subtotal}                              & \textbf{8\,533,00\,€} \\ \hline
+Contingencias (10\,\%)                         &   853,30\,€ \\ \hline
+Beneficio industrial (10\,\%)                  &   853,30\,€ \\ \hline
+\textbf{Coste total del proyecto}              & \textbf{10\,239,60\,€} \\ \hline
 \end{tabular}
 \caption{Resumen de costes del proyecto.}
 \label{tab:costes-resumen}
 \end{table}
 
-El porcentaje de contingencias del 10\,\% cubre posibles ampliaciones de horas de desarrollo, renovaciones imprevistas de infraestructura o material durante la defensa. El beneficio industrial del 10\,\% refleja la práctica habitual en presupuestos de proyecto software. La cifra de infraestructura corresponde únicamente a los dos meses en los que el sistema ha estado desplegado en DigitalOcean durante la fase de validación; el coste anual de explotación posterior se ha desglosado en la Tabla~\ref{tab:costes-actuales}.
+El porcentaje de contingencias del 10\,\% cubre posibles ampliaciones de horas de desarrollo y renovaciones imprevistas de infraestructura o material durante la fase de cierre del proyecto. El beneficio industrial del 10\,\% refleja la práctica habitual en presupuestos de proyecto software. La cifra de infraestructura corresponde únicamente a los dos meses en los que el sistema ha estado desplegado en DigitalOcean durante la fase de validación; el coste anual de explotación posterior se ha desglosado en la Tabla~\ref{tab:costes-actuales}.
 
 % =====================================================
 % SECCIÓN 7: ANÁLISIS DE DESVIACIONES
@@ -653,7 +652,7 @@ El porcentaje de contingencias del 10\,\% cubre posibles ampliaciones de horas d
 
 \subsection{Desviación temporal}
 
-A fecha de cierre del presente documento (02/05/2026), el sistema Clockify registra \textbf{281,72\,h}, con las secciones de manuales y presentación pendientes de completar. La estimación final, considerando esas tareas restantes, se sitúa en torno a \textbf{300--310\,h}, lo que supone una desviación positiva de entre 0 y 10\,h respecto a la previsión inicial de 300\,h (entre el 0\,\% y el 3,3\,\%).
+A fecha de cierre del presente documento (02/05/2026), el sistema Clockify registra \textbf{281,72\,h}, con las secciones de manuales pendientes de completar. La estimación final, considerando esas tareas restantes, se sitúa en torno a \textbf{300--310\,h}, lo que supone una desviación positiva de entre 0 y 10\,h respecto a la previsión inicial de 300\,h (entre el 0\,\% y el 3,3\,\%).
 
 La distribución real del esfuerzo difiere sensiblemente de la prevista en un aspecto: la fase de Desarrollo acumuló un porcentaje de horas mayor al estimado, en particular el Sprint 7 (150,52\,h registradas), que concentró las épicas de Horarios y Profesores, el panel de administración, el piloto con usuarios y varias iteraciones de mejora basadas en el feedback recibido. Esta concentración fue consecuencia de decisiones técnicas tomadas durante el desarrollo (incorporación del panel admin, extracción automatizada de datos desde los portales oficiales) que no estaban contempladas en la planificación inicial.
 
@@ -667,24 +666,26 @@ La distribución real del esfuerzo difiere sensiblemente de la prevista en un as
 2. Desarrollo & 195 & 197,81 & +2,81\,h \,(+1,4\,\%) \\ \hline
 3. Cierre     &  60 &  36,61$^*$ & $-$23,39\,h (pendiente) \\ \hline
 \textbf{Total}&\textbf{300} & \textbf{281,72$^*$} & \textbf{$-$18,28\,h} \\ \hline
-\multicolumn{4}{l}{\footnotesize $^*$ A 02/05/2026; pendientes manuales, presentación y revisión final.}
+\multicolumn{4}{l}{\footnotesize $^*$ A 02/05/2026; pendientes manuales y revisión final.}
 \end{tabular}
 \caption{Desviación temporal por fase.}
 \label{tab:desviacion-temporal}
 \end{table}
 
+\paragraph{Nota sobre la defensa del proyecto.} La carga de trabajo de \textbf{300\,h} corresponde a los 12 ECTS de la asignatura de TFG y cubre el desarrollo del proyecto y la redacción de la memoria. Se ha optado por \textbf{no contabilizar} las horas de preparación de la presentación oral y del vídeo demostrativo, dado que estas actividades se ejecutan en paralelo a la entrega de la memoria y su duración depende del acto de defensa, que está fuera del alcance de este documento. Por tanto, el esfuerzo asociado queda fuera del cómputo recogido en la Tabla~\ref{tab:desviacion-temporal} y no afecta al cálculo de costes presentado en la Sección~\ref{sec:costes}.
+
 \subsection{Desviación en costes}
 
-La desviación en costes es directamente proporcional a la desviación temporal. Con una previsión de cierre de 300--310\,h y una tarifa de 15\,€/h, el coste de personal se mantiene en el rango de 4\,500--4\,650\,€. Los costes de material no han sufrido variación relevante respecto a lo planificado.
+La desviación en costes es directamente proporcional a la desviación temporal. Con una previsión de cierre de 300--310\,h y una tarifa de 28,37\,€/h, el coste de personal se mantiene en el rango de 8\,511--8\,795\,€. Los costes de material no han sufrido variación relevante respecto a lo planificado.
 
 \subsection{Lecciones aprendidas}
 
 Las desviaciones observadas permiten extraer tres lecciones relevantes para proyectos similares:
 
 \begin{enumerate}
-    \item \textbf{Infraestructura de datos subestimada.} La extracción, limpieza e inserción de datos reales (planes docentes, horarios, datos del profesorado) consumió más tiempo del previsto. En proyectos con dependencia de datos externos no estructurados, conviene reservar al menos un 15\,\% del esfuerzo de la fase de Desarrollo para la adquisición y preparación de datos.
+    \item \textbf{Infraestructura de datos subestimada.} La extracción, limpieza e inserción de datos reales (planes docentes, horarios, datos del profesorado) consumió más tiempo del previsto. Los datos de origen (PDFs con formato variable, portales web sin API oficial y ficheros administrativos sin estructura homogénea) requirieron varios ciclos de revisión antes de estar listos para la carga. En proyectos con dependencia de datos externos no estructurados, conviene reservar al menos un 15\,\% del esfuerzo de la fase de Desarrollo para la adquisición y preparación de datos, e incluir en el plan un subpaquete explícito de limpieza y validación.
 
-    \item \textbf{Alcance incremental no planificado.} El panel de administración surgió durante el Sprint 6 como respuesta a una necesidad de mantenibilidad detectada en el piloto. Su desarrollo fue valioso para el sistema, pero no estaba en la planificación inicial. Las metodologías ágiles absorben este tipo de cambio, pero conviene reservar capacidad explícita para el alcance emergente.
+    \item \textbf{Alcance incremental no planificado.} El panel de administración surgió durante el Sprint 6 como respuesta a una necesidad de mantenibilidad detectada en el piloto: sin una interfaz de gestión, actualizar el corpus o corregir un dato requería acceso directo a la base de datos, lo que no era viable en producción. Su desarrollo fue valioso para el sistema, pero no estaba en la planificación inicial y consumió un tiempo que tuvo que absorberse dentro del Sprint 7. Las metodologías ágiles absorben este tipo de cambio, pero conviene reservar capacidad explícita (en torno al 10\,\% del presupuesto de horas) para el alcance emergente, en lugar de dejarlo fuera del plan hasta que aparezca.
 
-    \item \textbf{Distribución temporal desigual.} La mayor parte del esfuerzo se concentró entre marzo y abril de 2026, coincidiendo con el desarrollo de las épicas de Horarios y Profesores y el piloto con usuarios. Una distribución más uniforme a lo largo del año habría reducido la presión en los últimos sprints y facilitado una fase de cierre más tranquila.
+    \item \textbf{Distribución temporal desigual.} La mayor parte del esfuerzo se concentró entre marzo y abril de 2026, coincidiendo con el desarrollo de las épicas de Horarios y Profesores, el panel de administración y el piloto con usuarios. Esta acumulación fue en parte consecuencia de la carga lectiva del primer cuatrimestre y de la dependencia entre épicas (profesores requería el esquema de horarios). Una distribución más uniforme a lo largo del año, asignando épicas más pequeñas en periodos de mayor carga académica, habría reducido la presión en los últimos sprints y facilitado una fase de cierre más tranquila y con mayor margen para iteraciones correctivas.
 \end{enumerate}

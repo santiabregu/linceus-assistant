@@ -14,6 +14,7 @@ from ..shared.gemini_client import llamar_gemini
 from ..shared.db import db_client
 from ..shared.config import ALIAS_ASIGNATURAS
 from ..shared.follow_up import _contar_turnos_desde_slot, comprobar_titulacion
+from ..shared.json_utils import extraer_json_dict
 
 
 # ─── Heuristicas de continuacion / memoria ───────────────────────────────────
@@ -355,17 +356,12 @@ class ActionSmartFallback(Action):
             )
             return []
 
-        # Parsear JSON
-        try:
-            # Limpiar posibles artefactos
-            clean = respuesta_json.strip()
-            if clean.startswith("```"):
-                clean = clean.split("\n", 1)[1] if "\n" in clean else clean[3:]
-            if clean.endswith("```"):
-                clean = clean[:-3]
-            decision = json.loads(clean.strip())
-        except (json.JSONDecodeError, Exception) as e:
-            print(f"  Error parseando JSON del fallback: {e}\n  Respuesta: {respuesta_json}")
+        # Parsear JSON. Tolerante a respuestas que mezclen razonamiento + bloque
+        # markdown + JSON (Gemma 4 razona antes de responder y no respeta el
+        # "JSON only" del prompt como hacia Gemma 3).
+        decision = extraer_json_dict(respuesta_json, requiere_clave="action")
+        if decision is None:
+            print(f"  Error parseando JSON del fallback. Respuesta: {respuesta_json[:500]}")
             dispatcher.utter_message(
                 text="No he podido procesar tu pregunta. Prueba a reformularla o escribe 'ayuda'."
             )

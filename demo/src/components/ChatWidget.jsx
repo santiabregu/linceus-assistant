@@ -92,8 +92,12 @@ export default function ChatWidget({
               className="px-4 py-3 flex items-center gap-3 text-white"
               style={{ background: '#9e1c3f' }}
             >
-              <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center">
-                <span className="text-[#9e1c3f] font-display font-bold text-sm">L</span>
+              <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center overflow-hidden">
+                <img
+                  src="/linceUS-logo.png"
+                  alt="Linceus"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div className="flex-1">
                 <div className="font-semibold text-[15px] leading-tight">Linceus Assistant</div>
@@ -177,6 +181,20 @@ export default function ChatWidget({
                   <MessageBody text={m.text} />
                 </motion.div>
               ))}
+
+              {/* Burbuja "borrador" del usuario mientras teclea (antes de enviar) */}
+              {inputBuffer && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="self-end ml-auto rounded-2xl rounded-br-sm text-white max-w-[85%] px-3.5 py-2.5 text-[13.5px]"
+                  style={{ background: '#9e1c3f', opacity: 0.78 }}
+                >
+                  <span>{inputBuffer}</span>
+                  <span className="inline-block w-0.5 h-4 bg-white/85 ml-0.5 animate-pulse align-middle" />
+                </motion.div>
+              )}
 
               {botTyping && (
                 <div className="self-start mr-auto rounded-2xl rounded-bl-sm bg-white shadow-sm px-3.5 py-3 flex gap-1.5">

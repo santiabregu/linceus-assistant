@@ -40,7 +40,7 @@ Alumno: & Santia Bregu, \texttt{sanbre@alum.us.es} \\
   \item Mejoras en manuales: capturas de pantalla, versiones de imágenes Docker y ejemplos de código.
   \item Revisión de diagramas y EDT.
   \item Pendiente: sección de metodología y revisión del capítulo de pruebas.
-  \item Explicación de entregables y siguientes pasos hacia la presentación.
+  \item Explicación de entregables y siguientes pasos del cierre del proyecto.
 \end{itemize}
 
 \textbf{Objetivos acordados:}
@@ -49,7 +49,7 @@ Alumno: & Santia Bregu, \texttt{sanbre@alum.us.es} \\
   \item Añadir apéndice de actas y mejorar los manuales.
   \item Revisar el capítulo de pruebas.
   \item Enviar nueva versión de la memoria al tutor.
-  \item Preparar presentación y vídeo de defensa.
+  \item Preparar el vídeo demostración del prototipo.
 \end{itemize}
 
 % --------------------------------------------------
@@ -199,10 +199,6 @@ Alumno: & Santia Bregu, \texttt{sanbre@alum.us.es} \\
   \item Elaborar la planificación inicial con horas aproximadas y objetivos por sprint.
 \end{itemize}
 
-\section{Listado completo de casos de prueba}\label{ap:casos-prueba}
-\section{Esquema SQL de la base de datos}\label{ap:schema-sql}
-\section{Configuración de Rasa}\label{ap:config-rasa}
-
 \section{Informe de tiempo invertido}\label{ap:tiempo}
 
 El registro horario del proyecto se ha llevado de forma continua mediante la herramienta \textbf{Clockify}, siguiendo la convención de etiquetado descrita en el Capítulo~\ref{cap:metodologia} (\texttt{SX} seguido de la descripción de la tarea, donde \texttt{X} es el número de sprint). El informe completo exportado desde Clockify, con una entrada por tarea registrada y su duración exacta, se adjunta al material del proyecto en formato CSV (\texttt{Clockify\_Time\_Report\_Summary\_01\_06\_2025-31\_05\_2026.csv}).
@@ -248,4 +244,204 @@ Reuniones (sin sprint)   &   3,91 \\ \hline
 \label{tab:clockify-sprints}
 \end{table}
 
-A esta cifra restan por contabilizar las horas correspondientes al cierre completo de la memoria (revisión final de manuales, capítulos pendientes y preparación de la presentación), estimadas en aproximadamente 20\,h, que sitúan la previsión final del proyecto en torno a las 300\,h y por tanto dentro del margen establecido por la normativa.
+A esta cifra restan por contabilizar las horas correspondientes al cierre completo de la memoria (revisión final de manuales y capítulos pendientes), estimadas en aproximadamente 20\,h, que sitúan la previsión final del proyecto en torno a las 300\,h y por tanto dentro del margen establecido por la normativa.
+
+% =====================================================
+\section{Registro de decisiones técnicas}\label{ap:decisiones}
+% =====================================================
+
+A lo largo del desarrollo se han registrado \textbf{113 decisiones técnicas} en los ficheros \texttt{Registro\_decisiones.md} de \texttt{docs/sprints/} (sprints S2 a S7; S1 fue de planificación y S8 quedó dedicado al cierre de la memoria, sin nuevas decisiones técnicas). Las tablas que siguen recogen una entrada por decisión con su código y un título corto; la justificación, las alternativas descartadas y los ficheros afectados se conservan en el fichero correspondiente del repositorio.
+
+La codificación es heterogénea por razones históricas. Los sprints S2, S3 y S4 emplearon listas numeradas internas sin un código formal: para esta memoria se les ha asignado \emph{a posteriori} el prefijo del sprint (S2-\textit{nn}, S3-\textit{nn}, S4-\textit{nn}). El sprint S5 introdujo el código D-001..D-019 con numeración local, que ha sido renombrado a S5-\textit{nn} en el registro para evitar el choque con la numeración global iniciada en S6. A partir de S6, las decisiones se numeran D-001..D-069 de forma continua (con algunos huecos por consolidación de entradas), y esa es la codificación que la memoria cita en los capítulos~\ref{cap:requisitos} a~\ref{cap:conclusiones}.
+
+\subsection*{Sprint 2: Carga de asignaturas y diseño inicial (9 decisiones)}
+
+\begin{longtable}{|p{1.3cm}|>{\raggedright\arraybackslash}p{12cm}|}
+\hline
+\textbf{Código} & \textbf{Título} \\ \hline
+S2-01 & Diccionario general del proyecto. \\ \hline
+S2-02 & \textit{Scope} acotado a asignaturas (Ing. del Software, ETSII). \\ \hline
+S2-03 & Esquema inicial de la base de datos. \\ \hline
+S2-04 & Inserción de los datos iniciales. \\ \hline
+S2-05 & Definición de la lógica de versionado del proyecto. \\ \hline
+S2-06 & Separación de los datos de entrenamiento NLU por épicas. \\ \hline
+S2-07 & Una intención general de consulta con entidades en lugar de intenciones proliferantes. \\ \hline
+S2-08 & Adopción de \texttt{rapidfuzz} para \textit{fuzzy matching} (frente a \texttt{difflib}). \\ \hline
+S2-09 & Versión inicial del \textit{frontend}. \\ \hline
+\end{longtable}
+
+\subsection*{Sprint 3: Migración a Ollama y \textit{Text-to-SQL} (14 decisiones)}
+
+\begin{longtable}{|p{1.3cm}|>{\raggedright\arraybackslash}p{12cm}|}
+\hline
+\textbf{Código} & \textbf{Título} \\ \hline
+S3-01 & Migración completa de Gemini a Ollama con Llama~3. \\ \hline
+S3-02 & Cliente HTTP de Ollama en lugar de \textit{subprocess} (latencia 5--15$\times$ menor). \\ \hline
+S3-03 & Modelo optimizado \texttt{llama3.2:3b} frente a \texttt{llama3} completo. \\ \hline
+S3-04 & Sistema \textit{Text-to-SQL} con clasificación automática específica/general. \\ \hline
+S3-05 & Caché en memoria de asignaturas por sesión. \\ \hline
+S3-06 & Búsqueda \textit{fuzzy} mejorada con desambiguación por LLM. \\ \hline
+S3-07 & Respuestas naturales generadas íntegramente con LLM. \\ \hline
+S3-08 & Separación de la lógica de interpretación LLM en \texttt{llm\_interpreter.py}. \\ \hline
+S3-09 & Documentación técnica exhaustiva del nuevo sistema. \\ \hline
+S3-10 & Script de inicialización del servidor Ollama. \\ \hline
+S3-11 & Inclusión de \texttt{old/} en \texttt{.gitignore}. \\ \hline
+S3-12 & \textit{Slots} adicionales para cache de resultados (\texttt{ultimos\_resultados\_asignaturas}). \\ \hline
+S3-13 & Priorizar velocidad sobre capacidad del modelo. \\ \hline
+S3-14 & Mantener compatibilidad con el sistema \textit{legacy} durante la transición. \\ \hline
+\end{longtable}
+
+\subsection*{Sprint 4: Migración a Gemini API y arquitectura definitiva (5 decisiones)}
+
+\begin{longtable}{|p{1.3cm}|>{\raggedright\arraybackslash}p{12cm}|}
+\hline
+\textbf{Código} & \textbf{Título} \\ \hline
+S4-01 & Migración de Ollama a Gemini API (\texttt{gemini-2.5-flash-lite}). \\ \hline
+S4-02 & \textit{Actions} con lógica LLM interna en lugar de \textit{pipeline} NLU \textit{custom}. \\ \hline
+S4-03 & \textit{Actions} como responsables de generar SQL dinámico (validado por capas). \\ \hline
+S4-04 & Estrategia dual: Gemini en desarrollo, Ollama como \textit{fallback}. \\ \hline
+S4-05 & \textit{Web scraping} de Sevius4 para descarga de planes docentes. \\ \hline
+\end{longtable}
+
+\subsection*{Sprint 5: \textit{Testing} de asignaturas v1 (19 decisiones)}
+
+\begin{longtable}{|p{1.3cm}|>{\raggedright\arraybackslash}p{12cm}|}
+\hline
+\textbf{Código} & \textbf{Título} \\ \hline
+S5-01 & \textit{Fix} de alias con prefijos NLU (\texttt{de}, \texttt{del}, \texttt{la}, \texttt{el}). \\ \hline
+S5-02 & Test E-T03: no exigir que el bot pida titulación cuando no es necesaria. \\ \hline
+S5-03 & Nuevos ejemplos NLU para \textit{``todas las asignaturas''}. \\ \hline
+S5-04 & Nuevos ejemplos NLU para conteo con \textit{``carrera''} y \textit{``grado''}. \\ \hline
+S5-05 & Intent \texttt{out\_of\_scope} con \textit{threshold} de \textit{fallback} elevado. \\ \hline
+S5-06 & Corrección de \texttt{expected\_count} en los tests de conteo. \\ \hline
+S5-07 & Validación de tests \textit{fallback} acepta \texttt{out\_of\_scope}. \\ \hline
+S5-08 & \textit{Fallback} con búsqueda por código y SELECT ALL como red de seguridad. \\ \hline
+S5-09 & Ejemplos NLU de asignaturas genéricas para mejorar la robustez. \\ \hline
+S5-10 & \textit{Regex feature} \texttt{conteo\_signal} para distinguir conteo de listado. \\ \hline
+S5-11 & Mantener separados los \textit{intents}/\textit{actions} de listado y conteo. \\ \hline
+S5-12 & Descartar \texttt{RegexEntityExtractor} para acrónimos por riesgo de falsos positivos. \\ \hline
+S5-13 & Actualización de \texttt{utter\_default} con enlaces útiles. \\ \hline
+S5-14 & \textit{Fallback fuzzy} cuando \texttt{ILIKE} falla con el nombre extraído por NLU. \\ \hline
+S5-15 & Mejora de \texttt{\_resolver\_nombre\_desde\_texto} con ventanas de palabras. \\ \hline
+S5-16 & Reordenación de resultados SQL por \texttt{token\_set\_ratio}. \\ \hline
+S5-17 & Detección de alias/acrónimos en la pregunta cuando NLU no extrae entidad. \\ \hline
+S5-18 & Ampliación del diccionario \texttt{ALIAS\_ASIGNATURAS}. \\ \hline
+S5-19 & Reformulación de las preguntas de test para \textit{testing} realista. \\ \hline
+\end{longtable}
+
+\subsection*{Sprint 6: Horarios, profesorado y \textit{multi-intent} (36 decisiones)}
+
+\begin{longtable}{|p{1.3cm}|>{\raggedright\arraybackslash}p{12cm}|}
+\hline
+\textbf{Código} & \textbf{Título} \\ \hline
+D-001 & Extracción del PDF de horarios con \texttt{pdfplumber} y filtrado de \textit{watermark}. \\ \hline
+D-002 & Formato de código del PDF y filtrado por titulación (C/S/T). \\ \hline
+D-003 & Estructura de archivos Markdown por titulación/curso/grupo. \\ \hline
+D-004 & Limpieza de artefactos del PDF (comas dobles, asteriscos). \\ \hline
+D-005 & Script separado de inserción en BD (\texttt{insertar\_horarios\_db.py}). \\ \hline
+D-006 & Diccionario unificado de alias/abreviaturas en \texttt{actions/shared/config.py}. \\ \hline
+D-007 & Un \texttt{grupo\_clase} por (asignatura, grupo), no por cuatrimestre. \\ \hline
+D-008 & Validación estricta de códigos de aula con regex \texttt{[A-Z]\textbackslash d+.\textbackslash d+}. \\ \hline
+D-009 & Clasificación automática del tipo de aula a partir del edificio. \\ \hline
+D-010 & \texttt{ActionConsultaHorario} basada en BD y LLM. \\ \hline
+D-011 & Datos NLU para el \textit{intent} \texttt{consulta\_horario} (115 ejemplos). \\ \hline
+D-012 & \textit{Multi-intent} nativo de DIET con \texttt{ActionMultiIntent}. \\ \hline
+D-013 & Respuesta unificada del \textit{multi-intent} vía LLM (no concatenación). \\ \hline
+D-014 & Regla \textit{``no saludes''} en todos los \textit{prompts} de LLM. \\ \hline
+D-015 & Corrección de tipología \texttt{TRONCAL}~$\rightarrow$~\texttt{OBLIGATORIA} en los \textit{prompts}. \\ \hline
+D-016 & Detección heurística de seguimiento basada en recencia de \textit{slots}. \\ \hline
+D-017 & \textit{Slot} \texttt{ultima\_action\_ejecutada} para refinamiento de grupo. \\ \hline
+D-018 & Campos adicionales en la tabla \texttt{profesores} (categoría, perfil). \\ \hline
+D-019 & \textit{Scrapers} independientes por departamento (LSI, DTE, CCIA, MA1). \\ \hline
+D-020 & Reconstrucción de \textit{email} ofuscado en DTE desde \textit{spans} HTML. \\ \hline
+D-021 & Nombre/apellidos no separables en CCIA y MA1. \\ \hline
+D-022 & MA1 con doble enriquecimiento (SISIUS y Directorio US). \\ \hline
+D-023 & \textit{Trigger} de BD genera \texttt{nombre\_normalizado}, no el \textit{scraper}. \\ \hline
+D-024 & Dockerización con tres contenedores (Rasa + actions + Nginx). \\ \hline
+D-025 & Migración de \texttt{google-genai} a \texttt{google-generativeai} por conflicto de \texttt{websockets}. \\ \hline
+D-026 & Dependencias faltantes en \texttt{Dockerfile.actions} (\texttt{psycopg2}, \texttt{requests}, \textit{spaCy}). \\ \hline
+D-027 & \textit{Frontend} rediseñado siguiendo la identidad visual de \texttt{www.us.es}. \\ \hline
+D-028 & \textit{Logging} de conversaciones y \textit{feedback} vía Supabase REST API. \\ \hline
+D-029 & Botones de selección de titulación en lugar de texto libre. \\ \hline
+D-030 & Eliminar titulación por defecto y detección automática silenciosa. \\ \hline
+D-031 & Filtro de sección en RAG y \textit{reranking} por \textit{metadata}. \\ \hline
+D-032 & Búsqueda de profesores por nombre completo en cuatro formatos. \\ \hline
+D-033 & Mensaje informativo cuando no hay plan docente (TFG, prácticas). \\ \hline
+D-034 & Consultas multi-asignatura en \texttt{ActionConsultaEspecifica} y \texttt{ActionConsultaHorario}. \\ \hline
+D-035 & Variantes cortas de titulación y \textit{fix} de \textit{``sí''} como confirmación. \\ \hline
+D-036 & Ejemplos NLU de laboratorios en el \textit{intent} \texttt{consulta\_horario}. \\ \hline
+\end{longtable}
+
+\subsection*{Sprint 7: Panel de administración, piloto y consolidación (30 decisiones)}
+
+\begin{longtable}{|p{1.3cm}|>{\raggedright\arraybackslash}p{12cm}|}
+\hline
+\textbf{Código} & \textbf{Título} \\ \hline
+D-037 & Navegación jerárquica Centro $\rightarrow$ Titulación $\rightarrow$ Asignatura en el panel. \\ \hline
+D-038 & Sevius como fuente de verdad para centros, titulaciones y asignaturas. \\ \hline
+D-039 & Flujo \textit{``preview} primero, \textit{insert} después\textit{''} para \textit{scraping}. \\ \hline
+D-040 & Reutilización del \textit{pipeline} RAG existente desde el panel. \\ \hline
+D-041 & Modal de selección por asignatura con todos los grupos incluidos. \\ \hline
+D-042 & \textit{Scraping} síncrono con \textit{spinner}, no cola de fondo. \\ \hline
+D-043 & Directorio PDI de \texttt{us.es} como fuente canónica de profesorado. \\ \hline
+D-044 & Filtro \textit{``Centro''} del buscador de \texttt{us.es} para acotar el alcance. \\ \hline
+D-045 & Página del centro como índice de departamentos. \\ \hline
+D-046 & Nuevos campos en BD: \texttt{centro\_id} y \texttt{codigo\_us} en varias tablas. \\ \hline
+D-047 & \textit{Backfill} SQL manual para los registros existentes de la ETSII. \\ \hline
+D-048 & \textit{Upsert} por \texttt{email} con \textit{fallback} a \texttt{nombre\_normalizado}. \\ \hline
+D-049 & Separación heurística nombre/apellidos para profesores nuevos. \\ \hline
+D-050 & Auto-creación de departamentos ausentes durante el \textit{scraping}. \\ \hline
+D-051 & Vista Centro $\rightarrow$ Departamento $\rightarrow$ Profesor con \textit{bucket} \textit{``Sin departamento''}. \\ \hline
+D-052 & Modal de enriquecimiento de profesorado con \textit{slug} editable. \\ \hline
+D-053 & \textit{Split} del \textit{intent} \texttt{consulta\_asignatura\_especifica} (ficha vs.~horario). \\ \hline
+D-054 & Bloqueo de alias de letra única en \texttt{\_expandir\_alias}. \\ \hline
+D-055 & Endurecimiento del \textit{fuzzy cutoff} en \texttt{ActionCambiarContexto}. \\ \hline
+D-056 & \texttt{ALIAS\_ASIGNATURAS} y \texttt{TITULACION\_MAP} como datos de dominio estables. \\ \hline
+D-057 & Multi-asignatura en \texttt{ActionConsultaHorarioAsignatura} como \textit{fallback} por diseño. \\ \hline
+D-058 & Ejemplos cortos \texttt{curso N grupo M} en el \textit{intent} \texttt{consulta\_horario}. \\ \hline
+D-058.b & RAG sin filtro por sección: la sección es solo señal de \textit{reranking}. \\ \hline
+D-060 & Poblar \texttt{profesor\_asignatura} desde \texttt{us.es} (docencia estructurada). \\ \hline
+D-061 & Tutorías fuera del \textit{scope}: redirección al \textit{email} del profesor. \\ \hline
+D-062 & \textit{``Profesores de X''} al \textit{intent} \texttt{consulta\_profesor} con \textit{pipeline} SQL$\rightarrow$RAG. \\ \hline
+D-063 & Filtro por titulación uniforme en los tres módulos. \\ \hline
+D-064 & RAG de profesores como vectorial puro, sin \textit{double-check} en BD. \\ \hline
+D-066 & Cuatrimestre como dimensión de horarios (corrige pérdida en S6). \\ \hline
+D-069 & Limpieza de horarios espurios (\textit{scraper} colapsaba franjas de varios grupos). \\ \hline
+\end{longtable}
+
+\paragraph{Huecos en la numeración global.} En el sprint S7 la numeración salta sobre D-059, D-065, D-067 y D-068. Estos códigos corresponden a propuestas evaluadas durante el sprint que finalmente se consolidaron dentro de otra decisión (por ejemplo, una mejora del fallback que acabó subsumida en D-064) o se descartaron sin llegar a generar entrada propia. Se ha optado por mantener los huecos en lugar de renumerar para preservar la trazabilidad con los \textit{commits} y \textit{pull requests} que ya referenciaban los códigos originales. La suma efectiva del bloque global D-\textit{nnn} es por tanto de 66 entradas; sumadas a las 47 entradas de los sprints anteriores resulta el total de 113 decisiones citado en los Capítulos~\ref{cap:introduccion} y~\ref{cap:conclusiones}.
+
+% =====================================================
+\section{Catálogo de casos de trabajo futuro}\label{ap:trabajo-futuro}
+% =====================================================
+
+Durante la auditoría de la suite E2E (Sección~\ref{sec:pruebas-e2e}) y de la reproducción de tráfico real (Sección~\ref{sec:pruebas-trafico}) se identificaron 13 casos cuya causa raíz no es un defecto puntual sino una limitación de diseño asumida. Estos casos se han marcado como \textit{trabajo futuro} y se excluyen del denominador del porcentaje de éxito, según la política descrita en la Sección~\ref{subsec:pruebas-trabajo-futuro}. La fuente original es el fichero \texttt{tests/results/testing\_general.md} del repositorio, sección \textit{``Trabajo futuro (excluido del cómputo)''}; la Tabla~\ref{tab:trabajo-futuro} reproduce su contenido íntegro para facilitar la consulta sin necesidad de salir del documento.
+
+Los códigos siguen la misma convención que el resto de la suite (Sección~\ref{sec:pruebas-casos-fallidos}): la primera letra indica el tipo de veredicto (\texttt{X} para sesión excluida del piloto de tráfico real, \texttt{P} para casos del dominio profesor, \texttt{H} para horarios y \texttt{HA} para horarios cruzados con asignatura), la segunda letra el subtipo (P~=~positivo, W~=~con typos, S~=~seguimiento) y el sufijo numérico identifica la entrada concreta en el cuaderno de resultados.
+
+{\small
+\begin{longtable}{|>{\raggedright\arraybackslash}p{1.1cm}|>{\raggedright\arraybackslash}p{2.7cm}|>{\raggedright\arraybackslash}p{4.2cm}|>{\raggedright\arraybackslash}p{5.0cm}|}
+\caption{Catálogo de casos de trabajo futuro (\textit{snapshot} 26/04/2026).}\label{tab:trabajo-futuro} \\
+\hline
+\textbf{ID} & \textbf{Categoría} & \textbf{Consulta} & \textbf{Motivo / palanca futura} \\ \hline
+\endfirsthead
+\hline
+\textbf{ID} & \textbf{Categoría} & \textbf{Consulta} & \textbf{Motivo / palanca futura} \\ \hline
+\endhead
+X-P01 & \texttt{cross\_dominio} & horario del coordinador de Álgebra & Atajo coordinador/suplente solo RAG (D-064); el resultado no se enriquece con la tabla \texttt{profesores}. \\ \hline
+X-P03 & \texttt{cross\_dominio} & dame el \textit{email} del profesor que coordina IISSI2 & Misma causa que X-P01. \\ \hline
+X-P04 & \texttt{cross\_dominio} & web personal de la coordinadora de Matemática Discreta & Misma causa que X-P01. \\ \hline
+X-P05 & \texttt{cross\_dominio} & ¿dónde imparten los profesores del grupo 1 de FP? & Enrutado cruzado profesor$\leftrightarrow$horario: la pregunta apunta a aulas pero el sistema la clasifica como \texttt{consulta\_profesor}. Requiere ejemplos NLU en \texttt{consulta\_horario\_asignatura} con fraseos del tipo \textit{``donde imparten los profes de X grupo Y''}. \\ \hline
+X-P06 & \texttt{cross\_dominio} & ¿qué carreras tocan electrónica de sistemas embebidos? & Cruce descripción-temática $\rightarrow$ titulación. El RAG vectorial responde con asignaturas afines al tema; falta el segundo paso (cruzar asignaturas con \texttt{titulaciones}). Requiere flujo \texttt{consulta\_titulacion\_por\_tema} o post-procesado equivalente. \\ \hline
+P-P07 & \texttt{profesor} & \textit{email} de la profesora que da ADDA en el grupo 2 & Emparejamiento profesor$\leftrightarrow$asignatura$\leftrightarrow$grupo no implementado: la tabla \texttt{profesor\_asignatura} no almacena el grupo. \\ \hline
+P-P08 & \texttt{profesor} & despacho del coordinador de Ingeniería del Software & Misma causa que X-P01 (atajo coordinador sin enriquecimiento). \\ \hline
+P-W03 & \texttt{profesor} & datos de la profa \textit{bernrdez} & \textit{Fuzzy matching} de \textit{typos} severos en nombres propios. Resoluble subiendo el umbral de \texttt{rapidfuzz} o aceptando como entrada solo si el \textit{match} es superior al 75\,\%. \\ \hline
+P-S01 & \texttt{seguimiento\_\allowbreak cross\_intent} & (turno 2) \textit{``y de estadística?''} tras \textit{``tutorías de AE''} & Cambio de sub-intent durante el seguimiento (tutorías $\rightarrow$ ficha): el NLU clasifica cada turno aisladamente. Resoluble con un \textit{slot} booleano \texttt{ultima\_consulta\_tutorias} con TTL de 3 turnos. \\ \hline
+H-S01 & \texttt{seguimiento\_\allowbreak cross\_intent} & (turno 3) \textit{``y qué horario tiene''} tras ficha de DP & Mismo patrón que P-S01 trasladado a horarios: el turno elíptico se clasifica como \texttt{consulta\_horario} (curso+grupo) en lugar de heredar \texttt{ultimo\_nombre\_asignatura} y delegar en \texttt{consulta\_horario\_asignatura}. \\ \hline
+HA-P09 & \texttt{horario\_\allowbreak asignatura} & ¿dónde son las prácticas de Álgebra Lineal? & La palabra \textit{``prácticas''} colisiona con \textit{``Prácticas Externas''} y con \textit{``clases teórico-prácticas''} del plan docente. Requiere ejemplos NLU específicos para enrutar a \texttt{consulta\_horario\_asignatura} con filtro de laboratorio. \\ \hline
+HA-P10 & \texttt{horario\_\allowbreak asignatura} & laboratorio de Inteligencia Artificial grupo 3 & La convención \texttt{aula.startswith('A')\,=\,teoría} falla cuando una asignatura usa varias aulas A como sala de práctica. Resoluble con heurística \textit{``primera aula\,=\,teoría, resto\,=\,lab''} o con columna \texttt{tipo\_uso} en \texttt{horarios}. \\ \hline
+HA-W06 & \texttt{horario\_\allowbreak asignatura} & laboratorio de \textit{inteleigenicia artifical} & Misma causa que HA-P10. \\ \hline
+\end{longtable}
+}
+
+\paragraph{Resumen por palanca técnica.} Los 13 casos se concentran en cinco palancas claramente identificadas: (a)~enriquecimiento del atajo coordinador con un \texttt{JOIN} a \texttt{profesores} resolvería los cuatro casos X-P01, X-P03, X-P04 y P-P08; (b)~la incorporación del grupo a la tabla \texttt{profesor\_asignatura} cubre P-P07; (c)~un par de flujos NLU adicionales (\texttt{consulta\_titulacion\_por\_tema} y enrutado profesor$\rightarrow$aula) resuelve X-P05 y X-P06; (d)~la palanca de seguimiento conversacional descrita en la Sección~\ref{subsec:conc-fut-optimizacion} cubre P-S01 y H-S01; y (e)~la distinción aula teoría/laboratorio mediante columna en BD cubre HA-P09, HA-P10 y HA-W06. La sexta entrada, P-W03, depende exclusivamente de calibrar el umbral del \textit{fuzzy matching} de profesorado. Esta distribución refuerza la lectura de la Sección~\ref{sec:pruebas-discusion}: los fallos residuales son conocidos, aislados y gestionables con cambios localizados, no con un rediseño de la arquitectura.

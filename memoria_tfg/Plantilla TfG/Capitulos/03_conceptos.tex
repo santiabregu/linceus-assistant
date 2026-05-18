@@ -6,9 +6,9 @@ Este capítulo presenta la terminología fundamental sobre la que se construye e
 \section{Sistema conversacional}
 \label{sec:sistema-conversacional}
 
-Un sistema conversacional es una aplicación software diseñada para interactuar con usuarios mediante lenguaje natural. El sistema interpreta cada entrada textual, mantiene el estado del diálogo a lo largo del tiempo y genera respuestas coherentes en función del contexto y de los objetivos definidos.
+Un sistema conversacional es una aplicación software diseñada para interactuar con usuarios mediante lenguaje natural~\cite{jurafsky2009speech}. El sistema interpreta cada entrada textual, mantiene el estado del diálogo a lo largo del tiempo y genera respuestas coherentes en función del contexto y de los objetivos definidos.
 
-En el caso de Linceus Assistant, el sistema se especializa en consultas académicas del ámbito de la ETSII: horarios, información de asignaturas, datos de contacto del profesorado y normativa universitaria. Esta especialización condiciona tanto el diseño del modelo de lenguaje como la estructura de la base de datos.
+En el caso de Linceus Assistant, el sistema se especializa en consultas académicas del ámbito de la ETSII: horarios, información de asignaturas y datos de contacto del profesorado. Esta especialización condiciona tanto el diseño del modelo de lenguaje como la estructura de la base de datos.
 
 \section{Componentes del sistema conversacional con Rasa}
 \label{sec:conceptos-rasa}
@@ -19,11 +19,11 @@ El framework Rasa organiza el sistema en dos capas bien diferenciadas: la compre
 
 El módulo NLU procesa cada mensaje del usuario para extraer dos tipos de información: la intención que expresa y las entidades que contiene.
 
-\paragraph{Intent}
+\paragraph{Intent.}
 
-Un intent representa el propósito o el objetivo del mensaje del usuario. Cada entrada se clasifica en una única intención que determina el tipo de acción que debe ejecutar el asistente. En el proyecto se definen intents específicos para cada dominio funcional: consulta de horarios, búsqueda de profesores, información sobre asignaturas o preguntas sobre normativa.
+Un intent representa el propósito o el objetivo del mensaje del usuario. Cada entrada se clasifica en una única intención que determina el tipo de acción que debe ejecutar el asistente. En el proyecto se definen intents específicos para cada dominio funcional: consulta de horarios, búsqueda de profesores, información sobre asignaturas o cambio dinámico de titulación.
 
-\paragraph{Entity}
+\paragraph{Entity.}
 
 Una entidad es un fragmento de información concreta extraído del mensaje que completa la intención detectada. Por ejemplo, en la frase \textit{``¿Cuándo es la clase de Bases de Datos del grupo 2?''}, el intent es \texttt{consultar\_horario}, la entidad \texttt{nombre\_asignatura} toma el valor \textit{Bases de Datos} y la entidad \texttt{grupo} toma el valor \textit{2}. Las entidades se definen en el archivo \texttt{domain.yml} y se anotan en los ejemplos de entrenamiento dentro de \texttt{data/nlu.yml}.
 
@@ -31,11 +31,11 @@ Una entidad es un fragmento de información concreta extraído del mensaje que c
 
 Una vez que el NLU ha identificado el intent y las entidades, el gestor de diálogo decide qué acción ejecutar a continuación. Este componente trabaja con tres elementos principales: slots, el tracker y las políticas de diálogo.
 
-\paragraph{Slot}
+\paragraph{Slot.}
 
 Un slot es una variable de memoria que persiste durante toda la conversación. Mientras que una entidad se extrae del mensaje actual y se descarta al siguiente turno, un slot conserva el valor extraído para que esté disponible en acciones posteriores. En Rasa, los slots se declaran en \texttt{domain.yml} y se tipan según el dato que almacenan: texto, número, valor booleano o valor categórico.
 
-\paragraph{Tracker}
+\paragraph{Tracker.}
 
 El tracker es la estructura interna que almacena el estado completo de la conversación en cada instante. Contiene el historial de mensajes del usuario, los intents detectados, las entidades extraídas, los valores actuales de los slots y las acciones ya ejecutadas. Las custom actions acceden al tracker para leer el contexto de la conversación antes de generar una respuesta.
 
@@ -87,7 +87,7 @@ La distinción entre \texttt{stories.yml} y \texttt{rules.yml} es relevante para
 Cuando el usuario envía un mensaje al asistente, el sistema lo procesa en tres etapas consecutivas:
 
 \begin{enumerate}
-    \item \textbf{NLU}: el texto se tokeniza, se vectoriza y se clasifica para obtener el intent y las entidades. En el proyecto, esta etapa combina el clasificador DIET de Rasa con una llamada opcional a la API de Gemini para los casos en que la confianza del clasificador local no supera el umbral definido.
+    \item \textbf{NLU}: el texto se tokeniza, se vectoriza y se clasifica para obtener el intent y las entidades. En el proyecto, esta etapa combina el clasificador DIET de Rasa con una llamada condicional a la API de Gemini, que se activa únicamente cuando la confianza del clasificador local no supera el umbral definido.
     \item \textbf{Gestión del diálogo}: el gestor consulta las rules y las stories para decidir la siguiente acción. El tracker se actualiza con el nuevo mensaje y los valores de los slots modificados.
     \item \textbf{Ejecución de la acción}: si la acción es una respuesta predefinida, se envía directamente. Si es una custom action, se ejecuta el código Python correspondiente, que puede consultar la base de datos, llamar a la API de Gemini o construir una respuesta RAG.
 \end{enumerate}
@@ -95,16 +95,16 @@ Cuando el usuario envía un mensaje al asistente, el sistema lo procesa en tres 
 \section{Generación aumentada por recuperación (RAG)}
 \label{sec:rag}
 
-La generación aumentada por recuperación (RAG, del inglés \textit{Retrieval Augmented Generation}) es una técnica que combina la búsqueda de información en una base de conocimiento con la generación de texto mediante un modelo de lenguaje~\cite{lewis2020retrieval}. El objetivo es reducir las alucinaciones propias de los modelos generativos proporcionándoles contexto factual relevante antes de generar la respuesta.
+La generación aumentada por recuperación (RAG, del inglés \textit{Retrieval Augmented Generation}) es una técnica que combina la búsqueda de información en una base de conocimiento con la generación de texto mediante un modelo de lenguaje~\cite{lewis2020retrieval}. El objetivo es reducir las alucinaciones propias de los modelos generativos~\cite{ji2023survey} proporcionándoles contexto factual relevante antes de generar la respuesta.
 
-En Linceus Assistant, el pipeline RAG opera en tres pasos. Primero, la consulta del usuario se transforma en un vector de alta dimensión mediante un modelo de embeddings. Segundo, ese vector se compara con los fragmentos almacenados en la base de datos vectorial para recuperar los más similares semánticamente. Tercero, los fragmentos recuperados se incorporan al prompt que se envía a Gemini, que genera la respuesta final fundamentada en esos contenidos.
+En Linceus Assistant, el pipeline RAG opera en cuatro pasos. Primero, la consulta del usuario se transforma en un vector de alta dimensión mediante un modelo de embeddings~\cite{mikolov2013word2vec}. Segundo, ese vector se compara con los fragmentos almacenados en la base de datos vectorial para recuperar los más similares semánticamente, empleando la similitud coseno como métrica estándar de proximidad semántica en recuperación de información~\cite{manning2008introduction}. Tercero, los fragmentos recuperados se someten a un paso de reranking basado en metadatos~\cite{nogueira2019passage}: el sistema detecta el tipo de consulta a partir de palabras clave (evaluación, contenidos, profesorado, bibliografía, etc.) y suma una bonificación sobre la similitud coseno según la sección del chunk, de modo que los fragmentos más pertinentes para esa categoría de pregunta asciendan en el ranking. Cuarto, los fragmentos reordenados se incorporan al prompt que se envía a Gemini, que genera la respuesta final fundamentada en esos contenidos.
 
 \section{Backend y persistencia de datos}
 \label{sec:backend}
 
 \subsection{Supabase y PostgreSQL}
 
-Supabase es una plataforma de backend basada en PostgreSQL que ofrece base de datos relacional, autenticación, API REST y soporte para la extensión pgvector~\cite{supabasedocs}. En el proyecto, Supabase centraliza dos tipos de información: los datos estructurados del dominio académico (asignaturas, profesores, horarios, normativa) y los vectores semánticos del sistema RAG.
+Supabase es una plataforma de backend basada en PostgreSQL que ofrece base de datos relacional, autenticación, API REST y soporte para la extensión pgvector~\cite{supabasedocs}. En el proyecto, Supabase centraliza dos tipos de información: los datos estructurados del dominio académico (asignaturas, profesores, horarios, planes docentes) y los vectores semánticos del sistema RAG.
 
 \subsection{pgvector}
 

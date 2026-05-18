@@ -9,7 +9,10 @@
       "Bash(python profesores/scraper_ccia.py)",
       "PowerShell(initexmf --admin --update-fndb)",
       "PowerShell(initexmf --update-fndb 2>&1)",
-      "PowerShell(Stop-Process -Force -ErrorAction SilentlyContinue)"
+      "PowerShell(Stop-Process -Force -ErrorAction SilentlyContinue)",
+      "Bash(pdflatex -interaction=nonstopmode -halt-on-error proyect.tex)",
+      "Bash(cd \"/c/Users/santi/Desktop/cuarto/TFG/linceus-assistant/memoria_tfg/Plantilla TfG\" && grep -nE \"^!|Fatal\" compile_pass2.log | head -10)",
+      "Read(//c/c/Users/santi/Desktop/cuarto/TFG/linceus-assistant/memoria_tfg/Plantilla TfG/**)"
     ]
   }
 }

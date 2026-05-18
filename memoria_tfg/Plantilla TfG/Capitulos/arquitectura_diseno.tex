@@ -10,7 +10,7 @@ Este capítulo describe la arquitectura del sistema LinceUS Assistant, las decis
 
 \section{Arquitectura general}\label{sec:arq-general}
 
-LinceUS Assistant sigue una \textbf{arquitectura por capas} (\textit{layered architecture}) con tres niveles claramente diferenciados: capa de presentación, capa de procesamiento conversacional y capa de datos. Esta separación permite que cada capa evolucione de forma independiente y que los cambios en una no afecten directamente a las demás, siempre que se respeten las interfaces definidas entre ellas.
+LinceUS Assistant sigue una \textbf{arquitectura por capas} (\textit{layered architecture})~\cite{bass2021sap} con tres niveles claramente diferenciados: capa de presentación, capa de procesamiento conversacional y capa de datos. Esta separación permite que cada capa evolucione de forma independiente y que los cambios en una no afecten directamente a las demás, siempre que se respeten las interfaces definidas entre ellas~\cite{martin2017clean}.
 
 \subsection{Capa de presentación}\label{subsec:capa-presentacion}
 
@@ -20,7 +20,7 @@ Las principales características de esta capa son:
 
 \begin{itemize}
     \item \textbf{Independencia tecnológica}: El widget no depende de frameworks como React o Angular; se implementa con JavaScript estándar (ES6+), lo que minimiza las dependencias y facilita su integración en páginas web existentes mediante una única etiqueta \texttt{<script>}.
-    \item \textbf{Comunicación REST}: El widget se comunica con el servidor Rasa mediante peticiones HTTP POST al endpoint \texttt{/webhooks/rest/webhook}, enviando mensajes del usuario y recibiendo las respuestas del asistente en formato JSON.
+    \item \textbf{Comunicación REST}: El widget se comunica con el servidor Rasa mediante peticiones HTTP POST al endpoint \texttt{/webhooks/rest/webhook}, enviando mensajes del usuario y recibiendo las respuestas del asistente en formato JSON. El estilo arquitectónico REST, definido por Fielding~\cite{fielding2000rest}, garantiza la ausencia de estado en el servidor y la interoperabilidad con cualquier cliente HTTP.
     \item \textbf{Renderizado enriquecido}: Soporta formato Markdown en las respuestas del bot, incluyendo tablas, enlaces y listas, para presentar la información académica de forma clara y estructurada.
     \item \textbf{Diseño institucional}: Emplea la identidad visual de la Universidad de Sevilla (colores corporativos, logotipo) para integrarse visualmente en el entorno universitario.
 \end{itemize}
@@ -43,7 +43,7 @@ La capa de datos se implementa sobre \textbf{Supabase}, una plataforma que propo
 \begin{itemize}
     \item \textbf{PostgreSQL}: Almacena toda la información académica estructurada: universidades, centros, titulaciones, asignaturas, planes docentes y sus metadatos asociados.
     \item \textbf{pgvector}: Extensión que añade el tipo de dato \texttt{vector} y operadores de similitud (distancia coseno, euclidiana y producto punto). Almacena los embeddings de los fragmentos de documentos vectorizados y permite realizar búsquedas semánticas eficientes mediante índices HNSW.
-    \item \textbf{Funciones SQL personalizadas}: Funciones almacenadas en la base de datos que encapsulan la lógica de búsqueda vectorial (\texttt{buscar\_plan\_docente()}, \texttt{buscar\_plan\_docente\_global()}), permitiendo filtrar por asignatura, grupo y curso académico con un umbral de similitud configurable.
+    \item \textbf{Funciones SQL personalizadas}: dos funciones almacenadas en la base de datos encapsulan la lógica de búsqueda vectorial. \texttt{buscar\_plan\_docente()} filtra por asignatura, grupo y curso académico, y su variante global busca en todos los planes con un umbral de similitud configurable.
 \end{itemize}
 
 % =====================================================
@@ -83,7 +83,7 @@ A continuación se describe la responsabilidad de cada componente y las interfac
 
 \section{Diagrama de despliegue}\label{sec:diagrama-despliegue}
 
-El diagrama de despliegue describe la distribución física de los componentes del sistema en nodos de ejecución y las conexiones de red entre ellos. La Figura~\ref{fig:despliegue} muestra esta configuración.
+El diagrama de despliegue describe la distribución física de los componentes del sistema en nodos de ejecución y las conexiones de red entre ellos~\cite{bass2021sap}. El sistema utiliza contenedores Docker~\cite{docker2024} orquestados mediante Docker Compose, lo que proporciona reproducibilidad del entorno y separación de responsabilidades entre servicios siguiendo el patrón de despliegue de microservicios independientes~\cite{newman2021microservices}. La Figura~\ref{fig:despliegue} muestra esta configuración.
 
 \begin{figure}[p]
 \centering
@@ -143,28 +143,28 @@ A lo largo del desarrollo del sistema se han tomado decisiones de diseño que ha
 
 \textbf{Contexto:} El sistema debe responder consultas sobre asignaturas que pueden formularse de formas muy diversas (por nombre, curso, tipología, créditos, duración o combinaciones de estos filtros). Implementar todas las variantes mediante reglas \textit{if-else} o expresiones regulares resultaría en un código excesivamente largo, frágil y difícil de mantener.
 
-\textbf{Decisión:} Se optó por un enfoque \textbf{Text-to-SQL basado en LLM}, donde el modelo Gemini (\texttt{gemma-3-27b-it}) recibe un prompt que incluye el esquema de la tabla \texttt{asignaturas}, las columnas permitidas y la pregunta del usuario, y genera la consulta SQL correspondiente.
+\textbf{Decisión:} Se optó por un enfoque \textbf{Text-to-SQL basado en LLM}~\cite{yu2018spider}, donde el modelo Gemini (\texttt{gemma-3-27b-it}) recibe un prompt que incluye el esquema de la tabla \texttt{asignaturas}, las columnas permitidas y la pregunta del usuario, y genera la consulta SQL correspondiente.
 
 \textbf{Justificación:}
 \begin{itemize}
     \item \textbf{Flexibilidad}: El modelo interpreta preguntas en lenguaje natural sin necesidad de anticipar todas las formulaciones posibles.
     \item \textbf{Mantenibilidad}: Añadir nuevos atributos o filtros solo requiere actualizar el prompt, no reescribir lógica de parsing.
-    \item \textbf{Seguridad}: Se aplican mecanismos de protección como una \textit{whitelist} de columnas permitidas, prohibición de subconsultas e inyección automática del filtro de titulación.
+    \item \textbf{Seguridad}: Se aplican mecanismos de protección como una \textit{whitelist} de columnas permitidas, prohibición de subconsultas e inyección automática del filtro de titulación, en línea con las recomendaciones de OWASP frente a inyección SQL~\cite{owasp2021injection}.
 \end{itemize}
 
-\textbf{Temperatura 0.0:} Se configura el modelo con temperatura cero para obtener respuestas deterministas, crítico para la generación de SQL donde la variabilidad es indeseable.
+\textbf{Temperatura 0.0:} Se configura el modelo con temperatura cero para obtener respuestas deterministas~\cite{holtzman2020curious}, crítico para la generación de SQL donde la variabilidad es indeseable.
 
-\subsection{Gemini como servicio principal con Ollama como alternativa local}\label{subsec:dd-gemini-ollama}
+\subsection{Gemini como servicio principal con Ollama como alternativa intercambiable}\label{subsec:dd-gemini-ollama}
 
-\textbf{Contexto:} El sistema requiere un modelo de lenguaje grande para Text-to-SQL y generación de embeddings. Depender exclusivamente de una API externa implica riesgos de disponibilidad y costes, mientras que depender solo de ejecución local exige hardware potente.
+\textbf{Contexto:} El sistema requiere un modelo de lenguaje grande para \textit{Text-to-SQL}, clasificación y generación de la respuesta natural. Depender exclusivamente de una API externa implica riesgos de disponibilidad y de cuota, mientras que depender solo de ejecución local exige hardware potente y sacrifica latencia.
 
-\textbf{Decisión:} Se adoptó una \textbf{estrategia dual}: Gemini como servicio principal (plan gratuito con 15.000 peticiones/día) y Ollama como alternativa local para situaciones donde la API externa no esté disponible.
+\textbf{Decisión:} Se adoptó una \textbf{estrategia dual de cliente intercambiable}: Gemini como servicio principal (plan gratuito con cuota suficiente para el volumen académico del proyecto) y Ollama como alternativa local. Ambos clientes están implementados en \texttt{shared/gemini\_client.py} y \texttt{shared/ollama\_client.py} con \textbf{idéntica firma} (\texttt{llamar\_gemini(prompt, modelo, timeout, options, context)} y \texttt{llamar\_ollama(prompt, modelo, timeout, options)}), lo que materializa un \textit{Strategy} configurable a nivel de \textit{build}: cambiar el proveedor exige modificar los \texttt{import} de las \textit{custom actions} (o redirigirlos mediante un envoltorio único \texttt{llm\_client.py} parametrizado por una variable de entorno), pero no requiere tocar la lógica de negocio.
 
 \textbf{Justificación:}
 \begin{itemize}
-    \item El plan gratuito de Gemini es suficiente para el volumen de uso académico del proyecto.
-    \item Ollama con \texttt{llama3.2:3b} permite seguir operando sin conexión a internet, aunque con menor calidad en las respuestas.
-    \item Esta dualidad alinea el proyecto con los requisitos de privacidad (RGPD), ya que el flujo local no envía datos a terceros.
+    \item El plan gratuito de Gemini es suficiente para el volumen de uso académico del proyecto y proporciona la latencia que exige el caso de uso interactivo (1,8\,s mediana frente a 4,1\,s observados con Ollama y \texttt{llama3.2:3b} sobre CPU).
+    \item Ollama con \texttt{llama3.2:3b} se conserva como alternativa operativa de pleno derecho: instalable localmente, sin conexión a internet y sin envío de datos a terceros, lo que alinea el flujo local con los requisitos de privacidad (RGPD) en caso de que se opte por una explotación \textit{on-premise}.
+    \item La conmutación entre proveedores es de configuración, no automática \textit{en caliente}: si Gemini deja de responder, el \textit{Action Server} no cambia de cliente sobre la marcha. La degradación elegante en línea está reservada al pipeline RAG, donde sí existe un \textit{fallback} a búsqueda por palabras clave (Sección~\ref{subsec:dd-fallback}). La incorporación de un \textit{failover} automático a Ollama figura entre las líneas de mejora del Capítulo~\ref{cap:conclusiones}.
 \end{itemize}
 
 \subsection{Embeddings de 2000 dimensiones con HNSW}\label{subsec:dd-embeddings}
@@ -188,7 +188,7 @@ A lo largo del desarrollo del sistema se han tomado decisiones de diseño que ha
 
 \textbf{Justificación:}
 \begin{itemize}
-    \item 800 caracteres ($\approx$150--200 tokens) es suficiente para capturar un párrafo o sección temática completa, en línea con los valores recomendados por LangChain~\cite{langchainChunking}.
+    \item 800 caracteres ($\approx$150--200 tokens) es suficiente para capturar un párrafo o sección temática completa, en línea con los valores recomendados por LangChain.
     \item El solapamiento del 12,5\,\% mitiga la pérdida de información en los límites de fragmento, técnica habitual en pipelines de RAG~\cite{lewis2020retrieval,karpukhin2020dpr}.
     \item Se aplica detección de secciones por expresiones regulares (``Datos básicos'', ``Objetivos'', ``Contenidos'', ``Evaluación'', ``Bibliografía'') para etiquetar cada fragmento con su sección de origen, una práctica de \textit{metadata-augmented retrieval} que mejora la precisión sobre dominios estructurados~\cite{es2024ragas}.
 \end{itemize}
@@ -210,7 +210,7 @@ A lo largo del desarrollo del sistema se han tomado decisiones de diseño que ha
 
 \textbf{Contexto:} Los usuarios introducen nombres de asignaturas con errores ortográficos, sin tildes, con abreviaturas o con variaciones coloquiales (``FP'' por ``Fundamentos de Programación'', ``ADDA'' por ``Análisis y Diseño de Datos y Algoritmos'').
 
-\textbf{Decisión:} Se integró la librería \textbf{RapidFuzz} con un umbral de similitud del 80\% combinado con una tabla de alias y acrónimos mantenida en el código.
+\textbf{Decisión:} Se integró la librería \textbf{RapidFuzz}, basada en métricas estándar de distancia entre cadenas~\cite{cohen2003comparison}, con un umbral de similitud del 80\% combinado con una tabla de alias y acrónimos mantenida en el código.
 
 \textbf{Justificación:}
 \begin{itemize}
@@ -238,36 +238,39 @@ A lo largo del desarrollo del sistema se han tomado decisiones de diseño que ha
     \item El slot \texttt{contexto\_titulacion} no tiene un valor por defecto: en el primer turno de cada sesión el \textit{widget} muestra un \textbf{modal de selección de titulación} con las opciones disponibles (GII-IS, GII-TI, GII-IC), de modo que la titulación queda fijada explícitamente por el usuario antes de cualquier consulta. Esta decisión (revisión R3) sustituye al antiguo valor por defecto GII-IS, que generaba respuestas incorrectas cuando el alumno pertenecía a otra titulación y no formulaba un cambio explícito. El slot puede modificarse posteriormente mediante la intención \texttt{cambiar\_contexto\_academico} dentro del flujo conversacional.
 \end{itemize}
 
-\subsection{Pipeline NLU de 9 etapas con doble featurización}\label{subsec:dd-pipeline}
+\subsection{Pipeline NLU con preentreno spaCy y featurización híbrida}\label{subsec:dd-pipeline}
 
-\textbf{Contexto:} El pipeline NLU de Rasa~\cite{rasadocs,bocklisch2017rasa} debe ser capaz de clasificar correctamente intenciones en español, tolerando errores ortográficos, abreviaturas y variaciones léxicas propias del lenguaje coloquial estudiantil.
+\textbf{Contexto:} El pipeline NLU de Rasa~\cite{rasadocs,bocklisch2017rasa} debe ser capaz de clasificar correctamente intenciones en español, tolerando errores ortográficos, abreviaturas y variaciones léxicas propias del lenguaje coloquial estudiantil, sobre un corpus de entrenamiento reducido (entre 600 y 800 ejemplos en el cierre de prototipo).
 
-\textbf{Decisión:} Se configuró un pipeline de 9 componentes que combina \textbf{featurización a nivel de palabra} (n-gramas 1--2) y \textbf{a nivel de carácter} (n-gramas 1--4), siguiendo el diseño \textit{multi-featurizer} recomendado en la documentación oficial~\cite{rasadocs}:
+\textbf{Decisión:} Se configuró un pipeline de 11 componentes que apoya el clasificador \texttt{DIETClassifier} sobre \textbf{embeddings preentrenados de spaCy en español} (\texttt{es\_core\_news\_md}) y combina \textbf{featurización a nivel de palabra} (n-gramas 1--2), \textbf{a nivel de carácter} (n-gramas 2--4) y \textbf{vectores densos de spaCy}, siguiendo el diseño \textit{multi-featurizer} recomendado en la documentación oficial~\cite{rasadocs}:
 
 \begin{enumerate}
-    \item \texttt{WhitespaceTokenizer}~\cite{rasadocs}: Tokenización por espacios en blanco.
-    \item \texttt{RegexFeaturizer}~\cite{rasadocs}: Patrones regex para códigos de asignatura y formatos especiales.
-    \item \texttt{LexicalSyntacticFeaturizer}~\cite{rasadocs}: Características gramaticales del contexto local.
-    \item \texttt{CountVectorsFeaturizer} (palabra)~\cite{rasadocs}: N-gramas de palabras (1--2).
-    \item \texttt{CountVectorsFeaturizer} (carácter)~\cite{rasadocs}: N-gramas de caracteres (1--4).
-    \item \texttt{DIETClassifier}~\cite{bocklisch2020diet}: Clasificador dual de intenciones y entidades (150 épocas, dropout 0.2).
-    \item \texttt{EntitySynonymMapper}~\cite{rasadocs}: Normalización de sinónimos de entidades.
-    \item \texttt{ResponseSelector}~\cite{rasadocs}: Selección de respuestas tipo FAQ.
-    \item \texttt{FallbackClassifier}~\cite{rasadocs}: Detección de baja confianza (umbral 0.7).
+    \item \texttt{SpacyNLP} (modelo \texttt{es\_core\_news\_md}): carga del modelo de lenguaje preentrenado en español, base de los \textit{embeddings} léxicos densos.
+    \item \texttt{SpacyTokenizer}: tokenización respetando la segmentación morfológica del modelo de español.
+    \item \texttt{RegexFeaturizer}: patrones regex para códigos de asignatura y formatos especiales.
+    \item \texttt{LexicalSyntacticFeaturizer}: características gramaticales del contexto local.
+    \item \texttt{CountVectorsFeaturizer} (palabra): n-gramas de palabras (1--2).
+    \item \texttt{CountVectorsFeaturizer} (carácter): n-gramas de caracteres (2--4); los n-gramas de un solo carácter se descartaron por aportar ruido sin mejorar la robustez frente a typos.
+    \item \texttt{SpacyFeaturizer}: \textit{features} densas derivadas del modelo de spaCy, complementarias a las cuentas léxicas.
+    \item \texttt{DIETClassifier}~\cite{bocklisch2020diet}: clasificador dual de intenciones y entidades (150 épocas, \textit{dropout} 0,2, \texttt{constrain\_similarities = true}).
+    \item \texttt{EntitySynonymMapper}: normalización de sinónimos de entidades.
+    \item \texttt{ResponseSelector}: selección de respuestas tipo FAQ (150 épocas).
+    \item \texttt{FallbackClassifier}: detección de baja confianza, configurada con \texttt{threshold = 0,8} y \texttt{ambiguity\_threshold = 0,10}.
 \end{enumerate}
 
 \textbf{Justificación:}
 \begin{itemize}
+    \item El uso de embeddings preentrenados de spaCy en español (\texttt{es\_core\_news\_md}) es la decisión que permite que el \texttt{DIETClassifier} aprenda con un corpus pequeño: palabras como \textit{difícil}, \textit{mejor} o \textit{peor} llegan al clasificador con su vector semántico ya construido, en lugar de inferirlo desde cero a partir de las cuentas léxicas. Sin esta entrada densa, los experimentos preliminares sobre el mismo conjunto de ejemplos mostraban una clasificación notablemente menos estable en consultas reformuladas con sinónimos.
     \item La featurización a nivel de carácter es especialmente eficaz para manejar errores ortográficos (``Fundamnetos'' se reconoce por similitud de caracteres con ``Fundamentos''), efecto documentado en el artículo original de DIET~\cite{bocklisch2020diet}.
-    \item El umbral de fallback de 0.7 equilibra la precisión (evitar respuestas incorrectas) con la cobertura (no rechazar demasiadas consultas legítimas), valor coherente con los rangos reportados en \textit{benchmarks} de detección de intenciones~\cite{casanueva2020efficient}.
-    \item El \texttt{DIETClassifier} con 150 épocas y dropout de 0.2 proporciona un modelo robusto sin sobreajuste al conjunto de entrenamiento, en línea con la configuración recomendada por sus autores~\cite{bocklisch2020diet}.
+    \item El umbral de fallback de 0,8 equilibra la precisión (evitar respuestas incorrectas) con la cobertura (no rechazar demasiadas consultas legítimas), y el \texttt{ambiguity\_threshold = 0,10} es decisivo en consultas como \textit{«asignatura más difícil»}, donde dos intenciones (\texttt{preguntar\_hay\_mas} y \texttt{consulta\_asignaturas\_listado}) compiten con probabilidades cercanas; sin la regla de ambigüedad el sistema se decantaba por la opción con confianza ligeramente superior aunque no fuera la correcta. Estos valores son coherentes con los rangos reportados en \textit{benchmarks} de detección de intenciones~\cite{casanueva2020efficient}.
+    \item El \texttt{DIETClassifier} con 150 épocas y \textit{dropout} de 0,2 proporciona un modelo robusto sin sobreajuste al conjunto de entrenamiento, en línea con la configuración recomendada por sus autores~\cite{bocklisch2020diet}.
 \end{itemize}
 
 \subsection{Hash SHA-256 para evitar reprocesamiento de documentos}\label{subsec:dd-hash}
 
 \textbf{Contexto:} El pipeline de vectorización RAG procesa documentos PDF que pueden ser costosos de re-vectorizar (extracción de texto, chunking, generación de embeddings con API de pago por uso).
 
-\textbf{Decisión:} Se almacena un \textbf{hash SHA-256} de cada PDF procesado en la tabla \texttt{planes\_docentes}. Antes de procesar un documento, se compara el hash actual con el almacenado.
+\textbf{Decisión:} La tabla \texttt{planes\_docentes} guarda un \textbf{hash SHA-256}~\cite{nistFips180} de cada PDF procesado. El hash se calcula sobre el contenido binario íntegro del fichero (en bloques de 8\,KB para no cargar el PDF entero en memoria), lo que detecta cualquier modificación a nivel de bytes sin necesidad de parsear el documento. Antes de procesar un documento, se compara el hash actual con el almacenado.
 
 \textbf{Justificación:}
 \begin{itemize}
@@ -302,4 +305,4 @@ El pipeline de vectorización sigue el patrón \textit{Pipeline} (o \textit{Pipe
 
 \subsection{Patrón \textit{Repository} para acceso a datos}
 
-El módulo \texttt{db.py} centraliza todas las operaciones contra la base de datos, proporcionando una abstracción que oculta los detalles de conexión (pool de conexiones psycopg2) y ejecución de consultas al resto del sistema. Esto facilita el testing unitario mediante mocks y permite cambiar la implementación de persistencia sin modificar la lógica de negocio.
+El módulo \texttt{db.py} centraliza todas las operaciones contra la base de datos, siguiendo el patrón \textit{Repository}~\cite{fowler2002patterns} y proporcionando una abstracción que oculta los detalles de conexión (pool de conexiones psycopg2) y ejecución de consultas al resto del sistema. Esto facilita el testing unitario mediante mocks y permite cambiar la implementación de persistencia sin modificar la lógica de negocio.

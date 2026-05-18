@@ -8,6 +8,7 @@ import json
 from typing import Dict, Any, List, Optional, Tuple
 from ..shared.gemini_client import llamar_gemini as llamar_llm
 from ..shared.db import db_client
+from ..shared.json_utils import extraer_json_dict
 
 
 # ── Schema de la BD (para el prompt del LLM) ──
@@ -384,13 +385,9 @@ JSON:"""
             }
         )
         if respuesta:
-            # Buscar JSON desde primera { hasta última }
-            inicio = respuesta.find('{')
-            fin = respuesta.rfind('}')
-
-            if inicio != -1 and fin != -1 and fin > inicio:
-                json_str = respuesta[inicio:fin+1]
-                data = json.loads(json_str)
+            # Extraer JSON tolerando razonamiento + markdown del LLM
+            data = extraer_json_dict(respuesta, requiere_clave='sql')
+            if data is not None:
                 # Validar la SQL generada
                 sql_validada = validar_sql(data.get('sql', ''), tipo='select')
                 if sql_validada:
@@ -488,24 +485,17 @@ GENERA SOLO EL JSON (sin explicaciones):"""
         )
         if respuesta:
             print(f"🔍 Respuesta cruda del LLM:\n{respuesta}\n")
-
-            # Buscar JSON desde primera { hasta última }
-            inicio = respuesta.find('{')
-            fin = respuesta.rfind('}')
-
-            if inicio != -1 and fin != -1 and fin > inicio:
-                json_str = respuesta[inicio:fin+1]
-                print(f"🔍 JSON extraído: {json_str}")
-                data = json.loads(json_str)
+            # Extraer JSON tolerando razonamiento + markdown del LLM
+            data = extraer_json_dict(respuesta, requiere_clave='sql')
+            if data is not None:
+                print(f"🔍 JSON extraído: {data}")
                 sql_validada = validar_sql(data.get('sql', ''), tipo='select')
                 if sql_validada:
                     data['sql'] = _inyectar_filtro_titulacion(sql_validada, contexto_titulacion)
                     data['valido'] = True
                     return data
             else:
-                print("❌ No se encontró JSON en la respuesta")
-    except json.JSONDecodeError as e:
-        print(f"❌ Error parseando JSON: {e}")
+                print("❌ No se encontró JSON válido en la respuesta")
     except Exception as e:
         print(f"Error generando SQL listado: {e}")
 
@@ -585,13 +575,9 @@ JSON:"""
             }
         )
         if respuesta:
-            # Buscar JSON desde primera { hasta última }
-            inicio = respuesta.find('{')
-            fin = respuesta.rfind('}')
-
-            if inicio != -1 and fin != -1 and fin > inicio:
-                json_str = respuesta[inicio:fin+1]
-                data = json.loads(json_str)
+            # Extraer JSON tolerando razonamiento + markdown del LLM
+            data = extraer_json_dict(respuesta, requiere_clave='sql')
+            if data is not None:
                 sql_validada = validar_sql(data.get('sql', ''), tipo='count')
                 if sql_validada:
                     data['sql'] = _inyectar_filtro_titulacion(sql_validada, contexto_titulacion)

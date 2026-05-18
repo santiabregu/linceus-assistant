@@ -37,10 +37,10 @@ El código se organiza en una carpeta \texttt{actions/} con un módulo por épic
 
 \section{Anatomía común de una \textit{custom action}}\label{sec:impl-anatomia}
 
-Antes de entrar en cada épica, conviene fijar el patrón al que responden todas las acciones del proyecto. Una \textit{custom action} de Rasa es una clase Python que hereda de \texttt{Action} y expone un método \texttt{run(dispatcher, tracker, domain)}. Dentro de ese método, todas las épicas siguen una misma secuencia de cinco pasos.
+Antes de entrar en cada épica, conviene fijar el patrón al que responden todas las acciones del proyecto. Una \textit{custom action} de Rasa es una clase Python que hereda de \texttt{Action} y expone un método \texttt{run(dispatcher, tracker, domain)}. Esta estructura responde al patrón \textit{Template Method}~\cite{gamma1994gof}: la clase base define el esqueleto del algoritmo y cada subclase (cada épica) especializa los pasos concretos. Dentro de ese método, todas las épicas siguen una misma secuencia de cinco pasos.
 
 \begin{enumerate}
-    \item \textbf{Validación de contexto}: si la consulta requiere titulación y el slot \texttt{contexto\_titulacion} está vacío, la acción interrumpe el flujo y muestra los botones de selección de titulación. Esta comprobación está centralizada en \texttt{shared/follow\_up.py} para evitar duplicarla en cada épica.
+    \item \textbf{Validación de contexto}: si la consulta requiere titulación y el slot \texttt{contexto\_titulacion} está vacío, la acción interrumpe el flujo y muestra los botones de selección de titulación. Esta comprobación está centralizada en \texttt{shared/follow\_up.py} y se aplica en las épicas de asignaturas y horarios; la épica de profesores lee el slot si está presente para filtrar los resultados, pero no interrumpe el flujo cuando está vacío, ya que muchas consultas sobre profesorado no están ligadas a una titulación concreta.
     \item \textbf{Extracción y normalización}: se leen las entidades NLU del último mensaje y los slots persistentes. Los nombres se normalizan con NFKD (eliminación de tildes), paso a minúsculas y limpieza de partículas (\textit{de}, \textit{del}, \textit{la}, \textit{info}). Los acrónimos (\textit{FP}, \textit{ADDA}, \textit{DP1}) se expanden contra el diccionario \texttt{ALIAS\_ASIGNATURAS} de \texttt{shared/config.py}.
     \item \textbf{Resolución}: con el dato extraído se busca en la base de datos. Cuando hay varias coincidencias se aplica \textit{fuzzy matching} (\texttt{rapidfuzz}) para descartar falsos positivos. En consultas que no se pueden expresar como filtro estructurado (por ejemplo, contenido del plan docente), se delega en el pipeline RAG.
     \item \textbf{Generación de respuesta}: los datos recuperados se entregan al modelo Gemini junto con un prompt específico de la épica. Gemini se encarga de redactar la respuesta en lenguaje natural respetando un límite de 1500 caracteres. Si la llamada falla, cada épica dispone de una plantilla \textit{hardcoded} de respaldo.
@@ -60,16 +60,16 @@ La épica de asignaturas concentra cinco acciones: \texttt{ActionConsultaEspecif
 
 La acción \texttt{ActionConsultaEspecifica} responde a preguntas del tipo \textit{``¿cuántos créditos tiene Redes?''} o \textit{``¿cómo se evalúa Ingeniería del Software II?''}. Su pipeline (Figura~\ref{fig:pipe-asig-especifica}) se descompone en dos bloques lógicos: primero \textbf{resolver} a qué asignatura concreta se refiere el usuario, y después \textbf{decidir} si la respuesta vive en la tabla relacional o en el plan docente.
 
-\begin{figure}[hbtp]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}[pipe]
 \node[plstart] (in) {Mensaje del usuario};
 \node[plstep, below=of in, text width=44mm, minimum width=46mm] (resolv) {\textbf{Resolver asignatura} (cascada de 5 etapas, Listado~\ref{lst:asig-cascada})};
 \node[pldec, below=of resolv] (dec) {¿Pregunta sobre plan docente?};
-\node[plllm, left=14mm of dec] (clasif) {Gemini clasificador (heurística + LLM)};
+\node[plllm, left=6mm of dec, text width=32mm] (clasif) {Gemini clasificador (heurística + LLM)};
 \node[pldb, below=of dec] (vec) {Búsqueda vectorial \texttt{plan\_docente} (pgvector)};
 \node[plllm, below=of vec] (genrag) {Gemini redacta respuesta con \textit{chunks} como contexto};
-\node[plllm, right=18mm of dec] (gensql) {Gemini redacta respuesta con datos estructurales};
+\node[plllm, right=8mm of dec, text width=32mm] (gensql) {Gemini redacta respuesta con datos estructurales};
 \node[plend, below=of genrag] (out) {Respuesta + \texttt{SlotSet} de seguimiento};
 
 \draw[plflow] (in) -- (resolv);
@@ -87,40 +87,47 @@ La acción \texttt{ActionConsultaEspecifica} responde a preguntas del tipo \text
 
 \paragraph{Resolución del nombre de asignatura.} La función \texttt{resolver\_asignatura()} (en \texttt{actions/asignaturas/actions.py}) es la pieza más reutilizada del proyecto, porque el resto de épicas (horarios, profesores, fallback) la invocan para identificar la asignatura aludida por el usuario. Aplica una cascada de cinco estrategias en orden de mayor a menor confianza, y se detiene en la primera que devuelve un candidato fiable. El Listado~\ref{lst:asig-cascada} muestra el esqueleto de esa cascada.
 
-\begin{lstlisting}[language=python, caption={Cascada de resolucion de \texttt{resolver\_asignatura()} (\texttt{actions/asignaturas/actions.py}).}, label={lst:asig-cascada}]
-def resolver_asignatura(pregunta, tracker, contexto_titulacion,
-                        usar_seguimiento=True):
+\begin{lstlisting}[language=python, basicstyle=\ttfamily\footnotesize, caption={Cascada de resolucion de \texttt{resolver\_asignatura()}.}, label={lst:asig-cascada}]
+def resolver_asignatura(pregunta, tracker, contexto, seguir=True):
     # 1. Entidad NLU del ultimo mensaje (extractor de Rasa)
     nombre = extraer_nombre_asignatura(tracker, ...)
 
-    # 2. Expansion de acronimo contra ALIAS_ASIGNATURAS (FP -> Fundamentos...)
+    # 2. Expansion de acronimo (FP -> Fundamentos...)
     if nombre:
-        nombre = _expandir_alias(nombre, contexto_titulacion)
+        nombre = _expandir_alias(nombre, contexto)
 
-    # 3. Sin entidad NLU: regex sobre alias conocidos en el texto crudo
+    # 3. Sin entidad NLU: regex sobre alias en el texto crudo
     if not nombre:
-        for alias in sorted(ALIAS_ASIGNATURAS, key=len, reverse=True):
-            if re.search(r"\b" + re.escape(alias) + r"\b", pregunta.lower()):
-                nombre = _expandir_alias(alias, contexto_titulacion)
+        for alias in sorted(ALIAS, key=len, reverse=True):
+            patron = r"\b" + re.escape(alias) + r"\b"
+            if re.search(patron, pregunta.lower()):
+                nombre = _expandir_alias(alias, contexto)
                 break
 
-    # 4. Seguimiento: heredar slot ultimo_nombre_asignatura si <=3 turnos atras
-    if usar_seguimiento and not nombre:
-        if _contar_turnos_desde_slot(tracker, "ultimo_nombre_asignatura") <= 3:
-            nombre = tracker.get_slot("ultimo_nombre_asignatura")
+    # 4. Seguimiento: heredar slot si <=3 turnos atras
+    if seguir and not nombre:
+        slot = "ultimo_nombre_asignatura"
+        if _turnos_desde_slot(tracker, slot) <= 3:
+            nombre = tracker.get_slot(slot)
 
-    # 5. Fuzzy matching contra nombres reales de la BD (rapidfuzz, umbral 85)
+    # 5. Fuzzy matching contra nombres de la BD (umbral 85)
     if not nombre:
-        nombre = _resolver_nombre_desde_texto(pregunta, contexto_titulacion)
+        nombre = _resolver_desde_texto(pregunta, contexto)
 
-    # SELECT con ILIKE; si no hay resultados, fallback con fuzzy reordering
-    # (token_set_ratio contra la pregunta original para desempatar candidatos).
+    # SELECT con ILIKE; si vacio, fuzzy reordering por
+    # token_set_ratio contra la pregunta original.
     ...
 \end{lstlisting}
 
-Las cinco etapas no son intercambiables: el orden refleja una jerarquía de confianza. La entidad NLU (etapa 1) es la fuente más fiable porque el modelo de \textit{Diet Classifier} ya ha decidido que ese fragmento es un nombre de asignatura. La expansión de alias (etapa 2) traduce acrónimos como \textit{FP} o \textit{ADDA} a sus nombres canónicos antes de cualquier búsqueda. Si no hay entidad, una pasada por regex (etapa 3) intenta detectar alias en el texto crudo. La etapa 4 cubre las preguntas elípticas (\textit{``¿y los créditos?''}) heredando el último nombre consultado, siempre que sea reciente. Solo cuando todo lo anterior falla se recurre al \textit{fuzzy matching} contra los nombres normalizados de la base de datos (etapa 5), que es la estrategia más permisiva pero también la más propensa a confundir \textit{Administración} con \textit{Ampliación de Administración}; por eso es el último recurso.
+Las cinco etapas no son intercambiables: el orden refleja una jerarquía de confianza. La entidad NLU (etapa 1) es la fuente más fiable porque el modelo de \textit{DIET Classifier} ya ha decidido que ese fragmento es un nombre de asignatura. La expansión de alias (etapa 2) traduce acrónimos como \textit{FP} o \textit{ADDA} a sus nombres canónicos antes de cualquier búsqueda. Si no hay entidad, una pasada por regex (etapa 3) intenta detectar alias en el texto crudo. La etapa 4 cubre las preguntas elípticas (\textit{``¿y los créditos?''}) heredando el último nombre consultado, siempre que sea reciente. Solo cuando todo lo anterior falla se recurre al \textit{fuzzy matching} contra los nombres normalizados de la base de datos (etapa 5), que es la estrategia más permisiva pero también la más propensa a confundir \textit{Administración} con \textit{Ampliación de Administración}; por eso es el último recurso.
 
-\paragraph{Bifurcación entre datos estructurales y plan docente.} Una vez identificada la asignatura, el pipeline elige rama según la naturaleza de la pregunta. Una pregunta sobre datos estructurales (créditos, curso, tipología, duración) se resuelve con el \texttt{SELECT} ya ejecutado durante la resolución y se entrega a Gemini para que redacte una frase natural. Una pregunta sobre contenido del plan docente (evaluación, temario, metodología, bibliografía) requiere recuperación vectorial: la consulta se transforma en \textit{embedding} con \texttt{text-embedding-004}, se recuperan los \textit{chunks} más similares de la tabla \texttt{plan\_docente} mediante \texttt{pgvector}, y esos fragmentos se entregan a Gemini como contexto.
+\paragraph{Saneamiento de la entidad NLU antes de la cascada.} La etapa 1 incluye una limpieza específica del valor que devuelve el extractor de entidades, implementada en \texttt{extraer\_\allowbreak nombre\_\allowbreak asignatura()}. El \textit{DIET Classifier} en ocasiones marca como \texttt{nombre\_asignatura} tokens que en realidad son partículas (\textit{info}, \textit{datos}, \textit{hablame}, \textit{sobre}) o fragmentos de la titulación inline (\textit{software}, \textit{computadores}, \textit{ingeniería}, \textit{grado}, \textit{tecnologías}); la función descarta estas listas hardcodeadas, elimina sufijos vacíos (\textit{de}, \textit{del}, \textit{la}, \textit{el}, \textit{las}, \textit{los}) de forma iterativa y, si tras la limpieza siguen quedando varias entidades, se queda con la más larga. Este saneamiento evita que una consulta como \textit{``info de Software''} (refiriéndose al grado) acabe disparando la búsqueda de una asignatura llamada \textit{Software}, un falso positivo que se observó de forma sistemática durante la fase de validación interna.
+
+\paragraph{Match exacto antes del fuzzy.} El paso final de \texttt{resolver\_asignatura()}, una vez ejecutado el \texttt{SELECT} con \texttt{ILIKE}, contempla el caso de coincidencias múltiples. Antes de aplicar \texttt{token\_set\_ratio} sobre la pregunta completa, la función comprueba si alguna fila se llama \textit{exactamente} igual al nombre que se está resolviendo (tras la normalización) y, si la hay, la devuelve sin reordenar. Esta comprobación evita un error sistemático en el seguimiento conversacional cuando un nombre de asignatura es prefijo de otro: sin ella, \textit{Administración de Empresas} se reordena hacia \textit{Ampliación de Administración de Empresas} porque el \texttt{ILIKE \%administracion\%} trae ambas filas y el \textit{fuzzy} las puntúa muy parecido. La regla aplica a varios pares conocidos: AE/AAE, IA/AIA, BD/CBD, IS/ISPP.
+
+\paragraph{Detección de consultas con dos asignaturas.} \texttt{ActionConsultaEspecifica} contempla una rama complementaria para frases del tipo \textit{``diferencia entre DP1 y PSG2''} o \textit{``cómo se evalúan ISPP e IS''}. Una función auxiliar (\texttt{\_extraer\_multiples\_nombres}) busca el patrón \texttt{[alias]~(y$\vert$,$\vert$e)~[alias]} sobre el texto crudo, expande cada coincidencia contra el diccionario de alias y, si recupera al menos dos asignaturas válidas, deriva a un flujo paralelo (\texttt{\_run\_multi}) que invoca el RAG para cada una etiquetando los \textit{chunks} con el nombre de la asignatura de origen. La respuesta final agrupa los fragmentos por asignatura para que el redactor de Gemini pueda contrastar la información sin mezclarla.
+
+\paragraph{Bifurcación entre datos estructurales y plan docente.} Una vez identificada la asignatura, el pipeline elige rama según la naturaleza de la pregunta. Una pregunta sobre datos estructurales (créditos, curso, tipología, duración) se resuelve con el \texttt{SELECT} ya ejecutado durante la resolución y se entrega a Gemini para que redacte una frase natural. Una pregunta sobre contenido del plan docente (evaluación, temario, metodología, bibliografía) requiere recuperación vectorial: la consulta se transforma en \textit{embedding} con \texttt{gemini-embedding-001} (vector de 2\,000~dimensiones, reducido desde los 3\,072 nativos para encajar con holgura en el índice HNSW de \texttt{pgvector}), se recuperan los \textit{chunks} más similares de la tabla \texttt{planes\_docentes\_chunks} y, antes de entregarlos a Gemini, se aplica un proceso de \textit{reranking} aditivo: los fragmentos cuya sección del plan docente coincide con el tipo de consulta detectado (evaluación, profesorado, contenidos, etc.) reciben una bonificación sobre su puntuación de similitud coseno, lo que mejora la relevancia del contexto seleccionado sin descartar ningún \textit{chunk} potencialmente útil. El mecanismo completo se detalla en la Sección~\ref{subsec:impl-rag-busqueda}.
 
 La decisión entre las dos ramas la toma un clasificador en dos pasos. Primero se aplica una heurística rápida basada en palabras clave (\textit{evalúa}, \textit{temario}, \textit{bibliografía}, \textit{competencias}, \textit{metodología}); si la heurística no es concluyente, se invoca a Gemini con un \textit{prompt} específico de clasificación binaria a temperatura cero. Este diseño evita llamadas innecesarias al LLM en los casos triviales y mantiene la precisión cuando la frase es ambigua.
 
@@ -152,7 +159,11 @@ Las acciones \texttt{ActionConsultaListado} y \texttt{ActionConsultaConteo} resp
 
 Toda esta lógica vive en \texttt{actions/asignaturas/text\_to\_sql.py}, separada del fichero \texttt{actions.py} de la épica para mantener pequeño el módulo principal y reutilizable el flujo de generación de SQL desde otras épicas (la consulta de profesores reaprovecha la misma cadena de \textit{prompt}, validador e inyector de \texttt{titulacion\_id}).
 
-El SQL generado por el modelo no se ejecuta directamente. Pasa por un validador propio (\texttt{validar\_sql}) que rechaza cualquier sentencia que no empiece por \texttt{SELECT}, que acceda a tablas no permitidas o que contenga patrones peligrosos (\texttt{UNION}, \texttt{OR 1=1}, \texttt{SLEEP}, modificación de datos). Tras la validación, un paso adicional inyecta automáticamente el filtro \texttt{titulacion\_id} a partir del slot \texttt{contexto\_titulacion} para que un usuario que ha elegido GII-IS no reciba resultados de GII-TI. Solo entonces se ejecuta la consulta con \texttt{psycopg2} y se entrega el resultado a Gemini para la redacción final, que avisa explícitamente cuando la respuesta es una muestra paginada.
+El SQL generado por el modelo no se ejecuta directamente. Pasa por un validador propio (\texttt{validar\_sql}) que aplica cuatro comprobaciones en cascada antes de admitir la sentencia. Primero, exige que la cadena empiece por \texttt{SELECT} en mayúsculas tras la normalización, lo que descarta de plano cualquier intento de \texttt{INSERT}, \texttt{UPDATE}, \texttt{DELETE}, \texttt{DROP}, \texttt{ALTER}, \texttt{CREATE}, \texttt{TRUNCATE} o \texttt{EXEC}. Segundo, rechaza la presencia de catorce patrones que el corpus de OWASP~\cite{owasp2021injection} identifica como vectores comunes de inyección SQL: \texttt{--} y \texttt{;--} (comentarios de finalización de sentencia), \texttt{UNION SELECT}, \texttt{OR 1=1} y \texttt{OR '1'='1'} (saltos lógicos del \texttt{WHERE}), \texttt{SLEEP()} y \texttt{BENCHMARK()} (ataques temporizados), y de nuevo todos los verbos de modificación de datos por si aparecen anidados. Tercero, contrasta los nombres de las tablas referenciadas contra una lista blanca (\texttt{asignaturas}, \texttt{titulaciones} para esta épica) y rechaza cualquier acceso fuera de ella. Cuarto, valida que las columnas seleccionadas pertenezcan al conjunto \texttt{COLUMNAS\_PERMITIDAS} definido en el propio módulo, lo que cierra la posibilidad de exfiltrar campos sensibles incluso desde una tabla autorizada. Para la acción de conteo, el validador exige además que la proyección sea exactamente \texttt{COUNT(*)} para evitar agregaciones inesperadas como \texttt{COUNT(email)}.
+
+Tras la validación, un paso adicional inyecta automáticamente el filtro \texttt{titulacion\_id} a partir del slot \texttt{contexto\_titulacion}, para que un usuario que ha elegido GII-IS no reciba resultados de GII-TI. La inyección no \textit{hardcodea} el UUID de la titulación: si el SQL contiene una cláusula \texttt{WHERE activa = true}, se le añade \texttt{AND titulacion\_id = (SELECT id FROM titulaciones WHERE codigo = \%s LIMIT 1)} y se pasa el código de titulación como parámetro de \texttt{psycopg2}; si no existe esa cláusula, el filtro se inserta al inicio del \texttt{WHERE}. La sub-consulta parametrizada evita exponer los identificadores internos y aprovecha la barrera nativa de \texttt{psycopg2} contra la inyección, que es la segunda línea de defensa cuando el validador anterior deja pasar algo.
+
+Solo entonces se ejecuta la consulta con \texttt{psycopg2} y se entrega el resultado a Gemini para la redacción final, que avisa explícitamente cuando la respuesta es una muestra paginada.
 
 La acción de conteo es estructuralmente idéntica pero el prompt instruye al modelo para devolver \texttt{SELECT COUNT(*)}. Si la pregunta hace referencia a una asignatura específica con palabras propias del plan docente (\textit{``¿cuántos temas tiene FP?''}), la heurística delega en \texttt{ActionConsultaEspecifica} en vez de generar un \texttt{COUNT}, porque la respuesta correcta proviene del documento, no de la base relacional.
 
@@ -167,7 +178,7 @@ La acción de conteo es estructuralmente idéntica pero el prompt instruye al mo
 
 \texttt{ActionConsultaProfesor} responde a un abanico amplio de consultas sobre el profesorado: correo, despacho, departamento, profesores que imparten una asignatura concreta o, indirectamente, tutorías. El pipeline tiene dos vías de resolución, \textit{text-to-SQL} sobre la tabla \texttt{profesores} y RAG vectorial sobre el plan docente, y la acción decide entre ellas en tres puntos distintos del flujo. La Figura~\ref{fig:pipe-profesores} resume su estructura.
 
-\begin{figure}[hbtp]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}[pipe, node distance=7mm and 10mm]
 \node[plstart] (in) {Mensaje del usuario};
@@ -206,30 +217,35 @@ Conviene precisar qué hay y qué no hay en la base relacional, porque los tres 
 
 El primer atajo se dispara cuando la pregunta menciona explícitamente \textit{coordinador} o \textit{suplente}, datos que viven en el plan docente y no en la columna (vacía) \texttt{es\_coordinador}. El segundo, cuando combina asignatura y un grupo concreto (\textit{``profesores de Redes en el grupo 2''}): SQL no puede filtrar por grupo porque la columna \texttt{grupo} también está vacía. El tercero es un fallback que rescata la consulta cuando el text-to-SQL devuelve cero filas pero el usuario sí ha mencionado una asignatura; cubre los casos en que la asignación profesor--asignatura del plan docente todavía no se ha sincronizado a \texttt{profesor\_asignatura} o el nombre que dio el usuario no matchea ninguna fila del JOIN. El Listado~\ref{lst:prof-atajos} muestra los dos primeros atajos tal como están implementados.
 
-\begin{lstlisting}[language=python, caption={Atajos a RAG en \texttt{ActionConsultaProfesor} (\texttt{actions/profesores/actions.py}).}, label={lst:prof-atajos}]
+\begin{lstlisting}[language=python, basicstyle=\ttfamily\footnotesize, caption={Atajos a RAG en \texttt{ActionConsultaProfesor}.}, label={lst:prof-atajos}]
 # Atajo 1: rol coordinador/suplente -> RAG directo
-if codigo_asignatura and _pregunta_menciona_rol_rag(pregunta):
-    chunks = _rag_chunks_plan_docente(
-        codigo_asignatura, grupo=grupo_detectado,
+if codigo_asig and _menciona_rol_rag(pregunta):
+    chunks = _rag_chunks_plan(
+        codigo_asig, grupo=grupo_detectado,
     )
     if chunks:
-        respuesta = _generar_respuesta_rag(pregunta, chunks, nombre_asignatura)
+        respuesta = _generar_respuesta_rag(
+            pregunta, chunks, nombre_asig,
+        )
         if respuesta:
             dispatcher.utter_message(text=respuesta)
             return [...]
-    # Si el RAG no devuelve respuesta, cae al flujo SQL normal.
+    # Si el RAG no responde, cae al flujo SQL normal.
 
-# Atajo 2: asignatura + grupo concreto -> RAG con filtro de grupo
-if codigo_asignatura and grupo_detectado and not _pregunta_menciona_rol_rag(pregunta):
-    chunks = _rag_chunks_plan_docente(
-        codigo_asignatura, grupo=grupo_detectado,
+# Atajo 2: asignatura + grupo concreto -> RAG con filtro
+if (codigo_asig and grupo_detectado
+        and not _menciona_rol_rag(pregunta)):
+    chunks = _rag_chunks_plan(
+        codigo_asig, grupo=grupo_detectado,
     )
     # ... mismo patron con fallback a SQL.
 \end{lstlisting}
 
 La vía \textit{text-to-SQL} es estructuralmente idéntica a la de la épica de asignaturas (mismo \textit{prompt} de generación, mismo validador, misma inyección de \texttt{titulacion\_id}), con dos peculiaridades propias. La primera es la herencia agresiva de contexto: si el usuario dice \textit{``¿y su correo?''} sin nombrar a nadie, la acción lee \texttt{ultimo\_profesor\_consultado} y \texttt{ultimo\_nombre\_asignatura} de los últimos tres turnos para reconstruir la consulta. La segunda es el filtrado por similitud: cuando el usuario pregunta por nombre, los resultados del \texttt{SELECT} pasan por \texttt{shared/matching.py}, que calcula la proporción de tokens de la pregunta presentes en el \texttt{nombre\_normalizado} de cada profesor y los separa en firmes (umbral $\geq$ 0,60) y sugerencias (entre 0,30 y 0,60). Si no hay coincidencias firmes pero sí sugerencias, la mejor se guarda en el slot \texttt{ultima\_sugerencia} para que el usuario la confirme con un \textit{``sí''} en el siguiente turno; este flujo de afirmación está implementado en \texttt{ActionResolverAfirmacion}.
 
-Las tutorías merecen una nota: la tabla \texttt{tutorias} permanece deliberadamente vacía (decisión D-061) porque ningún portal oficial publica horarios estables. Cuando el usuario pregunta por tutorías, la respuesta redirige al correo institucional del profesor, que sí está en la base de datos.
+Las tutorías merecen una nota: la tabla \texttt{tutorias} permanece deliberadamente vacía (decisión D-061), aunque dos de los cuatro departamentos de la ETSII (CCIA y DTE) sí publican horarios de tutoría en páginas propias y el repositorio incluye \textit{scrapers} funcionales que los extraen a JSON (57 profesores cubiertos). La decisión de no cargarlos en la base de datos responde al riesgo de obsolescencia. Las tutorías cambian entre cuatrimestres, durante el curso por viajes o congresos del profesorado, y de forma puntual en periodos de exámenes. Las páginas departamentales que publican estos horarios no documentan con qué frecuencia se actualizan, lo que impide saber a ciencia cierta si el dato extraído sigue siendo válido en el momento de la consulta. Un dato desactualizado es peor que ninguno, ya que un alumno que se desplaza al despacho equivocado pierde tiempo y confianza en el sistema. La fase~1 no incluye un pipeline de refresco automatizado que garantice la frescura, y por ese motivo se ha preferido no arriesgar y redirigir al correo institucional del profesor, que sí está en la base de datos y que constituye la fuente más autoritativa: el propio profesor, que mantiene su disponibilidad real al día.
+
+\paragraph{Cascada de fuentes para el directorio de profesorado.} Aunque el discurso anterior se refiere genéricamente al \textit{directorio PDI de us.es} como fuente única, la realidad es más matizada. El directorio central de la US (\texttt{www.us.es/directorio-pdi}) cubre la mayoría de profesores pero deja huecos sistemáticos en cuatro departamentos cuyas plantillas se publican principalmente en las webs específicas de cada unidad. Para cubrir ese vacío, la épica incorpora cuatro \textit{scrapers} adicionales, uno por departamento, en \texttt{actions/profesores/}: \texttt{scraper\_ccia.py} (Ciencias de la Computación e Inteligencia Artificial), \texttt{scraper\_dte.py} (Departamento de Tecnología Electrónica), \texttt{scraper\_lsi.py} (Lenguajes y Sistemas Informáticos) y \texttt{scraper\_ma1.py} (Matemática Aplicada I). Estos \textit{scrapers} se invocan únicamente desde el panel de administración, como acción de enriquecimiento posterior a la importación principal del directorio: si tras el barrido del directorio central queda un profesor sin email o sin despacho y figura en uno de esos cuatro departamentos, se lanza el \textit{scraper} específico que conoce la estructura HTML de esa web departamental. La separación en módulos independientes facilita el mantenimiento: si una de las cuatro webs cambia su HTML, basta con actualizar el \textit{scraper} correspondiente sin tocar el resto del flujo.
 
 % =====================================================
 % ÉPICA 3: HORARIOS
@@ -267,9 +283,11 @@ Las tutorías merecen una nota: la tabla \texttt{tutorias} permanece deliberadam
 \label{fig:pipe-horarios}
 \end{figure}
 
-El pipeline parsea con expresiones regulares cuatro elementos: curso (\textit{2º}, \textit{segundo}, \textit{curso 2}), grupo (\textit{grupo 1}, \textit{g1}), día (lunes a viernes) y cuatrimestre (explícito o inferido por fecha). Si faltan curso o grupo, intenta heredarlos de los slots \texttt{ultimo\_curso\_consultado} y \texttt{ultimo\_grupo\_consultado} si fueron fijados en los últimos tres turnos. Existe además un seguimiento entre épicas: si la consulta no aporta ninguna pista de horario pero hay una asignatura reciente en el slot, la acción delega en \texttt{ActionConsultaHorarioAsignatura} en vez de pedir más datos.
+El pipeline parsea con expresiones regulares cuatro elementos: curso (\textit{2º}, \textit{segundo}, \textit{curso 2}), grupo (\textit{grupo 1}, \textit{g1}), día (lunes a viernes) y cuatrimestre (explícito o inferido por fecha). Si faltan curso o grupo, intenta heredarlos de los slots \texttt{ultimo\_curso\_consultado} y \texttt{ultimo\_grupo\_consultado} si fueron fijados en los últimos tres turnos. Existe además un seguimiento entre épicas: cuando la consulta no aporta ninguna pista de horario pero el slot mantiene una asignatura reciente, el control pasa a \texttt{ActionConsultaHorarioAsignatura} en vez de pedir más datos.
 
-La consulta SQL hace \texttt{JOIN} entre \texttt{horarios}, \texttt{grupos\_clase}, \texttt{asignaturas}, \texttt{titulaciones} y \texttt{aulas}, filtrando por curso, grupo y, opcionalmente, día y cuatrimestre. El resultado se reagrupa por (\textit{día}, \textit{hora\_inicio}, \textit{hora\_fin}, \textit{asignatura}) para juntar las distintas aulas de una misma sesión, y se categoriza cada aula como teoría (prefijo \textit{A}) o laboratorio. Solo entonces se entrega a Gemini con instrucciones para que respete la fecha actual (\textit{``hoy''}, \textit{``mañana''}) y advierta cuando la consulta cae en sábado o domingo.
+\paragraph{Bloqueo proactivo de consultas por letra del DNI.} Antes incluso de resolver la asignatura, el pipeline aplica un filtro defensivo sobre frases como \textit{``mi grupo es la letra A del DNI''} o \textit{``letra B del dni''}. Una expresión regular dedicada (\texttt{\_RE\_LETRA\_DNI}) detecta el patrón \texttt{letra~$\langle$x$\rangle$~(de$\vert$del)~(mi~)?dni} y, al dispararse, la acción interrumpe el flujo y responde de forma proactiva que la asignación de grupos por letra del DNI varía cada curso y debe consultarse en el portal oficial. Sin este atajo, la letra solitaria (\textit{``T''}) era una candidata involuntaria de la cascada de alias y se interpretaba como abreviatura de asignaturas como \textit{Teledetección}, generando respuestas absurdas.
+
+\paragraph{Colapso de aulas mediante GROUP BY.} La consulta SQL hace \texttt{JOIN} entre \texttt{horarios}, \texttt{grupos\_clase}, \texttt{asignaturas}, \texttt{titulaciones} y \texttt{aulas}, filtrando por curso, grupo y, opcionalmente, día y cuatrimestre. Sin agregación, el \texttt{JOIN} devuelve una fila por aula reservada, de modo que una misma sesión de teoría y laboratorio aparece duplicada con dos códigos de aula distintos (típicamente una con prefijo \textit{A}, teoría, y otra con prefijo distinto, laboratorio). La cláusula \texttt{GROUP BY (dia\_semana, hora\_inicio, hora\_fin, asignatura, cuatrimestre)} colapsa las filas redundantes y agrega los códigos de aula en un \texttt{ARRAY\_AGG} que conserva ambas pertenencias. Tras esa agrupación, cada aula se categoriza como teoría (prefijo \textit{A}) o laboratorio según la convención adoptada por la ETSII (decisión D-066). Solo entonces se entrega a Gemini con instrucciones para que respete la fecha actual (\textit{``hoy''}, \textit{``mañana''}) y advierta cuando la consulta cae en sábado o domingo.
 
 % =====================================================
 % ÉPICA 4: CONTEXTO
@@ -278,14 +296,14 @@ La consulta SQL hace \texttt{JOIN} entre \texttt{horarios}, \texttt{grupos\_clas
 
 La épica de contexto agrupa cuatro acciones cortas: \texttt{ActionCambiarContexto} fija la titulación del usuario, \texttt{ActionConsultarContexto} la lee, \texttt{ActionResetContexto} la borra y \texttt{ActionConsultaTitulaciones} muestra las disponibles. La pieza interesante es la primera, porque transforma una frase libre del usuario en uno de los códigos canónicos \texttt{GII-IS}, \texttt{GII-TI} o \texttt{GII-IC}.
 
-La normalización se apoya en una combinación de coincidencia exacta sobre el diccionario \texttt{TITULACION\_MAP}, un guard que exige al menos un token discriminante (\textit{software}, \textit{computadores}, \textit{tecnologías}, \textit{is}, \textit{ti}, \textit{ic}) y, si nada de lo anterior funciona, un \textit{fuzzy matching} con \texttt{fuzz.WRatio} a un umbral conservador de 85. El umbral se elevó tras la revisión R3 para evitar que frases ambiguas como \textit{``ingeniería''} produjeran cambios de contexto silenciosos. El resto de épicas dependen del valor de \texttt{contexto\_titulacion} para inyectar el filtro \texttt{titulacion\_id} en sus consultas, por lo que un fallo en la normalización contamina toda la sesión: de ahí el cuidado con los umbrales.
+La normalización se apoya en una combinación de coincidencia exacta sobre el diccionario \texttt{TITULACION\_MAP}, un guard que exige al menos un token discriminante (\textit{software}, \textit{computadores}, \textit{tecnologías}, \textit{is}, \textit{ti}, \textit{ic}) y, si nada de lo anterior funciona, un \textit{fuzzy matching} con \texttt{fuzz.WRatio} a un umbral conservador de 85. \texttt{WRatio} es una combinación ponderada de las métricas de similitud de \texttt{rapidfuzz}, construidas sobre la distancia de edición de Levenshtein~\cite{levenshtein1966binary}. El umbral se elevó tras la revisión R3 para evitar que frases ambiguas como \textit{``ingeniería''} produjeran cambios de contexto silenciosos. El resto de épicas dependen del valor de \texttt{contexto\_titulacion} para inyectar el filtro \texttt{titulacion\_id} en sus consultas, por lo que un fallo en la normalización contamina toda la sesión: de ahí el cuidado con los umbrales.
 
 % =====================================================
 % ÉPICA 5: FALLBACK
 % =====================================================
 \section{Épica de fallback inteligente}\label{sec:impl-fallback}
 
-El fallback de Rasa se activa cuando la confianza del clasificador NLU está por debajo del umbral configurado en \texttt{config.yml}. En lugar de devolver un mensaje genérico de disculpa, \texttt{ActionSmartFallback} delega en Gemini la decisión de qué acción ejecutar a partir de la pregunta y del historial reciente. La Figura~\ref{fig:pipe-fallback} muestra el flujo.
+El fallback de Rasa se activa cuando la confianza del clasificador NLU está por debajo del umbral configurado en \texttt{config.yml}. La acción \texttt{ActionSmartFallback} sustituye el mensaje genérico de disculpa por una llamada a Gemini, que decide qué consulta ejecutar a partir de la pregunta y del historial reciente. La Figura~\ref{fig:pipe-fallback} muestra el flujo.
 
 \begin{figure}[hbtp]
 \centering
@@ -294,9 +312,9 @@ El fallback de Rasa se activa cuando la confianza del clasificador NLU está por
 \node[plstep, below=of in] (cont) {¿Es continuación ``todos los grupos''?};
 \node[plllm, below=of cont] (clasif) {Gemini clasificador (action + parámetros, JSON)};
 \node[pldec, below=of clasif] (sw) {action};
-\node[pldb, below left=10mm and 16mm of sw] (asig) {BUSCAR\_ASIGNATURA \\ (BD + RAG)};
-\node[pldb, below=of sw] (hor) {BUSCAR\_HORARIO \\ (BD por alias o curso)};
-\node[pldb, below right=10mm and 16mm of sw] (prof) {BUSCAR\_PROFESOR \\ (BD por nombre)};
+\node[pldb, below left=12mm and 28mm of sw] (asig) {BUSCAR\_ASIGNATURA \\ (BD + RAG)};
+\node[pldb, below=14mm of sw] (hor) {BUSCAR\_HORARIO \\ (BD por alias o curso)};
+\node[pldb, below right=12mm and 28mm of sw] (prof) {BUSCAR\_PROFESOR \\ (BD por nombre)};
 \node[plllm, below=20mm of hor] (resp) {Gemini redacta respuesta natural};
 \node[plend, below=of resp] (out) {Respuesta o \texttt{respuesta\_directa}};
 
@@ -326,7 +344,15 @@ Antes de invocar al modelo, una regex detecta el patrón \textit{``todos los gru
 
 \texttt{ActionMultiIntent} fue diseñada para cubrir mensajes que combinan un cambio de contexto y una consulta en una sola frase: \textit{``soy de Ingeniería del Software, ¿qué horario tengo en segundo grupo 2?''} se identificaba con un intent compuesto del tipo \texttt{cambiar\_contexto\_academico+consulta\_horario}, que se separaba en sub-intents y se ejecutaban en orden. El código de la acción permanece en el directorio \texttt{actions/multi\_intent/} como referencia, pero el flujo está \textbf{desactivado en el prototipo}: ni los intents compuestos figuran en \texttt{domain.yml} ni la acción aparece en las reglas de \texttt{data/rules.yml}, por lo que Rasa nunca la invoca.
 
-La razón de la desactivación es práctica: durante la fase de validación se comprobó que el flujo natural de los usuarios separa el cambio de titulación y la consulta en dos turnos consecutivos (primero la elección por modal, después la pregunta), de modo que el coste de mantener anotaciones \textit{multi-intent} en el corpus NLU no se amortizaba con un beneficio observable. La elección de titulación a través del modal de selección descrito en la Sección~\ref{subsec:dd-slots} cubre el escenario que motivó originalmente la épica.
+\paragraph{Motivos de la desactivación.} La decisión de no activar esta épica responde a tres razones concretas, registradas como decisión de cierre del proyecto en el cuaderno del sprint final (\texttt{docs/sprints/S7/registro\_decisiones.md}; resumen en el Apéndice~\ref{ap:decisiones}):
+
+\begin{enumerate}
+    \item \textbf{Necesidad baja confirmada durante las pruebas.} Tanto en la fase de validación interna como en el piloto de tráfico real (59 sesiones) se comprobó que los usuarios raramente enviaban dos peticiones de distinto dominio en un único mensaje. El patrón de uso que motivó el diseño de la épica (combinar un cambio de titulación con una consulta en la misma frase) no se materializó como caso frecuente, y su ausencia no generó fricción observable en ninguna sesión registrada.
+    \item \textbf{Impacto en la latencia.} Cada intent compuesto exige dos llamadas consecutivas al servidor de acciones (una por sub-intent), lo que habría aumentado la latencia mediana de respuesta en aproximadamente 1,5~s por turno en los casos afectados, penalizando también a todos los usuarios que \textit{no} usaran la sintaxis compuesta.
+    \item \textbf{Complejidad añadida sin valor proporcional.} Mantener un corpus NLU de intents compuestos habría incrementado el coste de anotación y mantenimiento de los datos de entrenamiento. Los recursos se priorizaron, en su lugar, para consolidar la cobertura y calidad de los intents simples existentes, que concentraban la mayoría de los fallos identificados durante el desarrollo y representaban el grueso del tráfico real.
+\end{enumerate}
+
+La desactivación implica técnicamente que el flujo de Rasa trata cualquier frase compuesta como un único intent, que el clasificador asignará al dominio más probable. En el peor caso (frase muy ambigua), el fallback inteligente de la Sección~\ref{sec:impl-fallback} se activa y Gemini reencamina la consulta al dominio correcto. Este circuito de rescate ha resultado suficiente para el alcance actual del prototipo.
 
 % =====================================================
 % MÓDULOS COMPARTIDOS
@@ -337,7 +363,9 @@ Tres módulos de \texttt{shared/} concentran la complejidad transversal del sist
 
 \subsection{Cliente de Gemini}
 
-\texttt{shared/gemini\_client.py} expone una función \texttt{llamar\_gemini(prompt, modelo, timeout, options, context)} que envuelve el SDK oficial. El modelo por defecto es \texttt{gemma-3-27b-it}. La función centraliza los \textit{timeouts}, los reintentos ante errores transitorios y, si la variable de entorno \texttt{LINCEUS\_BENCH\_METRICS} está activa, registra la latencia y el número de tokens de cada llamada en un fichero JSONL etiquetado con el campo \texttt{context} (\textit{``asignaturas.text\_to\_sql''}, \textit{``profesores.respuesta''}, etc.). Este registro fue clave durante la fase de optimización para identificar los prompts más caros y aplanar la curva de latencia.
+\texttt{shared/gemini\_client.py} expone una función \texttt{llamar\_gemini(prompt, modelo, timeout, options, context)} que envuelve el SDK oficial. El modelo por defecto es \texttt{gemma-3-27b-it}. La función centraliza los \textit{timeouts}, los reintentos ante errores transitorios y, si la variable de entorno \texttt{LINCEUS\_BENCH\_METRICS} apunta a un fichero, anota \textit{append-only} una línea JSON por cada llamada con once campos: marca temporal en \texttt{ISO~8601} con zona UTC (\texttt{ts}), nombre del modelo (\texttt{modelo}), etiqueta libre del \textit{call site} (\texttt{context}, p.~ej. \texttt{"asignaturas.text\_to\_sql"} o \texttt{"profesores.respuesta"}), recuentos de \textit{tokens} de entrada, salida y total tomados de \texttt{usage\_metadata} del SDK (\texttt{input\_tokens}, \texttt{output\_tokens}, \texttt{total\_tokens}), latencia medida con \texttt{time.perf\_counter()} y resolución de milisegundos (\texttt{latencia\_ms}), longitudes en caracteres del prompt y de la respuesta (\texttt{prompt\_chars}, \texttt{respuesta\_chars}) y un \textit{flag} de éxito (\texttt{ok}). Si la variable no está fijada, la función no abre el fichero y el coste de la instrumentación es nulo: este patrón \textit{toggleable} permite ejecutar tanto las pruebas E2E como el bot en producción con o sin telemetría detallada sin tocar el código. El JSONL resultante alimenta los análisis de coste y latencia presentados en las Secciones~\ref{subsec:no-funcional-latencia} y \ref{subsec:no-funcional-coste} del Capítulo~\ref{cap:pruebas}.
+
+\paragraph{Calibración de temperatura por caso de uso.} Las llamadas al modelo no comparten la misma configuración: la temperatura se ajusta deliberadamente en función del tipo de salida esperada, en línea con el análisis de degeneración del texto generado por redes neuronales bajo distintos parámetros de muestreo~\cite{holtzman2020curious}. Para la generación de SQL en \textit{Text-to-SQL} y para la clasificación binaria entre \textit{datos estructurales} y \textit{plan docente} se fija a \texttt{0,0}, lo que hace la salida determinista y evita variaciones léxicas que romperían el validador de \texttt{validar\_sql} o introducirían ambigüedad en una decisión de enrutado. Para la redacción de la respuesta natural al usuario se eleva a \texttt{0,3}, valor suficiente para que el modelo varíe la formulación entre turnos similares sin caer en alucinaciones~\cite{ji2023survey}. Las opciones también limitan el número de \textit{tokens} de salida (\texttt{max\_output\_tokens=150} para SQL, \texttt{max\_output\_tokens=300} para redacción), parámetros que reducen el coste por llamada y previenen respuestas excesivamente largas.
 
 \subsection{Conexión a base de datos}
 
@@ -345,7 +373,79 @@ Tres módulos de \texttt{shared/} concentran la complejidad transversal del sist
 
 \subsection{Matching difuso de nombres}
 
-\texttt{shared/matching.py} implementa la función \texttt{score\_por\_normalizado(consulta, normalizado)} que devuelve un valor entre 0 y 1 según la proporción de tokens de la consulta presentes en el campo normalizado de la base de datos. Sobre esta función se construye \texttt{clasificar\_por\_normalizado()}, que separa una lista de resultados en firmes (umbral $\geq$ 0,60) y sugerencias (entre 0,30 y 0,60). Los umbrales fueron calibrados durante las pruebas piloto: por debajo de 0,30 los falsos positivos contaminaban las respuestas y por encima de 0,60 se perdían matches válidos por errores ortográficos del usuario.
+\texttt{shared/matching.py} implementa la función \texttt{score\_por\_normalizado(consulta, normalizado)} que devuelve un valor entre 0 y 1 según la proporción de tokens de la consulta presentes en el campo normalizado de la base de datos. Sobre esta función se construye \texttt{clasificar\_por\_normalizado()}, que separa una lista de resultados en \textbf{firmes} (umbral $\geq$ 0,60) y \textbf{sugerencias} (entre 0,30 y 0,60). La elección de dos umbrales en lugar de uno responde al compromiso clásico entre \textit{precision} y \textit{recall} en recuperación de información~\cite{manning2008introduction}: el umbral firme prioriza precisión y el umbral de sugerencia prioriza cobertura.
+
+\paragraph{Ajuste iterativo de los umbrales.} Los valores 0,30 y 0,60 no son arbitrarios: se fijaron mediante ajuste manual durante la Épica de Profesorado (sprint S6, Iteración~5), observando el comportamiento del bot sobre las consultas con typos del piloto interno y revisando para cada \textit{rondeo} de umbral los casos en los que el flujo se quedaba sin firmes pero el usuario sí había escrito un nombre reconocible. Tres observaciones cualitativas guiaron el ajuste:
+
+\begin{itemize}
+    \item Un umbral firme \textbf{muy alto} (próximo a 0,80) dejaba fuera typos moderados como \textit{``parejjo''} o \textit{``galinndo''}: el nombre escrito tenía sentido para un humano pero la proporción de tokens reconocibles caía por debajo del umbral y la respuesta era un \textit{``no he encontrado al profesor''} percibido como error del sistema.
+    \item Un umbral firme \textbf{muy bajo} (próximo a 0,40) elevaba la sensibilidad a costa de la precisión: nombres cortos o con baja especificidad léxica (\textit{``García''}, \textit{``Martín''}) generaban matches múltiples con alta confianza, todos clasificados como firmes, lo que contaminaba la respuesta del bot.
+    \item Con umbral firme en \textbf{0,60} y un \textit{piso} de sugerencia en \textbf{0,30}, los casos ambiguos caen deliberadamente en la zona de sugerencias, donde el sistema ofrece la opción con mayor puntuación y solicita confirmación al usuario mediante \texttt{ActionResolverAfirmacion} (Sección~\ref{subsec:impl-resolver-afirmacion}). Esto traslada la incertidumbre del sistema al diálogo en lugar de resolverla con una respuesta posiblemente errónea.
+\end{itemize}
+
+El umbral separador de 0,30 establece además el límite por debajo del cual el sistema declara explícitamente que no encuentra coincidencias. Sin ese piso, consultas sobre personas sin ninguna relación con el directorio (\textit{``¿quién es Einstein?''}) producían sugerencias sin sentido. El comportamiento correcto en ese caso es el de RF-P7: declarar la ausencia de información sin inventar contenido.
+
+Conviene precisar que la calidad de la respuesta final no se sostiene únicamente sobre estos umbrales. La métrica \texttt{score\_por\_normalizado} no se aplica directamente contra el directorio completo: el flujo de la \textit{custom action} hace primero una consulta \texttt{SELECT \ldots WHERE nombre\_normalizado ILIKE \%nombre\%} que reduce el universo a un puñado de candidatos, y \texttt{clasificar\_por\_normalizado} solo reordena ese subconjunto. Por tanto, la estabilidad observada en el piloto (Sección~\ref{sec:pruebas-trafico}, 98,3~\% de sesiones validadas) descansa sobre tres mecanismos combinados: el filtro previo del \texttt{SELECT}, los umbrales del matching difuso, y el flujo de confirmación de \texttt{ActionResolverAfirmacion}.
+
+\subsection{Resolución de afirmación con inyección de entidades sintéticas}\label{subsec:impl-resolver-afirmacion}
+
+\texttt{ActionResolverAfirmacion} cierra el ciclo iniciado por una sugerencia: cuando el sistema ofrece la mejor coincidencia ambigua y guarda \texttt{ultima\_sugerencia} (un diccionario con \texttt{action}, \texttt{campo}, \texttt{valor} y \texttt{pregunta\_original}), basta con que el usuario responda \textit{``sí''} para que esa sugerencia se convierta en una consulta real sin reescribir la pregunta. La implementación reutiliza la acción original (\texttt{ActionConsultaProfesor}, \texttt{ActionConsultaEspecifica}, etc.) en lugar de duplicar su lógica, lo que mantiene una única fuente de verdad para cada flujo de consulta.
+
+Esta reutilización exige sortear una limitación del API de Rasa: una \textit{custom action} recibe el \texttt{Tracker} con el último mensaje del usuario (\textit{``sí''}), no con la pregunta original ni con la entidad sugerida. La solución consiste en construir un \textit{Tracker} sintético: la función auxiliar \texttt{\_inyectar\_entidad()} hace una copia profunda del último \texttt{latest\_message}, sustituye su texto por el valor sugerido y añade una entidad artificial con \texttt{extractor: "sugerencia"} para que la acción reutilizada la encuentre como si la hubiera extraído el NLU. Sobre ese \texttt{Tracker} reconstruido se invoca la acción original mediante despacho por nombre. El campo \texttt{extractor} permite distinguir, en los \textit{logs} y en \texttt{conversation\_log}, las entidades inyectadas de las verdaderamente clasificadas por DIET, lo que facilita la auditoría posterior. Esta técnica resulta especialmente útil para la épica de profesores, donde la mayoría de los casos ambiguos se resuelven con un único turno de confirmación.
+
+% =====================================================
+% PIPELINE RAG
+% =====================================================
+\section{Pipeline RAG: chunking, embeddings y búsqueda}\label{sec:impl-rag-pipeline}
+
+El módulo \texttt{rag/} concentra la lógica de Retrieval Augmented Generation~\cite{lewis2020retrieval} que alimenta dos casos de uso: la respuesta sobre contenido del plan docente (épica de asignaturas, Sección~\ref{sec:impl-asignaturas}) y el atajo del rol de coordinador o suplente en la épica de profesores (Sección~\ref{sec:impl-profesores}). El módulo se divide en cinco ficheros con responsabilidades claras: \texttt{extraer\_pdf.py} extrae el texto plano del PDF original, \texttt{chunking.py} lo trocea, \texttt{embeddings.py} consulta la API de Google para obtener los vectores, \texttt{db\_vectores.py} los persiste en \texttt{planes\_docentes\_chunks} y \texttt{buscar.py} realiza la consulta semántica con \textit{reranking}. La sección que sigue describe los detalles técnicos no obvios de cada uno.
+
+\subsection{Chunking por secciones con deduplicación de cabeceras}
+
+El troceado no se hace por número de caracteres ciego: \texttt{chunking.py} aplica primero una segmentación por secciones reconocibles del plan docente (\textit{Datos básicos}, \textit{Profesorado}, \textit{Coordinador}, \textit{Objetivos}, \textit{Contenidos}, \textit{Metodología}, \textit{Evaluación}, \textit{Bibliografía}, etc.) mediante 16 expresiones regulares compiladas con \texttt{re.IGNORECASE} y variantes ortográficas que toleran la presencia o ausencia de tildes (\texttt{Datos~b[áa]sicos}, \texttt{Metodolog[íi]a}, etc.). Esta tolerancia es necesaria porque la extracción con \texttt{pdfplumber} no siempre preserva las tildes con fidelidad: dependiendo del PDF de origen, la palabra \textit{Evaluación} puede aparecer como \textit{Evaluacion} sin que el resto del texto se vea afectado.
+
+Tras la segmentación se ejecuta una pasada de deduplicación de cabeceras: si la misma sección aparece varias veces en el documento (algo frecuente en PDFs multipágina, donde el encabezado se repite al inicio de cada página), \texttt{\_deduplicar\_bloques()} conserva la aparición más larga y descarta las demás. Sin esta pasada, la base de datos almacenaba \textit{chunks} duplicados que sobrerrepresentaban algunas secciones en la búsqueda vectorial.
+
+Solo dentro de cada sección se aplica la división por tamaño, con tres parámetros: \texttt{MAX\_CHUNK\_SIZE=800} caracteres, \texttt{OVERLAP\_SIZE=100} caracteres (12,5~\% de solapamiento, valor recomendado por \cite{langchainChunking}) y \texttt{MIN\_CHUNK\_SIZE=50} caracteres. La división respeta los saltos de párrafo (\texttt{\textbackslash n\textbackslash s*\textbackslash n}) cuando es posible y nunca cruza el límite entre secciones, lo que garantiza que un \textit{chunk} de \textit{Evaluación} no contenga texto que pertenezca a \textit{Bibliografía}.
+
+\subsection{Embeddings con \textit{batching} y \textit{rate limit handling}}
+
+\texttt{embeddings.py} envuelve la llamada a \texttt{models/gemini-embedding-001} y declara una dimensionalidad de salida de 2\,000 (frente a las 3\,072 nativas), valor justificado en la Sección~\ref{subsec:dd-embeddings} del Capítulo~\ref{cap:arquitectura}. La estrategia de envío respeta los dos límites del nivel gratuito de la API: \textbf{100~peticiones por minuto} y \textbf{1\,000~peticiones por día}. El módulo agrupa los \textit{chunks} en lotes de hasta cien (parámetro \texttt{BATCH\_SIZE = 100}, máximo soportado por la API), espera un segundo entre lotes (\texttt{PAUSA\_ENTRE\_BATCHES = 1.0}) y, si la API responde con un error que contiene la cadena \texttt{429} o \texttt{RESOURCE\_EXHAUSTED}, duerme 60~segundos antes de reintentar. Esta combinación permite vectorizar un plan docente medio (50--80 \textit{chunks}) en menos de tres segundos, y un grado completo (10--12 asignaturas activas) sin agotar la cuota diaria, condición necesaria para que el flujo del panel pueda lanzarse en horario lectivo sin penalizar a los usuarios del bot.
+
+\subsection{Búsqueda en dos fases con \textit{reranking} por sección}\label{subsec:impl-rag-busqueda}
+
+\texttt{buscar\_en\_plan\_docente()} (en \texttt{rag/buscar.py}) implementa la consulta semántica que ejecutan en tiempo real las \textit{custom actions}. El flujo nominal es: se obtiene el \textit{embedding} de la pregunta del usuario, se consulta la función SQL \texttt{buscar\_plan\_docente()} sobre \texttt{planes\_docentes\_chunks} con el operador \texttt{<=>}~de \texttt{pgvector} (distancia coseno) y se devuelven los \textit{top-K=10} fragmentos con similitud superior al umbral de 0,5. Sobre estos resultados se aplica un \textit{reranking} aditivo en función de la sección a la que pertenece cada \textit{chunk}.
+
+La Tabla~\ref{tab:rerank-weights} recoge los pesos del reordenamiento. La idea es la siguiente: si la pregunta del usuario alude a un tipo concreto de información (profesorado, evaluación, contenidos, horarios o bibliografía), un detector léxico basado en palabras clave fija ese tipo de consulta; entonces, los \textit{chunks} cuya sección coincide reciben un bonus aditivo de hasta 0,15 que se suma al \textit{score} vectorial original.
+
+\begin{table}[hbtp]
+\centering
+\small
+\caption{Tabla \texttt{RERANK\_WEIGHTS}: bonificación aditiva por sección según el tipo de consulta detectado.}\label{tab:rerank-weights}
+\begin{tabular}{|p{2.6cm}|p{4.6cm}|p{1.6cm}|}
+\hline
+\textbf{Tipo de consulta} & \textbf{Sección del \textit{chunk}} & \textbf{Bonus} \\ \hline
+\multirow{3}{*}{profesorado} & profesorado & +0,15 \\
+                              & coordinador & +0,12 \\
+                              & datos\_basicos & +0,03 \\ \hline
+\multirow{3}{*}{evaluacion}   & evaluacion\_general & +0,15 \\
+                              & evaluacion\_grupo & +0,15 \\
+                              & metodologia & +0,03 \\ \hline
+\multirow{3}{*}{contenidos}   & contenidos & +0,15 \\
+                              & contenidos\_detallados & +0,15 \\
+                              & objetivos & +0,05 \\ \hline
+\multirow{2}{*}{horarios}     & horarios & +0,15 \\
+                              & calendario\_examenes & +0,05 \\ \hline
+\multirow{2}{*}{bibliografia} & bibliografia & +0,15 \\
+                              & informacion\_adicional & +0,03 \\ \hline
+\end{tabular}
+\end{table}
+
+Dos rasgos del \textit{reranking} merecen comentario. El primero es que \textbf{no se filtra por sección en la consulta SQL}: la sección es una señal débil porque el chunker la etiqueta \textit{best-effort} y se sabe que en ocasiones falla (un nombre de profesor puede acabar en un \textit{chunk} etiquetado como \textit{bibliografia} si la cabecera de la siguiente sección cae dentro del mismo \textit{chunk}). Si la sección fuese un filtro estricto, esos casos se perderían; al usarla solo como peso aditivo, la similitud vectorial conserva la última palabra. El segundo es que \textbf{todos los pesos son positivos}. Una iteración anterior aplicaba penalizaciones negativas a las secciones \textit{incoherentes} (\texttt{-0,30} a \textit{bibliografia} cuando se preguntaba por profesorado), pero esas penalizaciones enmascaraban precisamente los casos del primer punto y devolvían respuestas vacías. La calibración final usa solo bonificaciones pequeñas, suficientes para reordenar pero incapaces de descartar un \textit{chunk} relevante.
+
+\paragraph{Fallback por palabras clave.} Si la llamada a la API de \textit{embeddings} falla por causas específicas de esa capa (agotamiento de la cuota de \texttt{models/gemini-embedding-001}, tiempo de respuesta excesivo al vectorizar la consulta o error de red restringido a ese \textit{endpoint}), \texttt{buscar.py} cae automáticamente a una búsqueda \texttt{ILIKE} sobre el campo \texttt{contenido} de \texttt{planes\_docentes\_chunks}. El \textit{fallback} extrae las palabras de más de tres caracteres de la pregunta, descarta una lista corta de \textit{stopwords} en español y compone una cláusula \texttt{WHERE contenido ILIKE '\%palabra\%' OR \ldots}. El \textit{reranking} se aplica también a este flujo. Esta degradación cubre el escenario concreto en que el servicio de vectorización no está disponible pero el modelo de generación sí lo está: los \textit{chunks} se recuperan por coincidencia textual en lugar de por similitud semántica y se entregan igualmente a Gemini para redactar la respuesta final, a costa de una pérdida limitada de precisión en la selección del contexto. La existencia de este fallback es la razón por la que la disponibilidad del \texttt{Text-to-SQL} es más frágil que la del RAG: aquel no tiene una vía alternativa equivalente.
+
+\paragraph{Tolerancia a variantes de nombre de grupo.} La función auxiliar \texttt{\_resolver\_grupo()} acepta nombres de grupo con variaciones de notación entre la pregunta del usuario y la base de datos. Si el usuario escribe \textit{``Grupo 5''} pero la BD almacena \textit{``Grupo 5 INGLES''}, una consulta auxiliar (\texttt{pd.grupo LIKE \%Grupo~5\%}) recupera el primer grupo cuyo nombre lo contenga. Sin esta tolerancia, las preguntas sobre grupos bilingües fallaban sistemáticamente.
 
 % =====================================================
 % PANEL DE ADMINISTRACIÓN
@@ -361,7 +461,7 @@ El servidor se define en \texttt{admin/app.py} y registra nueve \textit{blueprin
 \begin{itemize}
     \item \texttt{centros} y \texttt{titulaciones}: CRUD jerárquico de la estructura académica. La pantalla de inicio del panel (Figura~\ref{fig:impl-admin-home}) muestra los centros disponibles como tarjetas con el número de titulaciones asociadas.
     \item \texttt{asignaturas}: CRUD de asignaturas con soporte para importación masiva. Cada asignatura se vincula a una titulación y se etiqueta con curso, tipo y créditos.
-    \item \texttt{profesores}: tabla de consulta paginada del directorio PDI. El \textit{endpoint} \texttt{/api/admin/profesores/sync} lanza el scraper de \texttt{us.es} que actualiza la tabla \texttt{profesores} y rellena \texttt{profesor\_asignatura} para el curso vigente (Figura~\ref{fig:impl-admin-profesores}).
+    \item \texttt{profesores}: tabla de consulta paginada del directorio PDI con acciones para enriquecer datos desde \texttt{us.es} y refrescar enlaces oficiales (Figura~\ref{fig:impl-admin-profesores}). El detalle de cada operación se recoge en la Tabla~\ref{tab:impl-admin-operaciones}.
     \item \texttt{horarios}: gestión de los horarios importados desde los PDFs de la ETSII. El módulo delega en \texttt{admin/horarios\_extractores/} la extracción de sesiones desde los documentos oficiales.
     \item \texttt{sevius}: \textit{endpoints} de \textit{preview} que consultan el portal Sevius sin modificar la base de datos, útiles para explorar los grupos y planes docentes disponibles antes de lanzar la vectorización.
     \item \texttt{planes\_docentes}: combina scraping de grupos en Sevius, descarga de PDFs y procesado RAG en un único \textit{endpoint} \texttt{POST /api/admin/planes\_docentes/vectorize}. Por cada par (asignatura, grupo) que no esté ya vectorizado, descarga el PDF, lo trocea con el pipeline \texttt{rag/pipeline.py} y almacena los \textit{chunks} en \texttt{planes\_docentes\_chunks} junto con su \textit{embedding} en pgvector. El campo \texttt{estado\_rag} de cada plan docente registra el estado del proceso (\texttt{pendiente}, \texttt{completado} o \texttt{error}).
@@ -397,10 +497,74 @@ El servidor se define en \texttt{admin/app.py} y registra nueve \textit{blueprin
     \label{fig:impl-admin-stats}
 \end{figure}
 
+\subsection{Operaciones del panel}\label{subsec:impl-admin-operaciones}
+
+Más allá de las consultas de lectura, el panel expone una colección de operaciones de mantenimiento que el administrador lanza desde la interfaz. Cada operación se traduce en una llamada HTTP a un \textit{endpoint} concreto del API y, según el caso, dispara un \textit{scraper} contra Sevius o el directorio de \texttt{us.es} antes de modificar la base de datos. La Figura~\ref{fig:sevius4-publico} muestra la página pública de Sevius (\texttt{https://sevius4.us.es/?PyP=LISTA}) sobre la que operan estas sincronizaciones: tres desplegables encadenados (Centro, Titulación y Asignatura) que el \textit{scraper} recorre programáticamente para extraer los nombres de centros, titulaciones y asignaturas, así como los enlaces de descarga de los planes docentes en PDF. La Tabla~\ref{tab:impl-admin-operaciones} resume las operaciones agrupadas por la pestaña en la que se invocan.
+
+\begin{figure}[hbtp]
+    \centering
+    \includegraphics[width=\linewidth]{img/sevius4-centro-titulacion-asignatura.png}
+    \caption{Página de acceso público del portal Sevius4 (\texttt{https://sevius4.us.es/?PyP=LISTA}). Los tres desplegables encadenados Centro $\rightarrow$ Titulación $\rightarrow$ Asignatura son la fuente que los \textit{scrapers} del panel recorren para sincronizar los nombres del catálogo académico y descargar los planes docentes en PDF.}
+    \label{fig:sevius4-publico}
+\end{figure}
+
+\begin{table}[hbtp]
+\centering
+\caption{Operaciones del panel de administración por pestaña. Todos los \textit{endpoints} van prefijados por \texttt{/api/admin}.}\label{tab:impl-admin-operaciones}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{4.6cm}|>{\raggedright\arraybackslash}p{4.4cm}|}
+\hline
+\textbf{Acción visible} & \textbf{\textit{Endpoint}} & \textbf{Efecto} \\
+\hline
+\multicolumn{3}{|l|}{\textbf{Centros}} \\
+\hline
+Nuevo centro & \texttt{POST /centros} & Inserta fila en \texttt{centros} \\
+\hline
+Sincronizar desde Sevius & \texttt{GET /sevius/centros} & Lectura previa del portal \texttt{sevius4.us.es}; el alta sigue \texttt{POST /centros} \\
+\hline
+Nueva titulación & \texttt{POST /titulaciones} & Inserta fila en \texttt{titulaciones} \\
+\hline
+Sincronizar titulaciones desde Sevius & \texttt{POST /titulaciones/sync} & Extrae titulaciones del portal \texttt{sevius4.us.es} e inserta las que aún no estén en BD \\
+\hline
+\multicolumn{3}{|l|}{\textbf{Asignaturas}} \\
+\hline
+Sincronizar desde Sevius & \texttt{POST /asignaturas/sync} & Extrae asignaturas del portal \texttt{sevius4.us.es} e inserta las nuevas con campos básicos \\
+\hline
+Enriquecer datos & \texttt{POST /asignaturas/enrich} & Actualiza curso, créditos y tipología desde el catálogo de grados de \texttt{us.es} \\
+\hline
+Cargar docencia & \texttt{POST /titulaciones/} \texttt{$\langle$id$\rangle$/sync\_docencia} & Popula \texttt{profesor\_asignatura} desde el directorio PDI de \texttt{us.es} (sección \textit{Asignaturas que imparte} de cada perfil) \\
+\hline
+Vectorizar planes docentes & \texttt{POST /planes\_docentes/} \texttt{vectorize} & Descarga PDFs de planes docentes desde \texttt{sevius4.us.es} y guarda \textit{embeddings} en \texttt{pgvector} \\
+\hline
+\multicolumn{3}{|l|}{\textbf{Profesores}} \\
+\hline
+Enriquecer desde us.es (centro) & \texttt{POST /centros/$\langle$id$\rangle$/} \texttt{enrich\_profesores} & \textit{Scraping} del directorio PDI de \texttt{us.es}; da de alta departamentos y hace \textit{upsert} de profesores \\
+\hline
+Enriquecer desde us.es (depto.) & \texttt{POST /departamentos/} \texttt{$\langle$id$\rangle$/enrich\_profesores} & Igual al anterior pero restringido a un departamento concreto \\
+\hline
+Refrescar enlaces us.es & \texttt{POST /centros/$\langle$id$\rangle$/} \texttt{refresh\_enlaces\_us} & Actualiza \texttt{enlace\_perfil} con el \textit{slug} del directorio PDI de \texttt{us.es} \\
+\hline
+\multicolumn{3}{|l|}{\textbf{Horarios}} \\
+\hline
+Generar horarios & \texttt{POST /horarios/generar} & Lanza el extractor del centro y pobla \texttt{horarios}, \texttt{grupos\_clase}, \texttt{aulas} \\
+\hline
+\multicolumn{3}{|l|}{\textbf{Conversaciones}} \\
+\hline
+Marcar sesión como revisada & \texttt{PATCH /conversaciones/} \texttt{sesiones/$\langle$id$\rangle$/revisada} & Cambia el flag \texttt{revisada} de todas las filas de la sesión \\
+\hline
+Exportar conversaciones & -- (cliente) & Vuelca el JSON ya cargado en navegador a fichero local para tests \\
+\hline
+\end{tabular}
+\end{table}
+
+Tres rasgos transversales gobiernan estas operaciones. El primero es la \textbf{idempotencia}: las acciones que sincronizan datos externos (Sevius, \texttt{us.es}) comprueban primero si cada entidad ya existe en BD y nunca duplican filas; cualquiera de ellas puede relanzarse sin riesgo tras un fallo parcial. El segundo es el \textbf{respeto a los datos manuales}: los \textit{upserts} de profesores nunca sobreescriben con \texttt{NULL} un campo ya poblado, lo que permite combinar carga automática con correcciones manuales sin perder estas últimas. El tercero es el \textbf{orden de prerrequisitos}: vectorizar planes docentes exige tener asignaturas; cargar docencia exige tener profesores con enlace de \texttt{us.es} (de ahí la acción \textit{Refrescar enlaces} previa); generar horarios exige tener grupos de clase ya creados. La pantalla de cada pestaña inhabilita los botones cuando esos prerrequisitos no se cumplen, lo que reduce la probabilidad de errores operativos.
+
 \subsection{Pipeline de vectorización}
 
 La ruta \texttt{POST /api/admin/planes\_docentes/vectorize} es el flujo más complejo del panel y merece una descripción detallada porque tiene impacto directo en la calidad de las respuestas del asistente. Recibe un cuerpo JSON con la titulación, el código Sevius del centro y de la titulación, y la lista de identificadores de asignaturas a procesar. Para cada asignatura consulta Sevius para obtener los grupos del curso vigente, descarga el PDF del proyecto docente de cada grupo y lo pasa por \texttt{rag/pipeline.py}.
 
-El pipeline RAG divide el PDF en secciones según los encabezados del documento (\textit{Evaluación}, \textit{Temario}, \textit{Metodología}, \textit{Bibliografía}, etc.), genera un \textit{embedding} por \textit{chunk} usando la API \texttt{text-embedding-004} de Google y almacena el par (\textit{chunk}, \textit{embedding}) en \texttt{planes\_docentes\_chunks}. Si el grupo ya tiene un plan en estado \texttt{completado} para el curso actual, el pipeline lo salta sin regenerar los \textit{embeddings}, lo que hace que el \textit{endpoint} sea idempotente y seguro de relanzar tras un error parcial.
+El pipeline RAG divide el PDF en secciones según los encabezados del documento (\textit{Evaluación}, \textit{Temario}, \textit{Metodología}, \textit{Bibliografía}, etc.), genera un \textit{embedding} por \textit{chunk} con la API \texttt{gemini-embedding-001} de Google (2\,000~dimensiones) y almacena el par (\textit{chunk}, \textit{embedding}) en \texttt{planes\_docentes\_chunks}. Si el grupo ya tiene un plan en estado \texttt{completado} para el curso actual y el hash SHA-256 del PDF coincide, el pipeline lo salta sin regenerar los \textit{embeddings}, lo que hace que el \textit{endpoint} sea idempotente y seguro de relanzar tras un error parcial. La mecánica concreta del troceado, la deduplicación de cabeceras y el \textit{rate limiting} de la API se detalla en la Sección~\ref{sec:impl-rag-pipeline}.
 
 El campo \texttt{estado\_rag} actúa como un semáforo de tres estados. Durante el procesado toma el valor \texttt{en\_proceso}, lo que permite al panel mostrar progreso aunque el \textit{endpoint} sea síncrono; si el PDF no se puede descargar o el troceado falla, queda en \texttt{error} con un mensaje descriptivo; al completarse todos los \textit{chunks} pasa a \texttt{completado}. La respuesta del \textit{endpoint} devuelve un resumen con los contadores de planes completados, sin cambios y con error, junto con el total de \textit{chunks} generados en la llamada.
