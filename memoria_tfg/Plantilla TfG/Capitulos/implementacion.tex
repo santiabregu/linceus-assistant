@@ -60,7 +60,7 @@ La épica de asignaturas concentra cinco acciones: \texttt{ActionConsultaEspecif
 
 La acción \texttt{ActionConsultaEspecifica} responde a preguntas del tipo \textit{``¿cuántos créditos tiene Redes?''} o \textit{``¿cómo se evalúa Ingeniería del Software II?''}. Su pipeline (Figura~\ref{fig:pipe-asig-especifica}) se descompone en dos bloques lógicos: primero \textbf{resolver} a qué asignatura concreta se refiere el usuario, y después \textbf{decidir} si la respuesta vive en la tabla relacional o en el plan docente.
 
-\begin{figure}[hbtp]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}[pipe]
 \node[plstart] (in) {Mensaje del usuario};
@@ -178,7 +178,7 @@ La acción de conteo es estructuralmente idéntica pero el prompt instruye al mo
 
 \texttt{ActionConsultaProfesor} responde a un abanico amplio de consultas sobre el profesorado: correo, despacho, departamento, profesores que imparten una asignatura concreta o, indirectamente, tutorías. El pipeline tiene dos vías de resolución, \textit{text-to-SQL} sobre la tabla \texttt{profesores} y RAG vectorial sobre el plan docente, y la acción decide entre ellas en tres puntos distintos del flujo. La Figura~\ref{fig:pipe-profesores} resume su estructura.
 
-\begin{figure}[hbtp]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}[pipe, node distance=7mm and 10mm]
 \node[plstart] (in) {Mensaje del usuario};
@@ -243,7 +243,7 @@ if (codigo_asig and grupo_detectado
 
 La vía \textit{text-to-SQL} es estructuralmente idéntica a la de la épica de asignaturas (mismo \textit{prompt} de generación, mismo validador, misma inyección de \texttt{titulacion\_id}), con dos peculiaridades propias. La primera es la herencia agresiva de contexto: si el usuario dice \textit{``¿y su correo?''} sin nombrar a nadie, la acción lee \texttt{ultimo\_profesor\_consultado} y \texttt{ultimo\_nombre\_asignatura} de los últimos tres turnos para reconstruir la consulta. La segunda es el filtrado por similitud: cuando el usuario pregunta por nombre, los resultados del \texttt{SELECT} pasan por \texttt{shared/matching.py}, que calcula la proporción de tokens de la pregunta presentes en el \texttt{nombre\_normalizado} de cada profesor y los separa en firmes (umbral $\geq$ 0,60) y sugerencias (entre 0,30 y 0,60). Si no hay coincidencias firmes pero sí sugerencias, la mejor se guarda en el slot \texttt{ultima\_sugerencia} para que el usuario la confirme con un \textit{``sí''} en el siguiente turno; este flujo de afirmación está implementado en \texttt{ActionResolverAfirmacion}.
 
-Las tutorías merecen una nota: la tabla \texttt{tutorias} permanece deliberadamente vacía (decisión D-061) porque ningún portal oficial publica horarios estables. Cuando el usuario pregunta por tutorías, la respuesta redirige al correo institucional del profesor, que sí está en la base de datos.
+Las tutorías merecen una nota: la tabla \texttt{tutorias} permanece deliberadamente vacía (decisión D-061), aunque dos de los cuatro departamentos de la ETSII (CCIA y DTE) sí publican horarios de tutoría en páginas propias y el repositorio incluye \textit{scrapers} funcionales que los extraen a JSON (57 profesores cubiertos). La decisión de no cargarlos en la base de datos responde al riesgo de obsolescencia. Las tutorías cambian entre cuatrimestres, durante el curso por viajes o congresos del profesorado, y de forma puntual en periodos de exámenes. Las páginas departamentales que publican estos horarios no documentan con qué frecuencia se actualizan, lo que impide saber a ciencia cierta si el dato extraído sigue siendo válido en el momento de la consulta. Un dato desactualizado es peor que ninguno, ya que un alumno que se desplaza al despacho equivocado pierde tiempo y confianza en el sistema. La fase~1 no incluye un pipeline de refresco automatizado que garantice la frescura, y por ese motivo se ha preferido no arriesgar y redirigir al correo institucional del profesor, que sí está en la base de datos y que constituye la fuente más autoritativa: el propio profesor, que mantiene su disponibilidad real al día.
 
 \paragraph{Cascada de fuentes para el directorio de profesorado.} Aunque el discurso anterior se refiere genéricamente al \textit{directorio PDI de us.es} como fuente única, la realidad es más matizada. El directorio central de la US (\texttt{www.us.es/directorio-pdi}) cubre la mayoría de profesores pero deja huecos sistemáticos en cuatro departamentos cuyas plantillas se publican principalmente en las webs específicas de cada unidad. Para cubrir ese vacío, la épica incorpora cuatro \textit{scrapers} adicionales, uno por departamento, en \texttt{actions/profesores/}: \texttt{scraper\_ccia.py} (Ciencias de la Computación e Inteligencia Artificial), \texttt{scraper\_dte.py} (Departamento de Tecnología Electrónica), \texttt{scraper\_lsi.py} (Lenguajes y Sistemas Informáticos) y \texttt{scraper\_ma1.py} (Matemática Aplicada I). Estos \textit{scrapers} se invocan únicamente desde el panel de administración, como acción de enriquecimiento posterior a la importación principal del directorio: si tras el barrido del directorio central queda un profesor sin email o sin despacho y figura en uno de esos cuatro departamentos, se lanza el \textit{scraper} específico que conoce la estructura HTML de esa web departamental. La separación en módulos independientes facilita el mantenimiento: si una de las cuatro webs cambia su HTML, basta con actualizar el \textit{scraper} correspondiente sin tocar el resto del flujo.
 
@@ -499,7 +499,14 @@ El servidor se define en \texttt{admin/app.py} y registra nueve \textit{blueprin
 
 \subsection{Operaciones del panel}\label{subsec:impl-admin-operaciones}
 
-Más allá de las consultas de lectura, el panel expone una colección de operaciones de mantenimiento que el administrador lanza desde la interfaz. Cada operación se traduce en una llamada HTTP a un \textit{endpoint} concreto del API y, según el caso, dispara un \textit{scraper} contra Sevius o el directorio de \texttt{us.es} antes de modificar la base de datos. La Tabla~\ref{tab:impl-admin-operaciones} las resume agrupadas por la pestaña en la que se invocan.
+Más allá de las consultas de lectura, el panel expone una colección de operaciones de mantenimiento que el administrador lanza desde la interfaz. Cada operación se traduce en una llamada HTTP a un \textit{endpoint} concreto del API y, según el caso, dispara un \textit{scraper} contra Sevius o el directorio de \texttt{us.es} antes de modificar la base de datos. La Figura~\ref{fig:sevius4-publico} muestra la página pública de Sevius (\texttt{https://sevius4.us.es/?PyP=LISTA}) sobre la que operan estas sincronizaciones: tres desplegables encadenados (Centro, Titulación y Asignatura) que el \textit{scraper} recorre programáticamente para extraer los nombres de centros, titulaciones y asignaturas, así como los enlaces de descarga de los planes docentes en PDF. La Tabla~\ref{tab:impl-admin-operaciones} resume las operaciones agrupadas por la pestaña en la que se invocan.
+
+\begin{figure}[hbtp]
+    \centering
+    \includegraphics[width=\linewidth]{img/sevius4-centro-titulacion-asignatura.png}
+    \caption{Página de acceso público del portal Sevius4 (\texttt{https://sevius4.us.es/?PyP=LISTA}). Los tres desplegables encadenados Centro $\rightarrow$ Titulación $\rightarrow$ Asignatura son la fuente que los \textit{scrapers} del panel recorren para sincronizar los nombres del catálogo académico y descargar los planes docentes en PDF.}
+    \label{fig:sevius4-publico}
+\end{figure}
 
 \begin{table}[hbtp]
 \centering

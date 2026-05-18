@@ -270,7 +270,7 @@ A lo largo del desarrollo del sistema se han tomado decisiones de diseño que ha
 
 \textbf{Contexto:} El pipeline de vectorización RAG procesa documentos PDF que pueden ser costosos de re-vectorizar (extracción de texto, chunking, generación de embeddings con API de pago por uso).
 
-\textbf{Decisión:} La tabla \texttt{planes\_docentes} guarda un \textbf{hash SHA-256} de cada PDF procesado. Antes de procesar un documento, se compara el hash actual con el almacenado.
+\textbf{Decisión:} La tabla \texttt{planes\_docentes} guarda un \textbf{hash SHA-256}~\cite{nistFips180} de cada PDF procesado. El hash se calcula sobre el contenido binario íntegro del fichero (en bloques de 8\,KB para no cargar el PDF entero en memoria), lo que detecta cualquier modificación a nivel de bytes sin necesidad de parsear el documento. Antes de procesar un documento, se compara el hash actual con el almacenado.
 
 \textbf{Justificación:}
 \begin{itemize}

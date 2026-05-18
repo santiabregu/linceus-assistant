@@ -7,9 +7,9 @@
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {5.1}{\ignorespaces Estructura de Descomposición del Trabajo (EDT): fases y paquetes de trabajo.}}{51}{figure.5.1}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {6.1}{\ignorespaces Modelo conceptual de los requisitos de información: dominio académico, módulo RAG y entidades de operación.}}{73}{figure.6.1}%
-\contentsline {figure}{\numberline {6.2}{\ignorespaces Widget conversacional integrado en la página institucional.}}{75}{figure.6.2}%
-\contentsline {figure}{\numberline {6.3}{\ignorespaces Panel de administración: vista de centros.}}{77}{figure.6.3}%
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Modelo conceptual de los requisitos de información: dominio académico, módulo RAG y entidades de operación.}}{72}{figure.6.1}%
+\contentsline {figure}{\numberline {6.2}{\ignorespaces Widget conversacional integrado en la página institucional.}}{76}{figure.6.2}%
+\contentsline {figure}{\numberline {6.3}{\ignorespaces Panel de administración: vista de centros.}}{76}{figure.6.3}%
 \contentsline {figure}{\numberline {6.4}{\ignorespaces Panel de administración: detalle de horarios por curso y grupo.}}{77}{figure.6.4}%
 \contentsline {figure}{\numberline {6.5}{\ignorespaces Panel de administración: gestión del profesorado por departamento.}}{78}{figure.6.5}%
 \contentsline {figure}{\numberline {6.6}{\ignorespaces Panel de administración: auditoría de conversaciones del piloto.}}{78}{figure.6.6}%
@@ -23,28 +23,29 @@
 \contentsline {figure}{\numberline {11.1}{\ignorespaces Pipeline de \texttt {ActionConsultaEspecifica}. La caja \textit {Resolver asignatura} encapsula la cascada de cinco estrategias detallada en el Listado~\ref {lst:asig-cascada}.}}{115}{figure.11.1}%
 \contentsline {figure}{\numberline {11.2}{\ignorespaces Pipeline de listado y conteo (\textit {text-to-SQL}).}}{117}{figure.11.2}%
 \contentsline {figure}{\numberline {11.3}{\ignorespaces Pipeline de \texttt {ActionConsultaProfesor}. Tres puntos de decisión derivan al RAG: rol (\textit {coordinador}/\textit {suplente}), grupo concreto, o resultado SQL vacío como último recurso.}}{119}{figure.11.3}%
-\contentsline {figure}{\numberline {11.4}{\ignorespaces Pipeline de \texttt {ActionConsultaHorario}.}}{121}{figure.11.4}%
-\contentsline {figure}{\numberline {11.5}{\ignorespaces Pipeline de \texttt {ActionSmartFallback}.}}{123}{figure.11.5}%
+\contentsline {figure}{\numberline {11.4}{\ignorespaces Pipeline de \texttt {ActionConsultaHorario}.}}{122}{figure.11.4}%
+\contentsline {figure}{\numberline {11.5}{\ignorespaces Pipeline de \texttt {ActionSmartFallback}.}}{124}{figure.11.5}%
 \contentsline {figure}{\numberline {11.6}{\ignorespaces Pantalla de inicio del panel de administración. Cada tarjeta representa un centro con el número de titulaciones que gestiona.}}{130}{figure.11.6}%
-\contentsline {figure}{\numberline {11.7}{\ignorespaces Vista de profesores del Departamento de Lenguajes y Sistemas Informáticos. La columna \textit {Enriquecer desde us.es} lanza el scraper de directorio para actualizar los datos del PDI.}}{130}{figure.11.7}%
-\contentsline {figure}{\numberline {11.8}{\ignorespaces Vista de conversaciones agrupadas por sesión. La fila en verde indica una sesión marcada como revisada. El botón \textit {Exportar esta página} vuelca las sesiones seleccionadas en CSV.}}{130}{figure.11.8}%
+\contentsline {figure}{\numberline {11.7}{\ignorespaces Vista de profesores del Departamento de Lenguajes y Sistemas Informáticos. La columna \textit {Enriquecer desde us.es} lanza el scraper de directorio para actualizar los datos del PDI.}}{131}{figure.11.7}%
+\contentsline {figure}{\numberline {11.8}{\ignorespaces Vista de conversaciones agrupadas por sesión. La fila en verde indica una sesión marcada como revisada. El botón \textit {Exportar esta página} vuelca las sesiones seleccionadas en CSV.}}{131}{figure.11.8}%
 \contentsline {figure}{\numberline {11.9}{\ignorespaces Panel de estadísticas generales. Los contadores se calculan en tiempo real contra Supabase. En el momento de la captura el sistema contaba con 244~asignaturas, 268~profesores, 157~planes docentes vectorizados y 1352~\textit {chunks} RAG.}}{132}{figure.11.9}%
+\contentsline {figure}{\numberline {11.10}{\ignorespaces Página de acceso público del portal Sevius4 (\texttt {https://sevius4.us.es/?PyP=LISTA}). Los tres desplegables encadenados Centro $\rightarrow $ Titulación $\rightarrow $ Asignatura son la fuente que los \textit {scrapers} del panel recorren para sincronizar los nombres del catálogo académico y descargar los planes docentes en PDF.}}{132}{figure.11.10}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {13.1}{\ignorespaces Página principal del prototipo con el \textit {widget} de chat cerrado.}}{147}{figure.13.1}%
-\contentsline {figure}{\numberline {13.2}{\ignorespaces \textit {Widget} desplegado con mensaje de bienvenida y selector de titulación.}}{147}{figure.13.2}%
-\contentsline {figure}{\numberline {13.3}{\ignorespaces Ejemplo de consulta sobre una asignatura concreta (ficha individual).}}{149}{figure.13.3}%
-\contentsline {figure}{\numberline {13.4}{\ignorespaces Ejemplo de consulta de horario con curso y grupo.}}{150}{figure.13.4}%
-\contentsline {figure}{\numberline {13.5}{\ignorespaces Ejemplo de consulta sobre profesorado.}}{151}{figure.13.5}%
-\contentsline {figure}{\numberline {13.6}{\ignorespaces Panel de administración: pantalla de inicio con la jerarquía de centros.}}{152}{figure.13.6}%
-\contentsline {figure}{\numberline {13.7}{\ignorespaces Pestaña \textit {Asignaturas} con la barra de acciones disponibles para la titulación.}}{153}{figure.13.7}%
-\contentsline {figure}{\numberline {13.8}{\ignorespaces Pestaña \textit {Profesores} del panel de administración. La columna \textit {Enriquecer desde us.es} dispara el scraper del directorio PDI para el departamento correspondiente.}}{154}{figure.13.8}%
-\contentsline {figure}{\numberline {13.9}{\ignorespaces Pestaña \textit {Horarios} con el botón \textit {Generar horarios} activo para los centros con extractor disponible.}}{155}{figure.13.9}%
-\contentsline {figure}{\numberline {13.10}{\ignorespaces Pestaña \textit {Conversaciones} con las sesiones agrupadas. La fila resaltada en verde indica una sesión ya revisada por el administrador.}}{156}{figure.13.10}%
-\contentsline {figure}{\numberline {13.11}{\ignorespaces Pestaña \textit {Estadísticas}: contadores globales del catálogo cargado.}}{157}{figure.13.11}%
+\contentsline {figure}{\numberline {13.1}{\ignorespaces Página principal del prototipo con el \textit {widget} de chat cerrado.}}{149}{figure.13.1}%
+\contentsline {figure}{\numberline {13.2}{\ignorespaces \textit {Widget} desplegado con mensaje de bienvenida y selector de titulación.}}{149}{figure.13.2}%
+\contentsline {figure}{\numberline {13.3}{\ignorespaces Ejemplo de consulta sobre una asignatura concreta (ficha individual).}}{151}{figure.13.3}%
+\contentsline {figure}{\numberline {13.4}{\ignorespaces Ejemplo de consulta de horario con curso y grupo.}}{152}{figure.13.4}%
+\contentsline {figure}{\numberline {13.5}{\ignorespaces Ejemplo de consulta sobre profesorado.}}{153}{figure.13.5}%
+\contentsline {figure}{\numberline {13.6}{\ignorespaces Panel de administración: pantalla de inicio con la jerarquía de centros.}}{154}{figure.13.6}%
+\contentsline {figure}{\numberline {13.7}{\ignorespaces Pestaña \textit {Asignaturas} con la barra de acciones disponibles para la titulación.}}{155}{figure.13.7}%
+\contentsline {figure}{\numberline {13.8}{\ignorespaces Pestaña \textit {Profesores} del panel de administración. La columna \textit {Enriquecer desde us.es} dispara el scraper del directorio PDI para el departamento correspondiente.}}{156}{figure.13.8}%
+\contentsline {figure}{\numberline {13.9}{\ignorespaces Pestaña \textit {Horarios} con el botón \textit {Generar horarios} activo para los centros con extractor disponible.}}{157}{figure.13.9}%
+\contentsline {figure}{\numberline {13.10}{\ignorespaces Pestaña \textit {Conversaciones} con las sesiones agrupadas. La fila resaltada en verde indica una sesión ya revisada por el administrador.}}{158}{figure.13.10}%
+\contentsline {figure}{\numberline {13.11}{\ignorespaces Pestaña \textit {Estadísticas}: contadores globales del catálogo cargado.}}{159}{figure.13.11}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {16.1}{\ignorespaces Miniatura del vídeo demostración alojado en YouTube. La imagen es un enlace activo en la versión PDF.}}{175}{figure.16.1}%
+\contentsline {figure}{\numberline {16.1}{\ignorespaces Miniatura del vídeo demostración alojado en YouTube. La imagen es un enlace activo en la versión PDF.}}{177}{figure.16.1}%
 \addvspace {10\p@ }
 \contentsfinish 

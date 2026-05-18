@@ -1,4 +1,4 @@
-\begin{thebibliography}{10}
+\begin{thebibliography}{100}
 
 \bibitem{jurafsky2009speech}
 D.~Jurafsky and J.~H. Martin, {\em Speech and Language Processing: An
@@ -152,6 +152,10 @@ B.~R. Ranoliya, N.~Raghuwanshi, and S.~Singh, ``Chatbot for university related
 D.~K. Dibya and S.~Sahoo, ``Implementation of a chatbot system using {AI} and
   {NLP},'' in {\em IEEE ICCCNT}, 2021.
 
+\bibitem{es2024ragas}
+S.~Es, J.~James, L.~Espinosa-Anke, and S.~Schockaert, ``{RAGAS}: Automated
+  evaluation of retrieval augmented generation,'' in {\em EACL}, 2024.
+
 \bibitem{wollny2021survey}
 S.~Wollny, J.~Schneider, D.~Di~Mitri, J.~Weidlich, M.~Rittberger, and
   H.~Drachsler, ``Are we there yet? -- a systematic literature review on
@@ -225,6 +229,22 @@ A.~Kane, ``pgvector: Open-source vector similarity search for {P}ostgres,''
 
 \bibitem{geminidocs}
 {Google DeepMind}, ``Gemini {API} documentation,'' 2024.
+\newblock Consultado: enero 2026.
+
+\bibitem{openaiPlatform}
+{OpenAI}, ``{OpenAI} {API} platform documentation,'' 2024.
+\newblock Consultado: enero 2026.
+
+\bibitem{deepseekDocs}
+{DeepSeek}, ``Deepseek {API} documentation,'' 2024.
+\newblock Consultado: enero 2026.
+
+\bibitem{huggingfaceInference}
+{Hugging Face}, ``Inference {API} documentation,'' 2024.
+\newblock Consultado: enero 2026.
+
+\bibitem{anthropicClaude}
+{Anthropic}, ``Claude {API} documentation,'' 2024.
 \newblock Consultado: enero 2026.
 
 \bibitem{mikolov2013word2vec}
@@ -334,12 +354,6 @@ W.~W. Cohen, P.~Ravikumar, and S.~E. Fienberg, ``A comparison of string
   \url{https://ai.google.dev/gemini-api/docs/rate-limits}.
 \newblock Consultado en mayo de 2026.
 
-\bibitem{segura2024guiatfg}
-S.~Segura and A.~Ruiz, ``Guia para proyectos fin de grado sobre desarrollo de
-  software.'' \url{https://github.com/ssegura/Guia_TFG}, 2024.
-\newblock Departamento de Lenguajes y Sistemas Informaticos, ETSII, Universidad
-  de Sevilla.
-
 \bibitem{sommerville2015}
 I.~Sommerville, {\em Software Engineering}.
 \newblock Pearson, 10th~ed., 2015.
@@ -350,6 +364,12 @@ D.~Clegg and R.~Barker, {\em Case Method Fast-Track: A {RAD} Approach}.
 
 \bibitem{north2006bdd}
 D.~North, ``Introducing {BDD}.'' Better Software Magazine, 2006.
+
+\bibitem{segura2024guiatfg}
+S.~Segura and A.~Ruiz, ``Guia para proyectos fin de grado sobre desarrollo de
+  software.'' \url{https://github.com/ssegura/Guia_TFG}, 2024.
+\newblock Departamento de Lenguajes y Sistemas Informaticos, ETSII, Universidad
+  de Sevilla.
 
 \bibitem{bass2021sap}
 L.~Bass, P.~Clements, and R.~Kazman, {\em Software Architecture in Practice}.
@@ -384,14 +404,16 @@ A.~Holtzman, J.~Buys, L.~Du, M.~Forbes, and Y.~Choi, ``The curious case of
   \url{https://python.langchain.com/docs/concepts/text_splitters/}, 2024.
 \newblock Recommended chunk size 500--1000 chars with 10--20\,\% overlap.
 
-\bibitem{es2024ragas}
-S.~Es, J.~James, L.~Espinosa-Anke, and S.~Schockaert, ``{RAGAS}: Automated
-  evaluation of retrieval augmented generation,'' in {\em EACL}, 2024.
-
 \bibitem{casanueva2020efficient}
 I.~Casanueva, T.~Temcinas, D.~Gerz, M.~Henderson, and I.~Vulic, ``Efficient
   intent detection with dual sentence encoders,'' in {\em ACL NLP4ConvAI
   Workshop}, 2020.
+
+\bibitem{nistFips180}
+{National Institute of Standards and Technology}, ``{FIPS PUB 180-4}: Secure
+  hash standard ({SHS}),'' 2015.
+\newblock Federal Information Processing Standards Publication. Consultado:
+  enero 2026.
 
 \bibitem{fowler2002patterns}
 M.~Fowler, {\em Patterns of Enterprise Application Architecture}.

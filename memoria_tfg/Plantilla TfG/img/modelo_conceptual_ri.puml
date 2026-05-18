@@ -39,7 +39,7 @@ class Asignatura <<dominio>> {
   curso
   creditos
   duracion
-  tipologia
+  tipologia : FB|OB|OP
 }
 
 class Departamento <<dominio>> {
@@ -58,18 +58,18 @@ class Profesor <<dominio>> {
 class ProfesorAsignatura <<dominio>> {
   curso_academico
   grupo
-  rol (titular | coordinador | suplente)
+  rol : titular | coordinador | suplente
 }
 
 class GrupoClase <<dominio>> {
   codigo
-  tipo (teoria | laboratorio)
+  tipo : teoria | laboratorio
 }
 
 class Aula <<dominio>> {
   codigo
   capacidad
-  tipo (A: teoria | resto: laboratorio)
+  tipo : teoria | laboratorio
 }
 
 class Horario <<dominio>> {
@@ -84,7 +84,6 @@ class Tutoria <<dominio>> {
   hora_inicio
   hora_fin
   modalidad
-  nota: deliberadamente vacia (D-061)
 }
 
 ' === MODULO RAG ===
@@ -92,19 +91,19 @@ class PlanDocente <<rag>> {
   curso_academico
   grupo
   hash_sha256
-  estado_rag (pendiente | en_proceso | completado | error)
+  estado_rag : pendiente | en_proceso | completado | error
 }
 
 class PlanDocenteChunk <<rag>> {
-  contenido (texto)
-  embedding (vector 2000 dims)
+  contenido : texto
+  embedding : vector 2000 dims
   seccion
   orden
 }
 
 ' === OPERACION ===
 class ConversationLog <<operacion>> {
-  session_id (UUID anonimo)
+  session_id : UUID anonimo
   user_message
   bot_response
   intent
@@ -113,7 +112,7 @@ class ConversationLog <<operacion>> {
 }
 
 class Feedback <<operacion>> {
-  session_id (UUID anonimo)
+  session_id : UUID anonimo
   rating
   comment
   last_user_message
@@ -132,10 +131,10 @@ Asignatura "1" --> "*" GrupoClase : se_imparte_en
 Asignatura "1" --> "*" PlanDocente : tiene
 Asignatura "1" --> "*" ProfesorAsignatura
 Profesor    "1" --> "*" ProfesorAsignatura
-Profesor    "1" --> "*" Tutoria
+Profesor    "1" --> "*" Tutoria : imparte
 
-GrupoClase "1" --> "*" Horario
-Aula       "1" --> "*" Horario
+GrupoClase "1" --> "*" Horario : se_planifica
+Aula       "1" --> "*" Horario : se_ocupa_en
 
 PlanDocente "1" --> "*" PlanDocenteChunk : vectorizado
 
