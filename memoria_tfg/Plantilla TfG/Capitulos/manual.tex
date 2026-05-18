@@ -338,7 +338,7 @@ Además de los recursos de cómputo, el despliegue requiere disponer de tres cre
 La instalación parte de la clonación del repositorio del proyecto y se completa en cuatro pasos. El primer paso consiste en obtener una copia local del código y situarse en el directorio resultante. El segundo paso es preparar el fichero \texttt{.env} a partir de la plantilla, sustituyendo cada variable por el valor correspondiente al entorno de despliegue. El tercer paso es asegurarse de que el directorio \texttt{models/} contiene un modelo Rasa entrenado: si no es así, basta con ejecutar \texttt{rasa train} en un entorno con las dependencias instaladas, o bien copiar el último modelo válido desde el repositorio. El cuarto y último paso es levantar la pila completa con Docker Compose:
 
 \begin{lstlisting}[language=bash, caption={Levantar la pila completa con Docker Compose.}]
-git clone <url-repositorio> && cd linceus-assistant
+git clone https://github.com/santiabregu/linceus-assistant && cd linceus-assistant
 cp .env.example .env          # completar variables
 docker compose -f docker/docker-compose.yml up --build -d
 \end{lstlisting}
@@ -401,7 +401,7 @@ docker compose -f docker/docker-compose.yml down
 % =====================================================
 \section{Manual de desarrollo}\label{sec:manual-desarrollo}
 
-El manual de desarrollo se dirige a quien deba modificar, ampliar o mantener el código de Linceus Assistant tras el cierre de este TFG. Su objetivo es minimizar la curva de aprendizaje proporcionando una visión panorámica del repositorio, las convenciones empleadas y el ciclo de trabajo recomendado.
+El manual de desarrollo se dirige a quien deba modificar, ampliar o mantener el código de Linceus Assistant tras el cierre de este TFG. Su objetivo es minimizar la curva de aprendizaje proporcionando una visión panorámica del repositorio, las convenciones empleadas y el ciclo de trabajo recomendado. El código fuente completo del proyecto está alojado en GitHub bajo \href{https://github.com/santiabregu/linceus-assistant}{\texttt{https://github.com/santiabregu/linceus-assistant}} y es la referencia autoritativa para cualquier divergencia con esta memoria.
 
 \subsection{Estructura del repositorio}\label{subsec:desarrollo-estructura}
 

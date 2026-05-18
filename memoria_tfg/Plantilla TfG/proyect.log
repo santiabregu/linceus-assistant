@@ -1,9 +1,13 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.4.26)  18 MAY 2026 21:10
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.4.26)  18 MAY 2026 21:38
 entering extended mode
  restricted \write18 enabled.
+ file:line:error style messages enabled.
  %&-line parsing enabled.
-**./proyect.tex
-(proyect.tex
+**"c:/Users/santi/Desktop/cuarto/TFG/linceus-assistant/memoria_tfg/Plantilla Tf
+G/proyect.tex"
+
+(c:/Users/santi/Desktop/cuarto/TFG/linceus-assistant/memoria_tfg/Plantilla TfG/
+proyect.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
 (pclass.cls
@@ -3659,6 +3663,18 @@ Package xcolor Warning: Incompatible color definition on input line 341.
 Package xcolor Warning: Incompatible color definition on input line 341.
 
 
+Package xcolor Warning: Incompatible color definition on input line 341.
+
+
+Package xcolor Warning: Incompatible color definition on input line 341.
+
+
+Package xcolor Warning: Incompatible color definition on input line 341.
+
+
+Package xcolor Warning: Incompatible color definition on input line 341.
+
+
 Package xcolor Warning: Incompatible color definition on input line 342.
 
 
@@ -4789,130 +4805,130 @@ Package xcolor Warning: Incompatible color definition on input line 509.
 
 Package xcolor Warning: Incompatible color definition on input line 509.
 
-
-Package xcolor Warning: Incompatible color definition on input line 510.
-
-
-Package xcolor Warning: Incompatible color definition on input line 510.
-
-
-Package xcolor Warning: Incompatible color definition on input line 510.
-
-
-Package xcolor Warning: Incompatible color definition on input line 511.
-
-
-Package xcolor Warning: Incompatible color definition on input line 511.
-
-
-Package xcolor Warning: Incompatible color definition on input line 511.
-
-
-Package xcolor Warning: Incompatible color definition on input line 511.
-
-
-Package xcolor Warning: Incompatible color definition on input line 511.
-
-
-Package xcolor Warning: Incompatible color definition on input line 511.
-
-
-Package xcolor Warning: Incompatible color definition on input line 512.
-
-
-Package xcolor Warning: Incompatible color definition on input line 512.
-
-
-Package xcolor Warning: Incompatible color definition on input line 512.
-
-
-Package xcolor Warning: Incompatible color definition on input line 512.
-
-
-Package xcolor Warning: Incompatible color definition on input line 512.
-
-
-Package xcolor Warning: Incompatible color definition on input line 512.
-
-
-Package xcolor Warning: Incompatible color definition on input line 512.
-
-
-Package xcolor Warning: Incompatible color definition on input line 512.
-
-
-Package xcolor Warning: Incompatible color definition on input line 512.
-
-
-Package xcolor Warning: Incompatible color definition on input line 512.
-
-
-Package xcolor Warning: Incompatible color definition on input line 512.
-
-
-Package xcolor Warning: Incompatible color definition on input line 512.
-
-
-Package xcolor Warning: Incompatible color definition on input line 512.
-
-
-Package xcolor Warning: Incompatible color definition on input line 512.
-
-
-Package xcolor Warning: Incompatible color definition on input line 513.
-
-
-Package xcolor Warning: Incompatible color definition on input line 513.
-
-
-Package xcolor Warning: Incompatible color definition on input line 513.
-
-
-Package xcolor Warning: Incompatible color definition on input line 513.
-
-
-Package xcolor Warning: Incompatible color definition on input line 513.
-
-
-Package xcolor Warning: Incompatible color definition on input line 513.
-
-
-Package xcolor Warning: Incompatible color definition on input line 513.
-
-
-Package xcolor Warning: Incompatible color definition on input line 513.
-
-
-Package xcolor Warning: Incompatible color definition on input line 513.
-
-
-Package xcolor Warning: Incompatible color definition on input line 513.
-
-
-Package xcolor Warning: Incompatible color definition on input line 513.
-
-
-Package xcolor Warning: Incompatible color definition on input line 513.
-
-
-Package xcolor Warning: Incompatible color definition on input line 513.
-
-
-Package xcolor Warning: Incompatible color definition on input line 513.
-
-
-Package xcolor Warning: Incompatible color definition on input line 513.
-
-
-Package xcolor Warning: Incompatible color definition on input line 513.
-
-
-Package xcolor Warning: Incompatible color definition on input line 513.
-
-
-Package xcolor Warning: Incompatible color definition on input line 513.
-
 [163]
+
+Package xcolor Warning: Incompatible color definition on input line 510.
+
+
+Package xcolor Warning: Incompatible color definition on input line 510.
+
+
+Package xcolor Warning: Incompatible color definition on input line 510.
+
+
+Package xcolor Warning: Incompatible color definition on input line 511.
+
+
+Package xcolor Warning: Incompatible color definition on input line 511.
+
+
+Package xcolor Warning: Incompatible color definition on input line 511.
+
+
+Package xcolor Warning: Incompatible color definition on input line 511.
+
+
+Package xcolor Warning: Incompatible color definition on input line 511.
+
+
+Package xcolor Warning: Incompatible color definition on input line 511.
+
+
+Package xcolor Warning: Incompatible color definition on input line 512.
+
+
+Package xcolor Warning: Incompatible color definition on input line 512.
+
+
+Package xcolor Warning: Incompatible color definition on input line 512.
+
+
+Package xcolor Warning: Incompatible color definition on input line 512.
+
+
+Package xcolor Warning: Incompatible color definition on input line 512.
+
+
+Package xcolor Warning: Incompatible color definition on input line 512.
+
+
+Package xcolor Warning: Incompatible color definition on input line 512.
+
+
+Package xcolor Warning: Incompatible color definition on input line 512.
+
+
+Package xcolor Warning: Incompatible color definition on input line 512.
+
+
+Package xcolor Warning: Incompatible color definition on input line 512.
+
+
+Package xcolor Warning: Incompatible color definition on input line 512.
+
+
+Package xcolor Warning: Incompatible color definition on input line 512.
+
+
+Package xcolor Warning: Incompatible color definition on input line 512.
+
+
+Package xcolor Warning: Incompatible color definition on input line 512.
+
+
+Package xcolor Warning: Incompatible color definition on input line 513.
+
+
+Package xcolor Warning: Incompatible color definition on input line 513.
+
+
+Package xcolor Warning: Incompatible color definition on input line 513.
+
+
+Package xcolor Warning: Incompatible color definition on input line 513.
+
+
+Package xcolor Warning: Incompatible color definition on input line 513.
+
+
+Package xcolor Warning: Incompatible color definition on input line 513.
+
+
+Package xcolor Warning: Incompatible color definition on input line 513.
+
+
+Package xcolor Warning: Incompatible color definition on input line 513.
+
+
+Package xcolor Warning: Incompatible color definition on input line 513.
+
+
+Package xcolor Warning: Incompatible color definition on input line 513.
+
+
+Package xcolor Warning: Incompatible color definition on input line 513.
+
+
+Package xcolor Warning: Incompatible color definition on input line 513.
+
+
+Package xcolor Warning: Incompatible color definition on input line 513.
+
+
+Package xcolor Warning: Incompatible color definition on input line 513.
+
+
+Package xcolor Warning: Incompatible color definition on input line 513.
+
+
+Package xcolor Warning: Incompatible color definition on input line 513.
+
+
+Package xcolor Warning: Incompatible color definition on input line 513.
+
+
+Package xcolor Warning: Incompatible color definition on input line 513.
+
 
 Package xcolor Warning: Incompatible color definition on input line 514.
 
@@ -5468,7 +5484,7 @@ Cap\'{\i }tulo 15.
 
 ]) (Capitulos/video_presentacion.tex [176]
 Cap\'{\i }tulo 16.
-<img/youtube-demo-thumbnail.png, id=3418, 2762.32pt x 1541.76pt>
+<img/youtube-demo-thumbnail.png, id=3419, 2762.32pt x 1541.76pt>
 File: img/youtube-demo-thumbnail.png Graphic file (type png)
 <use img/youtube-demo-thumbnail.png>
 Package pdftex.def Info: img/youtube-demo-thumbnail.png  used on input line 30.
@@ -5487,8 +5503,8 @@ m/b/n/10.95 113 de-ci-sio-nes t[]ecni-cas \OT1/ptm/m/n/10.95 en los fi-che-ros
  []
 
 [182] [183]
-ignored error: Infinite glue shrinkage found in box being split [184] [185]
-[186]
+Capitulos/apendices.tex:330: ignored error: Infinite glue shrinkage found in bo
+x being split [184] [185] [186]
 Overfull \hbox (14.93623pt too wide) in paragraph at lines 434--434
 \OT1/pcr/m/n/10 consulta[]horario[]asignatura 
  []
@@ -5513,8 +5529,8 @@ Overfull \hbox (17.07027pt too wide) in paragraph at lines 442--442
 \OT1/pcr/m/n/10 aula.startswith([]A')=teor[]^^Pa 
  []
 
-ignored error: Infinite glue shrinkage found in box being split [187]) [188]
-(proyect.bbl [189
+Capitulos/apendices.tex:444: ignored error: Infinite glue shrinkage found in bo
+x being split [187]) [188] (proyect.bbl [189
 
 
 ]
@@ -5533,13 +5549,13 @@ Package rerunfilecheck Info: File `proyect.out' has not changed.
 (rerunfilecheck)             Checksum: 5D5E377E1A2745E927973101B6326431;58339.
  ) 
 Here is how much of TeX's memory you used:
- 29769 strings out of 467871
- 538517 string characters out of 5418376
- 1157156 words of memory out of 5000000
- 57006 multiletter control sequences out of 15000+600000
+ 29773 strings out of 467871
+ 538776 string characters out of 5418376
+ 1184156 words of memory out of 5000000
+ 57008 multiletter control sequences out of 15000+600000
  715650 words of font info for 206 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,15n,94p,2893b,2125s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,15n,94p,2971b,2125s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\santi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm
 1095.pk><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
 ts/cm/cmbx10.pfb><C:/Users/santi/AppData/Local/Programs/MiKTeX/fonts/type1/publ
@@ -5565,9 +5581,9 @@ TeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/santi/AppData/Local/Programs/MiK
 TeX/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/santi/AppData/Local/Programs/Mi
 KTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/santi/AppData/Local/Programs/Mi
 KTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on proyect.pdf (195 pages, 4984721 bytes).
+Output written on proyect.pdf (195 pages, 4985202 bytes).
 PDF statistics:
- 3912 PDF objects out of 4296 (max. 8388607)
+ 3913 PDF objects out of 4296 (max. 8388607)
  988 named destinations out of 1000 (max. 500000)
  2452 words of extra memory for PDF output out of 10000 (max. 10000000)
 
