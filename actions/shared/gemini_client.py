@@ -15,7 +15,7 @@ load_dotenv()
 
 # Configuración de Gemini
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL = "gemini-2.5-flash"  # Variante completa de Gemini 2.5 Flash: prefill más rápido que -lite en prompts largos (chunks RAG), evita los 504 "cancelled before prefill" del servidor. Thinking se desactiva explícitamente con thinking_budget=0 para que la cadena de razonamiento no se filtre en las respuestas.
+GEMINI_MODEL = "gemini-2.5-flash"  # Variante completa de Gemini 2.5 Flash: prefill más rápido que -lite en prompts largos (chunks RAG), evita los 504 "cancelled before prefill" del servidor. El "thinking" interno no se serializa en response.text por defecto, así que no se filtra en las respuestas al usuario.
 DEFAULT_TIMEOUT = 30  # segundos
 
 # Path donde se vuelcan métricas en modo benchmark. Si la env var
@@ -91,15 +91,12 @@ def llamar_gemini(
 
         model = genai.GenerativeModel(modelo)
 
-        # Se pasa como dict (no como genai.types.GenerationConfig) para que SDKs antiguas
-        # que no exponen thinking_config como kwarg sigan tragando la clave sin romper.
-        generation_config = {
-            "temperature": temperature,
-            "max_output_tokens": max_tokens,
-            "top_p": top_p,
-            "top_k": top_k,
-            "thinking_config": {"thinking_budget": 0},
-        }
+        generation_config = genai.types.GenerationConfig(
+            temperature=temperature,
+            max_output_tokens=max_tokens,
+            top_p=top_p,
+            top_k=top_k,
+        )
 
         t_start = time.perf_counter()
         response = model.generate_content(
