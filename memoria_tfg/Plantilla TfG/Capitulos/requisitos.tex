@@ -210,7 +210,7 @@ La Figura~\ref{fig:modelo-conceptual-ri} sintetiza los requisitos de informació
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=\linewidth,keepaspectratio]{img/modelo_conceptual_ri.png}
-\caption{Modelo conceptual de los requisitos de información: dominio académico, módulo RAG y entidades de operación.}\label{fig:modelo-conceptual-ri}
+\caption[Modelo conceptual de los requisitos de información.]{Modelo conceptual de los requisitos de información: dominio académico, módulo RAG y entidades de operación.}\label{fig:modelo-conceptual-ri}
 \end{figure}
 
 La revisión del modelo permitió detectar y resolver tres inconsistencias durante la fase de análisis. La primera afectaba al rol del profesorado en una asignatura (titular, coordinador, suplente): se modeló inicialmente como atributo de \textsc{Profesor}, pero la cardinalidad real lo sitúa como atributo de la relación \textsc{ProfesorAsignatura}, ya que un mismo profesor puede ejercer roles distintos en grupos distintos del mismo curso académico. La segunda afectaba a la categorización de aulas como teoría o laboratorio: la convención adoptada (prefijo \emph{A} para teoría) es un atributo derivado del código del aula, no una columna independiente, lo que se documenta en la propia entidad. La tercera, la entidad \textsc{Tutoria}, está modelada en el esquema pero deliberadamente vacía: el requisito RF-P4 redirige las consultas de tutorías al correo del profesor (decisión D-061), por lo que la entidad se conserva para futuros usos pero no participa en ningún flujo del prototipo actual.
