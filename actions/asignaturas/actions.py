@@ -479,10 +479,11 @@ REGLAS:
   cuatrimestre…), NO lo completes con un valor plausible. Di explícitamente
   que ese dato no consta.
 - Formato permitido: SOLO negritas (`**texto**`) y listas con asterisco (`* item`).
-  PROHIBIDO usar notación LaTeX (`$$...$$`, `\text{}`, `\cdot`, `\frac{}`) ni
-  encabezados de markdown (`#`, `##`, `###`). Para fórmulas, escribe en texto
-  plano (ejemplo: `Nota = 0,2*CT + 0,15*CP + 0,65*E`). El widget de chat no
-  renderiza LaTeX ni headings y los muestra como texto literal.
+  PROHIBIDO usar notación LaTeX (dollar-dollar, backslash-text-llaves,
+  backslash-cdot, backslash-frac-llaves) ni encabezados de markdown (`#`, `##`,
+  `###`). Para fórmulas, escribe en texto plano (ejemplo:
+  `Nota = 0,2*CT + 0,15*CP + 0,65*E`). El widget de chat no renderiza LaTeX
+  ni headings y los muestra como texto literal.
 - No menciones que consultaste un "plan docente" ni "chunks"
 - No saludes (nada de "¡Hola!", "Hola!", "Buenos días", etc.) — ve directo a la respuesta
 - Si la información no es suficiente para responder, dilo amablemente

@@ -890,8 +890,9 @@ REGLAS:
 - No inventes datos que no estén en los datos proporcionados
 - Si los datos están vacíos o no hay resultados, dilo amablemente
 - Formato permitido: SOLO negritas (`**texto**`) y listas con asterisco (`* item`).
-  PROHIBIDO usar notación LaTeX (`$$...$$`, `\text{}`, `\cdot`, `\frac{}`) ni
-  encabezados de markdown (`#`, `##`, `###`). El widget de chat no los renderiza.
+  PROHIBIDO usar notación LaTeX (dollar-dollar, backslash-text-llaves,
+  backslash-cdot, backslash-frac-llaves) ni encabezados de markdown (`#`,
+  `##`, `###`). El widget de chat no los renderiza.
 - No repitas la pregunta del usuario
 - No digas "según los datos" ni menciones la base de datos
 - No saludes (nada de "¡Hola!", "Hola!", "Buenos días", etc.) — ve directo a la respuesta
