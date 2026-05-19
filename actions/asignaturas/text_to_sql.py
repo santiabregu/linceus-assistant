@@ -889,7 +889,9 @@ REGLAS:
 - Si es un conteo, responde con una frase natural
 - No inventes datos que no estén en los datos proporcionados
 - Si los datos están vacíos o no hay resultados, dilo amablemente
-- Puedes usar markdown para formatear (negritas, listas)
+- Formato permitido: SOLO negritas (`**texto**`) y listas con asterisco (`* item`).
+  PROHIBIDO usar notación LaTeX (`$$...$$`, `\text{}`, `\cdot`, `\frac{}`) ni
+  encabezados de markdown (`#`, `##`, `###`). El widget de chat no los renderiza.
 - No repitas la pregunta del usuario
 - No digas "según los datos" ni menciones la base de datos
 - No saludes (nada de "¡Hola!", "Hola!", "Buenos días", etc.) — ve directo a la respuesta
