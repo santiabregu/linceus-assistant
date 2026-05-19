@@ -1,12 +1,14 @@
 """
-Cliente para Google Gemini API.
-Alternativa rápida a Ollama cuando se necesita velocidad (demo, producción).
+Cliente para Google Gemini API vía REST directo con `requests`.
 
-Usa la SDK `google-genai` (sucesora de `google-generativeai`, que está deprecada).
-La SDK nueva es la única que expone `ThinkingConfig`, necesario para desactivar
-el "thinking" interno de Gemini 2.5 Flash; con thinking activado los tokens de
-razonamiento consumen el presupuesto de `max_output_tokens` y la respuesta al
-usuario llega truncada.
+No usamos ningún SDK oficial porque tanto `google-generativeai` (deprecado, sin
+`thinking_config`) como `google-genai` (sucesor, con `thinking_config`) chocan
+con dependencias del proyecto: `google-genai` exige `httpx>=0.28` y
+`websockets>=13`, mientras que `supabase 2.3.0` exige `httpx<0.25` y
+`rasa-sdk 3.6.2` exige `websockets<11`. Pegar a REST evita esos conflictos y
+nos permite pasar `thinkingConfig.thinkingBudget=0` para que Gemini 2.5 Flash
+no consuma `maxOutputTokens` en su razonamiento interno (lo que truncaba las
+respuestas RAG).
 """
 
 import json
@@ -15,15 +17,15 @@ import time
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 
+import requests
 from dotenv import load_dotenv
-from google import genai
-from google.genai import types
 
 load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL = "gemini-2.5-flash"  # Variante completa: prefill suficiente para prompts grandes (chunks RAG) sin disparar 504 "cancelled before prefill" que veíamos con -lite. Thinking se desactiva explícitamente con thinking_budget=0.
+GEMINI_MODEL = "gemini-2.5-flash"  # Variante completa: prefill suficiente para prompts grandes (chunks RAG); thinking desactivado vía thinking_budget=0 para no gastar maxOutputTokens en razonamiento interno.
 DEFAULT_TIMEOUT = 30
+_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models"
 
 _BENCH_METRICS_PATH = os.getenv("LINCEUS_BENCH_METRICS")
 
@@ -46,18 +48,18 @@ def llamar_gemini(
     context: str = "unknown",
 ) -> Optional[str]:
     """
-    Llama a Gemini API.
+    Llama a Gemini API vía REST.
 
     Args:
         prompt: Prompt para el modelo
         modelo: Nombre del modelo
         timeout: Timeout en segundos
         options: Opciones de generación (temperature, num_predict, top_p, top_k)
-        context: etiqueta libre que identifica el call site (se usa solo
-            cuando `LINCEUS_BENCH_METRICS` está activa)
+        context: etiqueta libre que identifica el call site (sólo se usa cuando
+            `LINCEUS_BENCH_METRICS` está activa)
 
     Returns:
-        Respuesta del modelo o None si hay error
+        Texto generado por el modelo, o None si hay error.
     """
 
     # Defaults optimizados para generación SQL (JSON corto)
@@ -76,45 +78,65 @@ def llamar_gemini(
         if "top_k" in options:
             top_k = options["top_k"]
 
+    if not GEMINI_API_KEY:
+        print("❌ GEMINI_API_KEY no encontrada en .env")
+        return None
+
+    url = f"{_API_BASE}/{modelo}:generateContent"
+    body = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {
+            "temperature": temperature,
+            "maxOutputTokens": max_tokens,
+            "topP": top_p,
+            "topK": top_k,
+            "thinkingConfig": {"thinkingBudget": 0},
+        },
+    }
+
     try:
         print(f"🤖 Llamando a Gemini API (modelo: {modelo})...")
 
-        client = genai.Client(
-            api_key=GEMINI_API_KEY,
-            http_options=types.HttpOptions(timeout=timeout * 1000),  # SDK espera ms
-        )
-
-        config = types.GenerateContentConfig(
-            temperature=temperature,
-            max_output_tokens=max_tokens,
-            top_p=top_p,
-            top_k=top_k,
-            thinking_config=types.ThinkingConfig(thinking_budget=0),
-        )
-
         t_start = time.perf_counter()
-        response = client.models.generate_content(
-            model=modelo,
-            contents=prompt,
-            config=config,
+        resp = requests.post(
+            url,
+            params={"key": GEMINI_API_KEY},
+            json=body,
+            timeout=timeout,
         )
         latencia_ms = int((time.perf_counter() - t_start) * 1000)
 
-        respuesta = (response.text or "").strip()
+        if resp.status_code != 200:
+            print(f"❌ Error llamando a Gemini: HTTP {resp.status_code} {resp.text[:300]}")
+            if _BENCH_METRICS_PATH:
+                _log_bench_metric({
+                    "ts": datetime.now(timezone.utc).isoformat(),
+                    "modelo": modelo,
+                    "context": context,
+                    "ok": False,
+                    "error": f"HTTP {resp.status_code}: {resp.text[:200]}",
+                })
+            return None
+
+        data = resp.json()
+        candidates = data.get("candidates") or []
+        if not candidates:
+            print(f"❌ Gemini devolvió sin candidates: {data.get('promptFeedback')}")
+            return None
+
+        parts = (candidates[0].get("content") or {}).get("parts") or []
+        respuesta = "".join(p.get("text", "") for p in parts).strip()
         print(f"✅ Respuesta recibida ({len(respuesta)} chars)")
 
         if _BENCH_METRICS_PATH:
-            usage = getattr(response, "usage_metadata", None)
-            input_tokens = getattr(usage, "prompt_token_count", None) if usage else None
-            output_tokens = getattr(usage, "candidates_token_count", None) if usage else None
-            total_tokens = getattr(usage, "total_token_count", None) if usage else None
+            usage = data.get("usageMetadata") or {}
             _log_bench_metric({
                 "ts": datetime.now(timezone.utc).isoformat(),
                 "modelo": modelo,
                 "context": context,
-                "input_tokens": input_tokens,
-                "output_tokens": output_tokens,
-                "total_tokens": total_tokens,
+                "input_tokens": usage.get("promptTokenCount"),
+                "output_tokens": usage.get("candidatesTokenCount"),
+                "total_tokens": usage.get("totalTokenCount"),
                 "latencia_ms": latencia_ms,
                 "prompt_chars": len(prompt),
                 "respuesta_chars": len(respuesta),
@@ -138,36 +160,19 @@ def llamar_gemini(
 
 def verificar_gemini_activo() -> bool:
     """Verifica si Gemini está configurado correctamente."""
-    try:
-        if not GEMINI_API_KEY:
-            print("❌ GEMINI_API_KEY no encontrada en .env")
-            return False
-
-        client = genai.Client(api_key=GEMINI_API_KEY)
-        response = client.models.generate_content(
-            model=GEMINI_MODEL,
-            contents="Di 'OK'",
-            config=types.GenerateContentConfig(
-                max_output_tokens=10,
-                temperature=0.0,
-                thinking_config=types.ThinkingConfig(thinking_budget=0),
-            ),
-        )
-
-        if response.text:
-            print(f"✅ Gemini activo y respondiendo (modelo: {GEMINI_MODEL})")
-            return True
-
+    if not GEMINI_API_KEY:
+        print("❌ GEMINI_API_KEY no encontrada en .env")
         return False
-
-    except Exception as e:
-        print(f"❌ Error verificando Gemini: {e}")
-        return False
+    respuesta = llamar_gemini("Di 'OK'", timeout=10, options={"num_predict": 10})
+    if respuesta:
+        print(f"✅ Gemini activo y respondiendo (modelo: {GEMINI_MODEL})")
+        return True
+    return False
 
 
 # Test del módulo
 if __name__ == "__main__":
-    print("🧪 Testing Gemini Client\n")
+    print("🧪 Testing Gemini Client (REST directo)\n")
 
     if not verificar_gemini_activo():
         print("\n💡 Para usar Gemini:")
