@@ -1,42 +1,40 @@
 """
 Cliente para Google Gemini API.
 Alternativa rápida a Ollama cuando se necesita velocidad (demo, producción).
+
+Usa la SDK `google-genai` (sucesora de `google-generativeai`, que está deprecada).
+La SDK nueva es la única que expone `ThinkingConfig`, necesario para desactivar
+el "thinking" interno de Gemini 2.5 Flash; con thinking activado los tokens de
+razonamiento consumen el presupuesto de `max_output_tokens` y la respuesta al
+usuario llega truncada.
 """
 
 import json
 import os
 import time
 from datetime import datetime, timezone
-import google.generativeai as genai
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
+
 from dotenv import load_dotenv
+from google import genai
+from google.genai import types
 
 load_dotenv()
 
-# Configuración de Gemini
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL = "gemini-2.5-flash"  # Variante completa de Gemini 2.5 Flash: prefill más rápido que -lite en prompts largos (chunks RAG), evita los 504 "cancelled before prefill" del servidor. El "thinking" interno no se serializa en response.text por defecto, así que no se filtra en las respuestas al usuario.
-DEFAULT_TIMEOUT = 30  # segundos
+GEMINI_MODEL = "gemini-2.5-flash"  # Variante completa: prefill suficiente para prompts grandes (chunks RAG) sin disparar 504 "cancelled before prefill" que veíamos con -lite. Thinking se desactiva explícitamente con thinking_budget=0.
+DEFAULT_TIMEOUT = 30
 
-# Path donde se vuelcan métricas en modo benchmark. Si la env var
-# `LINCEUS_BENCH_METRICS` apunta a un fichero, cada llamada a Gemini añade
-# una línea JSONL con tokens + latencia. Si no, no se mide.
 _BENCH_METRICS_PATH = os.getenv("LINCEUS_BENCH_METRICS")
-
-# Configurar API key globalmente
-if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
 
 
 def _log_bench_metric(record: dict) -> None:
-    """Append-only log de métricas de Gemini cuando estamos en modo benchmark."""
     if not _BENCH_METRICS_PATH:
         return
     try:
         with open(_BENCH_METRICS_PATH, "a", encoding="utf-8") as f:
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
     except Exception:
-        # No queremos que un fallo de log rompa el bot.
         pass
 
 
@@ -50,20 +48,13 @@ def llamar_gemini(
     """
     Llama a Gemini API.
 
-    Ventajas vs Ollama local:
-    - Mucho más rápido (1-3s vs 30-60s en CPU)
-    - No consume recursos locales
-    - Modelos más potentes
-
     Args:
         prompt: Prompt para el modelo
         modelo: Nombre del modelo
         timeout: Timeout en segundos
-        options: Opciones de generación
-        context: etiqueta libre que identifica el call site (p.ej.
-            'profesores.text_to_sql', 'horarios.render'). Solo se usa
-            cuando `LINCEUS_BENCH_METRICS` está activa, para agregar
-            métricas por componente.
+        options: Opciones de generación (temperature, num_predict, top_p, top_k)
+        context: etiqueta libre que identifica el call site (se usa solo
+            cuando `LINCEUS_BENCH_METRICS` está activa)
 
     Returns:
         Respuesta del modelo o None si hay error
@@ -75,7 +66,6 @@ def llamar_gemini(
     top_p = 0.9
     top_k = 10
 
-    # Permitir sobreescribir opciones
     if options:
         if "temperature" in options:
             temperature = options["temperature"]
@@ -89,27 +79,30 @@ def llamar_gemini(
     try:
         print(f"🤖 Llamando a Gemini API (modelo: {modelo})...")
 
-        model = genai.GenerativeModel(modelo)
+        client = genai.Client(
+            api_key=GEMINI_API_KEY,
+            http_options=types.HttpOptions(timeout=timeout * 1000),  # SDK espera ms
+        )
 
-        generation_config = genai.types.GenerationConfig(
+        config = types.GenerateContentConfig(
             temperature=temperature,
             max_output_tokens=max_tokens,
             top_p=top_p,
             top_k=top_k,
+            thinking_config=types.ThinkingConfig(thinking_budget=0),
         )
 
         t_start = time.perf_counter()
-        response = model.generate_content(
-            prompt,
-            generation_config=generation_config,
-            request_options={"timeout": timeout},
+        response = client.models.generate_content(
+            model=modelo,
+            contents=prompt,
+            config=config,
         )
         latencia_ms = int((time.perf_counter() - t_start) * 1000)
 
-        respuesta = response.text.strip()
+        respuesta = (response.text or "").strip()
         print(f"✅ Respuesta recibida ({len(respuesta)} chars)")
 
-        # Métricas de benchmark (no-op si LINCEUS_BENCH_METRICS no está)
         if _BENCH_METRICS_PATH:
             usage = getattr(response, "usage_metadata", None)
             input_tokens = getattr(usage, "prompt_token_count", None) if usage else None
@@ -144,23 +137,20 @@ def llamar_gemini(
 
 
 def verificar_gemini_activo() -> bool:
-    """
-    Verifica si Gemini está configurado correctamente.
-
-    Returns:
-        True si la API key está configurada y es válida
-    """
+    """Verifica si Gemini está configurado correctamente."""
     try:
         if not GEMINI_API_KEY:
             print("❌ GEMINI_API_KEY no encontrada en .env")
             return False
 
-        model = genai.GenerativeModel(GEMINI_MODEL)
-        response = model.generate_content(
-            "Di 'OK'",
-            generation_config=genai.types.GenerationConfig(
+        client = genai.Client(api_key=GEMINI_API_KEY)
+        response = client.models.generate_content(
+            model=GEMINI_MODEL,
+            contents="Di 'OK'",
+            config=types.GenerateContentConfig(
                 max_output_tokens=10,
                 temperature=0.0,
+                thinking_config=types.ThinkingConfig(thinking_budget=0),
             ),
         )
 
@@ -179,14 +169,12 @@ def verificar_gemini_activo() -> bool:
 if __name__ == "__main__":
     print("🧪 Testing Gemini Client\n")
 
-    # 1. Verificar que Gemini está activo
     if not verificar_gemini_activo():
         print("\n💡 Para usar Gemini:")
         print("   1. Obtén una API key en: https://makersuite.google.com/app/apikey")
         print("   2. Agrégala al archivo .env: GEMINI_API_KEY=tu_key_aqui")
         exit(1)
 
-    # 2. Test simple
     print("\n📝 Test 1: Clasificación simple")
     respuesta = llamar_gemini(
         prompt='Clasifica: "cuántos créditos tiene Redes". Responde: {"tipo": "especifica"}',
@@ -194,7 +182,6 @@ if __name__ == "__main__":
     )
     print(f"Respuesta: {respuesta}")
 
-    # 3. Test de velocidad
     print("\n⚡ Test 2: Velocidad (debería ser <3s)")
     inicio = time.time()
     respuesta = llamar_gemini(
